@@ -1,0 +1,9 @@
+version '0.1'
+
+dependencies {
+    compile 'commons-codec:commons-codec:1.10'
+    compile 'org.apache.commons:commons-lang3:3.11'
+    compile 'com.google.code.gson:gson:2.8.6'
+    compile 'org.slf4j:slf4j-api:1.7.30'
+    compile 'com.google.guava:guava:30.1-jre'
+}

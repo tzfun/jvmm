@@ -1,0 +1,6 @@
+rootProject.name = 'jvmm'
+include 'core'
+include 'agent'
+include 'tools'
+include 'client'
+include 'web'

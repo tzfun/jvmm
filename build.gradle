@@ -1,0 +1,31 @@
+plugins {
+    id 'java'
+}
+
+group 'org.beifengtz'
+version '0.1'
+
+subprojects {
+    group 'org.beifengtz.jvmm'
+
+    apply plugin: 'java'
+    [compileJava,compileTestJava,javadoc]*.options*.encoding = 'UTF-8'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    repositories {
+        maven{ url 'https://maven.aliyun.com/repository/public/'}
+        mavenCentral()
+    }
+
+    dependencies {
+        testImplementation 'junit:junit:4.11'
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+}
