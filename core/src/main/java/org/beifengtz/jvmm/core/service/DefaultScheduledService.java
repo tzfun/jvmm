@@ -32,6 +32,10 @@ public class DefaultScheduledService implements ScheduleService {
     private final AtomicInteger targetTimes = new AtomicInteger(-1);
     private final AtomicInteger timesCounter = new AtomicInteger(0);
 
+    {
+        Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
+    }
+
     public DefaultScheduledService(String taskName) {
         this(taskName, ExecutorFactory.getScheduleThreadPool());
     }
@@ -86,6 +90,7 @@ public class DefaultScheduledService implements ScheduleService {
                 } catch (Exception e) {
                     log.error("Execute schedule task error. [" + taskName + "]", e);
                     if (stopOnError.get()) {
+                        state.set(Thread.State.TERMINATED);
                         return;
                     }
                 }

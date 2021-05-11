@@ -31,6 +31,21 @@ import java.util.List;
 public class TestMXBean {
 
     @Test
+    public void testAll() {
+        testMemory();
+        testRuntime();
+        testMemoryManager();
+        testMemoryPool();
+        testClassLoading();
+        testCompilation();
+        testOperatingSystem();
+        testOperatingSystemExtra();
+        testThread();
+        testThreadInfo();
+        testGarbageCollector();
+    }
+
+    @Test
     public void testMemory() {
         MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
         System.err.println(memoryMXBean.getHeapMemoryUsage());
@@ -92,7 +107,7 @@ public class TestMXBean {
             System.err.println(b.getPeakUsage());
             System.err.println(b.getType());
             System.err.println(b.getUsage());
-            if(b.isUsageThresholdSupported()){
+            if (b.isUsageThresholdSupported()) {
                 System.err.println(b.isUsageThresholdExceeded());
                 System.err.println(b.getUsageThreshold());
                 System.err.println(b.getUsageThresholdCount());
@@ -130,7 +145,7 @@ public class TestMXBean {
     }
 
     @Test
-    public void testOperatingSystemExtra(){
+    public void testOperatingSystemExtra() {
         OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
         for (Method method : operatingSystemMXBean.getClass().getDeclaredMethods()) {
             method.setAccessible(true);
@@ -147,13 +162,13 @@ public class TestMXBean {
     }
 
     @Test
-    public void testThread(){
+    public void testThread() {
         ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
         System.err.println(Arrays.toString(threadMXBean.findDeadlockedThreads()));
         System.err.println(Arrays.toString(threadMXBean.getAllThreadIds()));
         System.err.println(threadMXBean.getThreadCount());
         System.err.println(Arrays.toString(threadMXBean.getThreadInfo(threadMXBean.getAllThreadIds())));
-        if (threadMXBean.isCurrentThreadCpuTimeSupported()){
+        if (threadMXBean.isCurrentThreadCpuTimeSupported()) {
             System.err.println(threadMXBean.getCurrentThreadCpuTime());
         }
 
@@ -165,7 +180,7 @@ public class TestMXBean {
     }
 
     @Test
-    public void testThreadInfo(){
+    public void testThreadInfo() {
         ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
 
 
@@ -176,7 +191,7 @@ public class TestMXBean {
     }
 
     @Test
-    public void testGarbageCollector(){
+    public void testGarbageCollector() {
         List<GarbageCollectorMXBean> garbageCollectorMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
         garbageCollectorMXBeans.forEach(b -> {
             System.err.println("---------><-------------");
