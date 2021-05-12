@@ -1,4 +1,6 @@
-package org.beifengtz.jvmm.core.entity;
+package org.beifengtz.jvmm.core.entity.mx;
+
+import org.beifengtz.jvmm.core.entity.JsonParsable;
 
 import java.util.List;
 import java.util.Map;
@@ -19,7 +21,7 @@ public class ProcessInfo implements JsonParsable {
     private String name;
     private long startTime;
     private long uptime;
-    private int pid;
+    private long pid;
 
     /**
      * JVM信息
@@ -76,11 +78,11 @@ public class ProcessInfo implements JsonParsable {
         this.uptime = uptime;
     }
 
-    public int getPid() {
+    public long getPid() {
         return pid;
     }
 
-    public void setPid(int pid) {
+    public void setPid(long pid) {
         this.pid = pid;
     }
 

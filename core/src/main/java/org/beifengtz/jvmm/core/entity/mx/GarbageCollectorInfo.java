@@ -1,5 +1,7 @@
-package org.beifengtz.jvmm.core.entity;
+package org.beifengtz.jvmm.core.entity.mx;
 
+
+import org.beifengtz.jvmm.core.entity.JsonParsable;
 
 /**
  * <p>

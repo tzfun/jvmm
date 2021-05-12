@@ -1,4 +1,6 @@
-package org.beifengtz.jvmm.core.entity;
+package org.beifengtz.jvmm.core.entity.mx;
+
+import org.beifengtz.jvmm.core.entity.JsonParsable;
 
 import java.lang.management.MemoryType;
 import java.lang.management.MemoryUsage;

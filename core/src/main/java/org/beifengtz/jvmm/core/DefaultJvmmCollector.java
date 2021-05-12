@@ -1,17 +1,18 @@
 package org.beifengtz.jvmm.core;
 
-import org.beifengtz.jvmm.core.entity.ClassLoadingInfo;
-import org.beifengtz.jvmm.core.entity.CompilationInfo;
-import org.beifengtz.jvmm.core.entity.GarbageCollectorInfo;
-import org.beifengtz.jvmm.core.entity.MemoryInfo;
-import org.beifengtz.jvmm.core.entity.MemoryManagerInfo;
-import org.beifengtz.jvmm.core.entity.MemoryPoolInfo;
-import org.beifengtz.jvmm.core.entity.ProcessInfo;
-import org.beifengtz.jvmm.core.entity.SystemDynamicInfo;
-import org.beifengtz.jvmm.core.entity.SystemStaticInfo;
-import org.beifengtz.jvmm.core.entity.ThreadDynamicInfo;
+import org.beifengtz.jvmm.core.entity.mx.ClassLoadingInfo;
+import org.beifengtz.jvmm.core.entity.mx.CompilationInfo;
+import org.beifengtz.jvmm.core.entity.mx.GarbageCollectorInfo;
+import org.beifengtz.jvmm.core.entity.mx.MemoryInfo;
+import org.beifengtz.jvmm.core.entity.mx.MemoryManagerInfo;
+import org.beifengtz.jvmm.core.entity.mx.MemoryPoolInfo;
+import org.beifengtz.jvmm.core.entity.mx.ProcessInfo;
+import org.beifengtz.jvmm.core.entity.mx.SystemDynamicInfo;
+import org.beifengtz.jvmm.core.entity.mx.SystemStaticInfo;
+import org.beifengtz.jvmm.core.entity.mx.ThreadDynamicInfo;
 import org.beifengtz.jvmm.core.service.DefaultScheduledService;
 import org.beifengtz.jvmm.core.service.ScheduleService;
+import org.beifengtz.jvmm.tools.util.PidUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +75,7 @@ class DefaultJvmmCollector implements JvmmCollector {
         info.setName(runtimeMXBean.getName());
         info.setStartTime(runtimeMXBean.getStartTime());
         info.setUptime(runtimeMXBean.getUptime());
-        info.setPid(Integer.parseInt(info.getName().split("@")[0]));
+        info.setPid(PidUtil.currentPid());
         info.setVmName(runtimeMXBean.getVmName());
         info.setVmVendor(runtimeMXBean.getVmVendor());
         info.setVmVersion(runtimeMXBean.getVmVersion());
@@ -220,6 +221,13 @@ class DefaultJvmmCollector implements JvmmCollector {
     }
 
     @Override
+    public void stopTimerGetMemory() {
+        if (memoryTimer != null) {
+            memoryTimer.stop();
+        }
+    }
+
+    @Override
     public SystemDynamicInfo getSystemDynamic() {
         OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
         SystemDynamicInfo info = SystemDynamicInfo.create();
@@ -308,6 +316,13 @@ class DefaultJvmmCollector implements JvmmCollector {
     }
 
     @Override
+    public void stopTimerGetSystemDynamic() {
+        if (systemDynamicTimer != null) {
+            systemDynamicTimer.stop();
+        }
+    }
+
+    @Override
     public ThreadDynamicInfo getThreadDynamic() {
         ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
         ThreadDynamicInfo info = ThreadDynamicInfo.create();
@@ -340,6 +355,13 @@ class DefaultJvmmCollector implements JvmmCollector {
     public void updateTimerGetThreadDynamic(int newGapSeconds) {
         if (threadDynamicTimer != null) {
             threadDynamicTimer.setTimeGap(newGapSeconds);
+        }
+    }
+
+    @Override
+    public void stopTimerGetThreadDynamic() {
+        if (threadDynamicTimer != null){
+            threadDynamicTimer.stop();
         }
     }
 

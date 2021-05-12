@@ -1,15 +1,15 @@
 package org.beifengtz.jvmm.core;
 
-import org.beifengtz.jvmm.core.entity.ClassLoadingInfo;
-import org.beifengtz.jvmm.core.entity.CompilationInfo;
-import org.beifengtz.jvmm.core.entity.GarbageCollectorInfo;
-import org.beifengtz.jvmm.core.entity.MemoryInfo;
-import org.beifengtz.jvmm.core.entity.MemoryManagerInfo;
-import org.beifengtz.jvmm.core.entity.MemoryPoolInfo;
-import org.beifengtz.jvmm.core.entity.ProcessInfo;
-import org.beifengtz.jvmm.core.entity.SystemDynamicInfo;
-import org.beifengtz.jvmm.core.entity.SystemStaticInfo;
-import org.beifengtz.jvmm.core.entity.ThreadDynamicInfo;
+import org.beifengtz.jvmm.core.entity.mx.ClassLoadingInfo;
+import org.beifengtz.jvmm.core.entity.mx.CompilationInfo;
+import org.beifengtz.jvmm.core.entity.mx.GarbageCollectorInfo;
+import org.beifengtz.jvmm.core.entity.mx.MemoryInfo;
+import org.beifengtz.jvmm.core.entity.mx.MemoryManagerInfo;
+import org.beifengtz.jvmm.core.entity.mx.MemoryPoolInfo;
+import org.beifengtz.jvmm.core.entity.mx.ProcessInfo;
+import org.beifengtz.jvmm.core.entity.mx.SystemDynamicInfo;
+import org.beifengtz.jvmm.core.entity.mx.SystemStaticInfo;
+import org.beifengtz.jvmm.core.entity.mx.ThreadDynamicInfo;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -47,6 +47,8 @@ public interface JvmmCollector {
 
     void updateTimerGetMemory(int newGapSeconds);
 
+    void stopTimerGetMemory();
+
     SystemDynamicInfo getSystemDynamic();
 
     void timerGetSystemDynamic(int gapSeconds, Consumer<SystemDynamicInfo> callback);
@@ -55,6 +57,8 @@ public interface JvmmCollector {
 
     void updateTimerGetSystemDynamic(int newGapSeconds);
 
+    void stopTimerGetSystemDynamic();
+
     ThreadDynamicInfo getThreadDynamic();
 
     void timerGetThreadDynamic(int gapSeconds, Consumer<ThreadDynamicInfo> callback);
@@ -62,6 +66,8 @@ public interface JvmmCollector {
     void timerGetThreadDynamic(int gapSeconds, int times, Consumer<ThreadDynamicInfo> callback);
 
     void updateTimerGetThreadDynamic(int newGapSeconds);
+
+    void stopTimerGetThreadDynamic();
 
     String getThreadInfo(long id);
 

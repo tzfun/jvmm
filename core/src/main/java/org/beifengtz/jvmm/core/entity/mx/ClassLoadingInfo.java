@@ -1,4 +1,6 @@
-package org.beifengtz.jvmm.core.entity;
+package org.beifengtz.jvmm.core.entity.mx;
+
+import org.beifengtz.jvmm.core.entity.JsonParsable;
 
 /**
  * <p>
@@ -9,7 +11,7 @@ package org.beifengtz.jvmm.core.entity;
  *
  * @author beifengtz
  */
-public class ClassLoadingInfo implements JsonParsable{
+public class ClassLoadingInfo implements JsonParsable {
     /**
      * 是否开启打印输出
      */
