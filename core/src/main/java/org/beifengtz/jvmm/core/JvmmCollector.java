@@ -11,6 +11,7 @@ import org.beifengtz.jvmm.core.entity.SystemDynamicInfo;
 import org.beifengtz.jvmm.core.entity.SystemStaticInfo;
 import org.beifengtz.jvmm.core.entity.ThreadDynamicInfo;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -32,11 +33,11 @@ public interface JvmmCollector {
 
     CompilationInfo getCompilation();
 
-    GarbageCollectorInfo getGarbageCollector();
+    List<GarbageCollectorInfo> getGarbageCollector();
 
-    MemoryManagerInfo getMemoryManager();
+    List<MemoryManagerInfo> getMemoryManager();
 
-    MemoryPoolInfo getMemoryPool();
+    List<MemoryPoolInfo> getMemoryPool();
 
     MemoryInfo getMemory();
 

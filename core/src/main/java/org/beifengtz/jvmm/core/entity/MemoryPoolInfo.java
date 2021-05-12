@@ -12,9 +12,9 @@ import java.lang.management.MemoryUsage;
  *
  * @author beifengtz
  */
-public class MemoryPoolInfo {
+public class MemoryPoolInfo implements JsonParsable {
     private String name;
-    private String isValid;
+    private boolean valid;
     private String[] managerNames;
     /**
      * 内存类型
@@ -54,4 +54,136 @@ public class MemoryPoolInfo {
      * Java虚拟机检测到内存使用量已达到或超过收集使用量阈值的次数
      */
     private long collectionUsageThresholdCount;
+
+    private MemoryPoolInfo() {
+    }
+
+    public static MemoryPoolInfo create() {
+        return new MemoryPoolInfo();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean getValid() {
+        return valid;
+    }
+
+    public void setValid(boolean valid) {
+        this.valid = valid;
+    }
+
+    public String[] getManagerNames() {
+        return managerNames;
+    }
+
+    public void setManagerNames(String[] managerNames) {
+        this.managerNames = managerNames;
+    }
+
+    public MemoryType getType() {
+        return type;
+    }
+
+    public void setType(MemoryType type) {
+        this.type = type;
+    }
+
+    public MemoryUsage getUsage() {
+        return usage;
+    }
+
+    public void setUsage(MemoryUsage usage) {
+        this.usage = usage;
+    }
+
+    public MemoryUsage getCollectionUsage() {
+        return collectionUsage;
+    }
+
+    public void setCollectionUsage(MemoryUsage collectionUsage) {
+        this.collectionUsage = collectionUsage;
+    }
+
+    public MemoryUsage getPeakUsage() {
+        return peakUsage;
+    }
+
+    public void setPeakUsage(MemoryUsage peakUsage) {
+        this.peakUsage = peakUsage;
+    }
+
+    public boolean isUsageThresholdSupported() {
+        return usageThresholdSupported;
+    }
+
+    public void setUsageThresholdSupported(boolean usageThresholdSupported) {
+        this.usageThresholdSupported = usageThresholdSupported;
+    }
+
+    public boolean isUsageThresholdExceeded() {
+        return usageThresholdExceeded;
+    }
+
+    public void setUsageThresholdExceeded(boolean usageThresholdExceeded) {
+        this.usageThresholdExceeded = usageThresholdExceeded;
+    }
+
+    public long getUsageThreshold() {
+        return usageThreshold;
+    }
+
+    public void setUsageThreshold(long usageThreshold) {
+        this.usageThreshold = usageThreshold;
+    }
+
+    public long getUsageThresholdCount() {
+        return usageThresholdCount;
+    }
+
+    public void setUsageThresholdCount(long usageThresholdCount) {
+        this.usageThresholdCount = usageThresholdCount;
+    }
+
+    public boolean isCollectionUsageThresholdSupported() {
+        return collectionUsageThresholdSupported;
+    }
+
+    public void setCollectionUsageThresholdSupported(boolean collectionUsageThresholdSupported) {
+        this.collectionUsageThresholdSupported = collectionUsageThresholdSupported;
+    }
+
+    public boolean isCollectionUsageThresholdExceeded() {
+        return collectionUsageThresholdExceeded;
+    }
+
+    public void setCollectionUsageThresholdExceeded(boolean collectionUsageThresholdExceeded) {
+        this.collectionUsageThresholdExceeded = collectionUsageThresholdExceeded;
+    }
+
+    public long getCollectionUsageThreshold() {
+        return collectionUsageThreshold;
+    }
+
+    public void setCollectionUsageThreshold(long collectionUsageThreshold) {
+        this.collectionUsageThreshold = collectionUsageThreshold;
+    }
+
+    public long getCollectionUsageThresholdCount() {
+        return collectionUsageThresholdCount;
+    }
+
+    public void setCollectionUsageThresholdCount(long collectionUsageThresholdCount) {
+        this.collectionUsageThresholdCount = collectionUsageThresholdCount;
+    }
+
+    @Override
+    public String toString() {
+        return toJsonStr();
+    }
 }
