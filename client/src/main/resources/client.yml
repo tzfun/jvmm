@@ -1,0 +1,5 @@
+name: "jvmm_client"
+port:
+  bind: 5010
+  #  遇到冲突时监听端口自动自增
+  autoIncrease: false

@@ -1,15 +1,26 @@
 package org.beifengtz.jvmm.tools.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.Yaml;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 /**
  * <p>
@@ -21,6 +32,9 @@ import java.util.Properties;
  * @author beifengtz
  */
 public class FileUtil {
+    private static final Logger log = LoggerFactory.getLogger(FileUtil.class);
+
+    private static final int SAFE_BYTE_LENGTH = 2048;
 
     public static void writeByteArrayToFile(File file, byte[] data) throws IOException {
         writeByteArrayToFile(file, data, false);
@@ -64,17 +78,110 @@ public class FileUtil {
         }
     }
 
-    public static Properties readProperties(String file) throws IOException {
+    public static Map<String, String> readProperties(String file) throws IOException {
+        return readProperties(file, null);
+    }
+
+    public static Map<String, String> readProperties(String file, String globalPrefix) throws IOException {
         Properties properties = new Properties();
-
-        FileInputStream in = null;
-        try {
-            in = new FileInputStream(file);
+        try (FileInputStream in = new FileInputStream(file)) {
             properties.load(in);
-            return properties;
-        } finally {
-            IOUtil.close(in);
+            Map<String, String> map = new HashMap<>(properties.size());
+            properties.forEach((k, v) -> {
+                String key;
+                if (globalPrefix != null) {
+                    key = k.toString().replaceFirst(globalPrefix, "");
+                } else {
+                    key = k.toString();
+                }
+                map.put(key, v.toString());
+            });
+            return map;
         }
+    }
 
+    public static <T> T readYml(String file, Class<T> type) throws IOException {
+        Yaml yaml = new Yaml();
+        try (InputStream in = new FileInputStream(file)) {
+            return yaml.loadAs(in, type);
+        }
+    }
+
+    public static boolean readFileFromNet(String url, String dir, String fileName) {
+        File file = null;
+        long start = System.currentTimeMillis();
+        try {
+            URL httpUrl = new URL(url);
+
+            File saveDir = new File(dir);
+            if (!saveDir.exists()) {
+                saveDir.mkdirs();
+            }
+            file = new File(saveDir + File.separator + fileName);
+            if (file.exists()) {
+                file.delete();
+            }
+
+            log.info("Start open http connection. {}", url);
+            HttpURLConnection conn = (HttpURLConnection) httpUrl.openConnection();
+            conn.setConnectTimeout(3000);
+            conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
+
+            long totalSize = 0;
+            try (InputStream inputStream = conn.getInputStream(); FileOutputStream fos = new FileOutputStream(file)) {
+                log.info("Start save file to local path...");
+                int temp = 0;
+                byte[] bytes = new byte[SAFE_BYTE_LENGTH];
+                while ((temp = inputStream.read(bytes)) != -1) {
+                    fos.write(bytes, 0, temp);
+                    totalSize += temp;
+                }
+            }
+            log.info("Save file from network successful. use: {} ms, totalSize: {}.",
+                    System.currentTimeMillis() - start, elegantByteSize(totalSize, 2));
+
+            return true;
+        } catch (Exception e) {
+            log.info(String.format("Download file form network filed. url:'%s'. %s", url, e.getMessage()), e);
+
+            if (file != null && file.exists()) {
+                file.delete();
+            }
+
+            return false;
+        }
+    }
+
+    /**
+     * 大小可视化，进制为 1024
+     *
+     * @param bytes 单位为byte的大小
+     * @param scale 保留小数位
+     */
+    public static String elegantByteSize(long bytes, int scale) {
+        final String suffix;
+        final double size;
+        if (bytes >= 0 && bytes < 1024) {
+            suffix = " B";
+            size = bytes;
+        } else if (bytes >= 1024 && bytes < 1048576) {
+            suffix = " KB";
+            size = (double) bytes / 1024;
+        } else if (bytes >= 1048576 && bytes < 1073741824) {
+            suffix = " MB";
+            size = (double) bytes / 1048576;
+        } else if (bytes >= 1073741824 && bytes < 1099511627776L) {
+            suffix = " GB";
+            size = (double) bytes / 1073741824;
+        } else {
+            suffix = " TB";
+            size = (double) bytes / 1099511627776L;
+        }
+        BigDecimal bigDecimal = new BigDecimal(size).setScale(scale, BigDecimal.ROUND_HALF_UP);
+        if (scale == 0) {
+            return bigDecimal.longValue() + suffix;
+        } else {
+            return bigDecimal.doubleValue() + suffix;
+        }
     }
 }

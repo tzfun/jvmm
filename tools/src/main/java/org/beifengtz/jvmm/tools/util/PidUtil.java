@@ -88,7 +88,7 @@ public class PidUtil {
     }
 
     private static void handleProcessError(Process process, String command) throws InterruptedException, IOException {
-        if (process.waitFor(200, TimeUnit.MILLISECONDS)) {
+        if (process.waitFor(50, TimeUnit.MILLISECONDS)) {
             int exitVal = process.exitValue();
             if (exitVal < 0) {
                 try (InputStream errIs = process.getErrorStream()) {
