@@ -1,11 +1,17 @@
 package org.beifengtz.jvmm.client;
 
+import com.sun.tools.attach.VirtualMachine;
+import com.sun.tools.attach.VirtualMachineDescriptor;
+import org.beifengtz.jvmm.core.JvmmFactory;
+import org.beifengtz.jvmm.core.entity.mx.ClassLoadingInfo;
+import org.beifengtz.jvmm.tools.util.CommonUtil;
 import org.beifengtz.jvmm.tools.util.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -96,5 +102,15 @@ public class ClientBootstrap {
 
     public int getPort() {
         return port;
+    }
+
+    public static void main(String[] args) throws Throwable {
+        ClientWatchDog.getInstance().initToolsClasses();
+
+        ClassLoadingInfo classLoading = JvmmFactory.getCollector().getClassLoading();
+        CommonUtil.print("-->", classLoading);
+
+        List<VirtualMachineDescriptor> list = VirtualMachine.list();
+        list.forEach(o -> CommonUtil.print("==>", o));
     }
 }

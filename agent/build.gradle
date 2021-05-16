@@ -1,5 +1,21 @@
 version '0.1'
 
 dependencies {
-    compile (project(':tools'))
+    compile(project(':tools'))
+}
+
+jar {
+    manifestContentCharset 'utf-8'
+    metadataCharset 'utf-8'
+
+    manifest {
+        attributes("Premain-class": "org.beifengtz.jvmm.agent.AgentBootStrap",
+                "Agent-class": "org.beifengtz.jvmm.agent.AgentBootStrap",
+                "Can-Redefine-Classes": true, "Can-Retransform-Classes": true)
+    }
+    archiveName("jvmm-agent.jar")
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }

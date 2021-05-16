@@ -9,3 +9,7 @@ dependencies {
     compile 'com.google.guava:guava:30.1-jre'
     compile 'org.yaml:snakeyaml:1.27'
 }
+
+jar {
+    archiveName("jvmm-tools.jar")
+}

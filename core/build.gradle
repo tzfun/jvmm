@@ -1,5 +1,18 @@
+import javax.tools.ToolProvider
+
 version '0.1'
 
 dependencies {
-    compile (project(':tools'))
+    compile(project(':tools'))
+    compileOnly(files(((URLClassLoader) ToolProvider.getSystemToolClassLoader()).getURLs()))
+}
+
+jar {
+    manifestContentCharset 'utf-8'
+    metadataCharset 'utf-8'
+
+    archiveName("jvmm-core.jar")
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }

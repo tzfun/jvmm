@@ -1,7 +1,11 @@
 package org.beifengtz.agent.test;
 
+import org.beifengtz.jvmm.agent.AgentBootStrap;
 import org.beifengtz.jvmm.agent.AppUtil;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.security.CodeSource;
 
 /**
  * <p>
@@ -18,6 +22,12 @@ public class TestApp {
     public void testPath(){
         System.out.println(AppUtil.getLogPath());
         System.out.println(AppUtil.getDataPath());
+    }
 
+    @Test
+    public void testAgentPath() throws Exception{
+        CodeSource codeSource = AgentBootStrap.class.getProtectionDomain().getCodeSource();
+        File agentJarFile = new File(codeSource.getLocation().toURI().getSchemeSpecificPart());
+        System.out.println(agentJarFile);
     }
 }

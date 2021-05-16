@@ -21,10 +21,62 @@ public class JavaEnvUtil {
 
     private static final Logger log = LoggerFactory.getLogger(JavaEnvUtil.class);
 
-    public static File findToolsJar(String javaHome) {
-        if (JavaVersionUtils.isGreaterThanJava8()) {
-            return null;
+    private static volatile String JAVA_HOME = null;
+
+    public static String findJavaHome() {
+        if (JAVA_HOME != null) {
+            return JAVA_HOME;
         }
+
+        String javaHome = System.getProperty("java.home");
+
+        if (JavaVersionUtils.isLessThanJava9()) {
+            File toolsJar = new File(javaHome, "lib/tools.jar");
+            if (!toolsJar.exists()) {
+                toolsJar = new File(javaHome, "../lib/tools.jar");
+            }
+            if (!toolsJar.exists()) {
+                // maybe jre
+                toolsJar = new File(javaHome, "../../lib/tools.jar");
+            }
+
+            if (toolsJar.exists()) {
+                JAVA_HOME = javaHome;
+                return JAVA_HOME;
+            }
+
+            if (!toolsJar.exists()) {
+                log.debug("Can not find tools.jar under java.home: {}", javaHome);
+                String javaHomeEnv = System.getenv("JAVA_HOME");
+                if (javaHomeEnv != null && !javaHomeEnv.isEmpty()) {
+                    log.debug("Try to find tools.jar in System Env JAVA_HOME: {}", javaHomeEnv);
+                    // $JAVA_HOME/lib/tools.jar
+                    toolsJar = new File(javaHomeEnv, "lib/tools.jar");
+                    if (!toolsJar.exists()) {
+                        // maybe jre
+                        toolsJar = new File(javaHomeEnv, "../lib/tools.jar");
+                    }
+                }
+
+                if (toolsJar.exists()) {
+                    log.info("Found java home from System Env JAVA_HOME: {}", javaHomeEnv);
+                    JAVA_HOME = javaHomeEnv;
+                    return JAVA_HOME;
+                }
+
+                throw new IllegalArgumentException("Can not find tools.jar under java home: " + javaHome
+                        + ", please try to start arthas-boot with full path java. Such as /opt/jdk/bin/java -jar arthas-boot.jar");
+            }
+        } else {
+            JAVA_HOME = javaHome;
+        }
+        return JAVA_HOME;
+    }
+
+    public static File findToolsJar(String javaHome) {
+//        if (JavaVersionUtils.isGreaterThanJava8()) {
+//            return null;
+//        }
 
         File toolsJar = new File(javaHome, "lib/tools.jar");
         if (!toolsJar.exists()) {
@@ -57,7 +109,7 @@ public class JavaEnvUtil {
         for (String path : paths) {
             File programFile = new File(javaHome, path);
             if (programFile.exists()) {
-                log.debug("Found '{}': {}",programName, programFile.getAbsolutePath());
+                log.debug("Found '{}': {}", programName, programFile.getAbsolutePath());
                 programList.add(programFile);
             }
         }
@@ -91,6 +143,6 @@ public class JavaEnvUtil {
                 return -1;
             });
         }
-        return programList.get(0).getAbsolutePath().replaceAll("\\\\","/");
+        return programList.get(0).getAbsolutePath().replaceAll("\\\\", "/");
     }
 }

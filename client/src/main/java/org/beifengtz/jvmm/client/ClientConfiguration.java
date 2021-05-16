@@ -32,6 +32,14 @@ public final class ClientConfiguration {
         return new Gson().toJson(this);
     }
 
+    public String argFormat() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("name=").append(name).append(";");
+        sb.append("port.bind=").append(port).append(";");
+        sb.append("port.autoIncrease=").append(autoIncrease);
+        return sb.toString();
+    }
+
     static class Builder {
         private String name = "jvmm_client";
         private int port = 5010;

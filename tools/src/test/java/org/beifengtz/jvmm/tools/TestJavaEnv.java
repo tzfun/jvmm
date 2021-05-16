@@ -4,6 +4,8 @@ import org.beifengtz.jvmm.tools.util.CommonUtil;
 import org.beifengtz.jvmm.tools.util.JavaEnvUtil;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+
 /**
  * <p>
  * Description: TODO
@@ -22,5 +24,13 @@ public class TestJavaEnv {
         CommonUtil.print("Use time", System.currentTimeMillis() - start);
         System.out.println(JavaEnvUtil.findJavaProgram("jstat"));
         CommonUtil.print("Use time", System.currentTimeMillis() - start);
+    }
+
+    @Test
+    public void testToolsJar(){
+        File toolsJar = JavaEnvUtil.findToolsJar(JavaEnvUtil.findJavaHome());
+
+        System.out.println(toolsJar);
+
     }
 }
