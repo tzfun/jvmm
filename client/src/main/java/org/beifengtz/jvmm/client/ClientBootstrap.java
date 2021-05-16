@@ -105,6 +105,7 @@ public class ClientBootstrap {
     }
 
     public static void main(String[] args) throws Throwable {
+
         ClientWatchDog.getInstance().initToolsClasses();
 
         ClassLoadingInfo classLoading = JvmmFactory.getCollector().getClassLoading();

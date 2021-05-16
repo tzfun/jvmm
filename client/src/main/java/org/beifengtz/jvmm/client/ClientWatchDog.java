@@ -2,7 +2,6 @@ package org.beifengtz.jvmm.client;
 
 import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
-import org.beifengtz.jvmm.tools.JvmmClassLoader;
 import org.beifengtz.jvmm.tools.util.CodingUtil;
 import org.beifengtz.jvmm.tools.util.JavaEnvUtil;
 import org.beifengtz.jvmm.tools.util.JavaVersionUtils;
@@ -10,8 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Properties;
 
 /**
@@ -44,18 +46,27 @@ public class ClientWatchDog {
         if (toolsClassLoader == null) {
             File toolsJar = JavaEnvUtil.findToolsJar(JavaEnvUtil.findJavaHome());
             try {
-                toolsClassLoader = new JvmmClassLoader(new URL[]{toolsJar.toURI().toURL()});
+                URLClassLoader systemClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+
+                Method addURL = systemClassLoader.getClass().getSuperclass().getDeclaredMethod("addURL", URL.class);
+                addURL.setAccessible(true);
+                addURL.invoke(systemClassLoader, toolsJar.toURI().toURL());
+                toolsClassLoader = systemClassLoader;
             } catch (MalformedURLException e) {
                 //  ignored
+            } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+                log.error("Init class loader failed. " + e.getMessage(), e);
             }
         }
         return toolsClassLoader;
     }
 
-    public void initToolsClasses() throws Throwable{
+    public void initToolsClasses() throws Throwable {
         ClassLoader classLoader = getToolsClassLoader();
+        Thread.currentThread().setContextClassLoader(classLoader);
         classLoader.loadClass("com.sun.tools.attach.VirtualMachine");
         classLoader.loadClass("com.sun.tools.attach.VirtualMachineDescriptor");
+
         log.info("Init tools classes successful.");
     }
 

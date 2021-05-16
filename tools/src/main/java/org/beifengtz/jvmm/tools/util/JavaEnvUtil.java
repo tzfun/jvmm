@@ -3,6 +3,7 @@ package org.beifengtz.jvmm.tools.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.management.RuntimeErrorException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -74,9 +75,9 @@ public class JavaEnvUtil {
     }
 
     public static File findToolsJar(String javaHome) {
-//        if (JavaVersionUtils.isGreaterThanJava8()) {
-//            return null;
-//        }
+        if (JavaVersionUtils.isGreaterThanJava8()) {
+            throw new RuntimeException("Do not support greater than java 1.8");
+        }
 
         File toolsJar = new File(javaHome, "lib/tools.jar");
         if (!toolsJar.exists()) {
