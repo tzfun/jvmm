@@ -1,17 +1,19 @@
 package org.beifengtz.jvmm.client;
 
-import com.sun.tools.attach.VirtualMachine;
-import com.sun.tools.attach.VirtualMachineDescriptor;
-import org.beifengtz.jvmm.core.JvmmFactory;
-import org.beifengtz.jvmm.core.entity.mx.ClassLoadingInfo;
-import org.beifengtz.jvmm.tools.util.CommonUtil;
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import org.beifengtz.jvmm.client.channel.ClientLogicSocketChannel;
+import org.beifengtz.jvmm.convey.channel.StringChannelInitializer;
 import org.beifengtz.jvmm.tools.util.FileUtil;
+import org.beifengtz.jvmm.tools.util.PlatformUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -26,16 +28,23 @@ import java.util.Objects;
  * @author beifengtz
  */
 public class ClientBootstrap {
+    private static final Logger log = LoggerFactory.getLogger(ClientBootstrap.class);
+
     private static volatile ClientBootstrap clientBootstrap;
-    private final ClientConfiguration config;
+    private final Configuration config;
     private int port = -1;
 
     private ClientBootstrap() {
         this(parseConfig(null));
     }
 
-    private ClientBootstrap(ClientConfiguration config) {
+    private ClientBootstrap(Configuration config) {
         this.config = config;
+        start(config.getPort());
+    }
+
+    public synchronized static ClientBootstrap getInstance(String args) throws Throwable {
+        return getInstance(null, args);
     }
 
     public synchronized static ClientBootstrap getInstance(Instrumentation inst, String args) throws Throwable {
@@ -46,7 +55,13 @@ public class ClientBootstrap {
         return clientBootstrap;
     }
 
-    private static ClientConfiguration parseConfig(String args) {
+    /**
+     * 解析attach传过来的参数
+     *
+     * @param args 参数格式：name=jvmm_client;port.bind=5010;port.autoIncrease=true;http.maxChunkSize=52428800
+     * @return {@link Configuration}
+     */
+    private static Configuration parseConfig(String args) {
         if (args == null) {
             args = "";
         }
@@ -58,7 +73,7 @@ public class ClientBootstrap {
             String v = kv[1].trim();
             argMap.put(k, v);
         }
-        ClientConfiguration.Builder cb = ClientConfiguration.newBuilder();
+        Configuration.Builder cb = Configuration.newBuilder();
         String configPath = argMap.get("config");
         if (Objects.nonNull(configPath)) {
             File configFile = new File(configPath);
@@ -69,7 +84,7 @@ public class ClientBootstrap {
             try {
                 String lowerCase = configPath.toLowerCase(Locale.ROOT);
                 if (lowerCase.endsWith("yml") || lowerCase.endsWith("yaml")) {
-                    ClientConfigFileMapping mapping = FileUtil.readYml(configFile.getAbsolutePath(), ClientConfigFileMapping.class);
+                    ConfigFileMapping mapping = FileUtil.readYml(configFile.getAbsolutePath(), ConfigFileMapping.class);
                     cb.merge(mapping);
                 } else if (lowerCase.endsWith("properties")) {
                     Map<String, String> propMap = FileUtil.readProperties(configFile.getAbsolutePath());
@@ -104,14 +119,20 @@ public class ClientBootstrap {
         return port;
     }
 
-    public static void main(String[] args) throws Throwable {
+    private void start(int bindPort) {
+        if (PlatformUtil.portAvailable(bindPort)) {
+            log.info("Try to start client service. bind:{}", bindPort);
 
-        ClientWatchDog.getInstance().initToolsClasses();
+            final ServerBootstrap b = new ServerBootstrap();
+            final EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+            final EventLoopGroup workerGroup = new NioEventLoopGroup();
 
-        ClassLoadingInfo classLoading = JvmmFactory.getCollector().getClassLoading();
-        CommonUtil.print("-->", classLoading);
-
-        List<VirtualMachineDescriptor> list = VirtualMachine.list();
-        list.forEach(o -> CommonUtil.print("==>", o));
+            b.group(bossGroup, workerGroup)
+                    .channel(ClientLogicSocketChannel.class)
+                    .childHandler(new StringChannelInitializer(null));
+        } else {
+            log.info("Port {} is not available.", bindPort);
+            start(bindPort + 1);
+        }
     }
 }

@@ -4,3 +4,6 @@ include 'agent'
 include 'tools'
 include 'client'
 include 'web'
+include 'convey'
+include 'common'
+

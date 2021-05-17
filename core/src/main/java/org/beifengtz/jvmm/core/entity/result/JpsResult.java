@@ -1,6 +1,6 @@
 package org.beifengtz.jvmm.core.entity.result;
 
-import org.beifengtz.jvmm.core.entity.JsonParsable;
+import org.beifengtz.jvmm.common.JsonParsable;
 
 import java.util.List;
 

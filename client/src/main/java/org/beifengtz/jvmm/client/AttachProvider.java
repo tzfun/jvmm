@@ -18,31 +18,33 @@ import java.util.Properties;
 
 /**
  * <p>
- * Description: TODO 本类负责搜索物理机内可用的client，及向目标VM attach agent
+ * Description: TODO
  * </p>
  * <p>
- * Created in 10:10 上午 2021/5/16
+ * Created in 15:30 2021/5/17
  *
  * @author beifengtz
  */
-public class ClientWatchDog {
-    private static final Logger log = LoggerFactory.getLogger(ClientWatchDog.class);
+public class AttachProvider {
 
-    private static volatile ClientWatchDog INSTANCE;
+    private static final Logger log = LoggerFactory.getLogger(AttachProvider.class);
+
+    private static volatile AttachProvider INSTANCE;
 
     private volatile ClassLoader toolsClassLoader;
 
-    private ClientWatchDog() {
+    private AttachProvider() throws Throwable {
+        initToolsClassLoader();
     }
 
-    public static synchronized ClientWatchDog getInstance() {
+    public static synchronized AttachProvider getInstance() throws Throwable {
         if (INSTANCE == null) {
-            INSTANCE = new ClientWatchDog();
+            INSTANCE = new AttachProvider();
         }
         return INSTANCE;
     }
 
-    private synchronized ClassLoader getToolsClassLoader() {
+    protected synchronized void initToolsClassLoader() throws Throwable {
         if (toolsClassLoader == null) {
             File toolsJar = JavaEnvUtil.findToolsJar(JavaEnvUtil.findJavaHome());
             try {
@@ -52,25 +54,17 @@ public class ClientWatchDog {
                 addURL.setAccessible(true);
                 addURL.invoke(systemClassLoader, toolsJar.toURI().toURL());
                 toolsClassLoader = systemClassLoader;
+                log.info("Init tools classes successful.");
             } catch (MalformedURLException e) {
                 //  ignored
             } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
                 log.error("Init class loader failed. " + e.getMessage(), e);
+                throw e;
             }
         }
-        return toolsClassLoader;
     }
 
-    public void initToolsClasses() throws Throwable {
-        ClassLoader classLoader = getToolsClassLoader();
-        Thread.currentThread().setContextClassLoader(classLoader);
-        classLoader.loadClass("com.sun.tools.attach.VirtualMachine");
-        classLoader.loadClass("com.sun.tools.attach.VirtualMachineDescriptor");
-
-        log.info("Init tools classes successful.");
-    }
-
-    private void attachAgent(long targetPid, String agentPath, String clientPath, ClientConfiguration config) throws Exception {
+    protected void attachAgent(long targetPid, String agentPath, String clientPath, Configuration config) throws Exception {
         VirtualMachineDescriptor virtualMachineDescriptor = null;
         for (VirtualMachineDescriptor descriptor : VirtualMachine.list()) {
             String pid = descriptor.id();

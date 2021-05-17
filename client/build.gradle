@@ -3,8 +3,8 @@ import javax.tools.ToolProvider
 version '0.1'
 
 dependencies {
-    compile 'io.netty:netty-all:4.1.63.Final'
     compile(project(':core'))
+    compile(project(':convey'))
     compileOnly(files(((URLClassLoader) ToolProvider.getSystemToolClassLoader()).getURLs()))
 }
 

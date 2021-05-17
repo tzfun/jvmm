@@ -1,4 +1,4 @@
-package org.beifengtz.jvmm.core.entity;
+package org.beifengtz.jvmm.common;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;

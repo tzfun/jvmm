@@ -12,9 +12,11 @@ import java.util.Map;
  *
  * @author beifengtz
  */
-public class ClientConfigFileMapping {
+public class ConfigFileMapping {
     private String name;
     private Map<String, String> port = new HashMap<>();
+    private Map<String, String> http = new HashMap<>();
+    private Map<String, String> security = new HashMap<>();
 
     public String getName() {
         return name;
@@ -30,5 +32,21 @@ public class ClientConfigFileMapping {
 
     public void setPort(Map<String, String> port) {
         this.port = port;
+    }
+
+    public Map<String, String> getHttp() {
+        return http;
+    }
+
+    public void setHttp(Map<String, String> http) {
+        this.http = http;
+    }
+
+    public Map<String, String> getSecurity() {
+        return security;
+    }
+
+    public void setSecurity(Map<String, String> security) {
+        this.security = security;
     }
 }
