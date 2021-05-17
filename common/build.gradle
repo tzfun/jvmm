@@ -1,0 +1,12 @@
+version '0.1'
+
+dependencies {
+    compile 'com.google.code.gson:gson:2.8.6'
+}
+
+jar {
+    manifestContentCharset 'utf-8'
+    metadataCharset 'utf-8'
+
+    archiveName("jvmm-common.jar")
+}
