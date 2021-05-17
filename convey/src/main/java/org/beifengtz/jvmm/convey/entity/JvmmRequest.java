@@ -3,6 +3,7 @@ package org.beifengtz.jvmm.convey.entity;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import org.beifengtz.jvmm.common.JsonParsable;
+import org.beifengtz.jvmm.convey.GlobalType;
 
 /**
  * <p>
@@ -14,7 +15,6 @@ import org.beifengtz.jvmm.common.JsonParsable;
  * @author beifengtz
  */
 public class JvmmRequest implements JsonParsable {
-    private boolean heartbeat;
     private String type;
     private String account;
     private String password;
@@ -27,11 +27,7 @@ public class JvmmRequest implements JsonParsable {
     }
 
     public boolean isHeartbeat() {
-        return heartbeat;
-    }
-
-    public void setHeartbeat(boolean heartbeat) {
-        this.heartbeat = heartbeat;
+        return GlobalType.JVMM_TYPE_HEARTBEAT.name().equalsIgnoreCase(type);
     }
 
     public String getType() {

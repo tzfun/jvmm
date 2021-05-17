@@ -5,6 +5,8 @@ import com.google.gson.JsonSyntaxException;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.internal.logging.InternalLogger;
+import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
+import org.beifengtz.jvmm.convey.GlobalStatus;
 import org.beifengtz.jvmm.convey.channel.JvmmSocketChannel;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
@@ -52,7 +54,7 @@ public abstract class JvmmRequestHandler extends SimpleChannelInboundHandler<Str
             }
         } catch (JsonSyntaxException e) {
             ctx.channel().writeAndFlush(JvmmResponse.create()
-                    .setStatus("JSON_PARSE_FAILED")
+                    .setStatus(GlobalStatus.JVMM_STATUS_UNRECOGNIZED_CONTENT.name())
                     .setMessage(e.getMessage())
                     .toJsonStr());
         }
@@ -60,7 +62,13 @@ public abstract class JvmmRequestHandler extends SimpleChannelInboundHandler<Str
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        if (cause instanceof IOException) {
+        if (cause instanceof AuthenticationFailedException) {
+            ctx.channel().writeAndFlush(JvmmResponse.create()
+                    .setStatus(GlobalStatus.JVMM_STATUS_AUTHENTICATION_FAILED.name())
+                    .setMessage("Authentication failed.")
+                    .toJsonStr());
+            ctx.close();
+        } else if (cause instanceof IOException) {
             logger().debug(cause.toString());
         } else {
             logger().error(cause.toString(), cause);
