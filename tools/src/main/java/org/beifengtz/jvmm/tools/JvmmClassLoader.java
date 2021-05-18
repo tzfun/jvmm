@@ -18,6 +18,11 @@ public class JvmmClassLoader extends URLClassLoader {
     }
 
     @Override
+    public Class<?> loadClass(String name) throws ClassNotFoundException {
+        return this.loadClass(name,true);
+    }
+
+    @Override
     public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
         final Class<?> loadedClass = findLoadedClass(name);
         if (loadedClass != null){

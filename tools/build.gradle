@@ -1,16 +1,17 @@
 version '0.1'
 
 dependencies {
-    compile 'commons-codec:commons-codec:1.10'
-    compile 'org.apache.commons:commons-lang3:3.11'
-
-    compile 'org.slf4j:slf4j-api:1.7.30'
-    compile 'org.slf4j:slf4j-simple:1.7.30'
-    compile 'com.google.guava:guava:30.1-jre'
-    compile 'org.yaml:snakeyaml:1.27'
+    compile "commons-codec:commons-codec:${commonsCodecVersion}"
+    compile "org.apache.commons:commons-lang3:${commonsLangVersion}"
+    compile "org.slf4j:slf4j-api:${slf4jVersion}"
+    compile "com.google.guava:guava:${guavaVersion}"
+    compile "org.yaml:snakeyaml:${snakeyamlVersion}"
     compile(project(':common'))
 }
 
 jar {
+    manifestContentCharset 'utf-8'
+    metadataCharset 'utf-8'
+
     archiveName("jvmm-tools.jar")
 }

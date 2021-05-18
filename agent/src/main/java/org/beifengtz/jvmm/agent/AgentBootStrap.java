@@ -1,6 +1,6 @@
 package org.beifengtz.jvmm.agent;
 
-import org.beifengtz.jvmm.tools.JvmmClassLoader;
+import org.beifengtz.jvmm.tools.util.ClassLoaderUtil;
 import org.beifengtz.jvmm.tools.util.CodingUtil;
 import org.beifengtz.jvmm.tools.util.FileUtil;
 import org.slf4j.Logger;
@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.security.CodeSource;
 import java.util.Objects;
 
@@ -26,19 +25,27 @@ public class AgentBootStrap {
     private static final Logger log = LoggerFactory.getLogger(AgentBootStrap.class);
 
     private static final String JVMM_SERVER_JAR = "jvmm-server.jar";
-    private static final String SERVER_MAIN_CLASS = "org.beifengtz.jvmm.server.ServerBootStrap";
+    private static final String SERVER_MAIN_CLASS = "org.beifengtz.jvmm.server.ServerBootstrap";
 
     private static volatile ClassLoader agentClassLoader;
+    private static volatile boolean premainAttached;
 
     public static void premain(String agentArgs, Instrumentation inst) {
-        main(agentArgs, inst);
+        main(agentArgs, inst, "premain");
     }
 
     public static void agentmain(String agentArgs, Instrumentation inst) {
-        main(agentArgs, inst);
+        main(agentArgs, inst, "agentmain");
     }
 
-    private static synchronized void main(String args, final Instrumentation inst) {
+    private static synchronized void main(String args, final Instrumentation inst, String type) {
+        if ("premain".equals(type)) {
+            if (premainAttached) {
+                return;
+            }
+            premainAttached = true;
+        }
+        log.info("Agent attached by {}.", type);
         try {
             Class<?> configClazz = Class.forName("org.beifengtz.jvmm.server.ServerConfig");
             Method isInited = configClazz.getMethod("isInited");
@@ -118,10 +125,21 @@ public class AgentBootStrap {
 
         try {
             if (agentClassLoader == null) {
-                agentClassLoader = new JvmmClassLoader(new URL[]{serverJarFile.toURI().toURL()});
+                agentClassLoader = ClassLoaderUtil.systemLoadJar(serverJarFile.toURI().toURL());
+//                agentClassLoader = new JvmmClassLoader(new URL[]{serverJarFile.toURI().toURL()});
             }
 
-            bind(inst, agentClassLoader, agentArgs);
+            Thread bindThread = new Thread(() -> {
+                try {
+                    bind(inst, agentClassLoader, agentArgs);
+                } catch (Throwable e) {
+                    log.error(e.getMessage(), e);
+                }
+            });
+            bindThread.setName("jvmm-bind-thread");
+            bindThread.setContextClassLoader(agentClassLoader);
+            bindThread.start();
+            bindThread.join();
         } catch (Throwable e) {
             log.error(e.getMessage(), e);
             throw new RuntimeException(e);
@@ -129,7 +147,7 @@ public class AgentBootStrap {
     }
 
     private static void bind(Instrumentation inst, ClassLoader classLoader, String args) throws Throwable {
-        Class<?> bootClazz = classLoader.loadClass(SERVER_MAIN_CLASS);
+        Class<?> bootClazz = Class.forName(SERVER_MAIN_CLASS);
         Object boot = bootClazz.getMethod("getInstance", Instrumentation.class, String.class).invoke(null, inst, args);
         bootClazz.getMethod("start").invoke(boot);
     }

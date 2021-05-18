@@ -5,24 +5,36 @@ plugins {
 group 'org.beifengtz'
 version '0.1'
 
+ext {
+    commonsCodecVersion = "1.10"
+    commonsLangVersion = "3.11"
+    nettyVersion = "4.1.63.Final"
+    junitVersion = "4.11"
+    junitJupiterVersion = "5.7.0"
+    slf4jVersion = "1.7.30"
+    guavaVersion = "30.1-jre"
+    gsonVersoion = "2.8.6"
+    snakeyamlVersion = "1.27"
+}
+
 subprojects {
     group 'org.beifengtz.jvmm'
 
     apply plugin: 'java'
-    [compileJava,compileTestJava,javadoc]*.options*.encoding = 'UTF-8'
+    [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
 
     repositories {
-        maven{ url 'https://maven.aliyun.com/repository/public/'}
+        maven { url 'https://maven.aliyun.com/repository/public/' }
         mavenCentral()
     }
 
     dependencies {
-        testImplementation 'junit:junit:4.11'
-        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+        testImplementation "junit:junit:${junitVersion}"
+        testImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
     }
 
     test {

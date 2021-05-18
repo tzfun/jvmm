@@ -2,6 +2,8 @@ package org.beifengtz.jvmm.server;
 
 import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
+import org.apache.commons.lang3.ClassLoaderUtils;
+import org.beifengtz.jvmm.tools.util.ClassLoaderUtil;
 import org.beifengtz.jvmm.tools.util.CodingUtil;
 import org.beifengtz.jvmm.tools.util.JavaEnvUtil;
 import org.beifengtz.jvmm.tools.util.JavaVersionUtils;
@@ -48,12 +50,7 @@ public class AttachProvider {
         if (toolsClassLoader == null) {
             File toolsJar = JavaEnvUtil.findToolsJar(JavaEnvUtil.findJavaHome());
             try {
-                URLClassLoader systemClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-
-                Method addURL = systemClassLoader.getClass().getSuperclass().getDeclaredMethod("addURL", URL.class);
-                addURL.setAccessible(true);
-                addURL.invoke(systemClassLoader, toolsJar.toURI().toURL());
-                toolsClassLoader = systemClassLoader;
+                toolsClassLoader = ClassLoaderUtil.systemLoadJar(toolsJar.toURI().toURL());
                 log.info("Init tools classes successful.");
             } catch (MalformedURLException e) {
                 //  ignored
@@ -64,7 +61,7 @@ public class AttachProvider {
         }
     }
 
-    protected void attachAgent(long targetPid, String agentPath, String clientPath, Configuration config) throws Exception {
+    protected void attachAgent(long targetPid, String agentJarPath, String serverJarPath, Configuration config) throws Exception {
         VirtualMachineDescriptor virtualMachineDescriptor = null;
         for (VirtualMachineDescriptor descriptor : VirtualMachine.list()) {
             String pid = descriptor.id();
@@ -93,7 +90,7 @@ public class AttachProvider {
                 }
             }
 
-            virtualMachine.loadAgent(CodingUtil.encodeUrl(agentPath), CodingUtil.encodeUrl(clientPath) + ";" + config.argFormat());
+            virtualMachine.loadAgent(CodingUtil.encodeUrl(agentJarPath), CodingUtil.encodeUrl(serverJarPath) + ";" + config.argFormat());
         } finally {
             if (null != virtualMachine) {
                 virtualMachine.detach();

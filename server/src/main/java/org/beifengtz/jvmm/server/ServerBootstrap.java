@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -39,6 +40,8 @@ public class ServerBootstrap {
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
 
+    private Thread shutdownHook;
+
     private ServerBootstrap() {
     }
 
@@ -47,10 +50,12 @@ public class ServerBootstrap {
     }
 
     public synchronized static ServerBootstrap getInstance(Instrumentation inst, String args) throws Throwable {
+        log.info("Jvmm server bootstrap args: {}", args);
         if (clientBootstrap != null) {
             return clientBootstrap;
         }
         Configuration config = parseConfig(args);
+
         clientBootstrap = new ServerBootstrap();
         ServerConfig.setConfiguration(config);
         return clientBootstrap;
@@ -123,7 +128,6 @@ public class ServerBootstrap {
             int realBindPort = ServerConfig.getRealBindPort();
             if (realBindPort < 0) {
                 start(ServerConfig.getConfiguration().getPort());
-                System.out.println("......");
             } else {
                 log.info("Jvmm server already started on {}", realBindPort);
             }
@@ -134,7 +138,7 @@ public class ServerBootstrap {
 
     private void start(int bindPort) {
         if (PlatformUtil.portAvailable(bindPort)) {
-            log.info("Try to start jvmm server service. bind:{}", bindPort);
+            log.info("Try to start jvmm server service. target port: {}", bindPort);
             rebindTimes++;
             final io.netty.bootstrap.ServerBootstrap b = new io.netty.bootstrap.ServerBootstrap();
 
@@ -144,54 +148,72 @@ public class ServerBootstrap {
             if (workerGroup == null) {
                 workerGroup = new NioEventLoopGroup();
             }
-
+            System.err.println("1111111111111");
             try {
                 if (rebindTimes > BIND_LIMIT_TIMES) {
                     throw new BindException("The number of port monitoring retries exceeds the limit: " + BIND_LIMIT_TIMES);
                 }
+                System.err.println("22222222222222");
                 ChannelFuture f = b.group(bossGroup, workerGroup)
                         .channel(ServerLogicSocketChannel.class)
                         .childHandler(new StringChannelInitializer(new ServerHandlerProvider(10)))
                         .bind(bindPort).syncUninterruptibly();
-
+                System.err.println("333333333333333");
                 log.info("Jvmm server service started on {}", bindPort);
                 ServerConfig.setRealBindPort(bindPort);
+
+                if (shutdownHook == null) {
+                    shutdownHook = new Thread(this::stop);
+                    shutdownHook.setName("jvmm-shutdown-hook");
+                }
+                Runtime.getRuntime().addShutdownHook(shutdownHook);
+                System.err.println("4444444444444444");
                 f.channel().closeFuture().syncUninterruptibly();
-                log.info("Jvmm server service stopped.");
                 stop();
+                System.err.println("555555555555555555");
             } catch (BindException e) {
-                if (rebindTimes < BIND_LIMIT_TIMES) {
+                System.err.println("6666666666666666");
+                if (rebindTimes < BIND_LIMIT_TIMES && ServerConfig.getConfiguration().isAutoIncrease()) {
                     start(bindPort + 1);
                 } else {
                     log.error("Jvmm server start up failed. " + e.getMessage(), e);
                     stop();
                 }
             } catch (Throwable e) {
+                System.err.println("77777777777777");
+                log.error("Jvmm server start up failed. " + e.getMessage(), e);
                 stop();
             }
         } else {
             log.info("Port {} is not available.", bindPort);
-            start(bindPort + 1);
+            if (ServerConfig.getConfiguration().isAutoIncrease()) {
+                start(bindPort + 1);
+            }
         }
     }
 
     public void stop() {
         if (bossGroup != null) {
-            bossGroup.shutdownGracefully();
+            bossGroup.shutdownGracefully(0, 2, TimeUnit.SECONDS);
             bossGroup = null;
         }
         if (workerGroup != null) {
-            workerGroup.shutdownGracefully();
+            workerGroup.shutdownGracefully(1, 2, TimeUnit.SECONDS);
             workerGroup = null;
         }
         ServerConfig.setRealBindPort(-1);
+        if (shutdownHook != null) {
+            Runtime.getRuntime().removeShutdownHook(shutdownHook);
+            shutdownHook = null;
+        }
+        log.info("Jvmm server service stopped.");
     }
 
-    public boolean serverAvailable(){
+    public boolean serverAvailable() {
         return ServerConfig.getRealBindPort() >= 0;
     }
 
-    public static void main(String[] args) throws Throwable{
+    public static void main(String[] args) throws Throwable {
         getInstance("port.bind=8700").start();
     }
 }
