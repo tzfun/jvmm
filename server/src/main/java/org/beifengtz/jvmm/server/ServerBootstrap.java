@@ -220,8 +220,10 @@ public class ServerBootstrap {
 
     public static void main(String[] args) throws Throwable {
 //        getInstance("port.bind=8700").start();
-        long pid = PidUtil.findProcess(8700);
-        AttachProvider.getInstance().attachAgent(pid, "F:/Project/jvmm/agent/build/libs/jvmm-agent.jar",
-                "F:/Project/jvmm/server/build/libs/jvmm-server.jar", Configuration.newBuilder().build());
+        long pid = PidUtil.findProcess(81);
+//        AttachProvider.getInstance().attachAgent(pid, "F:/Project/jvmm/agent/build/libs/jvmm-agent.jar",
+//                "F:/Project/jvmm/server/build/libs/jvmm-server.jar", Configuration.newBuilder().build());
+                AttachProvider.getInstance().attachAgent(pid, "/Users/beifengtz/Program/jvmm/agent/build/libs/jvmm-agent.jar",
+                "/Users/beifengtz/Program/jvmm/server/build/libs/jvmm-server.jar", Configuration.newBuilder().build());
     }
 }

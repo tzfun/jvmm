@@ -18,9 +18,13 @@ public class ClassLoaderUtil {
     public static ClassLoader systemLoadJar(URL jar) throws Throwable {
         URLClassLoader systemClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
 
-        Method addURL = systemClassLoader.getClass().getSuperclass().getDeclaredMethod("addURL", URL.class);
-        addURL.setAccessible(true);
-        addURL.invoke(systemClassLoader, jar);
+        classLoaderAddURL(systemClassLoader, jar);
         return systemClassLoader;
+    }
+
+    public static void classLoaderAddURL(URLClassLoader classLoader, URL url) throws Throwable {
+        Method addURL = classLoader.getClass().getSuperclass().getDeclaredMethod("addURL", URL.class);
+        addURL.setAccessible(true);
+        addURL.invoke(classLoader, url);
     }
 }

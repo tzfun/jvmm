@@ -4,6 +4,7 @@ import org.beifengtz.jvmm.tools.JvmmClassLoader;
 import org.beifengtz.jvmm.tools.util.ClassLoaderUtil;
 import org.beifengtz.jvmm.tools.util.CodingUtil;
 import org.beifengtz.jvmm.tools.util.FileUtil;
+import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +12,7 @@ import java.io.File;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -142,7 +144,9 @@ public class AgentBootStrap {
                 ClassLoader loggerClassLoader = LoggerFactory.class.getClassLoader();
                 Enumeration<URL> loggerResources = loggerClassLoader.getResources("org/slf4j/impl/StaticLoggerBinder.class");
                 while (loggerResources.hasMoreElements()) {
-                    URL jarFile = new File(loggerResources.nextElement().getFile().substring(6).split("!")[0]).toURI().toURL();
+                    String urlPath = loggerResources.nextElement().getFile();
+                    String jarFilePath = urlPath.substring(5).split("!")[0];
+                    URL jarFile = new File(jarFilePath).toURI().toURL();
                     urlList.add(jarFile);
                     needPreLoad.add(jarFile);
                 }
@@ -152,7 +156,7 @@ public class AgentBootStrap {
             Thread bindThread = new Thread(() -> {
                 try {
                     for (URL url : needPreLoad) {
-                        ClassLoaderUtil.systemLoadJar(url);
+                        ClassLoaderUtil.classLoaderAddURL((URLClassLoader) agentClassLoader, url);
                     }
                     bind(inst, agentClassLoader, agentArgs);
                 } catch (Throwable e) {
