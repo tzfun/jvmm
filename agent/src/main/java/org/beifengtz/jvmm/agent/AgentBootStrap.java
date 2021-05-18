@@ -25,8 +25,8 @@ import java.util.Objects;
 public class AgentBootStrap {
     private static final Logger log = LoggerFactory.getLogger(AgentBootStrap.class);
 
-    private static final String JVMM_CLIENT_JAR = "jvmm-client.jar";
-    private static final String CLIENT_MAIN_CLASS = "org.beifengtz.jvmm.client.ClientBootStrap";
+    private static final String JVMM_SERVER_JAR = "jvmm-server.jar";
+    private static final String SERVER_MAIN_CLASS = "org.beifengtz.jvmm.server.ServerBootStrap";
 
     private static volatile ClassLoader agentClassLoader;
 
@@ -40,11 +40,16 @@ public class AgentBootStrap {
 
     private static synchronized void main(String args, final Instrumentation inst) {
         try {
-            Class<?> configClazz = Class.forName("org.beifengtz.jvmm.client.ClientConfig");
+            Class<?> configClazz = Class.forName("org.beifengtz.jvmm.server.ServerConfig");
             Method isInited = configClazz.getMethod("isInited");
             if ((boolean) isInited.invoke(null)) {
-                log.info("Jvmm client already started.");
-                return;
+                log.info("Jvmm server already inited.");
+                Method getRealBindPort = configClazz.getMethod("getRealBindPort");
+                int realBindPort = (int) getRealBindPort.invoke(null);
+                if (realBindPort >= 0) {
+                    log.info("Jvmm server already started on {}", realBindPort);
+                    return;
+                }
             }
         } catch (Throwable ignored) {
         }
@@ -55,65 +60,65 @@ public class AgentBootStrap {
 
         args = CodingUtil.decodeUrl(args);
         int idx = args.indexOf(";");
-        String clientJar;
+        String serverJar;
         final String agentArgs;
         if (idx < 0) {
-            clientJar = "";
+            serverJar = "";
             agentArgs = args.trim();
         } else {
-            clientJar = args.substring(0, idx).trim();
+            serverJar = args.substring(0, idx).trim();
             agentArgs = args.substring(idx).trim();
         }
 
-        File clientJarFile = null;
+        File serverJarFile = null;
         //  支持从网络下载jar包
-        if (clientJar.startsWith("http://") || clientJar.startsWith("https://")) {
-            boolean loaded = FileUtil.readFileFromNet(clientJar, AppUtil.getDataPath(), JVMM_CLIENT_JAR);
+        if (serverJar.startsWith("http://") || serverJar.startsWith("https://")) {
+            boolean loaded = FileUtil.readFileFromNet(serverJar, AppUtil.getDataPath(), JVMM_SERVER_JAR);
             if (loaded) {
-                clientJarFile = new File(AppUtil.getDataPath(), JVMM_CLIENT_JAR);
+                serverJarFile = new File(AppUtil.getDataPath(), JVMM_SERVER_JAR);
             } else {
-                clientJarFile = new File("");
+                serverJarFile = new File("");
             }
         } else {
             //  从本地读取jar
-            clientJarFile = new File(clientJar);
+            serverJarFile = new File(serverJar);
         }
 
-        if (!clientJarFile.exists()) {
-            log.warn("Can not found jvmm-client.jar file from args: {}", clientJar);
+        if (!serverJarFile.exists()) {
+            log.warn("Can not found jvmm-server.jar file from args: {}", serverJar);
 
             //  如果从参数中未成功读取jar包，依次按以下路径去寻找jar包
-            //  1. 目标程序根目录下的 jvmm-client.jar 包
-            //  2. agent的资源目录下的 jvmm-client.jar 包
+            //  1. 目标程序根目录下的 jvmm-server.jar 包
+            //  2. agent的资源目录下的 jvmm-server.jar 包
 
-            log.info("Try to find jvmm-client.jar file from target program directory.");
-            clientJarFile = new File(AppUtil.getHomePath(), JVMM_CLIENT_JAR);
-            if (!clientJarFile.exists()) {
-                log.warn("Can not found jvmm-client.jar file from target program directory.");
+            log.info("Try to find jvmm-server.jar file from target program directory.");
+            serverJarFile = new File(AppUtil.getHomePath(), JVMM_SERVER_JAR);
+            if (!serverJarFile.exists()) {
+                log.warn("Can not found jvmm-server.jar file from target program directory.");
 
-                log.info("Try to find jvmm-client.jar file from agent jar directory.");
+                log.info("Try to find jvmm-server.jar file from agent jar directory.");
                 CodeSource codeSource = AgentBootStrap.class.getProtectionDomain().getCodeSource();
                 if (codeSource != null) {
                     try {
                         File agentJarFile = new File(codeSource.getLocation().toURI().getSchemeSpecificPart());
-                        clientJarFile = new File(agentJarFile.getParentFile(), JVMM_CLIENT_JAR);
-                        if (!clientJarFile.exists()) {
-                            log.error("Can not found jvmm-client.jar file from agent jar directory.");
+                        serverJarFile = new File(agentJarFile.getParentFile(), JVMM_SERVER_JAR);
+                        if (!serverJarFile.exists()) {
+                            log.error("Can not found jvmm-server.jar file from agent jar directory.");
                         }
                     } catch (Throwable e) {
-                        log.error(String.format("Can not found jvmm-client.jar file from %s. %s", codeSource.getLocation(), e.getMessage()), e);
+                        log.error(String.format("Can not found jvmm-server.jar file from %s. %s", codeSource.getLocation(), e.getMessage()), e);
                     }
                 }
             }
         }
 
-        if (!clientJarFile.exists()) {
+        if (!serverJarFile.exists()) {
             return;
         }
 
         try {
             if (agentClassLoader == null) {
-                agentClassLoader = new JvmmClassLoader(new URL[]{clientJarFile.toURI().toURL()});
+                agentClassLoader = new JvmmClassLoader(new URL[]{serverJarFile.toURI().toURL()});
             }
 
             bind(inst, agentClassLoader, agentArgs);
@@ -124,13 +129,8 @@ public class AgentBootStrap {
     }
 
     private static void bind(Instrumentation inst, ClassLoader classLoader, String args) throws Throwable {
-        Class<?> bootClazz = classLoader.loadClass(CLIENT_MAIN_CLASS);
+        Class<?> bootClazz = classLoader.loadClass(SERVER_MAIN_CLASS);
         Object boot = bootClazz.getMethod("getInstance", Instrumentation.class, String.class).invoke(null, inst, args);
-        int port = (int) bootClazz.getMethod("getPort").invoke(boot);
-        if (port < 0) {
-            throw new RuntimeException("Jvmm client start filed!");
-        } else {
-            log.info("Jvmm client already started on {}.", port);
-        }
+        bootClazz.getMethod("start").invoke(boot);
     }
 }

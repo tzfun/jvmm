@@ -1,8 +1,9 @@
 package org.beifengtz.jvmm.convey.handler;
 
 import io.netty.channel.ChannelHandler;
-import io.netty.handler.codec.protobuf.ProtobufDecoder;
+import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.EventExecutorGroup;
+import org.beifengtz.jvmm.convey.concurrent.SafeEventExecutorGroup;
 
 /**
  * <p>
@@ -14,6 +15,9 @@ import io.netty.util.concurrent.EventExecutorGroup;
  * @author beifengtz
  */
 public interface HandlerProvider {
+
+    EventExecutorGroup EXECUTOR_GROUP = new SafeEventExecutorGroup(
+            2 * Runtime.getRuntime().availableProcessors(), new DefaultThreadFactory(JvmmRequestHandler.class));
 
     ChannelHandler getHandler();
 

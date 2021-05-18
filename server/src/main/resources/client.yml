@@ -1,0 +1,13 @@
+name: jvmm_server
+port:
+  bind: 5010
+  #  遇到冲突时监听端口自动自增
+  autoIncrease: false
+
+http:
+  maxChunkSize: 52428800
+
+security:
+  enable: false
+  account: jvmm_test_acc
+  password: jvmm_test_pwd
