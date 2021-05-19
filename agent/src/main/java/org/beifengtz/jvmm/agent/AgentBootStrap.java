@@ -39,8 +39,6 @@ public class AgentBootStrap {
 
     static {
         try {
-            System.err.println(Thread.currentThread().getContextClassLoader());
-
             ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
 
             //  为了兼容Spring项目，需寻找Spring自定义的ClassLoader。
@@ -68,10 +66,8 @@ public class AgentBootStrap {
                         break;
                     }
                 }
-
                 springClassLoader = springLaunchClassLoader;
                 loadSpringResource(STATIC_LOGGER_BINDER_CLASS);
-
                 while (true) {
                     try {
                         Class.forName(STATIC_LOGGER_BINDER_PATH);
@@ -257,9 +253,10 @@ public class AgentBootStrap {
                 }
             });
 
-            bindThread.setName("jvmm-bind-thread");
+            bindThread.setName("jvmm-binding");
             bindThread.setContextClassLoader(agentClassLoader);
             bindThread.start();
+            Thread.sleep(3000);
         } catch (Throwable e) {
             log.error(e.getMessage(), e);
             throw new RuntimeException(e);

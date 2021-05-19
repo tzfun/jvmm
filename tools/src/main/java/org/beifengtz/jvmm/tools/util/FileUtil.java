@@ -26,9 +26,12 @@ import java.util.jar.JarFile;
  * @author beifengtz
  */
 public class FileUtil {
-    private static final Logger log = LoggerFactory.getLogger(FileUtil.class);
 
     private static final int SAFE_BYTE_LENGTH = 2048;
+
+    private static Logger logger(){
+        return LoggerFactory.getLogger(FileUtil.class);
+    }
 
     public static void writeByteArrayToFile(File file, byte[] data) throws IOException {
         writeByteArrayToFile(file, data, false);
@@ -116,14 +119,14 @@ public class FileUtil {
                 file.delete();
             }
 
-            log.info("Start open http connection. {}", url);
+            logger().info("Start open http connection. {}", url);
             HttpURLConnection conn = (HttpURLConnection) httpUrl.openConnection();
             conn.setConnectTimeout(3000);
             conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
 
             long totalSize = 0;
             try (InputStream inputStream = conn.getInputStream(); FileOutputStream fos = new FileOutputStream(file)) {
-                log.info("Start save file to local path...");
+                logger().info("Start save file to local path...");
                 int temp = 0;
                 byte[] bytes = new byte[SAFE_BYTE_LENGTH];
                 while ((temp = inputStream.read(bytes)) != -1) {
@@ -131,12 +134,12 @@ public class FileUtil {
                     totalSize += temp;
                 }
             }
-            log.info("Save file from network successful. use: {} ms, totalSize: {}.",
+            logger().info("Save file from network successful. use: {} ms, totalSize: {}.",
                     System.currentTimeMillis() - start, elegantByteSize(totalSize, 2));
 
             return true;
         } catch (Exception e) {
-            log.info(String.format("Download file form network filed. url:'%s'. %s", url, e.getMessage()), e);
+            logger().info(String.format("Download file form network filed. url:'%s'. %s", url, e.getMessage()), e);
 
             if (file != null && file.exists()) {
                 file.delete();

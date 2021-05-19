@@ -41,8 +41,7 @@ public class PidUtil {
                 if (line.contains(String.valueOf(port))) {
                     String[] split = line.split("(\\s+)|(\r+)|(\n+)");
                     if (split.length > 2) {
-                        int port1 = Integer.parseInt(split[2].split(":")[1]);
-
+                        int port1 = Integer.parseInt(split[2].substring(split[2].lastIndexOf(":") + 1));
                         if (port == port1 && split.length > 5) {
                             processId = Long.parseLong(split[5]);
                             break;

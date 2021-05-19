@@ -6,6 +6,10 @@ dependencies {
     compile(project(':core'))
     compile(project(':convey'))
     compileOnly(files(((URLClassLoader) ToolProvider.getSystemToolClassLoader()).getURLs()))
+    compileOnly("org.slf4j:slf4j-log4j12:${slf4jVersion}")
+    compileOnly("org.slf4j:slf4j-jdk14:${slf4jVersion}")
+    compileOnly("ch.qos.logback:logback-core:${logbackVersion}")
+    compileOnly("ch.qos.logback:logback-classic:${logbackVersion}")
 }
 
 jar {

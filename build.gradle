@@ -12,6 +12,7 @@ ext {
     junitVersion = "4.11"
     junitJupiterVersion = "5.7.0"
     slf4jVersion = "1.7.30"
+    logbackVersion = "1.2.3"
     guavaVersion = "30.1-jre"
     gsonVersoion = "2.8.6"
     snakeyamlVersion = "1.27"

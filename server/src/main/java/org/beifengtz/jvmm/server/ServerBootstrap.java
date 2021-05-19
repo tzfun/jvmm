@@ -56,6 +56,7 @@ public class ServerBootstrap {
     }
 
     public synchronized static ServerBootstrap getInstance(Instrumentation inst, String args) throws Throwable {
+
         if (clientBootstrap != null) {
             return clientBootstrap;
         }
