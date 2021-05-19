@@ -47,11 +47,11 @@ public class AgentBootStrap {
             try {
                 springLauncher = Class.forName("org.springframework.boot.loader.JarLauncher", false, systemClassLoader);
                 System.out.println("[Jvmm] Target spring application launched by jar.");
-            } catch (NoClassDefFoundError ignored1) {
+            } catch (NoClassDefFoundError | ClassNotFoundException ignored1) {
                 try {
                     springLauncher = Class.forName("org.springframework.boot.loader.WarLauncher", false, systemClassLoader);
                     System.out.println("[Jvmm] Target spring application launched by war.");
-                } catch (NoClassDefFoundError ignored2) {
+                } catch (NoClassDefFoundError | ClassNotFoundException ignored2) {
                 }
             }
 

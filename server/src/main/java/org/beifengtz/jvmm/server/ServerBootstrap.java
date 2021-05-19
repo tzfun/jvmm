@@ -220,7 +220,7 @@ public class ServerBootstrap {
 
     public static void main(String[] args) throws Throwable {
         //  just for test
-        int tp = 8089;
+        int tp = 8700;
         String homePath = SystemPropertyUtil.get("user.dir").replaceAll("\\\\", "/");
         System.out.println(homePath);
         String agentJar = homePath + "/agent/build/libs/jvmm-agent.jar";
