@@ -19,4 +19,13 @@ public class TestFile {
         System.out.println(FileUtil.readFileFromNet("http://www.beifengtz.com","F:\\Project","test.html"));;
         System.out.println(FileUtil.readFileFromNet("111","F:\\Project","test.html"));;
     }
+
+    @Test
+    public void testUnzipJar() throws Exception{
+//        FileUtil.unzipJar("E:\\MagicCube\\MagicCubeServer\\MCGameClientNew\\bin\\jvmm",
+//                "E:\\MagicCube\\MagicCubeServer\\MCGameClientNew\\bin\\MCGameClientNew.jar");
+
+        FileUtil.findAndUnzipJar("E:\\MagicCube\\MagicCubeServer\\MCGameClientNew\\bin\\jvmm",
+                "E:\\MagicCube\\MagicCubeServer\\MCGameClientNew\\bin\\MCGameClientNew.jar", "BOOT-INF/lib/logback-classic-1.2.3.jar");
+    }
 }

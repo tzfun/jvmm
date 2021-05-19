@@ -4,7 +4,6 @@ import org.beifengtz.jvmm.tools.JvmmClassLoader;
 import org.beifengtz.jvmm.tools.util.ClassLoaderUtil;
 import org.beifengtz.jvmm.tools.util.CodingUtil;
 import org.beifengtz.jvmm.tools.util.FileUtil;
-import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,11 +13,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.CodeSource;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.jar.JarFile;
 
 /**
@@ -31,13 +26,110 @@ import java.util.jar.JarFile;
  * @author beifengtz
  */
 public class AgentBootStrap {
-    private static final Logger log = LoggerFactory.getLogger(AgentBootStrap.class);
-
+    private static final Logger log;
+    private static final String STATIC_LOGGER_BINDER_CLASS = "org/slf4j/impl/StaticLoggerBinder.class";
+    private static final String STATIC_LOGGER_BINDER_PATH = "org.slf4j.impl.StaticLoggerBinder";
     private static final String JVMM_SERVER_JAR = "jvmm-server.jar";
     private static final String SERVER_MAIN_CLASS = "org.beifengtz.jvmm.server.ServerBootstrap";
 
     private static volatile ClassLoader agentClassLoader;
     private static volatile boolean premainAttached;
+
+    private static ClassLoader springClassLoader;
+
+    static {
+        try {
+            System.err.println(Thread.currentThread().getContextClassLoader());
+
+            ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
+
+            //  为了兼容Spring项目，需寻找Spring自定义的ClassLoader。
+            //  Spring项目在打成Jar包或者War包时会由特定的Launcher启动，启动时创建一个叫LaunchedURLClassLoader来加载jar包
+            Class<?> springLauncher = null;
+            try {
+                springLauncher = Class.forName("org.springframework.boot.loader.JarLauncher", false, systemClassLoader);
+                System.out.println("[Jvmm] Target spring application launched by jar.");
+            } catch (NoClassDefFoundError ignored1) {
+                try {
+                    springLauncher = Class.forName("org.springframework.boot.loader.WarLauncher", false, systemClassLoader);
+                    System.out.println("[Jvmm] Target spring application launched by war.");
+                } catch (NoClassDefFoundError ignored2) {
+                }
+            }
+
+            if (springLauncher != null) {
+                //  spring的ClassLoader存在启动线程的上下文中，扫描线程对象下的ClassLoader来获取
+                ClassLoader springLaunchClassLoader = null;
+                Set<Thread> allThread = Thread.getAllStackTraces().keySet();
+                for (Thread thread : allThread) {
+                    ClassLoader contextClassLoader = thread.getContextClassLoader();
+                    if (contextClassLoader != null && contextClassLoader.getClass().getName().startsWith("org.springframework.boot.loader.LaunchedURLClassLoader")) {
+                        springLaunchClassLoader = contextClassLoader;
+                        break;
+                    }
+                }
+
+                springClassLoader = springLaunchClassLoader;
+                loadSpringResource(STATIC_LOGGER_BINDER_CLASS);
+
+                while (true) {
+                    try {
+                        Class.forName(STATIC_LOGGER_BINDER_PATH);
+                        System.out.println("[Jvmm] Agent logger initialization is ok.");
+                        break;
+                    } catch (NoClassDefFoundError e) {
+                        if (!loadSpringResource(e.getMessage() + ".class")) {
+                            break;
+                        }
+                    } catch (ClassNotFoundException ignored) {
+                        break;
+                    }
+                }
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        log = LoggerFactory.getLogger(AgentBootStrap.class);
+    }
+
+    public static boolean loadSpringResource(String classPath) throws Throwable {
+        if (springClassLoader != null) {
+            Enumeration<URL> loggerResources = springClassLoader.getResources(classPath);
+            while (loggerResources.hasMoreElements()) {
+                String urlPath = loggerResources.nextElement().getFile();
+                urlPath = urlPath.substring(5);
+
+                String jarFilePath = urlPath.substring(0, urlPath.lastIndexOf("!"));
+                String[] jars = jarFilePath.split("!/");
+                if (jars.length > 0) {
+                    String baseJarPath = jars[0];
+                    String tmpPath = baseJarPath.substring(0, baseJarPath.lastIndexOf("/")) + "/JvmmTemp/";
+                    String tmpJar = baseJarPath;
+
+                    //  递归的解析jar包
+                    for (int i = 1; i < jars.length; ++i) {
+                        String relativePath = jars[i];
+                        if (relativePath.endsWith(".jar")) {
+                            if (FileUtil.findAndUnzipJar(tmpPath, baseJarPath, relativePath)) {
+                                int idx = relativePath.lastIndexOf("/");
+                                tmpPath += relativePath.substring(0, idx + 1);
+                                tmpJar = relativePath.substring(idx + 1);
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+                    String finalJarPath = tmpPath + tmpJar;
+
+                    URL jarFile = new File(finalJarPath).toURI().toURL();
+                    ClassLoaderUtil.classLoaderAddURL((URLClassLoader) Thread.currentThread().getContextClassLoader(), jarFile);
+                    System.out.println("[Jvmm] Load jar file from spring application. " + finalJarPath);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     public static void premain(String agentArgs, Instrumentation inst) {
         main(agentArgs, inst, "premain");
@@ -141,8 +233,9 @@ public class AgentBootStrap {
             if (agentClassLoader == null) {
                 List<URL> urlList = new LinkedList<>();
                 urlList.add(serverJarFile.toURI().toURL());
+
                 ClassLoader loggerClassLoader = LoggerFactory.class.getClassLoader();
-                Enumeration<URL> loggerResources = loggerClassLoader.getResources("org/slf4j/impl/StaticLoggerBinder.class");
+                Enumeration<URL> loggerResources = loggerClassLoader.getResources(STATIC_LOGGER_BINDER_CLASS);
                 while (loggerResources.hasMoreElements()) {
                     String urlPath = loggerResources.nextElement().getFile();
                     String jarFilePath = urlPath.substring(5).split("!")[0];
@@ -165,7 +258,7 @@ public class AgentBootStrap {
             });
 
             bindThread.setName("jvmm-bind-thread");
-            bindThread.setContextClassLoader(ClassLoader.getSystemClassLoader());
+            bindThread.setContextClassLoader(agentClassLoader);
             bindThread.start();
         } catch (Throwable e) {
             log.error(e.getMessage(), e);

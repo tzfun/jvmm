@@ -4,23 +4,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
+import java.io.*;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.regex.Pattern;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  * <p>
@@ -183,5 +177,47 @@ public class FileUtil {
         } else {
             return bigDecimal.doubleValue() + suffix;
         }
+    }
+
+    /**
+     * Find file from jar, and copy it to destination.
+     *
+     * @param destinationDir destination directory
+     * @param jarPath        jar path
+     * @param relativePath   relative path in jar
+     * @return success
+     * @throws IOException unzip filed
+     */
+    public static boolean findAndUnzipJar(String destinationDir, String jarPath, String relativePath) throws IOException {
+        JarFile jar = new JarFile(new File(jarPath));
+        File destination = new File(destinationDir);
+        if (!destination.exists()) {
+            destination.mkdirs();
+        }
+        Enumeration<JarEntry> entries = jar.entries();
+        while (entries.hasMoreElements()) {
+            JarEntry entry = entries.nextElement();
+            if (entry.getName().equals(relativePath)) {
+                String fileName = destinationDir + File.separator + entry.getName();
+                File f = new File(fileName);
+                File dir = f.getParentFile();
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
+                if (f.exists()) {
+                    f.delete();
+                }
+                try (InputStream is = jar.getInputStream(entry);
+                     FileOutputStream fos = new FileOutputStream(f)) {
+                    byte[] bytes = new byte[2048];
+                    int read = 0;
+                    while ((read = is.read(bytes, 0, bytes.length)) > 0) {
+                        fos.write(bytes, 0, read);
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
     }
 }
