@@ -52,7 +52,7 @@ public class PidUtil {
         } else if (PlatformUtil.isMac() || PlatformUtil.isLinux()) {
             String command = "lsof -t -s -i:" + port;
             String s = ExecuteNativeUtil.executeForFirstLine(command);
-            if (!StringUtil.isEmpty(s)){
+            if (!StringUtil.isEmpty(s)) {
                 processId = Long.parseLong(s);
             }
         }

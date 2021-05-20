@@ -33,7 +33,6 @@ import java.util.concurrent.TimeUnit;
  * @author beifengtz
  */
 public class ServerBootstrap {
-    private static final Logger log = LoggerFactory.getLogger(ServerBootstrap.class);
 
     private static final int BIND_LIMIT_TIMES = 20;
 
@@ -69,6 +68,10 @@ public class ServerBootstrap {
         return clientBootstrap;
     }
 
+    private static Logger logger(){
+        return LoggerFactory.getLogger(ServerBootstrap.class);
+    }
+
     /**
      * 解析attach传过来的参数
      *
@@ -101,7 +104,7 @@ public class ServerBootstrap {
                 String lowerCase = configPath.toLowerCase(Locale.ROOT);
                 if (lowerCase.endsWith("yml") || lowerCase.endsWith("yaml")) {
                     ConfigFileMapping mapping = FileUtil.readYml(configFile.getAbsolutePath(), ConfigFileMapping.class);
-                    cb.merge(mapping);
+                    cb.mergeFromMapping(mapping);
                 } else if (lowerCase.endsWith("properties")) {
                     Map<String, String> propMap = FileUtil.readProperties(configFile.getAbsolutePath());
                     propMap.putAll(argMap);
@@ -110,23 +113,9 @@ public class ServerBootstrap {
             } catch (IOException e) {
                 throw new RuntimeException("An error occurred while reading the file. " + e.getMessage(), e);
             }
-
         }
 
-        String name = argMap.get("name");
-        if (Objects.nonNull(name)) {
-            cb.setName(name);
-        }
-
-        String portBind = argMap.get("port.bind");
-        if (Objects.nonNull(portBind)) {
-            cb.setPort(Integer.parseInt(portBind));
-        }
-
-        String portAutoIncrease = argMap.get("port.autoIncrease");
-        if (Objects.nonNull(portAutoIncrease)) {
-            cb.setAutoIncrease(Boolean.parseBoolean(portAutoIncrease));
-        }
+        cb.mergeFromProperties(argMap);
 
         return cb.build();
     }
@@ -137,16 +126,16 @@ public class ServerBootstrap {
             if (realBindPort < 0) {
                 start(ServerConfig.getConfiguration().getPort());
             } else {
-                log.info("Jvmm server already started on {}", realBindPort);
+                logger().info("Jvmm server already started on {}", realBindPort);
             }
         } else {
-            log.error("Jvmm Server start failed, configuration not inited.");
+            logger().error("Jvmm Server start failed, configuration not inited.");
         }
     }
 
     private void start(int bindPort) {
         if (PlatformUtil.portAvailable(bindPort)) {
-            log.info("Try to start jvmm server service. target port: {}", bindPort);
+            logger().info("Try to start jvmm server service. target port: {}", bindPort);
             rebindTimes++;
             final io.netty.bootstrap.ServerBootstrap b = new io.netty.bootstrap.ServerBootstrap();
 
@@ -166,7 +155,7 @@ public class ServerBootstrap {
                         .childHandler(new StringChannelInitializer(new ServerHandlerProvider(10)))
                         .bind(bindPort).syncUninterruptibly();
 
-                log.info("Jvmm server service started on {}", bindPort);
+                logger().info("Jvmm server service started on {}", bindPort);
                 ServerConfig.setRealBindPort(bindPort);
 
                 if (shutdownHook == null) {
@@ -179,15 +168,15 @@ public class ServerBootstrap {
                 if (rebindTimes < BIND_LIMIT_TIMES && ServerConfig.getConfiguration().isAutoIncrease()) {
                     start(bindPort + 1);
                 } else {
-                    log.error("Jvmm server start up failed. " + e.getMessage(), e);
+                    logger().error("Jvmm server start up failed. " + e.getMessage(), e);
                     stop();
                 }
             } catch (Throwable e) {
-                log.error("Jvmm server start up failed. " + e.getMessage(), e);
+                logger().error("Jvmm server start up failed. " + e.getMessage(), e);
                 stop();
             }
         } else {
-            log.info("Port {} is not available.", bindPort);
+            logger().info("Port {} is not available.", bindPort);
             if (ServerConfig.getConfiguration().isAutoIncrease()) {
                 start(bindPort + 1);
             }
@@ -211,7 +200,7 @@ public class ServerBootstrap {
             }
             shutdownHook = null;
         }
-        log.info("Jvmm server service stopped.");
+        logger().info("Jvmm server service stopped.");
     }
 
     public boolean serverAvailable() {
@@ -220,7 +209,7 @@ public class ServerBootstrap {
 
     public static void main(String[] args) throws Throwable {
         //  just for test
-        int tp = 8700;
+        int tp = 8089;
         String homePath = SystemPropertyUtil.get("user.dir").replaceAll("\\\\", "/");
         System.out.println(homePath);
         String agentJar = homePath + "/agent/build/libs/jvmm-agent.jar";

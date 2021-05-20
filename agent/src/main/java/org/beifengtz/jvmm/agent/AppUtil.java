@@ -2,11 +2,6 @@ package org.beifengtz.jvmm.agent;
 
 
 import org.beifengtz.jvmm.tools.util.SystemPropertyUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.nio.file.Paths;
 
 /**
  * <p>
@@ -18,8 +13,6 @@ import java.nio.file.Paths;
  * @author beifengtz
  */
 public class AppUtil {
-
-    private static final Logger log = LoggerFactory.getLogger(AppUtil.class);
 
     private static String HOME_PATH;
     private static String LOG_PATH;
@@ -35,7 +28,8 @@ public class AppUtil {
             DATA_PATH = HOME_PATH + "/data";
             System.setProperty("jvmm.data.path", DATA_PATH);
         } catch (Exception e) {
-            log.error("Init application failed. " + e.getMessage(), e);
+            System.err.println("Init application failed. " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -43,11 +37,15 @@ public class AppUtil {
         return LOG_PATH;
     }
 
-    public static String getDataPath(){
+    public static String getDataPath() {
         return DATA_PATH;
     }
 
-    public static String getHomePath(){
+    public static String getHomePath() {
         return HOME_PATH;
+    }
+
+    public static String getTempPath() {
+        return DATA_PATH + "/temp/";
     }
 }

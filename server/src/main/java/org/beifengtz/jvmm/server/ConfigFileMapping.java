@@ -17,6 +17,7 @@ public class ConfigFileMapping {
     private Map<String, String> port = new HashMap<>();
     private Map<String, String> http = new HashMap<>();
     private Map<String, String> security = new HashMap<>();
+    private Map<String, String> log = new HashMap<>();
 
     public String getName() {
         return name;
@@ -48,5 +49,13 @@ public class ConfigFileMapping {
 
     public void setSecurity(Map<String, String> security) {
         this.security = security;
+    }
+
+    public Map<String, String> getLog() {
+        return log;
+    }
+
+    public void setLog(Map<String, String> log) {
+        this.log = log;
     }
 }

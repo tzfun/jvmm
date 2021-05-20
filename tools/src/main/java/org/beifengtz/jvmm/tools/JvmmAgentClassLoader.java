@@ -1,6 +1,7 @@
 package org.beifengtz.jvmm.tools;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Enumeration;
@@ -14,13 +15,13 @@ import java.util.Enumeration;
  *
  * @author beifengtz
  */
-public class JvmmClassLoader extends URLClassLoader {
+public class JvmmAgentClassLoader extends URLClassLoader {
 
-    public JvmmClassLoader(URL[] urls, ClassLoader parent) {
+    public JvmmAgentClassLoader(URL[] urls, ClassLoader parent) {
         super(urls, parent);
     }
 
-    public JvmmClassLoader(URL[] urls) {
+    public JvmmAgentClassLoader(URL[] urls) {
         super(urls, ClassLoader.getSystemClassLoader().getParent());
     }
 
@@ -46,9 +47,6 @@ public class JvmmClassLoader extends URLClassLoader {
 
         resources = getClass().getClassLoader().getResources(name);
         if (resources.hasMoreElements()) {
-            while (resources.hasMoreElements()) {
-                System.out.println("==> " + resources.nextElement());
-            }
             return resources;
         }
         return super.getResources(name);
@@ -56,7 +54,7 @@ public class JvmmClassLoader extends URLClassLoader {
 
     @Override
     public Class<?> loadClass(String name) throws ClassNotFoundException {
-        return this.loadClass(name, true);
+        return this.loadClass(name, false);
     }
 
     @Override

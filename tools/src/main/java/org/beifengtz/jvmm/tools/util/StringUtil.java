@@ -31,6 +31,10 @@ public class StringUtil {
         return Objects.isNull(str) || str.isEmpty();
     }
 
+    public static boolean nonEmpty(String str){
+        return !isEmpty(str);
+    }
+
     /**
      * 多个字符串都不为空
      *

@@ -17,6 +17,11 @@ public class ServerConfig {
 
     public static synchronized void setConfiguration(Configuration config) {
         configuration = config;
+        System.setProperty("jvmm.log.level", config.getLogLevel());
+        System.setProperty("jvmm.log.path", config.getLogPath());
+        System.setProperty("jvmm.log.pattern", config.getLogPattern());
+        System.setProperty("jvmm.log.fileName", config.getLogFileName());
+        System.setProperty("jvmm.log.maxFileSize", config.getLogMaxFileSize());
     }
 
     public static synchronized void setRealBindPort(int port) {

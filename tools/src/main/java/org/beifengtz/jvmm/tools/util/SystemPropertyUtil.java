@@ -16,7 +16,9 @@ import java.security.PrivilegedAction;
  * @author beifengtz
  */
 public class SystemPropertyUtil {
-    private static final Logger log = LoggerFactory.getLogger(SystemPropertyUtil.class);
+    private static Logger logger() {
+        return LoggerFactory.getLogger(SystemPropertyUtil.class);
+    }
 
     /**
      * Returns {@code true} if and only if the system property with the specified {@code key}
@@ -61,7 +63,7 @@ public class SystemPropertyUtil {
                 value = AccessController.doPrivileged((PrivilegedAction<String>) () -> System.getProperty(key));
             }
         } catch (SecurityException e) {
-            log.warn("Unable to retrieve a system property '{}'; default values will be used.", key, e);
+            logger().warn("Unable to retrieve a system property '{}'; default values will be used.", key, e);
         }
 
         if (value == null) {
@@ -99,7 +101,7 @@ public class SystemPropertyUtil {
             return false;
         }
 
-        log.warn(
+        logger().warn(
                 "Unable to parse the boolean system property '{}':{} - using the default value: {}",
                 key, value, def
         );
@@ -129,7 +131,7 @@ public class SystemPropertyUtil {
             // Ignore
         }
 
-        log.warn(
+        logger().warn(
                 "Unable to parse the integer system property '{}':{} - using the default value: {}",
                 key, value, def
         );
@@ -159,7 +161,7 @@ public class SystemPropertyUtil {
             // Ignore
         }
 
-        log.warn(
+        logger().warn(
                 "Unable to parse the long integer system property '{}':{} - using the default value: {}",
                 key, value, def
         );

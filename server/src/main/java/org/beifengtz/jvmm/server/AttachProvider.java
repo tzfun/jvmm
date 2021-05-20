@@ -2,9 +2,7 @@ package org.beifengtz.jvmm.server;
 
 import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
-import org.apache.commons.lang3.ClassLoaderUtils;
 import org.beifengtz.jvmm.tools.util.ClassLoaderUtil;
-import org.beifengtz.jvmm.tools.util.CodingUtil;
 import org.beifengtz.jvmm.tools.util.JavaEnvUtil;
 import org.beifengtz.jvmm.tools.util.JavaVersionUtils;
 import org.slf4j.Logger;
@@ -12,10 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Properties;
 
 /**
