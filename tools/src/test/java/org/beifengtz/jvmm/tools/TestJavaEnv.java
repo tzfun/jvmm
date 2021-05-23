@@ -1,7 +1,7 @@
 package org.beifengtz.jvmm.tools;
 
+import org.beifengtz.jvmm.tools.util.CommonUtil;
 import org.beifengtz.jvmm.tools.util.JavaEnvUtil;
-import org.beifengtz.jvmm.tools.util.SystemPropertyUtil;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -17,8 +17,10 @@ public class TestJavaEnv {
 
     @Test
     public void testJavaHome(){
-        System.out.println(SystemPropertyUtil.get("java.home"));
+        long start = System.currentTimeMillis();
         System.out.println(JavaEnvUtil.findJavaProgram("jps"));
+        CommonUtil.print("Use time", System.currentTimeMillis() - start);
         System.out.println(JavaEnvUtil.findJavaProgram("jstat"));
+        CommonUtil.print("Use time", System.currentTimeMillis() - start);
     }
 }

@@ -5,6 +5,8 @@ import org.beifengtz.jvmm.core.entity.result.JpsResult;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * <p>
@@ -29,7 +31,7 @@ public interface JvmmExecutor {
 
     void resetPeakThreadCount();
 
-    InputStream executeJvmTools(String command) throws IOException;
+    InputStream executeJvmTools(String command, long timeout, TimeUnit timeUnit) throws IOException, TimeoutException;
 
     List<JpsResult> listJavaProcess();
 }

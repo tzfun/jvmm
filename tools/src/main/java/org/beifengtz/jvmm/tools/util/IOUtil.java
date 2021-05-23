@@ -9,7 +9,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.zip.ZipFile;
 
 /**
  * <p>
@@ -80,11 +79,15 @@ public class IOUtil {
         return count;
     }
 
-    public static String toString(InputStream input) throws IOException {
+    public static String toString(InputStream input) throws IOException{
+        return toString(input, "UTF-8");
+    }
+
+    public static String toString(InputStream input, String encoding) throws IOException {
         BufferedReader br = null;
         try {
             StringBuilder sb = new StringBuilder();
-            br = new BufferedReader(new InputStreamReader(input));
+            br = new BufferedReader(new InputStreamReader(input, encoding));
             String line;
             while ((line = br.readLine()) != null) {
                 sb.append(line).append("\n");

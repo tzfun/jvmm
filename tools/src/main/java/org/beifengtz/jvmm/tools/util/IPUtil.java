@@ -89,13 +89,13 @@ public class IPUtil {
         try {
             URL url = new URL(source);
             String host = url.getHost();
-            return !isIpv4Addr(host);
+            return !isIpv4(host);
         } catch (MalformedURLException ignored) {
             return false;
         }
     }
 
-    public static boolean isIpv4Addr(String source) {
+    public static boolean isIpv4(String source) {
         if (StringUtil.isEmpty(source)){
             return false;
         }

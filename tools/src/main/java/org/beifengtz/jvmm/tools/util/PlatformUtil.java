@@ -1,8 +1,16 @@
 package org.beifengtz.jvmm.tools.util;
 
 import org.beifengtz.jvmm.tools.PlatformEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
+import java.net.UnknownHostException;
 import java.util.Locale;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * <p>
@@ -14,12 +22,15 @@ import java.util.Locale;
  * @author beifengtz
  */
 public class PlatformUtil {
+
+    private static final Logger log = LoggerFactory.getLogger(PlatformUtil.class);
+
     private static final String OPERATING_SYSTEM_NAME = SystemPropertyUtil.get("os.name").toLowerCase(Locale.ENGLISH);
     private static final String OPERATING_SYSTEM_ARCH = SystemPropertyUtil.get("os.arch").toLowerCase(Locale.ENGLISH);
 
-    private static PlatformEnum platform;
-
-    private static String arch;
+    private static final PlatformEnum platform;
+    private static final String arch;
+    private static final String encoding;
 
     static {
         if (OPERATING_SYSTEM_NAME.startsWith("linux")) {
@@ -33,6 +44,7 @@ public class PlatformUtil {
         }
 
         arch = normalizeArch(OPERATING_SYSTEM_ARCH);
+        encoding = SystemPropertyUtil.get("sun.jnu.encoding");
     }
 
     private PlatformUtil() {
@@ -48,6 +60,14 @@ public class PlatformUtil {
 
     public static boolean isMac() {
         return platform == PlatformEnum.MACOS;
+    }
+
+    public static PlatformEnum getOS() {
+        return platform;
+    }
+
+    public static String getEncoding() {
+        return encoding;
     }
 
     public static boolean isCygwinOrMinGW() {
@@ -135,5 +155,29 @@ public class PlatformUtil {
             return "";
         }
         return value.toLowerCase(Locale.US).replaceAll("[^a-z0-9]+", "");
+    }
+
+    /**
+     * 检测OS端口是否可以
+     *
+     * @param port 被检测的端口
+     * @return true-可用，未被占用 false-端口被占用
+     */
+    public static boolean portAvailable(int port) {
+        try {
+            long process = PidUtil.findProcess(port);
+            if (process >= 0) {
+                return false;
+            }
+        } catch (RejectedExecutionException e) {
+            log.error(e.getMessage(), e);
+            SocketAddress socketAddress = new InetSocketAddress("127.0.0.1", port);
+            try (Socket socket = new Socket()) {
+                socket.connect(socketAddress, 50);
+                return false;
+            } catch (IOException ignored) {
+            }
+        }
+        return true;
     }
 }
