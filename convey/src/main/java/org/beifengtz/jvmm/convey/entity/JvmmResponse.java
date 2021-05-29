@@ -3,6 +3,8 @@ package org.beifengtz.jvmm.convey.entity;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import org.beifengtz.jvmm.common.JsonParsable;
+import org.beifengtz.jvmm.convey.GlobalStatus;
+import org.beifengtz.jvmm.convey.GlobalType;
 
 /**
  * <p>
@@ -26,6 +28,10 @@ public class JvmmResponse  implements JsonParsable {
         return new JvmmResponse();
     }
 
+    public static JvmmResponse parseFrom(String msg){
+        return new Gson().fromJson(msg, JvmmResponse.class);
+    }
+
     public String getType() {
         return type;
     }
@@ -35,12 +41,22 @@ public class JvmmResponse  implements JsonParsable {
         return this;
     }
 
+    public JvmmResponse setType(GlobalType type) {
+        this.type = type.name();
+        return this;
+    }
+
     public String getStatus() {
         return status;
     }
 
     public JvmmResponse setStatus(String status) {
         this.status = status;
+        return this;
+    }
+
+    public JvmmResponse setStatus(GlobalStatus status) {
+        this.status = status.name();
         return this;
     }
 

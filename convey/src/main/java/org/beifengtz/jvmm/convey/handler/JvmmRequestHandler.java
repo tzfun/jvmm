@@ -6,7 +6,9 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.internal.logging.InternalLogger;
 import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
+import org.beifengtz.jvmm.common.exception.InvalidMsgException;
 import org.beifengtz.jvmm.convey.GlobalStatus;
+import org.beifengtz.jvmm.convey.GlobalType;
 import org.beifengtz.jvmm.convey.channel.JvmmSocketChannel;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
@@ -48,7 +50,11 @@ public abstract class JvmmRequestHandler extends SimpleChannelInboundHandler<Str
         try {
             stopWatch.reset().start();
             JvmmRequest request = JvmmRequest.parseFrom(msg);
-            ((JvmmSocketChannel) ctx.channel()).handleRequest(request);
+            if (GlobalType.JVMM_TYPE_BUBBLE.name().equals(request.getType())) {
+                ((JvmmSocketChannel) ctx.channel()).handleBubble(request);
+            } else {
+                ((JvmmSocketChannel) ctx.channel()).handleRequest(request);
+            }
             if (!request.isHeartbeat()) {
                 logger().debug(String.format("%s %dms", request.getType(), stopWatch.stop().elapsed(TimeUnit.MILLISECONDS)));
             }
@@ -67,6 +73,9 @@ public abstract class JvmmRequestHandler extends SimpleChannelInboundHandler<Str
                     .setStatus(GlobalStatus.JVMM_STATUS_AUTHENTICATION_FAILED.name())
                     .setMessage("Authentication failed.")
                     .toJsonStr());
+            ctx.close();
+        } else if (cause instanceof InvalidMsgException) {
+            logger().error("Invalid message verify, seed: " + ((InvalidMsgException) cause).getSeed());
             ctx.close();
         } else if (cause instanceof IOException) {
             logger().debug(cause.toString());

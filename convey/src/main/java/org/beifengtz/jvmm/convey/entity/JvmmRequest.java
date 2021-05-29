@@ -20,6 +20,10 @@ public class JvmmRequest implements JsonParsable {
 
     private JvmmRequest(){}
 
+    public static JvmmRequest create(){
+        return new JvmmRequest();
+    }
+
     public static JvmmRequest parseFrom(String msg){
         return new Gson().fromJson(msg, JvmmRequest.class);
     }
@@ -32,15 +36,22 @@ public class JvmmRequest implements JsonParsable {
         return type;
     }
 
-    public void setType(String type) {
+    public JvmmRequest setType(String type) {
         this.type = type;
+        return this;
+    }
+
+    public JvmmRequest setType(GlobalType type) {
+        this.type = type.name();
+        return this;
     }
 
     public JsonElement getData() {
         return data;
     }
 
-    public void setData(JsonElement data) {
+    public JvmmRequest setData(JsonElement data) {
         this.data = data;
+        return this;
     }
 }

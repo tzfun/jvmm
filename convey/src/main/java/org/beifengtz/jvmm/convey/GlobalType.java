@@ -10,5 +10,9 @@ package org.beifengtz.jvmm.convey;
  * @author beifengtz
  */
 public enum GlobalType {
-    JVMM_TYPE_HEARTBEAT
+    JVMM_TYPE_HEARTBEAT,
+    JVMM_TYPE_BUBBLE,
+    JVMM_TYPE_AUTHENTICATION,
+    JVMM_TYPE_PING,
+    JVMM_TYPE_PONG
 }

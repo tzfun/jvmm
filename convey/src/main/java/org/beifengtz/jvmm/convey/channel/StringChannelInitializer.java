@@ -31,6 +31,10 @@ public class StringChannelInitializer extends ChannelInitializer<Channel> {
     public static final String STRING_DECODER_HANDLER = "stringDecoderHandler";
     public static final String STRING_ENCODER_HANDLER = "stringEncoderHandler";
     public static final String CHUNKED_WRITE_HANDLER = "chunkedWriteHandler";
+
+    public static final String JVMM_BUBBLE_DECODER = "jvmmBubbleDecoder";
+    public static final String JVMM_BUBBLE_ENCODER = "jvmmBubbleEncoder";
+
     private final HandlerProvider provider;
 
     public StringChannelInitializer(HandlerProvider provider) {
