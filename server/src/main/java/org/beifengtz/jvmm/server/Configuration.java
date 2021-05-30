@@ -124,72 +124,81 @@ public final class Configuration {
             return httpMaxChunkSize;
         }
 
-        public void setHttpMaxChunkSize(int httpMaxChunkSize) {
+        public Builder setHttpMaxChunkSize(int httpMaxChunkSize) {
             this.httpMaxChunkSize = httpMaxChunkSize;
+            return this;
         }
 
         public boolean isSecurityEnable() {
             return securityEnable;
         }
 
-        public void setSecurityEnable(boolean securityEnable) {
+        public Builder setSecurityEnable(boolean securityEnable) {
             this.securityEnable = securityEnable;
+            return this;
         }
 
         public String getSecurityAccount() {
             return securityAccount;
         }
 
-        public void setSecurityAccount(String securityAccount) {
+        public Builder setSecurityAccount(String securityAccount) {
             this.securityAccount = securityAccount;
+            return this;
         }
 
         public String getSecurityPassword() {
             return securityPassword;
         }
 
-        public void setSecurityPassword(String securityPassword) {
+        public Builder setSecurityPassword(String securityPassword) {
             this.securityPassword = securityPassword;
+            return this;
         }
 
         public String getLogLevel() {
             return logLevel;
         }
 
-        public void setLogLevel(String logLevel) {
+        public Builder setLogLevel(String logLevel) {
             this.logLevel = logLevel;
+            return this;
         }
 
         public String getLogPath() {
             return logPath;
         }
 
-        public void setLogPath(String logPath) {
+        public Builder setLogPath(String logPath) {
             this.logPath = logPath;
+            return this;
         }
 
         public String getLogPattern() {
             return logPattern;
         }
 
-        public void setLogPattern(String logPattern) {
+        public Builder setLogPattern(String logPattern) {
             this.logPattern = logPattern;
+            return this;
         }
 
         public String getLogFileName() {
             return logFileName;
         }
 
-        public void setLogFileName(String logFileName) {
+        public Builder setLogFileName(String logFileName) {
             this.logFileName = logFileName;
+            return this;
         }
 
         public String getLogMaxFileSize() {
             return logMaxFileSize;
         }
 
-        public void setLogMaxFileSize(String logMaxFileSize) {
+        public Builder setLogMaxFileSize(String logMaxFileSize) {
             this.logMaxFileSize = logMaxFileSize;
+            return this;
         }
 
         public void mergeFromProperties(Map<String, String> argMap) {

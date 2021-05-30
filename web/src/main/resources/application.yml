@@ -1,0 +1,13 @@
+
+spring:
+  pid:
+    file: app.pid
+    fail-on-write-error: true
+  datasource:
+    url: jdbc:mysql://localhost:3306/test_db?characterEncoding=utf-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password:
+    continue-on-error: true
+    sql-script-encoding: utf-8
+    type: com.zaxxer.hikari.HikariDataSource

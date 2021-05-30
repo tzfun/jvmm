@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * <p>
  * Description: TODO
- * </p>
+ * </p> 3|sxd{}
  * <p>
  * Created in 8:17 下午 2021/5/29
  *
@@ -34,12 +34,19 @@ public class JvmmBubbleDecrypt extends MessageToMessageDecoder<String> {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, String msg, List<Object> out) throws Exception {
-        String authCode = msg.substring(0, 172);
         try {
+            int idx = msg.indexOf("|");
+            if (idx < 0) {
+                return;
+            }
+            int authCodeLen = Integer.parseInt(msg.substring(0, idx));
+            int msgStart = idx + authCodeLen + 1;
+            String authCode = msg.substring(idx + 1, msgStart);
+
             String seed = SignatureUtil.AESDecrypt(authCode, key);
             if (seed != null && Integer.parseInt(seed) == seedCounter.get()) {
                 seedCounter.incrementAndGet();
-                out.add(msg.substring(172));
+                out.add(msg.substring(msgStart));
             } else {
                 throw new InvalidMsgException(seedCounter.get());
             }

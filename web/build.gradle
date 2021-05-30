@@ -18,7 +18,7 @@ repositories {
 }
 
 dependencies {
-    compile (project(':tools'))
+    compile (project(':convey'))
 
     implementation 'org.springframework.boot:spring-boot-starter'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

@@ -30,6 +30,6 @@ public class JvmmBubbleEncrypt extends MessageToMessageEncoder<String> {
     protected void encode(ChannelHandlerContext ctx, String msg, List<Object> out) throws Exception {
         String authCode = SignatureUtil.AESEncrypt(String.valueOf(seedCounter.get()), key);
         seedCounter.incrementAndGet();
-        out.add(authCode + msg);
+        out.add(authCode.length() + "|" + authCode + msg);
     }
 }

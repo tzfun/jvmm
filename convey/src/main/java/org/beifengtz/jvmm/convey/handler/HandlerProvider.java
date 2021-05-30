@@ -1,7 +1,7 @@
 package org.beifengtz.jvmm.convey.handler;
 
 import io.netty.channel.ChannelHandler;
-import io.netty.channel.DefaultEventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
 
 /**
@@ -15,7 +15,7 @@ import io.netty.util.concurrent.EventExecutorGroup;
  */
 public interface HandlerProvider {
 
-    EventExecutorGroup EXECUTOR_GROUP = new DefaultEventLoopGroup();
+    EventExecutorGroup EXECUTOR_GROUP = new NioEventLoopGroup();
 
     ChannelHandler getHandler();
 

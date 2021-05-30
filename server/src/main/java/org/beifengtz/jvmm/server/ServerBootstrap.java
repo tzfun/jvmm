@@ -68,7 +68,7 @@ public class ServerBootstrap {
         return clientBootstrap;
     }
 
-    private static Logger logger(){
+    private static Logger logger() {
         return LoggerFactory.getLogger(ServerBootstrap.class);
     }
 
@@ -164,6 +164,7 @@ public class ServerBootstrap {
                 }
                 Runtime.getRuntime().addShutdownHook(shutdownHook);
                 f.channel().closeFuture().syncUninterruptibly();
+                stop();
             } catch (BindException e) {
                 if (rebindTimes < BIND_LIMIT_TIMES && ServerConfig.getConfiguration().isAutoIncrease()) {
                     start(bindPort + 1);
@@ -209,14 +210,15 @@ public class ServerBootstrap {
 
     public static void main(String[] args) throws Throwable {
         //  just for test
-        int tp = 8089;
+        int tp = 8090;
         String homePath = SystemPropertyUtil.get("user.dir").replaceAll("\\\\", "/");
-        System.out.println(homePath);
         String agentJar = homePath + "/agent/build/libs/jvmm-agent.jar";
         String serverJar = homePath + "/server/build/libs/jvmm-server.jar";
 
         long pid = PidUtil.findProcess(tp);
 
-        AttachProvider.getInstance().attachAgent(pid, agentJar, serverJar, Configuration.newBuilder().build());
+        Configuration config = Configuration.newBuilder().setLogLevel("debug").build();
+        AttachProvider.getInstance().attachAgent(pid, agentJar, serverJar, config);
+
     }
 }

@@ -9,14 +9,12 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
-import io.netty.channel.DefaultEventLoop;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.DefaultPromise;
 import io.netty.util.concurrent.Future;
-import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
-import org.beifengtz.jvmm.common.exception.InvalidMsgException;
+import org.beifengtz.jvmm.common.exception.SocketExecuteException;
 import org.beifengtz.jvmm.convey.GlobalStatus;
 import org.beifengtz.jvmm.convey.GlobalType;
 import org.beifengtz.jvmm.convey.auth.JvmmBubbleDecrypt;
@@ -28,7 +26,6 @@ import org.beifengtz.jvmm.convey.handler.HandlerProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -55,11 +52,11 @@ public class JvmmSocketConnector {
     private String authPassword;
 
     private EventLoopGroup workGroup;
-
     private State state = State.NONE;
-
     private DefaultPromise<Boolean> openPromise;
     private Channel channel;
+
+    private boolean keepAlive;
 
     private final List<MsgReceiveListener> listeners;
 
@@ -73,6 +70,17 @@ public class JvmmSocketConnector {
 
     public interface MsgReceiveListener {
         void onMessage(JvmmResponse response);
+    }
+
+    class HeartBeatHandler implements Runnable {
+
+        @Override
+        public void run() {
+            if (isConnected()) {
+                channel.writeAndFlush(JvmmRequest.create().setType(GlobalType.JVMM_TYPE_HEARTBEAT).serialize());
+                workGroup.next().schedule(this, 5, TimeUnit.SECONDS);
+            }
+        }
     }
 
     class SocketResponseHandler extends SimpleChannelInboundHandler<String> implements HandlerProvider {
@@ -103,24 +111,6 @@ public class JvmmSocketConnector {
             }
         }
 
-        @Override
-        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-            if (cause instanceof AuthenticationFailedException) {
-                ctx.channel().writeAndFlush(JvmmResponse.create()
-                        .setStatus(GlobalStatus.JVMM_STATUS_AUTHENTICATION_FAILED.name())
-                        .setMessage("Authentication failed.")
-                        .toJsonStr());
-                ctx.close();
-            } else if (cause instanceof InvalidMsgException) {
-                logger.error("Invalid message verify, seed: " + ((InvalidMsgException) cause).getSeed());
-                ctx.close();
-            } else if (cause instanceof IOException) {
-                logger.debug(cause.toString());
-            } else {
-                logger.error(cause.toString(), cause);
-            }
-        }
-
         private void handleResponse(ChannelHandlerContext ctx, JvmmResponse response) {
             String type = response.getType();
             if (GlobalType.JVMM_TYPE_BUBBLE.name().equals(type)) {
@@ -140,35 +130,38 @@ public class JvmmSocketConnector {
                     reqData.addProperty("account", authAccount);
                     reqData.addProperty("password", authPassword);
                     JvmmRequest request = JvmmRequest.create().setType(GlobalType.JVMM_TYPE_AUTHENTICATION).setData(reqData);
-                    ctx.pipeline().writeAndFlush(request.toJsonStr());
-                    openPromise.trySuccess(true);
+                    ctx.pipeline().writeAndFlush(request.serialize());
+                }
+                openPromise.trySuccess(true);
+
+                if (keepAlive) {
+                    workGroup.next().execute(new HeartBeatHandler());
                 }
 
             } else if (GlobalType.JVMM_TYPE_AUTHENTICATION.name().equals(type)) {
                 openPromise.trySuccess(GlobalStatus.JVMM_STATUS_OK.name().equals(response.getStatus()));
-            } else if (GlobalType.JVMM_TYPE_PING.name().equals(type)) {
-                ctx.pipeline().writeAndFlush(JvmmRequest.create().setType(GlobalType.JVMM_TYPE_PONG).toJsonStr());
             } else {
                 listeners.forEach(o -> o.onMessage(response));
             }
         }
     }
 
-    public static JvmmSocketConnector create(String host, int port) {
-        return create(host, port, null, null, new DefaultEventLoop());
+    public static JvmmSocketConnector create(String host, int port, EventLoopGroup workerGroup) {
+        return create(host, port, false, null, null, workerGroup);
     }
 
-    public static JvmmSocketConnector create(String host, int port, String authAccount, String authPassword) {
-        return create(host, port, authAccount, authPassword, new DefaultEventLoop());
+    public static JvmmSocketConnector create(String host, int port, boolean keepAlive, EventLoopGroup workerGroup) {
+        return create(host, port, keepAlive, null, null, workerGroup);
     }
 
-    public static JvmmSocketConnector create(String host, int port, String authAccount, String authPassword, EventLoopGroup workerGroup) {
+    public static JvmmSocketConnector create(String host, int port, boolean keepAlive, String authAccount, String authPassword, EventLoopGroup workerGroup) {
         JvmmSocketConnector connector = new JvmmSocketConnector();
         connector.host = host;
         connector.port = port;
         connector.authAccount = authAccount;
         connector.authPassword = authPassword;
         connector.workGroup = workerGroup;
+        connector.keepAlive = keepAlive;
         return connector;
     }
 
@@ -197,6 +190,7 @@ public class JvmmSocketConnector {
             b.group(workGroup).channel(NioSocketChannel.class).handler(new StringChannelInitializer(new SocketResponseHandler()));
             channel = b.connect(host, port).channel();
             channel.closeFuture().addListener(future -> state = State.CLOSED);
+            state = State.CONNECTED;
         } else {
             logger.warn("Jvmm socket connector is already connected.");
         }
@@ -205,10 +199,20 @@ public class JvmmSocketConnector {
 
     public ChannelFuture send(JvmmRequest request) {
         if (isConnected()) {
-            return channel.writeAndFlush(request.toJsonStr()).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+            return channel.writeAndFlush(request.serialize()).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
         } else {
             throw new IllegalStateException("Jvmm socket has disconnected");
         }
+    }
+
+    public String ping() {
+        try {
+            waitForResponse(workGroup, JvmmRequest.create().setType(GlobalType.JVMM_TYPE_PING),
+                    GlobalType.JVMM_TYPE_PONG.name(), 3, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            throw new SocketExecuteException(e.getMessage(), e);
+        }
+        return "pong";
     }
 
     public boolean isConnected() {
@@ -227,18 +231,43 @@ public class JvmmSocketConnector {
         }
     }
 
-    public JvmmResponse waitForResponse(EventLoopGroup group, JvmmRequest request, String waitType, long timeout, TimeUnit timeunit) throws Exception {
+    public JvmmResponse waitForResponse(JvmmRequest request)
+            throws ExecutionException, InterruptedException, TimeoutException {
+        return waitForResponse(workGroup, request, request.getType(), 5, TimeUnit.SECONDS);
+    }
+
+    public JvmmResponse waitForResponse(EventLoopGroup group, JvmmRequest request)
+            throws ExecutionException, InterruptedException, TimeoutException {
+        return waitForResponse(group, request, request.getType(), 5, TimeUnit.SECONDS);
+    }
+
+    public JvmmResponse waitForResponse(EventLoopGroup group, JvmmRequest request, long timeout, TimeUnit timeunit)
+            throws ExecutionException, InterruptedException, TimeoutException {
+        return waitForResponse(group, request, request.getType(), timeout, timeunit);
+    }
+
+    public JvmmResponse waitForResponse(EventLoopGroup group, JvmmRequest request, String waitType, long timeout, TimeUnit timeunit)
+            throws ExecutionException, InterruptedException, TimeoutException {
+        if (group == null) {
+            throw new IllegalArgumentException("Can not execute one request with null event loop group.");
+        }
         final DefaultPromise<JvmmResponse> promise = new DefaultPromise<>(group.next());
         MsgReceiveListener listener = response -> {
-            if (waitType.equals(response.getType())) {
-                promise.trySuccess(response);
+            String waitFor = waitType;
+            if (waitFor == null) {
+                waitFor = request.getType();
+            }
+            if (waitFor.equals(response.getType())) {
+                if (GlobalStatus.JVMM_STATUS_OK.name().equals(response.getStatus())) {
+                    promise.trySuccess(response);
+                } else {
+                    promise.tryFailure(new Exception(response.getMessage()));
+                }
             }
         };
         registerListener(listener);
         if (!isConnected()) {
-            if (!connect().await(timeout, timeunit)) {
-                throw new TimeoutException("Jvmm socket connect time out");
-            }
+            throw new IllegalStateException("Socket is closed");
         }
         send(request);
         return promise.get(timeout, timeunit);

@@ -1,12 +1,12 @@
 package org.beifengtz.jvmm.convey.auth;
 
+import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.RandomUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.beifengtz.jvmm.tools.util.SignatureUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -21,6 +21,7 @@ public class JvmmBubble {
 
     private static final byte ASCII_START = 33;
     private static final byte ASCII_END = 122;
+    private static final Set<Byte> ASCII_EXCLUDE = ImmutableSet.of((byte) 60, (byte) 61, (byte) 62, (byte) 94, (byte) 95, (byte) 96);
 
     private static final List<Byte> asciiList;
 
@@ -29,7 +30,9 @@ public class JvmmBubble {
     static {
         asciiList = new ArrayList<>(ASCII_END - ASCII_START + 1);
         for (byte i = ASCII_START; i < ASCII_END; ++i) {
-            asciiList.add(i);
+            if (!ASCII_EXCLUDE.contains(i)) {
+                asciiList.add(i);
+            }
         }
     }
 

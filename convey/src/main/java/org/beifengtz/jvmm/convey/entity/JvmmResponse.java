@@ -3,6 +3,7 @@ package org.beifengtz.jvmm.convey.entity;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import org.beifengtz.jvmm.common.JsonParsable;
+import org.beifengtz.jvmm.common.exception.MessageSerializeException;
 import org.beifengtz.jvmm.convey.GlobalStatus;
 import org.beifengtz.jvmm.convey.GlobalType;
 
@@ -15,7 +16,7 @@ import org.beifengtz.jvmm.convey.GlobalType;
  *
  * @author beifengtz
  */
-public class JvmmResponse  implements JsonParsable {
+public class JvmmResponse implements JsonParsable {
     private String type;
     private String status;
     private String message;
@@ -28,8 +29,18 @@ public class JvmmResponse  implements JsonParsable {
         return new JvmmResponse();
     }
 
-    public static JvmmResponse parseFrom(String msg){
+    public static JvmmResponse parseFrom(String msg) {
         return new Gson().fromJson(msg, JvmmResponse.class);
+    }
+
+    public String serialize() {
+        if (type == null) {
+            throw new MessageSerializeException("Missing required param: 'type'");
+        }
+        if (status == null) {
+            throw new MessageSerializeException("Missing required param: 'status'");
+        }
+        return toJsonStr();
     }
 
     public String getType() {

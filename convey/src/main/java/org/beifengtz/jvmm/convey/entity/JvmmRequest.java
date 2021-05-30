@@ -3,6 +3,7 @@ package org.beifengtz.jvmm.convey.entity;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import org.beifengtz.jvmm.common.JsonParsable;
+import org.beifengtz.jvmm.common.exception.MessageSerializeException;
 import org.beifengtz.jvmm.convey.GlobalType;
 
 /**
@@ -18,18 +19,26 @@ public class JvmmRequest implements JsonParsable {
     private String type;
     private JsonElement data;
 
-    private JvmmRequest(){}
+    private JvmmRequest() {
+    }
 
-    public static JvmmRequest create(){
+    public static JvmmRequest create() {
         return new JvmmRequest();
     }
 
-    public static JvmmRequest parseFrom(String msg){
+    public static JvmmRequest parseFrom(String msg) {
         return new Gson().fromJson(msg, JvmmRequest.class);
     }
 
     public boolean isHeartbeat() {
         return GlobalType.JVMM_TYPE_HEARTBEAT.name().equalsIgnoreCase(type);
+    }
+
+    public String serialize() {
+        if (type == null) {
+            throw new MessageSerializeException("Missing required param: 'type'");
+        }
+        return toJsonStr();
     }
 
     public String getType() {

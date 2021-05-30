@@ -50,8 +50,14 @@ public abstract class JvmmRequestHandler extends SimpleChannelInboundHandler<Str
         try {
             stopWatch.reset().start();
             JvmmRequest request = JvmmRequest.parseFrom(msg);
-            if (GlobalType.JVMM_TYPE_BUBBLE.name().equals(request.getType())) {
-                ((JvmmSocketChannel) ctx.channel()).handleBubble(request);
+            if (request.getType() == null) {
+                return;
+            }
+            if (GlobalType.JVMM_TYPE_PING.name().equals(request.getType())) {
+                ctx.channel().writeAndFlush(JvmmResponse.create()
+                        .setType(GlobalType.JVMM_TYPE_PONG)
+                        .setStatus(GlobalStatus.JVMM_STATUS_OK)
+                        .serialize());
             } else {
                 ((JvmmSocketChannel) ctx.channel()).handleRequest(request);
             }
@@ -60,9 +66,10 @@ public abstract class JvmmRequestHandler extends SimpleChannelInboundHandler<Str
             }
         } catch (JsonSyntaxException e) {
             ctx.channel().writeAndFlush(JvmmResponse.create()
+                    .setType(GlobalType.JVMM_TYPE_HANDLE_MSG)
                     .setStatus(GlobalStatus.JVMM_STATUS_UNRECOGNIZED_CONTENT.name())
                     .setMessage(e.getMessage())
-                    .toJsonStr());
+                    .serialize());
         }
     }
 
@@ -72,7 +79,7 @@ public abstract class JvmmRequestHandler extends SimpleChannelInboundHandler<Str
             ctx.channel().writeAndFlush(JvmmResponse.create()
                     .setStatus(GlobalStatus.JVMM_STATUS_AUTHENTICATION_FAILED.name())
                     .setMessage("Authentication failed.")
-                    .toJsonStr());
+                    .serialize());
             ctx.close();
         } else if (cause instanceof InvalidMsgException) {
             logger().error("Invalid message verify, seed: " + ((InvalidMsgException) cause).getSeed());

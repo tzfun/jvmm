@@ -22,13 +22,16 @@ public class ServerLogicSocketChannel extends NioServerSocketChannel {
 
     @Override
     protected int doReadMessages(List<Object> buf) throws Exception {
-        try(SocketChannel ch = javaChannel().accept()){
-            if (ch != null) {
-                buf.add(new LogicSocketChannel(this, ch));
-                return 1;
-            }
-        }catch (Throwable t) {
+        SocketChannel ch = null;
+        try {
+            ch = javaChannel().accept();
+            buf.add(new LogicSocketChannel(this, ch));
+            return 1;
+        } catch (Throwable t) {
             logger.warn("Failed to create a new channel from an accepted socket.", t);
+            if (ch != null) {
+                ch.close();
+            }
         }
         return 0;
     }

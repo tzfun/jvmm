@@ -1,10 +1,12 @@
 package org.beifengtz.jvmm.convey.channel;
 
 import com.google.gson.JsonObject;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.concurrent.EventExecutor;
 import org.beifengtz.jvmm.convey.GlobalStatus;
 import org.beifengtz.jvmm.convey.GlobalType;
@@ -15,7 +17,7 @@ import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 
 import java.nio.channels.ClosedChannelException;
-import java.util.concurrent.TimeUnit;
+import java.nio.channels.SocketChannel;
 
 /**
  * <p>
@@ -32,9 +34,14 @@ public abstract class JvmmSocketChannel extends NioSocketChannel {
 
     protected JvmmBubble bubble = new JvmmBubble();
 
+    public JvmmSocketChannel(Channel parent, SocketChannel socket) {
+        super(parent, socket);
+    }
+
     protected static final ChannelFutureListener FIRE_EXCEPTION_ON_FAILURE = f -> {
-        if (!f.isSuccess() && !(f.cause() instanceof ClosedChannelException))
+        if (!f.isSuccess() && !(f.cause() instanceof ClosedChannelException)){
             f.channel().pipeline().fireExceptionCaught(f.cause());
+        }
     };
 
     @Override
@@ -48,11 +55,12 @@ public abstract class JvmmSocketChannel extends NioSocketChannel {
         JsonObject data = new JsonObject();
         data.addProperty("seed", seed);
         data.addProperty("key", bubble.getKey());
+
         JvmmResponse bubbleResp = JvmmResponse.create()
                 .setType(GlobalType.JVMM_TYPE_BUBBLE)
                 .setStatus(GlobalStatus.JVMM_STATUS_OK)
                 .setData(data);
-        writeAndFlush(bubbleResp.toJsonStr());
+        writeAndFlush(bubbleResp.serialize());
 
         pipeline()
                 .addAfter(executor, StringChannelInitializer.STRING_DECODER_HANDLER,
@@ -62,13 +70,12 @@ public abstract class JvmmSocketChannel extends NioSocketChannel {
     }
 
     public void handleUserEvent(Object evt) {
-
-    }
-
-    public void handleBubble(JvmmRequest request) {
-
-        close();
-        disconnect();
+        if (evt instanceof IdleStateEvent) {
+            IdleStateEvent event = (IdleStateEvent) evt;
+            if (event.state() == IdleState.READER_IDLE) {
+                handleIdle();
+            }
+        }
     }
 
     public abstract void handleRequest(JvmmRequest reqMsg);
