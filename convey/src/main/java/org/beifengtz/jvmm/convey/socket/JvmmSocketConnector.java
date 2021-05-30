@@ -146,15 +146,15 @@ public class JvmmSocketConnector {
         }
     }
 
-    public static JvmmSocketConnector create(String host, int port, EventLoopGroup workerGroup) {
-        return create(host, port, false, null, null, workerGroup);
+    public static JvmmSocketConnector newInstance(String host, int port, EventLoopGroup workerGroup) {
+        return newInstance(host, port, false, null, null, workerGroup);
     }
 
-    public static JvmmSocketConnector create(String host, int port, boolean keepAlive, EventLoopGroup workerGroup) {
-        return create(host, port, keepAlive, null, null, workerGroup);
+    public static JvmmSocketConnector newInstance(String host, int port, boolean keepAlive, EventLoopGroup workerGroup) {
+        return newInstance(host, port, keepAlive, null, null, workerGroup);
     }
 
-    public static JvmmSocketConnector create(String host, int port, boolean keepAlive, String authAccount, String authPassword, EventLoopGroup workerGroup) {
+    public static JvmmSocketConnector newInstance(String host, int port, boolean keepAlive, String authAccount, String authPassword, EventLoopGroup workerGroup) {
         JvmmSocketConnector connector = new JvmmSocketConnector();
         connector.host = host;
         connector.port = port;

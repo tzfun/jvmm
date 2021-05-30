@@ -28,7 +28,7 @@ public class JvmmBubble {
     private String key;
 
     static {
-        asciiList = new ArrayList<>(ASCII_END - ASCII_START + 1);
+        asciiList = new ArrayList<>(ASCII_END - ASCII_START - ASCII_EXCLUDE.size() + 1);
         for (byte i = ASCII_START; i < ASCII_END; ++i) {
             if (!ASCII_EXCLUDE.contains(i)) {
                 asciiList.add(i);

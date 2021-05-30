@@ -78,7 +78,7 @@ public abstract class JvmmSocketChannel extends NioSocketChannel {
         }
     }
 
-    public abstract void handleRequest(JvmmRequest reqMsg);
+    public abstract void handleRequest(JvmmRequest reqMsg) ;
 
     public abstract void handleIdle();
 
