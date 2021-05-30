@@ -11,6 +11,8 @@ package org.beifengtz.jvmm.convey;
  */
 public enum GlobalStatus {
     JVMM_STATUS_OK,
+    JVMM_STATUS_SERVER_ERROR,
     JVMM_STATUS_UNRECOGNIZED_CONTENT,
     JVMM_STATUS_AUTHENTICATION_FAILED,
+    JVMM_STATUS_ILLEGAL_ARGUMENTS
 }

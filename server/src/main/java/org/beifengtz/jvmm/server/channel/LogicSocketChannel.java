@@ -1,8 +1,14 @@
 package org.beifengtz.jvmm.server.channel;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
 import io.netty.channel.Channel;
+import io.netty.channel.EventLoopGroup;
+import io.netty.util.concurrent.EventExecutor;
+import org.beifengtz.jvmm.common.JsonParsable;
 import org.beifengtz.jvmm.common.exception.InvalidJvmmMappingException;
+import org.beifengtz.jvmm.convey.GlobalStatus;
 import org.beifengtz.jvmm.convey.channel.JvmmSocketChannel;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
@@ -95,6 +101,8 @@ public class LogicSocketChannel extends JvmmSocketChannel {
                     parameter[i] = reqMsg.getData();
                 } else if (String.class.isAssignableFrom(parameterType)) {
                     parameter[i] = reqMsg.getType();
+                } else if (EventExecutor.class.isAssignableFrom(parameterType)) {
+                    parameter[i] = handlerExecutor;
                 } else {
                     parameter[i] = null;
                 }
@@ -103,9 +111,27 @@ public class LogicSocketChannel extends JvmmSocketChannel {
             Object result = method.invoke(instance, parameter);
             if (result instanceof JvmmResponse) {
                 writeAndFlush(((JvmmResponse) result).serialize());
+            } else if (result != null) {
+                JvmmResponse response = JvmmResponse.create().setStatus(GlobalStatus.JVMM_STATUS_OK).setType(reqMsg.getType());
+                JsonElement data = null;
+                if (result instanceof Boolean) {
+                    data = new JsonPrimitive((Boolean) result);
+                } else if (result instanceof Number) {
+                    data = new JsonPrimitive((Number) result);
+                } else if (result instanceof String) {
+                    data = new JsonPrimitive((String) result);
+                } else if (result instanceof Character) {
+                    data = new JsonPrimitive((Character) result);
+                } else if (result instanceof JsonParsable) {
+                    data = ((JsonParsable) result).toJson();
+                } else {
+                    data = new Gson().toJsonTree(result);
+                }
+                response.setData(data);
+                writeAndFlush(response.serialize());
             }
         } catch (Throwable e) {
-            log.error(e.getMessage(), e);
+            handleException(reqMsg, e);
         }
     }
 
@@ -117,5 +143,19 @@ public class LogicSocketChannel extends JvmmSocketChannel {
     @Override
     public void cleanup() {
         controllerInstance.clear();
+    }
+
+    private void handleException(JvmmRequest req, Throwable e) {
+        JvmmResponse response = JvmmResponse.create().setType(req.getType());
+        if (e instanceof IllegalArgumentException) {
+            response.setStatus(GlobalStatus.JVMM_STATUS_ILLEGAL_ARGUMENTS);
+        } else {
+            log.error(e.getMessage(), e);
+            response.setStatus(GlobalStatus.JVMM_STATUS_SERVER_ERROR);
+        }
+        if (e.getMessage() != null) {
+            response.setMessage(e.getMessage());
+        }
+        writeAndFlush(response.serialize());
     }
 }
