@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import io.netty.channel.Channel;
-import io.netty.channel.EventLoopGroup;
 import io.netty.util.concurrent.EventExecutor;
 import org.beifengtz.jvmm.common.JsonParsable;
 import org.beifengtz.jvmm.common.exception.InvalidJvmmMappingException;
@@ -103,7 +102,9 @@ public class LogicSocketChannel extends JvmmSocketChannel {
                     parameter[i] = reqMsg.getType();
                 } else if (EventExecutor.class.isAssignableFrom(parameterType)) {
                     parameter[i] = handlerExecutor;
-                } else {
+                } else if (JsonElement.class.isAssignableFrom(parameterType)){
+                    parameter[i] = reqMsg.getData();
+                }else {
                     parameter[i] = null;
                 }
             }
@@ -122,6 +123,8 @@ public class LogicSocketChannel extends JvmmSocketChannel {
                     data = new JsonPrimitive((String) result);
                 } else if (result instanceof Character) {
                     data = new JsonPrimitive((Character) result);
+                } else if (result instanceof JsonElement) {
+                    data = (JsonElement) result;
                 } else if (result instanceof JsonParsable) {
                     data = ((JsonParsable) result).toJson();
                 } else {
@@ -138,6 +141,7 @@ public class LogicSocketChannel extends JvmmSocketChannel {
     @Override
     public void handleIdle() {
         close();
+        log.debug("Channel close by idle");
     }
 
     @Override

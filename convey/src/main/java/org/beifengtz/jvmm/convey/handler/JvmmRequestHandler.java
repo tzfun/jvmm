@@ -81,9 +81,11 @@ public abstract class JvmmRequestHandler extends SimpleChannelInboundHandler<Str
                     .setMessage("Authentication failed.")
                     .serialize());
             ctx.close();
+            logger().debug("Channel closed by auth failed");
         } else if (cause instanceof InvalidMsgException) {
             logger().error("Invalid message verify, seed: " + ((InvalidMsgException) cause).getSeed());
             ctx.close();
+            logger().debug("Channel closed by message verify");
         } else if (cause instanceof IOException) {
             logger().debug(cause.toString());
         } else {

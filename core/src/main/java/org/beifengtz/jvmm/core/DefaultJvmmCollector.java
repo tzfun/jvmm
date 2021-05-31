@@ -10,8 +10,6 @@ import org.beifengtz.jvmm.core.entity.mx.ProcessInfo;
 import org.beifengtz.jvmm.core.entity.mx.SystemDynamicInfo;
 import org.beifengtz.jvmm.core.entity.mx.SystemStaticInfo;
 import org.beifengtz.jvmm.core.entity.mx.ThreadDynamicInfo;
-import org.beifengtz.jvmm.core.service.DefaultScheduledService;
-import org.beifengtz.jvmm.core.service.ScheduleService;
 import org.beifengtz.jvmm.tools.util.PidUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.TimeZone;
-import java.util.function.Consumer;
 
 /**
  * <p>
@@ -47,10 +44,6 @@ import java.util.function.Consumer;
 class DefaultJvmmCollector implements JvmmCollector {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultJvmmCollector.class);
-
-    private ScheduleService memoryTimer;
-    private ScheduleService systemDynamicTimer;
-    private ScheduleService threadDynamicTimer;
 
     DefaultJvmmCollector() {
     }
@@ -197,37 +190,6 @@ class DefaultJvmmCollector implements JvmmCollector {
     }
 
     @Override
-    public void timerGetMemory(int gapSeconds, Consumer<MemoryInfo> callback) {
-        timerGetMemory(gapSeconds, -1, callback);
-    }
-
-    @Override
-    public void timerGetMemory(int gapSeconds, int times, Consumer<MemoryInfo> callback) {
-        if (memoryTimer == null) {
-            memoryTimer = new DefaultScheduledService("Collect memory");
-        }
-        memoryTimer.setTask(() -> callback.accept(getMemory()))
-                .setTimes(times)
-                .setTimeGap(gapSeconds)
-                .setStopOnError(true)
-                .start();
-    }
-
-    @Override
-    public void updateTimerGetMemory(int newGapSeconds) {
-        if (memoryTimer != null) {
-            memoryTimer.setTimeGap(newGapSeconds);
-        }
-    }
-
-    @Override
-    public void stopTimerGetMemory() {
-        if (memoryTimer != null) {
-            memoryTimer.stop();
-        }
-    }
-
-    @Override
     public SystemDynamicInfo getSystemDynamic() {
         OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
         SystemDynamicInfo info = SystemDynamicInfo.create();
@@ -292,37 +254,6 @@ class DefaultJvmmCollector implements JvmmCollector {
     }
 
     @Override
-    public void timerGetSystemDynamic(int gapSeconds, Consumer<SystemDynamicInfo> callback) {
-        timerGetSystemDynamic(gapSeconds, -1, callback);
-    }
-
-    @Override
-    public void timerGetSystemDynamic(int gapSeconds, int times, Consumer<SystemDynamicInfo> callback) {
-        if (systemDynamicTimer == null) {
-            systemDynamicTimer = new DefaultScheduledService("Collect system dynamic");
-        }
-        systemDynamicTimer.setTask(() -> callback.accept(getSystemDynamic()))
-                .setTimes(times)
-                .setTimeGap(gapSeconds)
-                .setStopOnError(true)
-                .start();
-    }
-
-    @Override
-    public void updateTimerGetSystemDynamic(int newGapSeconds) {
-        if (systemDynamicTimer != null) {
-            systemDynamicTimer.setTimeGap(newGapSeconds);
-        }
-    }
-
-    @Override
-    public void stopTimerGetSystemDynamic() {
-        if (systemDynamicTimer != null) {
-            systemDynamicTimer.stop();
-        }
-    }
-
-    @Override
     public ThreadDynamicInfo getThreadDynamic() {
         ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
         ThreadDynamicInfo info = ThreadDynamicInfo.create();
@@ -332,37 +263,6 @@ class DefaultJvmmCollector implements JvmmCollector {
         info.setDeadlockedThreads(threadMXBean.findDeadlockedThreads());
         info.setPeakThreadCount(threadMXBean.getPeakThreadCount());
         return info;
-    }
-
-    @Override
-    public void timerGetThreadDynamic(int gapSeconds, Consumer<ThreadDynamicInfo> callback) {
-        timerGetThreadDynamic(gapSeconds, -1, callback);
-    }
-
-    @Override
-    public void timerGetThreadDynamic(int gapSeconds, int times, Consumer<ThreadDynamicInfo> callback) {
-        if (threadDynamicTimer == null) {
-            threadDynamicTimer = new DefaultScheduledService("Collect thread dynamic");
-        }
-        threadDynamicTimer.setTask(() -> callback.accept(getThreadDynamic()))
-                .setTimes(times)
-                .setTimeGap(gapSeconds)
-                .setStopOnError(true)
-                .start();
-    }
-
-    @Override
-    public void updateTimerGetThreadDynamic(int newGapSeconds) {
-        if (threadDynamicTimer != null) {
-            threadDynamicTimer.setTimeGap(newGapSeconds);
-        }
-    }
-
-    @Override
-    public void stopTimerGetThreadDynamic() {
-        if (threadDynamicTimer != null){
-            threadDynamicTimer.stop();
-        }
     }
 
     @Override

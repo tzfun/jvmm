@@ -4,7 +4,7 @@ spring:
     file: app.pid
     fail-on-write-error: true
   datasource:
-    url: jdbc:mysql://localhost:3306/test_db?characterEncoding=utf-8
+    url: jdbc:mysql://localhost:3306/information_schema?characterEncoding=utf-8
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password:

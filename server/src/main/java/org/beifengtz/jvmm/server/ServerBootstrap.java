@@ -3,10 +3,7 @@ package org.beifengtz.jvmm.server;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
-import org.beifengtz.jvmm.convey.GlobalType;
 import org.beifengtz.jvmm.convey.channel.StringChannelInitializer;
-import org.beifengtz.jvmm.convey.entity.JvmmRequest;
-import org.beifengtz.jvmm.convey.socket.JvmmSocketConnector;
 import org.beifengtz.jvmm.server.channel.ServerLogicSocketChannel;
 import org.beifengtz.jvmm.server.handler.ServerHandlerProvider;
 import org.beifengtz.jvmm.tools.util.FileUtil;
@@ -219,24 +216,14 @@ public class ServerBootstrap {
 
     public static void main(String[] args) throws Throwable {
         //  just for test
-        int tp = 8090;
+        int tp = 80;
         String homePath = SystemPropertyUtil.get("user.dir").replaceAll("\\\\", "/");
         String agentJar = homePath + "/agent/build/libs/jvmm-agent.jar";
         String serverJar = homePath + "/server/build/libs/jvmm-server.jar";
 
         long pid = PidUtil.findProcess(tp);
 
-        Configuration config = Configuration.newBuilder().setLogLevel("info").build();
+        Configuration config = Configuration.newBuilder().setLogLevel("debug").build();
         AttachProvider.getInstance().attachAgent(pid, agentJar, serverJar, config);
-        NioEventLoopGroup group = new NioEventLoopGroup();
-        JvmmSocketConnector client = JvmmSocketConnector.newInstance("127.0.0.1", config.getPort(), group);
-        try {
-            if (client.connect().await(3, TimeUnit.SECONDS)) {
-                System.out.println(client.ping());
-                client.send(JvmmRequest.create().setType(GlobalType.JVMM_TYPE_SERVER_SHUTDOWN));
-            }
-        } finally {
-            group.shutdownGracefully();
-        }
     }
 }

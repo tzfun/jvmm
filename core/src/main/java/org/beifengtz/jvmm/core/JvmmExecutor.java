@@ -1,5 +1,6 @@
 package org.beifengtz.jvmm.core;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.beifengtz.jvmm.core.entity.result.JpsResult;
 
 import java.io.IOException;
@@ -31,7 +32,7 @@ public interface JvmmExecutor {
 
     void resetPeakThreadCount();
 
-    InputStream executeJvmTools(String command, long timeout, TimeUnit timeUnit) throws IOException, TimeoutException;
+    Pair<List<String>, Boolean> executeJvmTools(String command) throws IOException, TimeoutException, InterruptedException;
 
-    List<JpsResult> listJavaProcess();
+    Pair<List<JpsResult>, String> listJavaProcess();
 }

@@ -1,8 +1,10 @@
 package org.beifengtz.jvmm.core;
 
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.ExecutionError;
+import org.apache.commons.lang3.tuple.Pair;
 import org.beifengtz.jvmm.core.entity.result.JpsResult;
 import org.beifengtz.jvmm.tools.util.IOUtil;
 import org.beifengtz.jvmm.tools.util.JavaEnvUtil;
@@ -80,7 +82,7 @@ class DefaultJvmmExecutor implements JvmmExecutor {
     }
 
     @Override
-    public InputStream executeJvmTools(String command, long timeout, TimeUnit timeUnit) throws IOException, TimeoutException {
+    public Pair<List<String>, Boolean> executeJvmTools(String command) throws IOException, TimeoutException, InterruptedException {
         if (StringUtil.isEmpty(command)) {
             throw new IllegalArgumentException("Can not execute empty command.");
         }
@@ -97,48 +99,63 @@ class DefaultJvmmExecutor implements JvmmExecutor {
         String newCmd = command.replaceFirst(programName, path);
         Process process = Runtime.getRuntime().exec(newCmd);
 
-        try {
-            if (process.waitFor(timeout, TimeUnit.SECONDS)) {
-                if (process.exitValue() < 0) {
-                    try (InputStream errIs = process.getErrorStream()) {
-                        String error = IOUtil.toString(errIs, PlatformUtil.getEncoding());
-                        throw new RejectedExecutionException(String.format("Execute command with exit value '%d'. %s. ['%s']"
-                                , process.exitValue(), error, newCmd));
-                    }
-                }
-            } else {
-                throw new TimeoutException(String.format("Execute command time out. ['%s']", newCmd));
+        List<String> output = new LinkedList<>();
+        List<String> err = new LinkedList<>();
+
+        try (Scanner sc = new Scanner(process.getInputStream(), PlatformUtil.getEncoding())) {
+            while (sc.hasNext()) {
+                output.add(sc.nextLine());
             }
-        } catch (InterruptedException e) {
-            log.error(String.format("Execute command error. ['%s']", newCmd), e);
         }
-        return process.getInputStream();
+
+        try (Scanner sc = new Scanner(process.getErrorStream(), PlatformUtil.getEncoding())) {
+            while (sc.hasNext()) {
+                err.add(sc.nextLine());
+            }
+        }
+
+        if (process.waitFor() != 0) {
+            err.addAll(output);
+            String errOutput = Joiner.on("\n").join(err);
+            log.error("Execute command with exit value '{}'. {}. [{}]", process.exitValue(), errOutput, newCmd);
+            return Pair.of(err, false);
+        } else {
+            return Pair.of(output, true);
+        }
     }
 
     @Override
-    public List<JpsResult> listJavaProcess() {
-        try (InputStream inputStream = executeJvmTools("jps -lmv", 50, TimeUnit.MILLISECONDS);
-             Scanner sc = new Scanner(inputStream, PlatformUtil.getEncoding())) {
-            List<JpsResult> resList = new LinkedList<>();
-            while (sc.hasNext()) {
-                String line = sc.nextLine();
-                String[] s = line.split(" ");
-                JpsResult res = JpsResult.create();
-                res.setPid(Long.parseLong(s[0]));
-                if (s.length > 1) {
-                    res.setMainClass(s[1]);
+    public Pair<List<JpsResult>, String> listJavaProcess() {
+        List<JpsResult> resList = new LinkedList<>();
+        String error = null;
+        try {
+            Pair<List<String>, Boolean> pair = executeJvmTools("jps -lmv");
+
+            if (pair.getRight()) {
+                for (String line : pair.getLeft()) {
+                    if (line.trim().isEmpty()) {
+                        continue;
+                    }
+                    String[] s = line.trim().split("\\s+");
+                    JpsResult res = JpsResult.create();
+                    res.setPid(Long.parseLong(s[0]));
+                    if (s.length > 1) {
+                        res.setMainClass(s[1]);
+                    }
+                    if (s.length > 2) {
+                        List<String> args = new ArrayList<>(s.length - 2);
+                        args.addAll(Arrays.asList(s).subList(2, s.length));
+                        res.setArguments(args);
+                    }
+                    resList.add(res);
                 }
-                if (s.length > 2) {
-                    List<String> args = new ArrayList<>(s.length - 2);
-                    args.addAll(Arrays.asList(s).subList(2, s.length));
-                    res.setArguments(args);
-                }
-                resList.add(res);
+            } else {
+                error = Joiner.on("\n").join(pair.getLeft());
             }
-            return resList;
-        } catch (IOException | TimeoutException | RejectedExecutionException e) {
-            log.error("List java process on localhost failed. " + e.getMessage(), e);
+        } catch (IOException | TimeoutException | InterruptedException e) {
+            error = "List java process on localhost failed. " + e.getMessage();
+            log.error(error, e);
         }
-        return new ArrayList<>();
+        return Pair.of(resList, error);
     }
 }

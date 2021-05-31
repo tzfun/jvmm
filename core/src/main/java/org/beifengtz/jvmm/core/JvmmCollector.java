@@ -12,7 +12,6 @@ import org.beifengtz.jvmm.core.entity.mx.SystemStaticInfo;
 import org.beifengtz.jvmm.core.entity.mx.ThreadDynamicInfo;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * <p>
@@ -41,33 +40,9 @@ public interface JvmmCollector {
 
     MemoryInfo getMemory();
 
-    void timerGetMemory(int gapSeconds, Consumer<MemoryInfo> callback);
-
-    void timerGetMemory(int gapSeconds, int times, Consumer<MemoryInfo> callback);
-
-    void updateTimerGetMemory(int newGapSeconds);
-
-    void stopTimerGetMemory();
-
     SystemDynamicInfo getSystemDynamic();
 
-    void timerGetSystemDynamic(int gapSeconds, Consumer<SystemDynamicInfo> callback);
-
-    void timerGetSystemDynamic(int gapSeconds, int times, Consumer<SystemDynamicInfo> callback);
-
-    void updateTimerGetSystemDynamic(int newGapSeconds);
-
-    void stopTimerGetSystemDynamic();
-
     ThreadDynamicInfo getThreadDynamic();
-
-    void timerGetThreadDynamic(int gapSeconds, Consumer<ThreadDynamicInfo> callback);
-
-    void timerGetThreadDynamic(int gapSeconds, int times, Consumer<ThreadDynamicInfo> callback);
-
-    void updateTimerGetThreadDynamic(int newGapSeconds);
-
-    void stopTimerGetThreadDynamic();
 
     String getThreadInfo(long id);
 

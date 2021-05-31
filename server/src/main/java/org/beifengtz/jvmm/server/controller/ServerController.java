@@ -10,12 +10,16 @@ import org.beifengtz.jvmm.server.annotation.JvmmMapping;
  * Description: TODO
  * </p>
  * <p>
- * Created in 5:55 下午 2021/5/30
+ * Created in 10:58 下午 2021/5/31
  *
  * @author beifengtz
  */
 @JvmmController
 public class ServerController {
+
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_HEARTBEAT)
+    public void heartbeat(){
+    }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_SERVER_SHUTDOWN)
     public void shutdownServer() {

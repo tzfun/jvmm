@@ -4,11 +4,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import io.netty.channel.Channel;
+import io.netty.util.concurrent.EventExecutor;
 import org.beifengtz.jvmm.convey.GlobalStatus;
 import org.beifengtz.jvmm.convey.GlobalType;
-import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
-import org.beifengtz.jvmm.core.JvmmCollector;
 import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.entity.mx.ClassLoadingInfo;
 import org.beifengtz.jvmm.core.entity.mx.CompilationInfo;
@@ -20,6 +19,8 @@ import org.beifengtz.jvmm.core.entity.mx.ProcessInfo;
 import org.beifengtz.jvmm.core.entity.mx.SystemDynamicInfo;
 import org.beifengtz.jvmm.core.entity.mx.SystemStaticInfo;
 import org.beifengtz.jvmm.core.entity.mx.ThreadDynamicInfo;
+import org.beifengtz.jvmm.core.service.DefaultScheduledService;
+import org.beifengtz.jvmm.core.service.ScheduleService;
 import org.beifengtz.jvmm.server.annotation.JvmmController;
 import org.beifengtz.jvmm.server.annotation.JvmmMapping;
 
@@ -36,6 +37,13 @@ import java.util.List;
  */
 @JvmmController
 public class CollectController {
+
+    private static final int DEFAULT_TIMER_DELAY = 3;
+    private static final int DEFAULT_TIMER_TIMES = 10;
+
+    private ScheduleService memoryCollectTimer;
+    private ScheduleService systemDynamicCollectTimer;
+    private ScheduleService threadDynamicCollectTimer;
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_SYSTEM_STATIC_INFO)
     public SystemStaticInfo getSystemStaticInfo() {
@@ -88,56 +96,161 @@ public class CollectController {
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_THREAD_INFO)
-    public List<String> getThreadInfo(JvmmRequest req, Channel channel, String type) {
-        JsonObject data = null;
-        if (req.getData() == null) {
+    public List<String> getThreadInfo(JsonObject data, Channel channel, String type) {
+        if (data == null) {
             throw new IllegalArgumentException("Missing data");
-        } else {
-            data = req.getData().getAsJsonObject();
-            if (!data.has("id") || data.get("id").getAsJsonArray().size() == 0) {
-                throw new IllegalArgumentException("Missing a parameter 'id' of type list");
-            }
-            JsonArray idList = data.get("id").getAsJsonArray();
-            long[] ids = new long[idList.size()];
-            for (int i = 0; i < idList.size(); i++) {
-                ids[i] = idList.get(i).getAsLong();
-            }
-            int depth = 0;
-            if (data.has("depth")) {
-                depth = data.get("depth").getAsInt();
-            }
-            String[] infos = JvmmFactory.getCollector().getThreadInfo(ids, depth);
-            return ImmutableList.copyOf(infos);
         }
+
+        if (!data.has("id") || data.get("id").getAsJsonArray().size() == 0) {
+            throw new IllegalArgumentException("Missing a parameter 'id' of type list");
+        }
+        JsonArray idList = data.get("id").getAsJsonArray();
+        long[] ids = new long[idList.size()];
+        for (int i = 0; i < idList.size(); i++) {
+            ids[i] = idList.get(i).getAsLong();
+        }
+        int depth = 0;
+        if (data.has("depth")) {
+            depth = data.get("depth").getAsInt();
+        }
+        String[] infos = JvmmFactory.getCollector().getThreadInfo(ids, depth);
+        return ImmutableList.copyOf(infos);
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_TIMER_COLLECT_MEMORY_INFO)
-    public void timerGetMemoryInfo(JvmmRequest req, Channel channel) {
-        if (req.getData() == null) {
-            throw new IllegalArgumentException("Missing data");
-        }
-        JsonObject data = req.getData().getAsJsonObject();
-        int gapSeconds = 3;
-        int times = -1;
-        if (data.has("delay")) {
-            gapSeconds = data.get("delay").getAsInt();
-        }
-        if (data.has("times")) {
-            gapSeconds = data.get("times").getAsInt();
-        }
-        JvmmCollector collector = JvmmFactory.getCollector();
-        collector.timerGetMemory(gapSeconds, times, info -> {
-            JvmmResponse response = JvmmResponse.create().setType(req.getType()).setStatus(GlobalStatus.JVMM_STATUS_OK).setData(info.toJson());
-            if (channel.isActive()) {
-                channel.writeAndFlush(response);
-            } else {
-                collector.stopTimerGetMemory();
+    public void timerGetMemoryInfo(JsonObject data, String type, Channel channel, EventExecutor executor) {
+
+        int gapSeconds = DEFAULT_TIMER_DELAY;
+        int times = DEFAULT_TIMER_TIMES;
+
+        if (data != null){
+            if (data.has("delay")) {
+                gapSeconds = data.get("delay").getAsInt();
             }
-        });
+            if (data.has("times")) {
+                times = data.get("times").getAsInt();
+            }
+        }
+
+        if (memoryCollectTimer == null) {
+            memoryCollectTimer = new DefaultScheduledService("CollectMemory", executor);
+        }
+
+        Runnable task = () -> {
+            JvmmResponse response = JvmmResponse.create().setType(type)
+                    .setStatus(GlobalStatus.JVMM_STATUS_OK)
+                    .setData(JvmmFactory.getCollector().getMemory().toJson());
+            if (channel != null && channel.isActive()) {
+                channel.writeAndFlush(response.serialize());
+            } else {
+                stopMemoryCollectTimer();
+            }
+        };
+        memoryCollectTimer.setTask(task)
+                .setTimes(times)
+                .setTimeGap(gapSeconds)
+                .setStopOnError(true)
+                .start();
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_STOP_TIMER_COLLECT_MEMORY_INFO)
-    public void stopTimerGetMemoryInfo() {
-        JvmmFactory.getCollector().stopTimerGetMemory();
+    public void stopMemoryCollectTimer() {
+        if (memoryCollectTimer != null) {
+            memoryCollectTimer.stop();
+        }
+    }
+
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_TIMER_COLLECT_SYSTEM_DYNAMIC_INFO)
+    public void timerGetSystemDynamicInfo(JsonObject data, String type, Channel channel, EventExecutor executor) {
+
+        int gapSeconds = DEFAULT_TIMER_DELAY;
+        int times = DEFAULT_TIMER_TIMES;
+        if (data != null){
+            if (data.has("delay")) {
+                gapSeconds = data.get("delay").getAsInt();
+            }
+            if (data.has("times")) {
+                times = data.get("times").getAsInt();
+            }
+        }
+
+        if (systemDynamicCollectTimer == null) {
+            systemDynamicCollectTimer = new DefaultScheduledService("CollectSystemDynamic", executor);
+        }
+
+        Runnable task = () -> {
+            JvmmResponse response = JvmmResponse.create().setType(type)
+                    .setStatus(GlobalStatus.JVMM_STATUS_OK)
+                    .setData(JvmmFactory.getCollector().getSystemDynamic().toJson());
+            if (channel != null && channel.isActive()) {
+                channel.writeAndFlush(response.serialize());
+            } else {
+                stopSystemDynamicCollectTimer();
+            }
+        };
+        systemDynamicCollectTimer.setTask(task)
+                .setTimes(times)
+                .setTimeGap(gapSeconds)
+                .setStopOnError(true)
+                .start();
+    }
+
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_STOP_TIMER_COLLECT_SYSTEM_DYNAMIC_INFO)
+    public void stopSystemDynamicCollectTimer() {
+        if (systemDynamicCollectTimer != null) {
+            systemDynamicCollectTimer.stop();
+        }
+    }
+
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_TIMER_COLLECT_THREAD_INFO)
+    public void timerGetThreadDynamicInfo(JsonObject data, String type, Channel channel, EventExecutor executor) {
+        int gapSeconds = DEFAULT_TIMER_DELAY;
+        int times = DEFAULT_TIMER_TIMES;
+
+        if (data != null){
+            if (data.has("delay")) {
+                gapSeconds = data.get("delay").getAsInt();
+            }
+            if (data.has("times")) {
+                times = data.get("times").getAsInt();
+            }
+        }
+
+        if (threadDynamicCollectTimer == null) {
+            threadDynamicCollectTimer = new DefaultScheduledService("CollectThreadDynamic", executor);
+        }
+
+        Runnable task = () -> {
+            JvmmResponse response = JvmmResponse.create().setType(type)
+                    .setStatus(GlobalStatus.JVMM_STATUS_OK)
+                    .setData(JvmmFactory.getCollector().getThreadDynamic().toJson());
+            if (channel != null && channel.isActive()) {
+                channel.writeAndFlush(response.serialize());
+            } else {
+                stopThreadDynamicTimer();
+            }
+        };
+        threadDynamicCollectTimer.setTask(task)
+                .setTimes(times)
+                .setTimeGap(gapSeconds)
+                .setStopOnError(true)
+                .start();
+    }
+
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_STOP_TIMER_COLLECT_THREAD_INFO)
+    public void stopThreadDynamicTimer() {
+        if (threadDynamicCollectTimer != null) {
+            threadDynamicCollectTimer.stop();
+        }
+    }
+
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_DUMP_THREAD_INFO)
+    public JsonArray dumpThreadInfo() {
+        String[] dump = JvmmFactory.getCollector().dumpAllThreads();
+        JsonArray result = new JsonArray(dump.length);
+        for (String info : dump) {
+            result.add(info);
+        }
+        return result;
     }
 }
