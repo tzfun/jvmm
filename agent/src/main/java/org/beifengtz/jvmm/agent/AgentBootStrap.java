@@ -1,5 +1,6 @@
 package org.beifengtz.jvmm.agent;
 
+import org.beifengtz.jvmm.tools.JvmmClassLoader;
 import org.beifengtz.jvmm.tools.util.ClassLoaderUtil;
 import org.beifengtz.jvmm.tools.util.CodingUtil;
 import org.beifengtz.jvmm.tools.util.FileUtil;
@@ -9,8 +10,14 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.security.CodeSource;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
+import java.util.jar.JarFile;
 
 /**
  * <p>
@@ -124,22 +131,38 @@ public class AgentBootStrap {
         }
 
         try {
+            //  拓展搜索范围
+            inst.appendToSystemClassLoaderSearch(new JarFile(serverJarFile));
+
+            //  需要预装载的文件，这里共享装载logger
+            List<URL> needPreLoad = new ArrayList<>();
             if (agentClassLoader == null) {
-                agentClassLoader = ClassLoaderUtil.systemLoadJar(serverJarFile.toURI().toURL());
-//                agentClassLoader = new JvmmClassLoader(new URL[]{serverJarFile.toURI().toURL()});
+                List<URL> urlList = new LinkedList<>();
+                urlList.add(serverJarFile.toURI().toURL());
+                ClassLoader loggerClassLoader = LoggerFactory.class.getClassLoader();
+                Enumeration<URL> loggerResources = loggerClassLoader.getResources("org/slf4j/impl/StaticLoggerBinder.class");
+                while (loggerResources.hasMoreElements()) {
+                    URL jarFile = new File(loggerResources.nextElement().getFile().substring(6).split("!")[0]).toURI().toURL();
+                    urlList.add(jarFile);
+                    needPreLoad.add(jarFile);
+                }
+                agentClassLoader = new JvmmClassLoader(urlList.toArray(new URL[0]), loggerClassLoader);
             }
 
             Thread bindThread = new Thread(() -> {
                 try {
+                    for (URL url : needPreLoad) {
+                        ClassLoaderUtil.systemLoadJar(url);
+                    }
                     bind(inst, agentClassLoader, agentArgs);
                 } catch (Throwable e) {
                     log.error(e.getMessage(), e);
                 }
             });
+
             bindThread.setName("jvmm-bind-thread");
-            bindThread.setContextClassLoader(agentClassLoader);
+            bindThread.setContextClassLoader(ClassLoader.getSystemClassLoader());
             bindThread.start();
-            bindThread.join();
         } catch (Throwable e) {
             log.error(e.getMessage(), e);
             throw new RuntimeException(e);
@@ -147,7 +170,7 @@ public class AgentBootStrap {
     }
 
     private static void bind(Instrumentation inst, ClassLoader classLoader, String args) throws Throwable {
-        Class<?> bootClazz = Class.forName(SERVER_MAIN_CLASS);
+        Class<?> bootClazz = classLoader.loadClass(SERVER_MAIN_CLASS);
         Object boot = bootClazz.getMethod("getInstance", Instrumentation.class, String.class).invoke(null, inst, args);
         bootClazz.getMethod("start").invoke(boot);
     }

@@ -90,7 +90,8 @@ public class AttachProvider {
                 }
             }
 
-            virtualMachine.loadAgent(CodingUtil.encodeUrl(agentJarPath), CodingUtil.encodeUrl(serverJarPath) + ";" + config.argFormat());
+            virtualMachine.loadAgent(agentJarPath.replaceAll("\\\\","/"),
+                    serverJarPath.replaceAll("\\\\","/") + ";" + config.argFormat());
         } finally {
             if (null != virtualMachine) {
                 virtualMachine.detach();

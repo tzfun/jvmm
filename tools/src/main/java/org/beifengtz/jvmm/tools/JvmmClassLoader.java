@@ -1,7 +1,9 @@
 package org.beifengtz.jvmm.tools;
 
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Enumeration;
 
 /**
  * <p>
@@ -13,19 +15,54 @@ import java.net.URLClassLoader;
  * @author beifengtz
  */
 public class JvmmClassLoader extends URLClassLoader {
+
+    public JvmmClassLoader(URL[] urls, ClassLoader parent) {
+        super(urls, parent);
+    }
+
     public JvmmClassLoader(URL[] urls) {
         super(urls, ClassLoader.getSystemClassLoader().getParent());
     }
 
     @Override
+    public URL getResource(String name) {
+        URL resource = getParent().getResource(name);
+        if (resource != null) {
+            return resource;
+        }
+        resource = getClass().getClassLoader().getResource(name);
+        if (resource != null) {
+            return resource;
+        }
+        return super.getResource(name);
+    }
+
+    @Override
+    public Enumeration<URL> getResources(String name) throws IOException {
+        Enumeration<URL> resources = getParent().getResources(name);
+        if (resources.hasMoreElements()) {
+            return resources;
+        }
+
+        resources = getClass().getClassLoader().getResources(name);
+        if (resources.hasMoreElements()) {
+            while (resources.hasMoreElements()) {
+                System.out.println("==> " + resources.nextElement());
+            }
+            return resources;
+        }
+        return super.getResources(name);
+    }
+
+    @Override
     public Class<?> loadClass(String name) throws ClassNotFoundException {
-        return this.loadClass(name,true);
+        return this.loadClass(name, true);
     }
 
     @Override
     public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
         final Class<?> loadedClass = findLoadedClass(name);
-        if (loadedClass != null){
+        if (loadedClass != null) {
             return loadedClass;
         }
 

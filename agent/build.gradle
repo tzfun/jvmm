@@ -9,8 +9,8 @@ jar {
     metadataCharset 'utf-8'
 
     manifest {
-        attributes("Premain-class": "org.beifengtz.jvmm.agent.AgentBootStrap",
-                "Agent-class": "org.beifengtz.jvmm.agent.AgentBootStrap",
+        attributes("Premain-Class": "org.beifengtz.jvmm.agent.AgentBootStrap",
+                "Agent-Class": "org.beifengtz.jvmm.agent.AgentBootStrap",
                 "Can-Redefine-Classes": true, "Can-Retransform-Classes": true)
     }
     archiveName("jvmm-agent.jar")

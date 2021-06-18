@@ -15,7 +15,7 @@ import io.netty.util.concurrent.EventExecutorGroup;
  */
 public interface HandlerProvider {
 
-    EventExecutorGroup EXECUTOR_GROUP = new DefaultEventLoopGroup(2 * Runtime.getRuntime().availableProcessors());
+    EventExecutorGroup EXECUTOR_GROUP = new DefaultEventLoopGroup();
 
     ChannelHandler getHandler();
 

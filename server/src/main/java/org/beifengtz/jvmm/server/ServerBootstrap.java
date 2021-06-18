@@ -7,6 +7,7 @@ import org.beifengtz.jvmm.convey.channel.StringChannelInitializer;
 import org.beifengtz.jvmm.server.channel.ServerLogicSocketChannel;
 import org.beifengtz.jvmm.server.handler.ServerHandlerProvider;
 import org.beifengtz.jvmm.tools.util.FileUtil;
+import org.beifengtz.jvmm.tools.util.PidUtil;
 import org.beifengtz.jvmm.tools.util.PlatformUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.jar.JarFile;
 
 /**
  * <p>
@@ -31,10 +33,11 @@ import java.util.concurrent.TimeUnit;
  * @author beifengtz
  */
 public class ServerBootstrap {
-    private static final Logger log = LoggerFactory.getLogger(ServerBootstrap.class);
     private static final int BIND_LIMIT_TIMES = 20;
 
     private static volatile ServerBootstrap clientBootstrap;
+
+    private Instrumentation instrumentation;
     private int rebindTimes = 0;
 
     private EventLoopGroup bossGroup;
@@ -42,7 +45,8 @@ public class ServerBootstrap {
 
     private Thread shutdownHook;
 
-    private ServerBootstrap() {
+    private ServerBootstrap(Instrumentation inst) {
+        this.instrumentation = inst;
     }
 
     public synchronized static ServerBootstrap getInstance(String args) throws Throwable {
@@ -50,14 +54,14 @@ public class ServerBootstrap {
     }
 
     public synchronized static ServerBootstrap getInstance(Instrumentation inst, String args) throws Throwable {
-        log.info("Jvmm server bootstrap args: {}", args);
         if (clientBootstrap != null) {
             return clientBootstrap;
         }
         Configuration config = parseConfig(args);
 
-        clientBootstrap = new ServerBootstrap();
+        clientBootstrap = new ServerBootstrap(inst);
         ServerConfig.setConfiguration(config);
+
         return clientBootstrap;
     }
 
@@ -129,16 +133,16 @@ public class ServerBootstrap {
             if (realBindPort < 0) {
                 start(ServerConfig.getConfiguration().getPort());
             } else {
-                log.info("Jvmm server already started on {}", realBindPort);
+                logger().info("Jvmm server already started on {}", realBindPort);
             }
         } else {
-            log.error("Jvmm Server start failed, configuration not inited.");
+            logger().error("Jvmm Server start failed, configuration not inited.");
         }
     }
 
     private void start(int bindPort) {
         if (PlatformUtil.portAvailable(bindPort)) {
-            log.info("Try to start jvmm server service. target port: {}", bindPort);
+            logger().info("Try to start jvmm server service. target port: {}", bindPort);
             rebindTimes++;
             final io.netty.bootstrap.ServerBootstrap b = new io.netty.bootstrap.ServerBootstrap();
 
@@ -148,18 +152,17 @@ public class ServerBootstrap {
             if (workerGroup == null) {
                 workerGroup = new NioEventLoopGroup();
             }
-            System.err.println("1111111111111");
             try {
                 if (rebindTimes > BIND_LIMIT_TIMES) {
                     throw new BindException("The number of port monitoring retries exceeds the limit: " + BIND_LIMIT_TIMES);
                 }
-                System.err.println("22222222222222");
+
                 ChannelFuture f = b.group(bossGroup, workerGroup)
                         .channel(ServerLogicSocketChannel.class)
                         .childHandler(new StringChannelInitializer(new ServerHandlerProvider(10)))
                         .bind(bindPort).syncUninterruptibly();
-                System.err.println("333333333333333");
-                log.info("Jvmm server service started on {}", bindPort);
+
+                logger().info("Jvmm server service started on {}", bindPort);
                 ServerConfig.setRealBindPort(bindPort);
 
                 if (shutdownHook == null) {
@@ -167,25 +170,21 @@ public class ServerBootstrap {
                     shutdownHook.setName("jvmm-shutdown-hook");
                 }
                 Runtime.getRuntime().addShutdownHook(shutdownHook);
-                System.err.println("4444444444444444");
                 f.channel().closeFuture().syncUninterruptibly();
                 stop();
-                System.err.println("555555555555555555");
             } catch (BindException e) {
-                System.err.println("6666666666666666");
                 if (rebindTimes < BIND_LIMIT_TIMES && ServerConfig.getConfiguration().isAutoIncrease()) {
                     start(bindPort + 1);
                 } else {
-                    log.error("Jvmm server start up failed. " + e.getMessage(), e);
+                    logger().error("Jvmm server start up failed. " + e.getMessage(), e);
                     stop();
                 }
             } catch (Throwable e) {
-                System.err.println("77777777777777");
-                log.error("Jvmm server start up failed. " + e.getMessage(), e);
+                logger().error("Jvmm server start up failed. " + e.getMessage(), e);
                 stop();
             }
         } else {
-            log.info("Port {} is not available.", bindPort);
+            logger().info("Port {} is not available.", bindPort);
             if (ServerConfig.getConfiguration().isAutoIncrease()) {
                 start(bindPort + 1);
             }
@@ -203,17 +202,26 @@ public class ServerBootstrap {
         }
         ServerConfig.setRealBindPort(-1);
         if (shutdownHook != null) {
-            Runtime.getRuntime().removeShutdownHook(shutdownHook);
+            try{
+                Runtime.getRuntime().removeShutdownHook(shutdownHook);
+            }catch (Exception ignored){}
             shutdownHook = null;
         }
-        log.info("Jvmm server service stopped.");
+        logger().info("Jvmm server service stopped.");
     }
 
     public boolean serverAvailable() {
         return ServerConfig.getRealBindPort() >= 0;
     }
 
+    private Logger logger() {
+        return LoggerFactory.getLogger(this.getClass());
+    }
+
     public static void main(String[] args) throws Throwable {
-        getInstance("port.bind=8700").start();
+//        getInstance("port.bind=8700").start();
+        long pid = PidUtil.findProcess(8700);
+        AttachProvider.getInstance().attachAgent(pid, "F:/Project/jvmm/agent/build/libs/jvmm-agent.jar",
+                "F:/Project/jvmm/server/build/libs/jvmm-server.jar", Configuration.newBuilder().build());
     }
 }
