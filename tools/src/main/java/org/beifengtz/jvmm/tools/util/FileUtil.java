@@ -4,11 +4,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +38,7 @@ public class FileUtil {
 
     private static final int SAFE_BYTE_LENGTH = 2048;
 
-    private static Logger logger(){
+    private static Logger logger() {
         return LoggerFactory.getLogger(FileUtil.class);
     }
 
@@ -104,6 +113,14 @@ public class FileUtil {
         }
     }
 
+    /**
+     * 从网络中读取数据并写入文件
+     *
+     * @param url      网络地址，http / https协议
+     * @param dir      文件目录
+     * @param fileName 文件名
+     * @return 是否成功
+     */
     public static boolean readFileFromNet(String url, String dir, String fileName) {
         File file = null;
         long start = System.currentTimeMillis();
@@ -135,7 +152,7 @@ public class FileUtil {
                 }
             }
             logger().info("Save file from network successful. use: {} ms, totalSize: {}.",
-                    System.currentTimeMillis() - start, elegantByteSize(totalSize, 2));
+                    System.currentTimeMillis() - start, parseByteSize(totalSize, 2));
 
             return true;
         } catch (Exception e) {
@@ -155,7 +172,7 @@ public class FileUtil {
      * @param bytes 单位为byte的大小
      * @param scale 保留小数位
      */
-    public static String elegantByteSize(long bytes, int scale) {
+    public static String parseByteSize(long bytes, int scale) {
         final String suffix;
         final double size;
         if (bytes >= 0 && bytes < 1024) {
@@ -224,9 +241,15 @@ public class FileUtil {
         return false;
     }
 
+    /**
+     * 删除文件，如果file是目录，递归删除目录下所有文件
+     *
+     * @param file 被删除的文件或文件目录
+     * @return 是否删除成功
+     */
     public static boolean delFile(File file) {
         if (!file.exists()) {
-            return false;
+            return true;
         }
 
         if (file.isDirectory()) {
@@ -236,5 +259,37 @@ public class FileUtil {
             }
         }
         return file.delete();
+    }
+
+    /**
+     * 读取文件成为字符串
+     *
+     * @param f 源文件
+     * @return hex string
+     * @throws IOException when file is not exists
+     */
+    public static String toHexStr(File f) throws IOException {
+        if (!f.exists()) {
+            throw new IOException("File not found: " + f);
+        }
+        byte[] bytes = Files.readAllBytes(f.toPath());
+        return CodingUtil.bytes2HexStr(bytes);
+    }
+
+    /**
+     * 将hex字符串转为bytes并写成文件
+     *
+     * @param to     target file
+     * @param hexStr hex string sources
+     * @throws IOException when write file failed
+     */
+    public static void saveFromHexStr(File to, String hexStr) throws IOException {
+        if (!to.getParentFile().exists()) {
+            to.getParentFile().mkdirs();
+        }
+        if (!to.exists()) {
+            to.createNewFile();
+        }
+        Files.write(to.toPath(), CodingUtil.hexStr2Bytes(hexStr));
     }
 }

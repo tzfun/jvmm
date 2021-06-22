@@ -6,22 +6,28 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.ExecutionError;
 import org.apache.commons.lang3.tuple.Pair;
 import org.beifengtz.jvmm.core.entity.result.JpsResult;
+import org.beifengtz.jvmm.tools.util.ExecuteNativeUtil;
 import org.beifengtz.jvmm.tools.util.IOUtil;
 import org.beifengtz.jvmm.tools.util.JavaEnvUtil;
 import org.beifengtz.jvmm.tools.util.PlatformUtil;
 import org.beifengtz.jvmm.tools.util.StringUtil;
+import org.beifengtz.jvmm.tools.util.SystemPropertyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -157,5 +163,43 @@ class DefaultJvmmExecutor implements JvmmExecutor {
             log.error(error, e);
         }
         return Pair.of(resList, error);
+    }
+
+    @Override
+    public File flameProfile(int pid, int sampleSeconds) throws IOException {
+        return this.flameProfile(pid, sampleSeconds, "cpu");
+    }
+
+    @Override
+    public File flameProfile(int pid, int sampleSeconds, String mode) throws IOException {
+        File f = new File(SystemPropertyUtil.get("user.dir").replaceAll("\\\\", "/") + "/data",
+                UUID.randomUUID() + ".svg");
+        this.flameProfile(f, pid, sampleSeconds, mode);
+        return f;
+    }
+
+    @Override
+    public void flameProfile(File to, int pid, int sampleSeconds) throws IOException {
+        this.flameProfile(to, pid, sampleSeconds, "cpu");
+    }
+
+    @Override
+    public void flameProfile(File to, int pid, int sampleSeconds, String mode) throws IOException {
+        URL resource = getClass().getResource("/profiler.sh");
+        if (resource != null) {
+            if (!to.getParentFile().exists()) {
+                to.getParentFile().mkdirs();
+            }
+            List<String> result = ExecuteNativeUtil.execute(new String[]{resource.getFile(),
+                    "-d", String.valueOf(sampleSeconds),
+                    "-f", to.toString(),
+                    "-e", mode,
+                    String.valueOf(pid)});
+            if (result.size() != 0) {
+                throw new RejectedExecutionException(result.toString());
+            }
+        } else {
+            throw new IOException("Script file not found: profiler.sh");
+        }
     }
 }

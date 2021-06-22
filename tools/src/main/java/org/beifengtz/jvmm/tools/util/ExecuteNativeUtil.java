@@ -8,11 +8,13 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
 
 /**
  * <p>
  * Description: TODO
  * </p>
+ *
  * <p>
  * Created in 15:46 2021/5/18
  *
@@ -35,7 +37,10 @@ public class ExecuteNativeUtil {
                     result.add(sc.nextLine());
                 }
             }
-            process.waitFor();
+            int code = process.waitFor();
+            if (code != 0) {
+                throw new Exception(result.toString());
+            }
             return result;
         } catch (Exception e) {
             log.error("Execute command with some problem: " + Arrays.toString(command), e);

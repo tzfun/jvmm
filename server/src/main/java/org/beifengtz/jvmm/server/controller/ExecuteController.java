@@ -8,7 +8,6 @@ import org.beifengtz.jvmm.convey.GlobalType;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.entity.result.JpsResult;
-import org.beifengtz.jvmm.server.ServerBootstrap;
 import org.beifengtz.jvmm.server.annotation.JvmmController;
 import org.beifengtz.jvmm.server.annotation.JvmmMapping;
 
