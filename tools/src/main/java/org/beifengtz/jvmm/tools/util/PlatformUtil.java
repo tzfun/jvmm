@@ -90,6 +90,13 @@ public class PlatformUtil {
         return "aarch_64".equals(arch);
     }
 
+    public static boolean isX86(){
+        return "x86_32".equals(arch);
+    }
+    public static boolean isX64(){
+        return "x86_64".equals(arch);
+    }
+
     private static String normalizeArch(String value) {
         value = normalize(value);
         if (value.matches("^(x8664|amd64|ia32e|em64t|x64)$")) {
