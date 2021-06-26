@@ -1,11 +1,15 @@
-package org.beifengtz.jvmm.core.entity.profiler;
+package org.beifengtz.jvmm.core;
 
+import org.beifengtz.jvmm.core.entity.profiler.ProfilerCounter;
+import org.beifengtz.jvmm.core.entity.profiler.ProfilerEvent;
+import org.beifengtz.jvmm.tools.factory.ExecutorFactory;
 import org.beifengtz.jvmm.tools.util.PlatformUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -16,11 +20,9 @@ import java.net.URL;
  *
  * @author beifengtz
  */
-public class FlameProfiler {
+public class AsyncProfiler {
 
-    private static final Logger log = LoggerFactory.getLogger(FlameProfiler.class);
-
-    private static FlameProfiler instance = null;
+    private static AsyncProfiler instance = null;
 
     private static String libFilePath;
 
@@ -44,36 +46,36 @@ public class FlameProfiler {
         }
 
         if (soPath != null) {
-            URL resource = FlameProfiler.class.getResource(soPath);
-            if (resource != null){
+            URL resource = AsyncProfiler.class.getResource(soPath);
+            if (resource != null) {
                 libFilePath = resource.getFile();
             }
         }
     }
 
-    private FlameProfiler(){
+    private AsyncProfiler() {
     }
 
-    public static synchronized FlameProfiler getInstance() {
+    public static synchronized AsyncProfiler getInstance() {
         return getInstance(null);
     }
 
-    public static synchronized FlameProfiler getInstance(String soFilePath) {
+    public static synchronized AsyncProfiler getInstance(String soFilePath) {
 
-        if (instance != null){
+        if (instance != null) {
             return instance;
         }
 
-        if (soFilePath != null){
+        if (soFilePath != null) {
             libFilePath = soFilePath;
         }
 
-        if (libFilePath == null){
+        if (libFilePath == null) {
             throw new IllegalStateException("Can not found libasyncProfiler.so, Only support Linux & Mac.");
         }
 
         System.load(libFilePath);
-        instance = new FlameProfiler();
+        instance = new AsyncProfiler();
         return instance;
     }
 
@@ -89,7 +91,7 @@ public class FlameProfiler {
         return execute0(command);
     }
 
-    public String dumpCollapsed(Counter counter) {
+    public String dumpCollapsed(ProfilerCounter counter) {
         try {
             return execute0("collapsed,counter=" + counter.name().toLowerCase());
         } catch (IOException e) {
@@ -121,6 +123,12 @@ public class FlameProfiler {
         filterThread(thread, false);
     }
 
+    /**
+     * 添加或移除指定线程，这些线程是被采样的对象
+     *
+     * @param thread 线程对象
+     * @param enable true-添加 false-移除
+     */
     private void filterThread(Thread thread, boolean enable) {
         if (thread == null) {
             filterThread0(null, enable);
@@ -135,22 +143,26 @@ public class FlameProfiler {
     }
 
     public native long getSamples();
+
     private native void start0(String event, long interval, boolean reset) throws IllegalStateException;
+
     private native void stop0() throws IllegalStateException;
+
     private native String execute0(String command) throws IllegalArgumentException, IOException;
+
     private native void filterThread0(Thread thread, boolean enable);
 
-    public static void main(String[] args) throws Exception{
-        FlameProfiler profiler = getInstance();
-        String version = profiler.execute("version");
-        System.out.println(version);
-        String result = profiler.execute("start,threads,alluser,allkernel,event=cpu");
-        System.out.println(result);
-//        result = profiler.dumpCollapsed(Counter.SAMPLES);
-        System.out.println(result);
-        System.out.println(profiler.getSamples());
-        Thread.sleep(10000);
-        result = profiler.execute("stop,file=/Users/beifengtz/Program/jvmm/core/src/test/test.svg,");
-        System.out.println(result);
+    public static void main(String[] args) throws Exception {
+        JvmmProfiler profiler = JvmmFactory.getProfiler();
+        System.out.println(profiler.isSystemSupported());
+        System.out.println(profiler.enabledEvents());
+        System.out.println(profiler.version());
+        System.out.println("status: " + profiler.status());
+        System.out.println("start to dump file...");
+        ScheduledFuture<?> future = (ScheduledFuture<?>) profiler.sample(new File("test.svg"),
+                ProfilerEvent.cpu, 10, TimeUnit.SECONDS);
+        System.out.println("status: " + profiler.status());
+        System.out.println(future.get(12, TimeUnit.SECONDS));
+        ExecutorFactory.shutdown();
     }
 }

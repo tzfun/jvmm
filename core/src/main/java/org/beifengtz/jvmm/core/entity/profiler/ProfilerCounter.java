@@ -9,7 +9,7 @@ package org.beifengtz.jvmm.core.entity.profiler;
  *
  * @author beifengtz
  */
-public enum Counter {
-    SAMPLES,
-    TOTAL
+public enum ProfilerCounter {
+    samples,
+    total
 }

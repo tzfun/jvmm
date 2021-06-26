@@ -3,11 +3,9 @@ package org.beifengtz.jvmm.core;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.util.concurrent.ExecutionError;
 import org.apache.commons.lang3.tuple.Pair;
 import org.beifengtz.jvmm.core.entity.result.JpsResult;
 import org.beifengtz.jvmm.tools.util.ExecuteNativeUtil;
-import org.beifengtz.jvmm.tools.util.IOUtil;
 import org.beifengtz.jvmm.tools.util.JavaEnvUtil;
 import org.beifengtz.jvmm.tools.util.PlatformUtil;
 import org.beifengtz.jvmm.tools.util.StringUtil;
@@ -17,7 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.net.URL;
 import java.util.ArrayList;
@@ -27,9 +24,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**

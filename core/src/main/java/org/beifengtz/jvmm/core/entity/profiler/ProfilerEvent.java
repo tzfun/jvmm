@@ -9,10 +9,10 @@ package org.beifengtz.jvmm.core.entity.profiler;
  *
  * @author beifengtz
  */
-public interface EventType {
-    String CPU = "cpu";
-    String ALLOC = "alloc";
-    String LOCK = "lock";
-    String WALL = "wall";
-    String ITIMER = "itimer";
+public enum ProfilerEvent {
+    cpu,
+    alloc,
+    lock,
+    wall,
+    itimer
 }
