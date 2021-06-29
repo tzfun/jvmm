@@ -268,7 +268,7 @@ public class FileUtil {
      * @return hex string
      * @throws IOException when file is not exists
      */
-    public static String toHexStr(File f) throws IOException {
+    public static String readToHexStr(File f) throws IOException {
         if (!f.exists()) {
             throw new IOException("File not found: " + f);
         }

@@ -14,6 +14,10 @@ import com.google.gson.JsonObject;
  */
 public interface JsonParsable {
 
+    static <T> T parseFrom(String json, Class<T> clazz) {
+        return new Gson().fromJson(json, clazz);
+    }
+
     default String toJsonStr() {
         return new Gson().toJson(this);
     }
