@@ -36,7 +36,7 @@ public class ProfilerCommander {
 
     public String build() {
         if (this.action == null) {
-            throw new IllegalArgumentException("Missing required arguments: action");
+            throw new IllegalArgumentException("Profiler commander missing required arguments: action");
         }
         StringBuilder sb = new StringBuilder();
         sb.append(this.action.name()).append(",");

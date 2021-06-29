@@ -19,5 +19,4 @@ public enum ProfilerAction {
     check,
     summary,
     collapsed
-
 }

@@ -1,7 +1,5 @@
 package org.beifengtz.jvmm.core;
 
-import com.google.gson.Gson;
-
 /**
  * <p>
  * Description: TODO
@@ -36,9 +34,5 @@ public class JvmmFactory {
             jvmmProfiler = new DefaultJvmmProfiler();
         }
         return jvmmProfiler;
-    }
-
-    public static <T> T getEntity(String json, Class<T> clazz) {
-        return new Gson().fromJson(json, clazz);
     }
 }

@@ -8,7 +8,7 @@ import org.beifengtz.jvmm.tools.util.PlatformUtil;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -91,30 +91,6 @@ public class AsyncProfiler {
         return execute0(command);
     }
 
-    public String dumpCollapsed(ProfilerCounter counter) {
-        try {
-            return execute0("collapsed,counter=" + counter.name().toLowerCase());
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public String dumpTraces(int maxTraces) {
-        try {
-            return execute0("summary,traces=" + maxTraces);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public String dumpFlat(int maxMethods) {
-        try {
-            return execute0("summary,flat=" + maxMethods);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
     public void addThread(Thread thread) {
         filterThread(thread, true);
     }
@@ -159,7 +135,7 @@ public class AsyncProfiler {
         System.out.println(profiler.version());
         System.out.println("status: " + profiler.status());
         System.out.println("start to dump file...");
-        ScheduledFuture<?> future = (ScheduledFuture<?>) profiler.sample(new File("test.svg"),
+        Future<?> future = profiler.sample(new File("test.svg"),
                 ProfilerEvent.cpu, 10, TimeUnit.SECONDS);
         System.out.println("status: " + profiler.status());
         System.out.println(future.get(12, TimeUnit.SECONDS));
