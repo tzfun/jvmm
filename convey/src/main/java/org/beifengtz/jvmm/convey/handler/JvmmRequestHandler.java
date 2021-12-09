@@ -4,7 +4,6 @@ import com.google.common.base.Stopwatch;
 import com.google.gson.JsonSyntaxException;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.util.internal.logging.InternalLogger;
 import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
 import org.beifengtz.jvmm.common.exception.InvalidMsgException;
 import org.beifengtz.jvmm.convey.GlobalStatus;
@@ -12,6 +11,7 @@ import org.beifengtz.jvmm.convey.GlobalType;
 import org.beifengtz.jvmm.convey.channel.JvmmSocketChannel;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -98,5 +98,5 @@ public abstract class JvmmRequestHandler extends SimpleChannelInboundHandler<Str
         ((JvmmSocketChannel) ctx.channel()).handleUserEvent(evt);
     }
 
-    public abstract InternalLogger logger();
+    public abstract Logger logger();
 }

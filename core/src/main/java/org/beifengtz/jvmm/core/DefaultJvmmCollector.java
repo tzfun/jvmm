@@ -10,9 +10,9 @@ import org.beifengtz.jvmm.core.entity.mx.ProcessInfo;
 import org.beifengtz.jvmm.core.entity.mx.SystemDynamicInfo;
 import org.beifengtz.jvmm.core.entity.mx.SystemStaticInfo;
 import org.beifengtz.jvmm.core.entity.mx.ThreadDynamicInfo;
+import org.beifengtz.jvmm.tools.factory.LoggerFactory;
 import org.beifengtz.jvmm.tools.util.PidUtil;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.management.ClassLoadingMXBean;
 import java.lang.management.CompilationMXBean;
@@ -43,7 +43,7 @@ import java.util.TimeZone;
  */
 class DefaultJvmmCollector implements JvmmCollector {
 
-    private static final Logger log = LoggerFactory.getLogger(DefaultJvmmCollector.class);
+    private static final Logger log = LoggerFactory.logger(DefaultJvmmCollector.class);
 
     DefaultJvmmCollector() {
     }

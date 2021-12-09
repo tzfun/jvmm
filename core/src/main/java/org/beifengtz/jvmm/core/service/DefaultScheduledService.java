@@ -1,8 +1,8 @@
 package org.beifengtz.jvmm.core.service;
 
 import org.beifengtz.jvmm.tools.factory.ExecutorFactory;
+import org.beifengtz.jvmm.tools.factory.LoggerFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -20,7 +20,8 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author beifengtz
  */
 public class DefaultScheduledService implements ScheduleService {
-    private static final Logger log = LoggerFactory.getLogger(DefaultScheduledService.class);
+
+    private static final Logger log = LoggerFactory.logger(DefaultScheduledService.class);
 
     private final ScheduledExecutorService executor;
     private final AtomicReference<Runnable> task = new AtomicReference<>();

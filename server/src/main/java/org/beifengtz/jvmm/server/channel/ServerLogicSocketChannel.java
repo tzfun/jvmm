@@ -1,8 +1,8 @@
 package org.beifengtz.jvmm.server.channel;
 
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.util.internal.logging.InternalLogger;
-import io.netty.util.internal.logging.InternalLoggerFactory;
+import org.beifengtz.jvmm.tools.factory.LoggerFactory;
+import org.slf4j.Logger;
 
 import java.nio.channels.SocketChannel;
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class ServerLogicSocketChannel extends NioServerSocketChannel {
 
-    private static final InternalLogger logger = InternalLoggerFactory.getInstance(ServerLogicSocketChannel.class);
+    private static final Logger log = LoggerFactory.logger(ServerLogicSocketChannel.class);
 
     @Override
     protected int doReadMessages(List<Object> buf) throws Exception {
@@ -28,7 +28,7 @@ public class ServerLogicSocketChannel extends NioServerSocketChannel {
             buf.add(new LogicSocketChannel(this, ch));
             return 1;
         } catch (Throwable t) {
-            logger.warn("Failed to create a new channel from an accepted socket.", t);
+            log.warn("Failed to create a new channel from an accepted socket.", t);
             if (ch != null) {
                 ch.close();
             }

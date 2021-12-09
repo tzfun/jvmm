@@ -1,7 +1,7 @@
 package org.beifengtz.jvmm.tools.util;
 
+import org.beifengtz.jvmm.tools.factory.LoggerFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.BufferedReader;
@@ -39,7 +39,7 @@ public class FileUtil {
     private static final int SAFE_BYTE_LENGTH = 2048;
 
     private static Logger logger() {
-        return LoggerFactory.getLogger(FileUtil.class);
+        return LoggerFactory.logger(FileUtil.class);
     }
 
     public static void writeByteArrayToFile(File file, byte[] data) throws IOException {

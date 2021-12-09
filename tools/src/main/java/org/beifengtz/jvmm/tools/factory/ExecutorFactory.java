@@ -3,7 +3,6 @@ package org.beifengtz.jvmm.tools.factory;
 import org.beifengtz.jvmm.tools.util.StringUtil;
 import org.beifengtz.jvmm.tools.util.SystemPropertyUtil;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -21,7 +20,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author beifengtz
  */
 public class ExecutorFactory {
-    private static final Logger log = LoggerFactory.getLogger(ExecutorFactory.class);
+
+    private static final Logger log = LoggerFactory.logger(ExecutorFactory.class);
 
     private static volatile ScheduledExecutorService SCHEDULE_THREAD_POOL;
     private static volatile ExecutorService FIXED_THREAD_POOL;

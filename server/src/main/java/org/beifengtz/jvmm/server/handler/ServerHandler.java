@@ -1,8 +1,9 @@
 package org.beifengtz.jvmm.server.handler;
 
 import io.netty.util.internal.logging.InternalLogger;
-import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.convey.handler.JvmmRequestHandler;
+import org.beifengtz.jvmm.tools.factory.LoggerFactory;
+import org.slf4j.Logger;
 
 /**
  * <p>
@@ -14,10 +15,10 @@ import org.beifengtz.jvmm.convey.handler.JvmmRequestHandler;
  * @author beifengtz
  */
 public class ServerHandler extends JvmmRequestHandler {
-    private static final InternalLogger logger = InternalLoggerFactory.getInstance(ServerHandler.class);
+    private static final Logger logger = LoggerFactory.logger(ServerHandler.class);
 
     @Override
-    public InternalLogger logger() {
+    public Logger logger() {
         return logger;
     }
 }

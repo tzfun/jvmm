@@ -6,12 +6,14 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import org.beifengtz.jvmm.convey.channel.StringChannelInitializer;
 import org.beifengtz.jvmm.server.channel.ServerLogicSocketChannel;
 import org.beifengtz.jvmm.server.handler.ServerHandlerProvider;
+import org.beifengtz.jvmm.server.logger.DefaultILoggerFactory;
+import org.beifengtz.jvmm.tools.factory.LoggerFactory;
+import org.beifengtz.jvmm.tools.logger.LoggerLevel;
 import org.beifengtz.jvmm.tools.util.FileUtil;
 import org.beifengtz.jvmm.tools.util.PidUtil;
 import org.beifengtz.jvmm.tools.util.PlatformUtil;
 import org.beifengtz.jvmm.tools.util.SystemPropertyUtil;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +37,7 @@ import java.util.concurrent.TimeUnit;
 public class ServerBootstrap {
 
     private static final int BIND_LIMIT_TIMES = 20;
-
+    public static final String AGENT_BOOT_CLASS = "org.beifengtz.jvmm.agent.AgentBootStrap";
     private static volatile ServerBootstrap bootstrap;
 
     private Instrumentation instrumentation;
@@ -62,12 +64,12 @@ public class ServerBootstrap {
     }
 
     public synchronized static ServerBootstrap getInstance(Instrumentation inst, String args) throws Throwable {
-
         if (bootstrap != null) {
             return bootstrap;
         }
 
         Configuration config = parseConfig(args);
+        initLogger(config.getLogLevel());
 
         bootstrap = new ServerBootstrap(inst);
         ServerConfig.setConfiguration(config);
@@ -75,8 +77,37 @@ public class ServerBootstrap {
         return bootstrap;
     }
 
+    private static void initLogger(String levelStr) {
+        String lvl = levelStr.toUpperCase(Locale.ROOT);
+        LoggerLevel level = LoggerLevel.INFO;
+
+        switch (lvl) {
+            case "WARN":
+                level = LoggerLevel.WARN;
+                break;
+            case "DEBUG":
+                level = LoggerLevel.DEBUG;
+                break;
+            case "ERROR":
+                level = LoggerLevel.ERROR;
+                break;
+            case "OFF":
+                level = LoggerLevel.OFF;
+                break;
+            case "TRACE":
+                level = LoggerLevel.TRACE;
+                break;
+        }
+
+//        java.util.logging.Logger.getGlobal().setLevel(l1);
+
+        DefaultILoggerFactory defaultILoggerFactory = DefaultILoggerFactory.newInstance(level);
+        io.netty.util.internal.logging.InternalLoggerFactory.setDefaultFactory(defaultILoggerFactory);
+        LoggerFactory.register(defaultILoggerFactory);
+    }
+
     private static Logger logger() {
-        return LoggerFactory.getLogger(ServerBootstrap.class);
+        return LoggerFactory.logger(ServerBootstrap.class);
     }
 
     /**
@@ -208,20 +239,29 @@ public class ServerBootstrap {
             shutdownHook = null;
         }
         logger().info("Jvmm server service stopped.");
+
+        try {
+            Class<?> bootClazz = Thread.currentThread().getContextClassLoader().loadClass(AGENT_BOOT_CLASS);
+            bootClazz.getMethod("serverStop").invoke(null);
+        } catch (Throwable e) {
+            logger().error("Invoke agent boot method(#serverStop) failed", e);
+        }
     }
 
     public boolean serverAvailable() {
         return ServerConfig.getRealBindPort() >= 0;
     }
 
+    /**
+     * just for test
+     */
     public static void main(String[] args) throws Throwable {
-        //  just for test
-        int tp = 80;
+        int tp = 9191;
         String homePath = SystemPropertyUtil.get("user.dir").replaceAll("\\\\", "/");
         String agentJar = homePath + "/agent/build/libs/jvmm-agent.jar";
         String serverJar = homePath + "/server/build/libs/jvmm-server.jar";
 
-        long pid = PidUtil.findProcess(tp);
+        long pid = PidUtil.findProcessByPort(tp);
 
         Configuration config = Configuration.newBuilder().setLogLevel("debug").build();
         AttachProvider.getInstance().attachAgent(pid, agentJar, serverJar, config);

@@ -1,9 +1,8 @@
 package org.beifengtz.jvmm.tools.util;
 
+import org.beifengtz.jvmm.tools.factory.LoggerFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.management.RuntimeErrorException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ import java.util.List;
  */
 public class JavaEnvUtil {
 
-    private static final Logger log = LoggerFactory.getLogger(JavaEnvUtil.class);
+    private static final Logger log = LoggerFactory.logger(JavaEnvUtil.class);
 
     private static volatile String JAVA_HOME = null;
 

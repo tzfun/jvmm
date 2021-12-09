@@ -18,7 +18,7 @@ public class TestPlatform {
 
     @Test
     public void testProcessFind() {
-        long pid = PidUtil.findProcess(8700);
+        long pid = PidUtil.findProcessByPort(8700);
         System.out.println(pid);
     }
 

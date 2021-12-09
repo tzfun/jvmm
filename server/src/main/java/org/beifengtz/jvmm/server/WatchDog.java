@@ -1,8 +1,5 @@
 package org.beifengtz.jvmm.server;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * <p>
  * Description: TODO 本类负责搜索物理机内可用的client，及向目标VM attach agent
@@ -13,7 +10,6 @@ import org.slf4j.LoggerFactory;
  * @author beifengtz
  */
 public class WatchDog {
-    private static final Logger log = LoggerFactory.getLogger(WatchDog.class);
 
     private static volatile WatchDog INSTANCE;
 

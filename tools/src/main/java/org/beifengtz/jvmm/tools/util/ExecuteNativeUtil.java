@@ -1,14 +1,13 @@
 package org.beifengtz.jvmm.tools.util;
 
+import org.beifengtz.jvmm.tools.factory.LoggerFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
 
 /**
  * <p>
@@ -22,7 +21,7 @@ import java.util.concurrent.ExecutionException;
  */
 public class ExecuteNativeUtil {
 
-    private static final Logger log = LoggerFactory.getLogger(ExecuteNativeUtil.class);
+    private static final Logger log = LoggerFactory.logger(ExecuteNativeUtil.class);
 
     public static List<String> execute(String command) {
         return execute(command.split(" "));

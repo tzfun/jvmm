@@ -2,11 +2,11 @@ package org.beifengtz.jvmm.server;
 
 import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
+import org.beifengtz.jvmm.tools.factory.LoggerFactory;
 import org.beifengtz.jvmm.tools.util.ClassLoaderUtil;
 import org.beifengtz.jvmm.tools.util.JavaEnvUtil;
 import org.beifengtz.jvmm.tools.util.JavaVersionUtils;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -24,7 +24,7 @@ import java.util.Properties;
  */
 public class AttachProvider {
 
-    private static final Logger log = LoggerFactory.getLogger(AttachProvider.class);
+    private static final Logger log = LoggerFactory.logger(AttachProvider.class);
 
     private static volatile AttachProvider INSTANCE;
 

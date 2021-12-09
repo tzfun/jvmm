@@ -5,13 +5,13 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.tuple.Pair;
 import org.beifengtz.jvmm.core.entity.result.JpsResult;
+import org.beifengtz.jvmm.tools.factory.LoggerFactory;
 import org.beifengtz.jvmm.tools.util.ExecuteNativeUtil;
 import org.beifengtz.jvmm.tools.util.JavaEnvUtil;
 import org.beifengtz.jvmm.tools.util.PlatformUtil;
 import org.beifengtz.jvmm.tools.util.StringUtil;
 import org.beifengtz.jvmm.tools.util.SystemPropertyUtil;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +38,7 @@ import java.util.concurrent.TimeoutException;
  */
 class DefaultJvmmExecutor implements JvmmExecutor {
 
-    private static final Logger log = LoggerFactory.getLogger(DefaultJvmmExecutor.class);
+    private static final Logger log = LoggerFactory.logger(DefaultJvmmExecutor.class);
 
     private static final Set<String> ENABLED_PROGRAM_NAME = ImmutableSet.of("jps");
 

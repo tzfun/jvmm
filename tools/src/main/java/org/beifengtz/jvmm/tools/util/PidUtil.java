@@ -33,7 +33,7 @@ public class PidUtil {
      * @param port 端口
      * @return 进程pid，如未找到返回-1
      */
-    public static long findProcess(int port) {
+    public static long findProcessByPort(int port) {
         long processId = -1;
         if (PlatformUtil.isWindows()) {
             List<String> result = ExecuteNativeUtil.execute("netstat -aon");

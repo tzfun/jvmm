@@ -1,14 +1,13 @@
 package org.beifengtz.jvmm.tools.util;
 
 import org.beifengtz.jvmm.tools.PlatformEnum;
+import org.beifengtz.jvmm.tools.factory.LoggerFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.net.UnknownHostException;
 import java.util.Locale;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -23,7 +22,7 @@ import java.util.concurrent.RejectedExecutionException;
  */
 public class PlatformUtil {
 
-    private static final Logger log = LoggerFactory.getLogger(PlatformUtil.class);
+    private static final Logger log = LoggerFactory.logger(PlatformUtil.class);
 
     private static final String OPERATING_SYSTEM_NAME = SystemPropertyUtil.get("os.name").toLowerCase(Locale.ENGLISH);
     private static final String OPERATING_SYSTEM_ARCH = SystemPropertyUtil.get("os.arch").toLowerCase(Locale.ENGLISH);
@@ -90,10 +89,11 @@ public class PlatformUtil {
         return "aarch_64".equals(arch);
     }
 
-    public static boolean isX86(){
+    public static boolean isX86() {
         return "x86_32".equals(arch);
     }
-    public static boolean isX64(){
+
+    public static boolean isX64() {
         return "x86_64".equals(arch);
     }
 
@@ -172,7 +172,7 @@ public class PlatformUtil {
      */
     public static boolean portAvailable(int port) {
         try {
-            long process = PidUtil.findProcess(port);
+            long process = PidUtil.findProcessByPort(port);
             if (process >= 0) {
                 return false;
             }

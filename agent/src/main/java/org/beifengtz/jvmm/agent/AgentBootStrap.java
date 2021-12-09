@@ -1,6 +1,8 @@
 package org.beifengtz.jvmm.agent;
 
+import com.google.gson.Gson;
 import org.beifengtz.jvmm.tools.JvmmAgentClassLoader;
+import org.beifengtz.jvmm.tools.logger.LoggerEvent;
 import org.beifengtz.jvmm.tools.util.ClassLoaderUtil;
 import org.beifengtz.jvmm.tools.util.FileUtil;
 import org.slf4j.Logger;
@@ -18,6 +20,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.jar.JarFile;
 
 /**
@@ -36,10 +41,12 @@ public class AgentBootStrap {
     private static final String JVMM_SERVER_JAR = "jvmm-server.jar";
     private static final String SERVER_MAIN_CLASS = "org.beifengtz.jvmm.server.ServerBootstrap";
 
+    private static final AtomicBoolean isRunning = new AtomicBoolean(true);
     private static volatile JvmmAgentClassLoader agentClassLoader;
     private static volatile boolean premainAttached;
 
     private static ClassLoader springClassLoader;
+    private static BlockingQueue<LoggerEvent> logQueue = new LinkedBlockingQueue<>();
 
     static {
         try {
@@ -172,7 +179,7 @@ public class AgentBootStrap {
             }
             premainAttached = true;
         }
-        log.info("Agent attached by {}.", type);
+        log.info("Jvm monitor Agent attached by {}.", type);
         try {
             Class<?> configClazz = Class.forName("org.beifengtz.jvmm.server.ServerConfig");
             Method isInited = configClazz.getMethod("isInited");
@@ -277,6 +284,9 @@ public class AgentBootStrap {
                 agentClassLoader = new JvmmAgentClassLoader(urlList.toArray(new URL[0]), ClassLoader.getSystemClassLoader());
             }
 
+            //  启动日志打印代理消费线程
+            runLoggerConsumer();
+
             Thread bindThread = new Thread(() -> {
                 try {
                     for (URL url : needPreLoad) {
@@ -296,6 +306,101 @@ public class AgentBootStrap {
             log.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * 为了应用宿主程序的日志配置，启动一个日志消费者线程去Agent Server内部的处理日志
+     */
+    private static void runLoggerConsumer() {
+        Thread thread = new Thread(() -> {
+            while (isRunning.get()) {
+                try {
+                    LoggerEvent info = logQueue.take();
+                    Logger logger = LoggerFactory.getLogger(info.getName());
+                    switch (info.getType()) {
+                        case TRACE: {
+                            if (info.getArgs() == null) {
+                                if (info.getThrowable() == null) {
+                                    logger.trace(info.getMsg());
+                                } else {
+                                    logger.trace(info.getMsg(), info.getThrowable());
+                                }
+                            } else {
+                                logger.trace(info.getMsg(), info.getArgs());
+                            }
+                        }
+                        break;
+                        case INFO: {
+                            if (info.getArgs() == null) {
+                                if (info.getThrowable() == null) {
+                                    logger.info(info.getMsg());
+                                } else {
+                                    logger.info(info.getMsg(), info.getThrowable());
+                                }
+                            } else {
+                                logger.info(info.getMsg(), info.getArgs());
+                            }
+                        }
+                        break;
+                        case DEBUG: {
+                            if (info.getArgs() == null) {
+                                if (info.getThrowable() == null) {
+                                    logger.debug(info.getMsg());
+                                } else {
+                                    logger.debug(info.getMsg(), info.getThrowable());
+                                }
+                            } else {
+                                logger.debug(info.getMsg(), info.getArgs());
+                            }
+                        }
+                        break;
+                        case WARN: {
+                            if (info.getArgs() == null) {
+                                if (info.getThrowable() == null) {
+                                    logger.warn(info.getMsg());
+                                } else {
+                                    logger.warn(info.getMsg(), info.getThrowable());
+                                }
+                            } else {
+                                logger.warn(info.getMsg(), info.getArgs());
+                            }
+                        }
+                        break;
+                        case ERROR: {
+                            if (info.getArgs() == null) {
+                                if (info.getThrowable() == null) {
+                                    logger.error(info.getMsg());
+                                } else {
+                                    logger.error(info.getMsg(), info.getThrowable());
+                                }
+                            } else {
+                                logger.error(info.getMsg(), info.getArgs());
+                            }
+                        }
+                        break;
+                    }
+                } catch (Throwable e) {
+                    log.error("Consume log failed", e);
+                }
+            }
+        });
+        thread.start();
+        log.info("Log agent thread started successfully.");
+    }
+
+    /**
+     * 由Agent Server反射调用
+     *
+     * 这里的参数不能直接用LoggerEvent，两个ClassLoader上下文不一样，会出现找不到方法的情况
+     */
+    public static void logger(String event, Throwable t) {
+        LoggerEvent info = new Gson().fromJson(event, LoggerEvent.class);
+        info.setThrowable(t);
+        logQueue.offer(info);
+    }
+
+    public static void serverStop() {
+        isRunning.set(false);
     }
 
     private static void bind(Instrumentation inst, ClassLoader classLoader, String args) throws Throwable {
