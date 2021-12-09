@@ -256,14 +256,17 @@ public class ServerBootstrap {
      * just for test
      */
     public static void main(String[] args) throws Throwable {
-        int tp = 9191;
+        int tp = 8090;
         String homePath = SystemPropertyUtil.get("user.dir").replaceAll("\\\\", "/");
         String agentJar = homePath + "/agent/build/libs/jvmm-agent.jar";
         String serverJar = homePath + "/server/build/libs/jvmm-server.jar";
 
         long pid = PidUtil.findProcessByPort(tp);
-
-        Configuration config = Configuration.newBuilder().setLogLevel("debug").build();
-        AttachProvider.getInstance().attachAgent(pid, agentJar, serverJar, config);
+        if (pid > 0) {
+            Configuration config = Configuration.newBuilder().setLogLevel("info").build();
+            AttachProvider.getInstance().attachAgent(pid, agentJar, serverJar, config);
+        } else {
+            System.err.println("Can not found any program listen port " + tp);
+        }
     }
 }

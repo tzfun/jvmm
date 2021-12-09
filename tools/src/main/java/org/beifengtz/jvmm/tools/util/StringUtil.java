@@ -28,7 +28,7 @@ public class StringUtil {
     }
 
     public static boolean isEmpty(String str) {
-        return Objects.isNull(str) || str.isEmpty();
+        return Objects.isNull(str) || str.trim().isEmpty();
     }
 
     public static boolean nonEmpty(String str){

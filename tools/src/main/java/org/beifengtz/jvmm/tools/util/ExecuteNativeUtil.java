@@ -36,10 +36,7 @@ public class ExecuteNativeUtil {
                     result.add(sc.nextLine());
                 }
             }
-            int code = process.waitFor();
-            if (code != 0) {
-                throw new Exception(result.toString());
-            }
+            process.waitFor();
             return result;
         } catch (Exception e) {
             log.error("Execute command with some problem: " + Arrays.toString(command), e);
