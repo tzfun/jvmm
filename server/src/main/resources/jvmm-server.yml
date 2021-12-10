@@ -14,7 +14,3 @@ security:
 
 log:
   level: info
-  pattern: %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%-5level] %logger{50} - %msg%n
-  path: logs/
-  fileName: jvmm-server.log
-  maxFileSize: 10MB

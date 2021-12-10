@@ -22,10 +22,6 @@ public class ServerHandlerProvider implements HandlerProvider {
     private ServerHandlerProvider() {
     }
 
-    public ServerHandlerProvider(int idleTime) {
-        this(idleTime, HandlerProvider.EXECUTOR_GROUP);
-    }
-
     public ServerHandlerProvider(int idleTime, EventExecutorGroup group) {
         this(idleTime, "jvmmServerHandler", group);
     }

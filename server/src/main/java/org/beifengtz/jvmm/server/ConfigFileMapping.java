@@ -18,6 +18,7 @@ public class ConfigFileMapping {
     private Map<String, String> http = new HashMap<>();
     private Map<String, String> security = new HashMap<>();
     private Map<String, String> log = new HashMap<>();
+    private int workThread;
 
     public String getName() {
         return name;
@@ -57,5 +58,14 @@ public class ConfigFileMapping {
 
     public void setLog(Map<String, String> log) {
         this.log = log;
+    }
+
+    public int getWorkThread() {
+        return workThread;
+    }
+
+    public ConfigFileMapping setWorkThread(int workThread) {
+        this.workThread = workThread;
+        return this;
     }
 }

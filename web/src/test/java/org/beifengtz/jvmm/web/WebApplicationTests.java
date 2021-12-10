@@ -1,7 +1,8 @@
 package org.beifengtz.jvmm.web;
 
-import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.EventLoopGroup;
 import org.beifengtz.jvmm.convey.GlobalType;
+import org.beifengtz.jvmm.convey.channel.JvmmChannelInitializer;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,7 @@ class WebApplicationTests {
 
     @Test
     void contextLoads() throws Exception {
-        NioEventLoopGroup group = new NioEventLoopGroup();
+        EventLoopGroup group = JvmmChannelInitializer.newEventLoopGroup(1);
         JvmmConnector client = JvmmConnector.newInstance("127.0.0.1", 5010, true, group);
 
         CountDownLatch latch = new CountDownLatch(5);
@@ -39,6 +40,8 @@ class WebApplicationTests {
             client.send(JvmmRequest.create().setType(GlobalType.JVMM_TYPE_STOP_TIMER_COLLECT_MEMORY_INFO));
             client.close();
             group.shutdownGracefully();
+        } else {
+            System.err.println("Failed to connect target server");
         }
     }
 

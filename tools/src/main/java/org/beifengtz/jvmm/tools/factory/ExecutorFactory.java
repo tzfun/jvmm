@@ -35,7 +35,7 @@ public class ExecutorFactory {
     }
 
     private static int getProcessors() {
-        return SystemPropertyUtil.getInt("app.jvmm.threads", 2 * Runtime.getRuntime().availableProcessors());
+        return SystemPropertyUtil.getInt("jvmm.workThread", Runtime.getRuntime().availableProcessors());
     }
 
     public static ScheduledExecutorService getScheduleThreadPool() {

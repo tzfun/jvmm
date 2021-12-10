@@ -1,15 +1,21 @@
 package org.beifengtz.jvmm.convey.handler;
 
 import com.google.common.base.Stopwatch;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.TooLongFrameException;
+import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateEvent;
 import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
 import org.beifengtz.jvmm.common.exception.InvalidMsgException;
 import org.beifengtz.jvmm.convey.GlobalStatus;
 import org.beifengtz.jvmm.convey.GlobalType;
-import org.beifengtz.jvmm.convey.channel.JvmmSocketChannel;
+import org.beifengtz.jvmm.convey.auth.JvmmBubble;
+import org.beifengtz.jvmm.convey.auth.JvmmBubbleDecrypt;
+import org.beifengtz.jvmm.convey.auth.JvmmBubbleEncrypt;
+import org.beifengtz.jvmm.convey.channel.JvmmChannelInitializer;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
@@ -27,23 +33,41 @@ import java.util.concurrent.TimeUnit;
  *
  * @author beifengtz
  */
-public abstract class JvmmRequestHandler extends SimpleChannelInboundHandler<String> {
+public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<String> {
+
+    protected final JvmmBubble bubble = new JvmmBubble();
 
     private final Stopwatch stopWatch = Stopwatch.createUnstarted();
 
-    public JvmmRequestHandler() {
+    public JvmmChannelHandler() {
         super(false);
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        ((JvmmSocketChannel) ctx.channel()).handleActive(ctx.executor());
+        int seed = bubble.generateSeed();
+        JsonObject data = new JsonObject();
+        data.addProperty("seed", seed);
+        data.addProperty("key", bubble.getKey());
+
+        JvmmResponse bubbleResp = JvmmResponse.create()
+                .setType(GlobalType.JVMM_TYPE_BUBBLE)
+                .setStatus(GlobalStatus.JVMM_STATUS_OK)
+                .setData(data);
+        ctx.writeAndFlush(bubbleResp.serialize());
+
+        ctx.pipeline()
+                .addAfter(ctx.executor(), JvmmChannelInitializer.STRING_DECODER_HANDLER,
+                        JvmmChannelInitializer.JVMM_BUBBLE_ENCODER, new JvmmBubbleEncrypt(seed, bubble.getKey()))
+                .addAfter(ctx.executor(), JvmmChannelInitializer.STRING_DECODER_HANDLER,
+                        JvmmChannelInitializer.JVMM_BUBBLE_DECODER, new JvmmBubbleDecrypt(seed, bubble.getKey()));
+
         super.channelActive(ctx);
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        ((JvmmSocketChannel) ctx.channel()).cleanup();
+        cleanup(ctx);
         super.channelInactive(ctx);
     }
 
@@ -61,7 +85,7 @@ public abstract class JvmmRequestHandler extends SimpleChannelInboundHandler<Str
                         .setStatus(GlobalStatus.JVMM_STATUS_OK)
                         .serialize());
             } else {
-                ((JvmmSocketChannel) ctx.channel()).handleRequest(request);
+                handleRequest(ctx, request);
             }
             if (!request.isHeartbeat()) {
                 logger().debug(String.format("%s %dms", request.getType(), stopWatch.stop().elapsed(TimeUnit.MILLISECONDS)));
@@ -100,8 +124,19 @@ public abstract class JvmmRequestHandler extends SimpleChannelInboundHandler<Str
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) {
-        ((JvmmSocketChannel) ctx.channel()).handleUserEvent(evt);
+        if (evt instanceof IdleStateEvent) {
+            IdleStateEvent event = (IdleStateEvent) evt;
+            if (event.state() == IdleState.READER_IDLE) {
+                handleIdle(ctx);
+            }
+        }
     }
 
     public abstract Logger logger();
+
+    public abstract void handleRequest(ChannelHandlerContext ctx, JvmmRequest reqMsg);
+
+    public abstract void handleIdle(ChannelHandlerContext ctx);
+
+    public abstract void cleanup(ChannelHandlerContext ctx) throws Exception;
 }

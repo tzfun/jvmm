@@ -11,7 +11,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.DefaultPromise;
 import io.netty.util.concurrent.Future;
 import org.beifengtz.jvmm.common.exception.SocketExecuteException;
@@ -19,12 +18,12 @@ import org.beifengtz.jvmm.convey.GlobalStatus;
 import org.beifengtz.jvmm.convey.GlobalType;
 import org.beifengtz.jvmm.convey.auth.JvmmBubbleDecrypt;
 import org.beifengtz.jvmm.convey.auth.JvmmBubbleEncrypt;
-import org.beifengtz.jvmm.convey.channel.StringChannelInitializer;
+import org.beifengtz.jvmm.convey.channel.JvmmChannelInitializer;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.handler.HandlerProvider;
+import org.beifengtz.jvmm.tools.factory.LoggerFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -45,7 +44,7 @@ import java.util.concurrent.TimeoutException;
  */
 public class JvmmConnector {
 
-    private static final Logger logger = LoggerFactory.getLogger(JvmmConnector.class);
+    private static final Logger logger = LoggerFactory.logger(JvmmConnector.class);
 
     private String host;
     private int port;
@@ -122,10 +121,10 @@ public class JvmmConnector {
                 int seed = data.get("seed").getAsInt();
 
                 ctx.pipeline()
-                        .addAfter(ctx.executor(), StringChannelInitializer.STRING_DECODER_HANDLER,
-                                StringChannelInitializer.JVMM_BUBBLE_ENCODER, new JvmmBubbleEncrypt(seed, key))
-                        .addAfter(ctx.executor(), StringChannelInitializer.STRING_DECODER_HANDLER,
-                                StringChannelInitializer.JVMM_BUBBLE_DECODER, new JvmmBubbleDecrypt(seed, key));
+                        .addAfter(ctx.executor(), JvmmChannelInitializer.STRING_DECODER_HANDLER,
+                                JvmmChannelInitializer.JVMM_BUBBLE_ENCODER, new JvmmBubbleEncrypt(seed, key))
+                        .addAfter(ctx.executor(), JvmmChannelInitializer.STRING_DECODER_HANDLER,
+                                JvmmChannelInitializer.JVMM_BUBBLE_DECODER, new JvmmBubbleDecrypt(seed, key));
 
                 if (authAccount != null && authPassword != null) {
                     JsonObject reqData = new JsonObject();
@@ -189,7 +188,7 @@ public class JvmmConnector {
         if (state != State.CONNECTED) {
             openPromise = new DefaultPromise<>(workGroup.next());
             Bootstrap b = new Bootstrap();
-            b.group(workGroup).channel(NioSocketChannel.class).handler(new StringChannelInitializer(new SocketResponseHandler()));
+            b.group(workGroup).channel(JvmmChannelInitializer.channelClass(workGroup)).handler(new JvmmChannelInitializer(new SocketResponseHandler()));
             channel = b.connect(host, port).channel();
             channel.closeFuture().addListener(future -> state = State.CLOSED);
             state = State.CONNECTED;
@@ -209,8 +208,27 @@ public class JvmmConnector {
 
     public String ping() {
         try {
-            waitForResponse(workGroup, JvmmRequest.create().setType(GlobalType.JVMM_TYPE_PING),
-                    GlobalType.JVMM_TYPE_PONG.name(), 3, TimeUnit.SECONDS);
+            JvmmRequest request = JvmmRequest.create().setType(GlobalType.JVMM_TYPE_PING);
+
+            final DefaultPromise<JvmmResponse> promise = new DefaultPromise<>(workGroup.next());
+            MsgReceiveListener listener = response -> {
+                String waitFor = GlobalType.JVMM_TYPE_PONG.name();
+
+                if (waitFor.equals(response.getType())) {
+                    if (GlobalStatus.JVMM_STATUS_OK.name().equals(response.getStatus())) {
+                        promise.trySuccess(response);
+                    } else {
+                        promise.tryFailure(new Exception(response.getMessage()));
+                    }
+                }
+            };
+            registerListener(listener);
+            try {
+                send(request);
+                promise.get(3, TimeUnit.SECONDS);
+            } finally {
+                removeListener(listener);
+            }
         } catch (Exception e) {
             throw new SocketExecuteException(e.getMessage(), e);
         }
@@ -233,26 +251,38 @@ public class JvmmConnector {
         }
     }
 
-    public JvmmResponse waitForResponse(JvmmRequest request)
+    public static JvmmResponse waitForResponse(EventLoopGroup group, String address, JvmmRequest request)
             throws ExecutionException, InterruptedException, TimeoutException {
-        return waitForResponse(workGroup, request, request.getType(), 5, TimeUnit.SECONDS);
+        return waitForResponse(group, address, request, request.getType(), 5, TimeUnit.SECONDS);
     }
 
-    public JvmmResponse waitForResponse(EventLoopGroup group, JvmmRequest request)
+    public static JvmmResponse waitForResponse(EventLoopGroup group, String address, JvmmRequest request, long timeout, TimeUnit timeunit)
             throws ExecutionException, InterruptedException, TimeoutException {
-        return waitForResponse(group, request, request.getType(), 5, TimeUnit.SECONDS);
+        return waitForResponse(group, address, request, request.getType(), timeout, timeunit);
     }
 
-    public JvmmResponse waitForResponse(EventLoopGroup group, JvmmRequest request, long timeout, TimeUnit timeunit)
-            throws ExecutionException, InterruptedException, TimeoutException {
-        return waitForResponse(group, request, request.getType(), timeout, timeunit);
-    }
-
-    public JvmmResponse waitForResponse(EventLoopGroup group, JvmmRequest request, String waitType, long timeout, TimeUnit timeunit)
+    /**
+     * 一次性连接
+     *
+     * @param group     executor
+     * @param address   地址，比如：127.0.0.1:5010
+     * @param request   {@link JvmmRequest}
+     * @param waitType  监听返回类型，如果为null则默认监听请求的类型。见：{@link GlobalType}
+     * @param timeout   超时时间
+     * @param timeunit  超时单位
+     * @return {@link JvmmResponse}
+     * @throws ExecutionException 执行时异常
+     * @throws InterruptedException 中断异常，不可控
+     * @throws TimeoutException 超时未返回后抛出
+     */
+    public static JvmmResponse waitForResponse(EventLoopGroup group, String address, JvmmRequest request, String waitType, long timeout, TimeUnit timeunit)
             throws ExecutionException, InterruptedException, TimeoutException {
         if (group == null) {
             throw new IllegalArgumentException("Can not execute one request with null event loop group.");
         }
+        String[] split = address.split(":");
+        JvmmConnector connector = newInstance(split[0], Integer.parseInt(split[1]), group);
+
         final DefaultPromise<JvmmResponse> promise = new DefaultPromise<>(group.next());
         MsgReceiveListener listener = response -> {
             String waitFor = waitType;
@@ -267,11 +297,11 @@ public class JvmmConnector {
                 }
             }
         };
-        registerListener(listener);
-        if (!isConnected()) {
+        connector.registerListener(listener);
+        if (!connector.isConnected()) {
             throw new IllegalStateException("Socket is closed");
         }
-        send(request);
+        connector.send(request);
         return promise.get(timeout, timeunit);
     }
 

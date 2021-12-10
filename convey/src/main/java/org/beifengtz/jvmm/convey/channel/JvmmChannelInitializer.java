@@ -3,12 +3,21 @@ package org.beifengtz.jvmm.convey.channel;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.epoll.EpollServerSocketChannel;
+import io.netty.channel.epoll.EpollSocketChannel;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.ServerSocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
+import org.apache.commons.lang3.SystemUtils;
 import org.beifengtz.jvmm.convey.handler.HandlerProvider;
 
 import java.nio.charset.StandardCharsets;
@@ -22,7 +31,7 @@ import java.nio.charset.StandardCharsets;
  *
  * @author beifengtz
  */
-public class StringChannelInitializer extends ChannelInitializer<Channel> {
+public class JvmmChannelInitializer extends ChannelInitializer<Channel> {
 
     public static final String IDLE_STATE_HANDLER = "idleStateHandler";
 
@@ -37,7 +46,7 @@ public class StringChannelInitializer extends ChannelInitializer<Channel> {
 
     private final HandlerProvider provider;
 
-    public StringChannelInitializer(HandlerProvider provider) {
+    public JvmmChannelInitializer(HandlerProvider provider) {
         this.provider = provider;
     }
 
@@ -53,5 +62,31 @@ public class StringChannelInitializer extends ChannelInitializer<Channel> {
         p.addLast(provider.getGroup(), STRING_ENCODER_HANDLER, new StringEncoder(StandardCharsets.UTF_8));
         p.addLast(provider.getGroup(), STRING_DECODER_HANDLER, new StringDecoder(StandardCharsets.UTF_8));
         p.addLast(provider.getGroup(), provider.getName(), provider.getHandler());
+    }
+
+    public static Class<? extends Channel> channelClass(EventLoopGroup group) {
+        switch (group.next().getClass().getSimpleName()) {
+            case "NioEventLoop":
+                return NioSocketChannel.class;
+            case "EpollEventLoop":
+                return EpollSocketChannel.class;
+            default:
+                throw new IllegalArgumentException("unsupported loop");
+        }
+    }
+
+    public static Class<? extends ServerSocketChannel> serverChannelClass(EventLoopGroup group) {
+        switch (group.next().getClass().getSimpleName()) {
+            case "NioEventLoop":
+                return NioServerSocketChannel.class;
+            case "EpollEventLoop":
+                return EpollServerSocketChannel.class;
+            default:
+                throw new IllegalArgumentException("unsupported loop");
+        }
+    }
+
+    public static EventLoopGroup newEventLoopGroup(int nThreads) {
+        return SystemUtils.IS_OS_LINUX ? new EpollEventLoopGroup(nThreads) : new NioEventLoopGroup(nThreads);
     }
 }

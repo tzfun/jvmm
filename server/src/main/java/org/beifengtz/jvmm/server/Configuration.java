@@ -26,10 +26,8 @@ public final class Configuration {
     private final String securityPassword;
 
     private final String logLevel;
-    private final String logPath;
-    private final String logPattern;
-    private final String logFileName;
-    private final String logMaxFileSize;
+
+    private final int workThread;
 
     private Configuration(Builder builder) {
         this.name = builder.name;
@@ -40,10 +38,7 @@ public final class Configuration {
         this.securityAccount = builder.securityAccount;
         this.securityPassword = builder.securityPassword;
         this.logLevel = builder.logLevel;
-        this.logPath = builder.logPath;
-        this.logPattern = builder.logPattern;
-        this.logFileName = builder.logFileName;
-        this.logMaxFileSize = builder.logMaxFileSize;
+        this.workThread = builder.workThread;
     }
 
     public static Builder newBuilder() {
@@ -67,10 +62,7 @@ public final class Configuration {
         sb.append("security.enable=").append(securityEnable).append(";");
 
         sb.append("log.level=").append(logLevel).append(";");
-        sb.append("log.path=").append(logPath).append(";");
-        sb.append("log.pattern=").append(logPattern).append(";");
-        sb.append("log.fileName=").append(logFileName).append(";");
-        sb.append("log.maxFileSize=").append(logMaxFileSize).append(";");
+        sb.append("workThread=").append(workThread).append(";");
         return sb.toString();
     }
 
@@ -84,10 +76,8 @@ public final class Configuration {
         private String securityPassword = "";
 
         private String logLevel = "info";
-        private String logPath = "logs/";
-        private String logPattern = "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%-5level] %logger{50} - %msg%n";
-        private String logFileName = "jvmm-server.log";
-        private String logMaxFileSize = "10MB";
+
+        private int workThread = 1;
 
         public Configuration build() {
             return new Configuration(this);
@@ -165,39 +155,12 @@ public final class Configuration {
             return this;
         }
 
-        public String getLogPath() {
-            return logPath;
+        public int getWorkThread() {
+            return workThread;
         }
 
-        public Builder setLogPath(String logPath) {
-            this.logPath = logPath;
-            return this;
-        }
-
-        public String getLogPattern() {
-            return logPattern;
-        }
-
-        public Builder setLogPattern(String logPattern) {
-            this.logPattern = logPattern;
-            return this;
-        }
-
-        public String getLogFileName() {
-            return logFileName;
-        }
-
-        public Builder setLogFileName(String logFileName) {
-            this.logFileName = logFileName;
-            return this;
-        }
-
-        public String getLogMaxFileSize() {
-            return logMaxFileSize;
-        }
-
-        public Builder setLogMaxFileSize(String logMaxFileSize) {
-            this.logMaxFileSize = logMaxFileSize;
+        public Builder setWorkThread(int workThread) {
+            this.workThread = workThread;
             return this;
         }
 
@@ -238,22 +201,12 @@ public final class Configuration {
             if (StringUtil.nonEmpty(logLevel)) {
                 setLogLevel(logLevel);
             }
-            String logPath = argMap.get("log.path");
-            if (StringUtil.nonEmpty(logPath)) {
-                setLogPath(logPath);
+
+            String workThread = argMap.get("workThread");
+            if (StringUtil.nonEmpty(workThread)) {
+                setWorkThread(Math.max(Integer.parseInt(workThread), 1));
             }
-            String logPattern = argMap.get("log.pattern");
-            if (StringUtil.nonEmpty(logPattern)) {
-                setLogPattern(logPattern);
-            }
-            String logFileName = argMap.get("log.fileName");
-            if (StringUtil.nonEmpty(logFileName)) {
-                setLogFileName(logFileName);
-            }
-            String logMaxFileSize = argMap.get("log.maxFileSize");
-            if (StringUtil.nonEmpty(logMaxFileSize)) {
-                setLogMaxFileSize(logMaxFileSize);
-            }
+
         }
 
         public void mergeFromMapping(ConfigFileMapping mapping) {
@@ -295,25 +248,7 @@ public final class Configuration {
                 setLogLevel(logLevel);
             }
 
-            String logPattern = logConfig.get("pattern");
-            if (StringUtil.nonEmpty(logPattern)) {
-                setLogPath(logPattern);
-            }
-
-            String logPath = logConfig.get("path");
-            if (StringUtil.nonEmpty(logPath)) {
-                setLogPath(logPath);
-            }
-
-            String logFileName = logConfig.get("fileName");
-            if (StringUtil.nonEmpty(logFileName)) {
-                setLogPath(logFileName);
-            }
-
-            String logMaxFileSize = logConfig.get("maxFileSize");
-            if (StringUtil.nonEmpty(logMaxFileSize)) {
-                setLogPath(logMaxFileSize);
-            }
+            setWorkThread(Math.max(mapping.getWorkThread(), 1));
         }
     }
 
@@ -349,19 +284,7 @@ public final class Configuration {
         return logLevel;
     }
 
-    public String getLogPath() {
-        return logPath;
-    }
-
-    public String getLogPattern() {
-        return logPattern;
-    }
-
-    public String getLogFileName() {
-        return logFileName;
-    }
-
-    public String getLogMaxFileSize() {
-        return logMaxFileSize;
+    public int getWorkThread() {
+        return workThread;
     }
 }

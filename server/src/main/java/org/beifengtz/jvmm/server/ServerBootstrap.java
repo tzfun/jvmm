@@ -2,10 +2,8 @@ package org.beifengtz.jvmm.server;
 
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.internal.logging.InternalLoggerFactory;
-import org.beifengtz.jvmm.convey.channel.StringChannelInitializer;
-import org.beifengtz.jvmm.server.channel.ServerLogicSocketChannel;
+import org.beifengtz.jvmm.convey.channel.JvmmChannelInitializer;
 import org.beifengtz.jvmm.server.handler.ServerHandlerProvider;
 import org.beifengtz.jvmm.server.logger.DefaultILoggerFactory;
 import org.beifengtz.jvmm.tools.factory.LoggerFactory;
@@ -115,6 +113,11 @@ public class ServerBootstrap {
     /**
      * 解析attach传过来的参数
      *
+     * 优先级：
+     * 1. 如果参数中有配置属性优先取参数中的配置（即使 config 指定的配置文件中设有相同的属性，仍优先取参数中的值）；
+     * 2. 如果参数中指定了 config 参数，（此参数指定向一个配置文件，格式可以是 yml 也可以是 properties），从配置中读取；
+     * 3. 如果既没有指定配置文件又没有参数配置，则读默认配置，默认配置：{@link Configuration.Builder}。
+     *
      * @param args 参数格式：name=jvmm_server;port.bind=5010;port.autoIncrease=true;http.maxChunkSize=52428800
      * @return {@link Configuration}
      */
@@ -180,10 +183,10 @@ public class ServerBootstrap {
             final io.netty.bootstrap.ServerBootstrap b = new io.netty.bootstrap.ServerBootstrap();
 
             if (bossGroup == null) {
-                bossGroup = new NioEventLoopGroup(1);
+                bossGroup = JvmmChannelInitializer.newEventLoopGroup(1);
             }
             if (workerGroup == null) {
-                workerGroup = new NioEventLoopGroup();
+                workerGroup = JvmmChannelInitializer.newEventLoopGroup(ServerConfig.getWorkThread());
             }
             try {
                 if (rebindTimes > BIND_LIMIT_TIMES) {
@@ -191,8 +194,8 @@ public class ServerBootstrap {
                 }
 
                 ChannelFuture f = b.group(bossGroup, workerGroup)
-                        .channel(ServerLogicSocketChannel.class)
-                        .childHandler(new StringChannelInitializer(new ServerHandlerProvider(10)))
+                        .channel(JvmmChannelInitializer.serverChannelClass(bossGroup))
+                        .childHandler(new JvmmChannelInitializer(new ServerHandlerProvider(10, workerGroup)))
                         .bind(bindPort).syncUninterruptibly();
 
                 logger().info("Jvmm server service started on {}", bindPort);

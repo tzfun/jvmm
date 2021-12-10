@@ -7,7 +7,7 @@ spring:
     url: jdbc:mysql://localhost:3306/information_schema?characterEncoding=utf-8
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password:
+    password: 1246886075
     continue-on-error: true
     sql-script-encoding: utf-8
     type: com.zaxxer.hikari.HikariDataSource
