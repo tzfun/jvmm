@@ -9,7 +9,7 @@ package org.beifengtz.jvmm.common.exception;
  *
  * @author beifengtz
  */
-public class InvalidMsgException extends RuntimeException{
+public class InvalidMsgException extends RuntimeException {
 
     private int seed;
 

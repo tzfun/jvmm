@@ -1,0 +1,6 @@
+libasyncProfiler-linux-aarch64.so:1.8.7
+libasyncProfiler-linux-arm.so:1.8.7
+libasyncProfiler-linux-arm64.so:2.5.1
+libasyncProfiler-linux-x64.so:2.5.1
+libasyncProfiler-linux-x86.so:1.8.7
+libasyncProfiler-macos-x64-arm64.so:2.5.1

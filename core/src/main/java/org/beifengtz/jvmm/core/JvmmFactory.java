@@ -11,27 +11,42 @@ package org.beifengtz.jvmm.core;
  */
 public class JvmmFactory {
 
-    private static JvmmCollector jvmmCollector = null;
-    private static JvmmExecutor jvmmExecutor = null;
-    private static JvmmProfiler jvmmProfiler = null;
+    private static volatile JvmmCollector jvmmCollector = null;
+    private static volatile JvmmExecutor jvmmExecutor = null;
+    private static volatile JvmmProfiler jvmmProfiler = null;
 
-    public static synchronized JvmmCollector getCollector() {
+    public static JvmmCollector getCollector() {
         if (jvmmCollector == null) {
-            jvmmCollector = new DefaultJvmmCollector();
+            synchronized (JvmmFactory.class) {
+                if (jvmmCollector == null) {
+                    jvmmCollector = new DefaultJvmmCollector();
+                }
+                return jvmmCollector;
+            }
         }
         return jvmmCollector;
     }
 
-    public static synchronized JvmmExecutor getExecutor() {
+    public static JvmmExecutor getExecutor() {
         if (jvmmExecutor == null) {
-            jvmmExecutor = new DefaultJvmmExecutor();
+            synchronized (JvmmFactory.class) {
+                if (jvmmExecutor == null) {
+                    jvmmExecutor = new DefaultJvmmExecutor();
+                }
+                return jvmmExecutor;
+            }
         }
         return jvmmExecutor;
     }
 
-    public static synchronized JvmmProfiler getProfiler() {
+    public static JvmmProfiler getProfiler() {
         if (jvmmProfiler == null) {
-            jvmmProfiler = new DefaultJvmmProfiler();
+            synchronized (JvmmFactory.class) {
+                if (jvmmProfiler == null) {
+                    jvmmProfiler = new DefaultJvmmProfiler();
+                }
+                return jvmmProfiler;
+            }
         }
         return jvmmProfiler;
     }

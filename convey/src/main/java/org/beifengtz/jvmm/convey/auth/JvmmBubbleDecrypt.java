@@ -1,6 +1,5 @@
 package org.beifengtz.jvmm.convey.auth;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import org.beifengtz.jvmm.common.exception.InvalidMsgException;

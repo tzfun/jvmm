@@ -27,7 +27,7 @@ import java.util.jar.JarFile;
 
 /**
  * <p>
- * Description: TODO
+ * Description: Jvmm agent boot
  * </p>
  * <p>
  * Created in 11:42 2021/5/22
@@ -35,7 +35,7 @@ import java.util.jar.JarFile;
  * @author beifengtz
  */
 public class AgentBootStrap {
-    private static final Logger log;
+    private static final Logger log = LoggerFactory.getLogger(AgentBootStrap.class);
     private static final String STATIC_LOGGER_BINDER_CLASS = "org/slf4j/impl/StaticLoggerBinder.class";
     private static final String STATIC_LOGGER_BINDER_PATH = "org.slf4j.impl.StaticLoggerBinder";
     private static final String JVMM_SERVER_JAR = "jvmm-server.jar";
@@ -45,10 +45,13 @@ public class AgentBootStrap {
     private static volatile JvmmAgentClassLoader agentClassLoader;
     private static volatile boolean premainAttached;
 
-    private static ClassLoader springClassLoader;
-    private static BlockingQueue<LoggerEvent> logQueue = new LinkedBlockingQueue<>();
+    private static final BlockingQueue<LoggerEvent> logQueue = new LinkedBlockingQueue<>();
 
     static {
+//        tryFindSpringClassLoader();
+    }
+
+    private static ClassLoader loadWithSpringClassLoader() {
         try {
             ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
 
@@ -56,6 +59,7 @@ public class AgentBootStrap {
             //  Spring项目在打成Jar包或者War包时会由特定的Launcher启动，启动时创建一个叫LaunchedURLClassLoader来加载jar包
             Class<?> springLauncher = null;
             try {
+                LoggerFactory.getLogger(AgentBootStrap.class).info("test xxxxxxxxxxxxx");
                 springLauncher = Class.forName("org.springframework.boot.loader.JarLauncher", false, systemClassLoader);
                 System.out.println("[Jvmm] Target spring application launched by jar.");
             } catch (NoClassDefFoundError | ClassNotFoundException ignored1) {
@@ -79,19 +83,18 @@ public class AgentBootStrap {
                 }
 
                 if (springLaunchClassLoader != null) {
-                    springClassLoader = springLaunchClassLoader;
-                    loadLogClassFromAnotherClassLoader((URLClassLoader) AgentBootStrap.class.getClassLoader(), springClassLoader);
+                    loadLogClassFromAnotherClassLoader((URLClassLoader) AgentBootStrap.class.getClassLoader(), springLaunchClassLoader);
                     FileUtil.delFile(new File(AppUtil.getTempPath()));
                 }
+                return springLaunchClassLoader;
             }
         } catch (Throwable e) {
             e.printStackTrace();
-        } finally {
-            log = LoggerFactory.getLogger(AgentBootStrap.class);
         }
+        return null;
     }
 
-    public static void loadLogClassFromAnotherClassLoader(URLClassLoader loader, ClassLoader another) throws Throwable {
+    private static void loadLogClassFromAnotherClassLoader(URLClassLoader loader, ClassLoader another) throws Throwable {
         String logMsg = String.format("Class loader [%s] load logger class from [%s]", loader.getClass().getName(), another.getClass().getName());
         if (log != null) {
             log.info(logMsg);
@@ -121,7 +124,7 @@ public class AgentBootStrap {
         }
     }
 
-    public static boolean loadResourceFromAnother(URLClassLoader loader, ClassLoader another, String classPath) throws Throwable {
+    private static boolean loadResourceFromAnother(URLClassLoader loader, ClassLoader another, String classPath) throws Throwable {
         Enumeration<URL> loggerResources = another.getResources(classPath);
         while (loggerResources.hasMoreElements()) {
             String urlPath = loggerResources.nextElement().getFile();

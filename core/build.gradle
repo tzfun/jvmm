@@ -12,4 +12,8 @@ jar {
     metadataCharset 'utf-8'
 
     archiveName("jvmm-core.jar")
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }

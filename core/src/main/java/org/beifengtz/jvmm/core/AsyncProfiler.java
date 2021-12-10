@@ -1,6 +1,5 @@
 package org.beifengtz.jvmm.core;
 
-import org.beifengtz.jvmm.core.entity.profiler.ProfilerCounter;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerEvent;
 import org.beifengtz.jvmm.tools.factory.ExecutorFactory;
 import org.beifengtz.jvmm.tools.util.PlatformUtil;
@@ -13,8 +12,9 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
- * Description: TODO
+ * Description: async profiler实现
  * </p>
+ * @see <a href="https://github.com/jvm-profiling-tools/async-profiler">https://github.com/jvm-profiling-tools/async-profiler</a>
  * <p>
  * Created in 6:28 下午 2021/6/23
  *
@@ -30,16 +30,17 @@ public class AsyncProfiler {
         String soPath = null;
 
         if (PlatformUtil.isMac()) {
-            if (!PlatformUtil.isArm64()) {
-                soPath = "/async-profiler/libasyncProfiler-macos-x64.so";
-            }
+            //  兼容 arm64 和 x64架构
+            soPath = "/async-profiler/libasyncProfiler-macos-x64-arm64.so";
         } else if (PlatformUtil.isLinux()) {
             if (PlatformUtil.isArm32()) {
                 soPath = "/async-profiler/libasyncProfiler-linux-arm.so";
             } else if (PlatformUtil.isArm64()) {
-                soPath = "/async-profiler/libasyncProfiler-linux-aarch64.so";
+                soPath = "/async-profiler/libasyncProfiler-linux-arm64.so";
             } else if (PlatformUtil.isX86()) {
                 soPath = "/async-profiler/libasyncProfiler-linux-x86.so";
+            } else if (PlatformUtil.isAarch64()) {
+                soPath = "/async-profiler/libasyncProfiler-linux-aarch64.so";
             } else {
                 soPath = "/async-profiler/libasyncProfiler-linux-x64.so";
             }
