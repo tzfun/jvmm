@@ -384,6 +384,7 @@ public class AgentBootStrap {
                 }
             }
         });
+        thread.setName("jvmm-logger");
         thread.start();
         log.info("Log agent thread started successfully.");
     }

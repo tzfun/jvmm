@@ -82,5 +82,5 @@ public abstract class JvmmSocketChannel extends NioSocketChannel {
 
     public abstract void handleIdle();
 
-    public abstract void cleanup();
+    public abstract void cleanup() throws Exception ;
 }

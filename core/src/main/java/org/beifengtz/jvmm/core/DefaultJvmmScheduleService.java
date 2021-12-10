@@ -1,4 +1,4 @@
-package org.beifengtz.jvmm.core.service;
+package org.beifengtz.jvmm.core;
 
 import org.beifengtz.jvmm.tools.factory.ExecutorFactory;
 import org.beifengtz.jvmm.tools.factory.LoggerFactory;
@@ -19,9 +19,9 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @author beifengtz
  */
-public class DefaultScheduledService implements ScheduleService {
+public class DefaultJvmmScheduleService implements JvmmScheduleService {
 
-    private static final Logger log = LoggerFactory.logger(DefaultScheduledService.class);
+    private static final Logger log = LoggerFactory.logger(DefaultJvmmScheduleService.class);
 
     private final ScheduledExecutorService executor;
     private final AtomicReference<Runnable> task = new AtomicReference<>();
@@ -37,30 +37,30 @@ public class DefaultScheduledService implements ScheduleService {
         Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
     }
 
-    public DefaultScheduledService(String taskName) {
+    public DefaultJvmmScheduleService(String taskName) {
         this(taskName, ExecutorFactory.getScheduleThreadPool());
     }
 
-    public DefaultScheduledService(String taskName, ScheduledExecutorService executor) {
+    public DefaultJvmmScheduleService(String taskName, ScheduledExecutorService executor) {
         this.taskName = taskName;
         this.executor = executor;
         this.state = new AtomicReference<>(Thread.State.NEW);
     }
 
     @Override
-    public ScheduleService setTask(Runnable task) {
+    public JvmmScheduleService setTask(Runnable task) {
         this.task.set(task);
         return this;
     }
 
     @Override
-    public ScheduleService setTimes(int times) {
+    public JvmmScheduleService setTimes(int times) {
         this.targetTimes.set(times);
         return this;
     }
 
     @Override
-    public ScheduleService setTimeGap(int gapSeconds) {
+    public JvmmScheduleService setTimeGap(int gapSeconds) {
         if (gapSeconds > 0) {
             this.timeGap.set(gapSeconds);
         }
@@ -68,7 +68,7 @@ public class DefaultScheduledService implements ScheduleService {
     }
 
     @Override
-    public ScheduleService setStopOnError(boolean stopOnError) {
+    public JvmmScheduleService setStopOnError(boolean stopOnError) {
         this.stopOnError.set(stopOnError);
         return this;
     }

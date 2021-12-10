@@ -3,6 +3,7 @@ package org.beifengtz.jvmm.server;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.convey.channel.StringChannelInitializer;
 import org.beifengtz.jvmm.server.channel.ServerLogicSocketChannel;
 import org.beifengtz.jvmm.server.handler.ServerHandlerProvider;
@@ -102,7 +103,8 @@ public class ServerBootstrap {
 //        java.util.logging.Logger.getGlobal().setLevel(l1);
 
         DefaultILoggerFactory defaultILoggerFactory = DefaultILoggerFactory.newInstance(level);
-        io.netty.util.internal.logging.InternalLoggerFactory.setDefaultFactory(defaultILoggerFactory);
+
+        InternalLoggerFactory.setDefaultFactory(defaultILoggerFactory);
         LoggerFactory.register(defaultILoggerFactory);
     }
 
@@ -266,7 +268,7 @@ public class ServerBootstrap {
             Configuration config = Configuration.newBuilder().setLogLevel("info").build();
             AttachProvider.getInstance().attachAgent(pid, agentJar, serverJar, config);
         } else {
-            System.err.println("Can not found any program listen port " + tp);
+            System.err.println("Can not found any program is listening port " + tp);
         }
     }
 }

@@ -8,7 +8,9 @@ import io.netty.util.concurrent.EventExecutor;
 import org.beifengtz.jvmm.convey.GlobalStatus;
 import org.beifengtz.jvmm.convey.GlobalType;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
+import org.beifengtz.jvmm.core.DefaultJvmmScheduleService;
 import org.beifengtz.jvmm.core.JvmmFactory;
+import org.beifengtz.jvmm.core.JvmmScheduleService;
 import org.beifengtz.jvmm.core.entity.mx.ClassLoadingInfo;
 import org.beifengtz.jvmm.core.entity.mx.CompilationInfo;
 import org.beifengtz.jvmm.core.entity.mx.GarbageCollectorInfo;
@@ -19,11 +21,11 @@ import org.beifengtz.jvmm.core.entity.mx.ProcessInfo;
 import org.beifengtz.jvmm.core.entity.mx.SystemDynamicInfo;
 import org.beifengtz.jvmm.core.entity.mx.SystemStaticInfo;
 import org.beifengtz.jvmm.core.entity.mx.ThreadDynamicInfo;
-import org.beifengtz.jvmm.core.service.DefaultScheduledService;
-import org.beifengtz.jvmm.core.service.ScheduleService;
 import org.beifengtz.jvmm.server.annotation.JvmmController;
 import org.beifengtz.jvmm.server.annotation.JvmmMapping;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -36,14 +38,14 @@ import java.util.List;
  * @author beifengtz
  */
 @JvmmController
-public class CollectController {
+public class CollectController implements Closeable {
 
     private static final int DEFAULT_TIMER_DELAY = 3;
     private static final int DEFAULT_TIMER_TIMES = 10;
 
-    private ScheduleService memoryCollectTimer;
-    private ScheduleService systemDynamicCollectTimer;
-    private ScheduleService threadDynamicCollectTimer;
+    private JvmmScheduleService memoryCollectTimer;
+    private JvmmScheduleService systemDynamicCollectTimer;
+    private JvmmScheduleService threadDynamicCollectTimer;
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_SYSTEM_STATIC_INFO)
     public SystemStaticInfo getSystemStaticInfo() {
@@ -123,7 +125,7 @@ public class CollectController {
         int gapSeconds = DEFAULT_TIMER_DELAY;
         int times = DEFAULT_TIMER_TIMES;
 
-        if (data != null){
+        if (data != null) {
             if (data.has("delay")) {
                 gapSeconds = data.get("delay").getAsInt();
             }
@@ -133,7 +135,7 @@ public class CollectController {
         }
 
         if (memoryCollectTimer == null) {
-            memoryCollectTimer = new DefaultScheduledService("CollectMemory", executor);
+            memoryCollectTimer = new DefaultJvmmScheduleService("CollectMemory", executor);
         }
 
         Runnable task = () -> {
@@ -165,7 +167,7 @@ public class CollectController {
 
         int gapSeconds = DEFAULT_TIMER_DELAY;
         int times = DEFAULT_TIMER_TIMES;
-        if (data != null){
+        if (data != null) {
             if (data.has("delay")) {
                 gapSeconds = data.get("delay").getAsInt();
             }
@@ -175,7 +177,7 @@ public class CollectController {
         }
 
         if (systemDynamicCollectTimer == null) {
-            systemDynamicCollectTimer = new DefaultScheduledService("CollectSystemDynamic", executor);
+            systemDynamicCollectTimer = new DefaultJvmmScheduleService("CollectSystemDynamic", executor);
         }
 
         Runnable task = () -> {
@@ -207,7 +209,7 @@ public class CollectController {
         int gapSeconds = DEFAULT_TIMER_DELAY;
         int times = DEFAULT_TIMER_TIMES;
 
-        if (data != null){
+        if (data != null) {
             if (data.has("delay")) {
                 gapSeconds = data.get("delay").getAsInt();
             }
@@ -217,7 +219,7 @@ public class CollectController {
         }
 
         if (threadDynamicCollectTimer == null) {
-            threadDynamicCollectTimer = new DefaultScheduledService("CollectThreadDynamic", executor);
+            threadDynamicCollectTimer = new DefaultJvmmScheduleService("CollectThreadDynamic", executor);
         }
 
         Runnable task = () -> {
@@ -252,5 +254,18 @@ public class CollectController {
             result.add(info);
         }
         return result;
+    }
+
+    @Override
+    public void close() throws IOException {
+        if (memoryCollectTimer != null) {
+            memoryCollectTimer.stop();
+        }
+        if (threadDynamicCollectTimer != null) {
+            threadDynamicCollectTimer.stop();
+        }
+        if (systemDynamicCollectTimer != null) {
+            systemDynamicCollectTimer.stop();
+        }
     }
 }

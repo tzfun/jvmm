@@ -17,6 +17,7 @@ import org.beifengtz.jvmm.tools.factory.LoggerFactory;
 import org.beifengtz.jvmm.tools.util.ReflexUtil;
 import org.slf4j.Logger;
 
+import java.io.Closeable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.channels.SocketChannel;
@@ -145,7 +146,12 @@ public class LogicSocketChannel extends JvmmSocketChannel {
     }
 
     @Override
-    public void cleanup() {
+    public void cleanup() throws Exception {
+        for (Object controller : controllerInstance.values()) {
+            if (controller.getClass().isAssignableFrom(Closeable.class)) {
+                ((Closeable) controller).close();
+            }
+        }
         controllerInstance.clear();
     }
 

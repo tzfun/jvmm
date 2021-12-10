@@ -13,7 +13,7 @@ import org.slf4j.Logger;
  */
 public class LoggerFactory {
 
-    private static final DefaultEmptyLogger DEFAULT_LOGGER = new DefaultEmptyLogger();
+    private static final DefaultEmptyLogger DEFAULT_EMPTY_LOGGER = new DefaultEmptyLogger();
     private static ILoggerFactory CUSTOM_LOGGER_FACTORY;
 
     public static synchronized void register(ILoggerFactory loggerFactory) {
@@ -30,7 +30,7 @@ public class LoggerFactory {
 
     public static Logger logger(String name) {
         if (CUSTOM_LOGGER_FACTORY == null) {
-            return DEFAULT_LOGGER;
+            return DEFAULT_EMPTY_LOGGER;
         } else {
             return CUSTOM_LOGGER_FACTORY.getLogger(name);
         }

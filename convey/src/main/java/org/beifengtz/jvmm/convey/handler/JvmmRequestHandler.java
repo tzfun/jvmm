@@ -4,6 +4,7 @@ import com.google.common.base.Stopwatch;
 import com.google.gson.JsonSyntaxException;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.TooLongFrameException;
 import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
 import org.beifengtz.jvmm.common.exception.InvalidMsgException;
 import org.beifengtz.jvmm.convey.GlobalStatus;
@@ -11,6 +12,7 @@ import org.beifengtz.jvmm.convey.GlobalType;
 import org.beifengtz.jvmm.convey.channel.JvmmSocketChannel;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
+import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -88,6 +90,9 @@ public abstract class JvmmRequestHandler extends SimpleChannelInboundHandler<Str
             logger().debug("Channel closed by message verify");
         } else if (cause instanceof IOException) {
             logger().debug(cause.toString());
+        } else if (cause instanceof TooLongFrameException) {
+            logger().warn("{} | {}", cause.getMessage(), JvmmConnector.getIpByCtx(ctx));
+            ctx.close();
         } else {
             logger().error(cause.toString(), cause);
         }

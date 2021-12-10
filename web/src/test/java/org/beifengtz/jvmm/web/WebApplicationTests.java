@@ -3,7 +3,7 @@ package org.beifengtz.jvmm.web;
 import io.netty.channel.nio.NioEventLoopGroup;
 import org.beifengtz.jvmm.convey.GlobalType;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
-import org.beifengtz.jvmm.convey.socket.JvmmSocketConnector;
+import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -16,7 +16,7 @@ class WebApplicationTests {
     @Test
     void contextLoads() throws Exception {
         NioEventLoopGroup group = new NioEventLoopGroup();
-        JvmmSocketConnector client = JvmmSocketConnector.newInstance("127.0.0.1", 5010, true, group);
+        JvmmConnector client = JvmmConnector.newInstance("127.0.0.1", 5010, true, group);
 
         CountDownLatch latch = new CountDownLatch(5);
         client.registerListener((response) -> {

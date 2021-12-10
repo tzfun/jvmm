@@ -26,6 +26,8 @@ import org.beifengtz.jvmm.convey.handler.HandlerProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -41,9 +43,9 @@ import java.util.concurrent.TimeoutException;
  *
  * @author beifengtz
  */
-public class JvmmSocketConnector {
+public class JvmmConnector {
 
-    private static final Logger logger = LoggerFactory.getLogger(JvmmSocketConnector.class);
+    private static final Logger logger = LoggerFactory.getLogger(JvmmConnector.class);
 
     private String host;
     private int port;
@@ -60,7 +62,7 @@ public class JvmmSocketConnector {
 
     private final List<MsgReceiveListener> listeners;
 
-    private JvmmSocketConnector() {
+    private JvmmConnector() {
         listeners = new LinkedList<>();
     }
 
@@ -146,16 +148,16 @@ public class JvmmSocketConnector {
         }
     }
 
-    public static JvmmSocketConnector newInstance(String host, int port, EventLoopGroup workerGroup) {
+    public static JvmmConnector newInstance(String host, int port, EventLoopGroup workerGroup) {
         return newInstance(host, port, false, null, null, workerGroup);
     }
 
-    public static JvmmSocketConnector newInstance(String host, int port, boolean keepAlive, EventLoopGroup workerGroup) {
+    public static JvmmConnector newInstance(String host, int port, boolean keepAlive, EventLoopGroup workerGroup) {
         return newInstance(host, port, keepAlive, null, null, workerGroup);
     }
 
-    public static JvmmSocketConnector newInstance(String host, int port, boolean keepAlive, String authAccount, String authPassword, EventLoopGroup workerGroup) {
-        JvmmSocketConnector connector = new JvmmSocketConnector();
+    public static JvmmConnector newInstance(String host, int port, boolean keepAlive, String authAccount, String authPassword, EventLoopGroup workerGroup) {
+        JvmmConnector connector = new JvmmConnector();
         connector.host = host;
         connector.port = port;
         connector.authAccount = authAccount;
@@ -271,5 +273,17 @@ public class JvmmSocketConnector {
         }
         send(request);
         return promise.get(timeout, timeunit);
+    }
+
+    public static String getIpByCtx(ChannelHandlerContext ctx) {
+        String ip = null;
+        try {
+            SocketAddress socketAddress = ctx.channel().remoteAddress();
+            if (socketAddress != null) {
+                ip = ((InetSocketAddress) socketAddress).getAddress().getHostAddress();
+            }
+        } catch (Exception ignored) {
+        }
+        return ip;
     }
 }

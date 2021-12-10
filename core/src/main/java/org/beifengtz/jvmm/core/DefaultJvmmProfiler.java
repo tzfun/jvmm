@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author beifengtz
  */
-public class DefaultJvmmProfiler implements JvmmProfiler {
+class DefaultJvmmProfiler implements JvmmProfiler {
 
     private static final Logger log = LoggerFactory.logger(DefaultJvmmProfiler.class);
 

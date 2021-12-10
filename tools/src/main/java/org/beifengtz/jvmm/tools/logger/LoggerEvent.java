@@ -2,7 +2,6 @@ package org.beifengtz.jvmm.tools.logger;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import org.beifengtz.jvmm.common.JsonParsable;
 
 /**
  * Description: TODO
@@ -11,7 +10,7 @@ import org.beifengtz.jvmm.common.JsonParsable;
  *
  * @author beifengtz
  */
-public class LoggerEvent implements JsonParsable {
+public class LoggerEvent {
 
     private LoggerLevel type;
     private String msg;

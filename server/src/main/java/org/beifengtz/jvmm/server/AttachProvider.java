@@ -13,6 +13,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.util.Properties;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 /**
  * <p>
  * Description: TODO
@@ -57,6 +59,7 @@ public class AttachProvider {
     }
 
     protected void attachAgent(long targetPid, String agentJarPath, String serverJarPath, Configuration config) throws Exception {
+        checkArgument(targetPid > 0, "Can not attach to virtual machine with illegal pid " + targetPid);
         VirtualMachineDescriptor virtualMachineDescriptor = null;
         for (VirtualMachineDescriptor descriptor : VirtualMachine.list()) {
             String pid = descriptor.id();

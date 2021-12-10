@@ -1,6 +1,5 @@
 package org.beifengtz.jvmm.server.handler;
 
-import io.netty.util.internal.logging.InternalLogger;
 import org.beifengtz.jvmm.convey.handler.JvmmRequestHandler;
 import org.beifengtz.jvmm.tools.factory.LoggerFactory;
 import org.slf4j.Logger;

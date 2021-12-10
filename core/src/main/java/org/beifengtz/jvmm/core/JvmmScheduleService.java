@@ -1,4 +1,4 @@
-package org.beifengtz.jvmm.core.service;
+package org.beifengtz.jvmm.core;
 
 /**
  * <p>
@@ -9,16 +9,16 @@ package org.beifengtz.jvmm.core.service;
  *
  * @author beifengtz
  */
-public interface ScheduleService {
+public interface JvmmScheduleService {
 
-    ScheduleService setTask(Runnable task);
+    JvmmScheduleService setTask(Runnable task);
 
     /**
      * 设置执行周期数
      *
      * @param times 周期数，小于等于0时表示无限循环，默认-1
      */
-    ScheduleService setTimes(int times);
+    JvmmScheduleService setTimes(int times);
 
     /**
      * 更新任务周期执行间隙
@@ -26,12 +26,12 @@ public interface ScheduleService {
      * @param gapSeconds 秒为单位的时间间隙
      * @return 更新后的时间间隙，秒为单位
      */
-    ScheduleService setTimeGap(int gapSeconds);
+    JvmmScheduleService setTimeGap(int gapSeconds);
 
     /**
      * @param stopOnError true-遇到异常时停止循环 ，false-忽略异常，默认值是true
      */
-    ScheduleService setStopOnError(boolean stopOnError);
+    JvmmScheduleService setStopOnError(boolean stopOnError);
 
     void start();
 
