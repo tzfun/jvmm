@@ -155,6 +155,19 @@ public class JvmmConnector {
         return newInstance(host, port, keepAlive, null, null, workerGroup);
     }
 
+    /**
+     * 新建一个连接器实例向Jvmm Server通信，如果目标Server打开了安全认证，需传入认证账号和密码，如未打开安全认证，可不传
+     *
+     * @param host         目标Server ip或域名
+     * @param port         目标Server端口
+     * @param keepAlive    是否自动保持连接活跃。<p><p>
+     *                     true - 自动向Server发送心跳包，直至断开连接，断开连接调用{@link #close()}方法；<p>
+     *                     false - 不自动发送心跳包，连接闲置后会自动断开连接。<p>
+     * @param authAccount  安全认证账号
+     * @param authPassword 安全认证密码
+     * @param workerGroup  连接工作线程组，建议使用{@link JvmmChannelInitializer#newEventLoopGroup(int)}方法获得
+     * @return {@link JvmmConnector} 实例
+     */
     public static JvmmConnector newInstance(String host, int port, boolean keepAlive, String authAccount, String authPassword, EventLoopGroup workerGroup) {
         JvmmConnector connector = new JvmmConnector();
         connector.host = host;
@@ -264,16 +277,16 @@ public class JvmmConnector {
     /**
      * 一次性连接
      *
-     * @param group     executor
-     * @param address   地址，比如：127.0.0.1:5010
-     * @param request   {@link JvmmRequest}
-     * @param waitType  监听返回类型，如果为null则默认监听请求的类型。见：{@link GlobalType}
-     * @param timeout   超时时间
-     * @param timeunit  超时单位
+     * @param group    executor
+     * @param address  地址，比如：127.0.0.1:5010
+     * @param request  {@link JvmmRequest}
+     * @param waitType 监听返回类型，如果为null则默认监听请求的类型。见：{@link GlobalType}
+     * @param timeout  超时时间
+     * @param timeunit 超时单位
      * @return {@link JvmmResponse}
-     * @throws ExecutionException 执行时异常
+     * @throws ExecutionException   执行时异常
      * @throws InterruptedException 中断异常，不可控
-     * @throws TimeoutException 超时未返回后抛出
+     * @throws TimeoutException     超时未返回后抛出
      */
     public static JvmmResponse waitForResponse(EventLoopGroup group, String address, JvmmRequest request, String waitType, long timeout, TimeUnit timeunit)
             throws ExecutionException, InterruptedException, TimeoutException {
@@ -302,7 +315,11 @@ public class JvmmConnector {
             throw new IllegalStateException("Socket is closed");
         }
         connector.send(request);
-        return promise.get(timeout, timeunit);
+        try {
+            return promise.get(timeout, timeunit);
+        } finally {
+            connector.close();
+        }
     }
 
     public static String getIpByCtx(ChannelHandlerContext ctx) {

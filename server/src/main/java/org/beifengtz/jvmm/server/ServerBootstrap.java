@@ -121,7 +121,7 @@ public class ServerBootstrap {
      * @param args 参数格式：name=jvmm_server;port.bind=5010;port.autoIncrease=true;http.maxChunkSize=52428800
      * @return {@link Configuration}
      */
-    private static Configuration parseConfig(String args) {
+    static Configuration parseConfig(String args) {
         if (args == null) {
             args = "";
         }
@@ -198,7 +198,7 @@ public class ServerBootstrap {
                         .childHandler(new JvmmChannelInitializer(new ServerHandlerProvider(10, workerGroup)))
                         .bind(bindPort).syncUninterruptibly();
 
-                logger().info("Jvmm server service started on {}", bindPort);
+                logger().info("Jvmm server service started on {}, node name: {}", bindPort, ServerConfig.getConfiguration().getName());
                 ServerConfig.setRealBindPort(bindPort);
 
                 if (shutdownHook == null) {
@@ -261,17 +261,19 @@ public class ServerBootstrap {
      * just for test
      */
     public static void main(String[] args) throws Throwable {
-        int tp = 8090;
-        String homePath = SystemPropertyUtil.get("user.dir").replaceAll("\\\\", "/");
-        String agentJar = homePath + "/agent/build/libs/jvmm-agent.jar";
-        String serverJar = homePath + "/server/build/libs/jvmm-server.jar";
+//        int tp = 8090;
+//        String homePath = SystemPropertyUtil.get("user.dir").replaceAll("\\\\", "/");
+//        String agentJar = homePath + "/agent/build/libs/jvmm-agent.jar";
+//        String serverJar = homePath + "/server/build/libs/jvmm-server.jar";
+//
+//        long pid = PidUtil.findProcessByPort(tp);
+//        if (pid > 0) {
+//            Configuration config = Configuration.newBuilder().setLogLevel("info").build();
+//            AttachProvider.getInstance().attachAgent(pid, agentJar, serverJar, config);
+//        } else {
+//            System.err.println("Can not found any program is listening port " + tp);
+//        }
 
-        long pid = PidUtil.findProcessByPort(tp);
-        if (pid > 0) {
-            Configuration config = Configuration.newBuilder().setLogLevel("info").build();
-            AttachProvider.getInstance().attachAgent(pid, agentJar, serverJar, config);
-        } else {
-            System.err.println("Can not found any program is listening port " + tp);
-        }
+        Commander.parse(args);
     }
 }

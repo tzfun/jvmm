@@ -45,6 +45,10 @@ public final class Configuration {
         return new Builder();
     }
 
+    public static Configuration defaultInstance() {
+        return new Builder().build();
+    }
+
     @Override
     public String toString() {
         return new Gson().toJson(this);
@@ -248,7 +252,9 @@ public final class Configuration {
                 setLogLevel(logLevel);
             }
 
-            setWorkThread(Math.max(mapping.getWorkThread(), 1));
+            if (StringUtil.nonEmpty(mapping.getWorkThread())) {
+                setWorkThread(Math.max(Integer.parseInt(mapping.getWorkThread()), 1));
+            }
         }
     }
 

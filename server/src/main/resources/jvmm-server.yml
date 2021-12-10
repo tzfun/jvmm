@@ -14,3 +14,5 @@ security:
 
 log:
   level: info
+
+workThread: 1

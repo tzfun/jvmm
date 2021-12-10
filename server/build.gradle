@@ -10,6 +10,7 @@ dependencies {
     compileOnly("org.slf4j:slf4j-jdk14:${slf4jVersion}")
     compileOnly("ch.qos.logback:logback-core:${logbackVersion}")
     compileOnly("ch.qos.logback:logback-classic:${logbackVersion}")
+    compile("commons-cli:commons-cli:${commonsCli}")
 }
 
 jar {
