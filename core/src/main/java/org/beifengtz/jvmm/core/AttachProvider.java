@@ -49,7 +49,7 @@ public class AttachProvider {
             File toolsJar = JavaEnvUtil.findToolsJar(JavaEnvUtil.findJavaHome());
             try {
                 toolsClassLoader = ClassLoaderUtil.systemLoadJar(toolsJar.toURI().toURL());
-                log.info("Init tools classes successful.");
+                log.debug("Init tools classes successful.");
             } catch (MalformedURLException e) {
                 //  ignored
             } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
