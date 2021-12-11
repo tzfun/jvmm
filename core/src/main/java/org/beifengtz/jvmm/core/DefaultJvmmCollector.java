@@ -10,8 +10,8 @@ import org.beifengtz.jvmm.core.entity.mx.ProcessInfo;
 import org.beifengtz.jvmm.core.entity.mx.SystemDynamicInfo;
 import org.beifengtz.jvmm.core.entity.mx.SystemStaticInfo;
 import org.beifengtz.jvmm.core.entity.mx.ThreadDynamicInfo;
-import org.beifengtz.jvmm.tools.factory.LoggerFactory;
-import org.beifengtz.jvmm.tools.util.PidUtil;
+import org.beifengtz.jvmm.common.factory.LoggerFactory;
+import org.beifengtz.jvmm.common.util.PidUtil;
 import org.slf4j.Logger;
 
 import java.lang.management.ClassLoadingMXBean;

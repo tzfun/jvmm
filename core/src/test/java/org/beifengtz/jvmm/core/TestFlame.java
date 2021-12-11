@@ -1,6 +1,6 @@
 package org.beifengtz.jvmm.core;
 
-import org.beifengtz.jvmm.tools.util.PidUtil;
+import org.beifengtz.jvmm.common.util.PidUtil;
 import org.junit.jupiter.api.Test;
 
 /**

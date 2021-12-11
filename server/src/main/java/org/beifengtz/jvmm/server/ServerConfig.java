@@ -1,5 +1,7 @@
 package org.beifengtz.jvmm.server;
 
+import org.beifengtz.jvmm.core.conf.Configuration;
+
 /**
  * <p>
  * Description: TODO

@@ -2,7 +2,7 @@ package org.beifengtz.jvmm.convey.auth;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
-import org.beifengtz.jvmm.tools.util.SignatureUtil;
+import org.beifengtz.jvmm.common.util.SignatureUtil;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;

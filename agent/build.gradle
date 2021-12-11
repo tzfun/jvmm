@@ -1,7 +1,7 @@
 version '0.1'
 
 dependencies {
-    compile(project(':tools'))
+    compile(project(':common'))
 }
 
 jar {

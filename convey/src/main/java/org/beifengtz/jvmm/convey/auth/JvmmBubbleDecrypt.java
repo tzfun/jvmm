@@ -3,7 +3,7 @@ package org.beifengtz.jvmm.convey.auth;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import org.beifengtz.jvmm.common.exception.InvalidMsgException;
-import org.beifengtz.jvmm.tools.util.SignatureUtil;
+import org.beifengtz.jvmm.common.util.SignatureUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

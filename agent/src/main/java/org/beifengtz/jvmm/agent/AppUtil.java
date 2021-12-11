@@ -1,7 +1,7 @@
 package org.beifengtz.jvmm.agent;
 
 
-import org.beifengtz.jvmm.tools.util.SystemPropertyUtil;
+import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
 
 /**
  * <p>

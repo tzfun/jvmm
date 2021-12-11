@@ -12,8 +12,8 @@ import org.beifengtz.jvmm.core.entity.profiler.ProfilerCounter;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerEvent;
 import org.beifengtz.jvmm.server.annotation.JvmmController;
 import org.beifengtz.jvmm.server.annotation.JvmmMapping;
-import org.beifengtz.jvmm.tools.util.FileUtil;
-import org.beifengtz.jvmm.tools.util.SystemPropertyUtil;
+import org.beifengtz.jvmm.common.util.FileUtil;
+import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

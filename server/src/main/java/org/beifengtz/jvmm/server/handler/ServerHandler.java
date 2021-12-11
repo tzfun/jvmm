@@ -14,8 +14,8 @@ import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.handler.JvmmChannelHandler;
 import org.beifengtz.jvmm.server.annotation.JvmmController;
 import org.beifengtz.jvmm.server.annotation.JvmmMapping;
-import org.beifengtz.jvmm.tools.factory.LoggerFactory;
-import org.beifengtz.jvmm.tools.util.ReflexUtil;
+import org.beifengtz.jvmm.common.factory.LoggerFactory;
+import org.beifengtz.jvmm.common.util.ReflexUtil;
 import org.slf4j.Logger;
 
 import java.io.Closeable;

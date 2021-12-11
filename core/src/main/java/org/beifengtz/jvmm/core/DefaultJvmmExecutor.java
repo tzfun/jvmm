@@ -5,12 +5,12 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.tuple.Pair;
 import org.beifengtz.jvmm.core.entity.result.JpsResult;
-import org.beifengtz.jvmm.tools.factory.LoggerFactory;
-import org.beifengtz.jvmm.tools.util.ExecuteNativeUtil;
-import org.beifengtz.jvmm.tools.util.JavaEnvUtil;
-import org.beifengtz.jvmm.tools.util.PlatformUtil;
-import org.beifengtz.jvmm.tools.util.StringUtil;
-import org.beifengtz.jvmm.tools.util.SystemPropertyUtil;
+import org.beifengtz.jvmm.common.factory.LoggerFactory;
+import org.beifengtz.jvmm.common.util.ExecuteNativeUtil;
+import org.beifengtz.jvmm.common.util.JavaEnvUtil;
+import org.beifengtz.jvmm.common.util.PlatformUtil;
+import org.beifengtz.jvmm.common.util.StringUtil;
+import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
 import org.slf4j.Logger;
 
 import java.io.File;

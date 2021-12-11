@@ -2,9 +2,9 @@ package org.beifengtz.jvmm.server.logger;
 
 import io.netty.util.internal.logging.InternalLogLevel;
 import io.netty.util.internal.logging.InternalLogger;
-import org.beifengtz.jvmm.tools.logger.DefaultEmptyLogger;
-import org.beifengtz.jvmm.tools.logger.LoggerEvent;
-import org.beifengtz.jvmm.tools.logger.LoggerLevel;
+import org.beifengtz.jvmm.common.logger.DefaultImplLogger;
+import org.beifengtz.jvmm.common.logger.LoggerEvent;
+import org.beifengtz.jvmm.common.logger.LoggerLevel;
 
 import static org.beifengtz.jvmm.server.ServerBootstrap.AGENT_BOOT_CLASS;
 
@@ -15,7 +15,7 @@ import static org.beifengtz.jvmm.server.ServerBootstrap.AGENT_BOOT_CLASS;
  *
  * @author beifengtz
  */
-public class DefaultLoggerAdaptor extends DefaultEmptyLogger implements InternalLogger {
+public class DefaultLoggerAdaptor extends DefaultImplLogger implements InternalLogger {
 
     private final String name;
 

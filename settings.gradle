@@ -1,9 +1,9 @@
 rootProject.name = 'jvmm'
 include 'core'
 include 'agent'
-include 'tools'
 include 'web'
 include 'convey'
 include 'common'
 include 'server'
+include 'client'
 

@@ -1,10 +1,10 @@
 package org.beifengtz.jvmm.agent;
 
 import com.google.gson.Gson;
-import org.beifengtz.jvmm.tools.JvmmAgentClassLoader;
-import org.beifengtz.jvmm.tools.logger.LoggerEvent;
-import org.beifengtz.jvmm.tools.util.ClassLoaderUtil;
-import org.beifengtz.jvmm.tools.util.FileUtil;
+import org.beifengtz.jvmm.common.JvmmAgentClassLoader;
+import org.beifengtz.jvmm.common.logger.LoggerEvent;
+import org.beifengtz.jvmm.common.util.ClassLoaderUtil;
+import org.beifengtz.jvmm.common.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +40,7 @@ public class AgentBootStrap {
     private static final String STATIC_LOGGER_BINDER_PATH = "org.slf4j.impl.StaticLoggerBinder";
     private static final String JVMM_SERVER_JAR = "jvmm-server.jar";
     private static final String SERVER_MAIN_CLASS = "org.beifengtz.jvmm.server.ServerBootstrap";
+    private static final String SERVER_CONFIG_CLASS = "org.beifengtz.jvmm.server.ServerConfig";
 
     private static final AtomicBoolean isRunning = new AtomicBoolean(true);
     private static volatile JvmmAgentClassLoader agentClassLoader;
@@ -59,7 +60,6 @@ public class AgentBootStrap {
             //  Spring项目在打成Jar包或者War包时会由特定的Launcher启动，启动时创建一个叫LaunchedURLClassLoader来加载jar包
             Class<?> springLauncher = null;
             try {
-                LoggerFactory.getLogger(AgentBootStrap.class).info("test xxxxxxxxxxxxx");
                 springLauncher = Class.forName("org.springframework.boot.loader.JarLauncher", false, systemClassLoader);
                 System.out.println("[Jvmm] Target spring application launched by jar.");
             } catch (NoClassDefFoundError | ClassNotFoundException ignored1) {
@@ -184,7 +184,7 @@ public class AgentBootStrap {
         }
         log.info("Jvm monitor Agent attached by {}.", type);
         try {
-            Class<?> configClazz = Class.forName("org.beifengtz.jvmm.server.ServerConfig");
+            Class<?> configClazz = Class.forName(SERVER_CONFIG_CLASS);
             Method isInited = configClazz.getMethod("isInited");
             if ((boolean) isInited.invoke(null)) {
                 log.info("Jvmm server already inited.");

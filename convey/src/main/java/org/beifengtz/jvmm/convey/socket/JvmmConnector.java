@@ -22,7 +22,7 @@ import org.beifengtz.jvmm.convey.channel.JvmmChannelInitializer;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.handler.HandlerProvider;
-import org.beifengtz.jvmm.tools.factory.LoggerFactory;
+import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.slf4j.Logger;
 
 import java.net.InetSocketAddress;

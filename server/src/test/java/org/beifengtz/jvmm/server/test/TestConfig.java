@@ -1,8 +1,8 @@
 package org.beifengtz.jvmm.server.test;
 
-import org.beifengtz.jvmm.server.Configuration;
+import org.beifengtz.jvmm.core.conf.Configuration;
 import org.beifengtz.jvmm.server.ServerBootstrap;
-import org.beifengtz.jvmm.tools.util.SystemPropertyUtil;
+import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

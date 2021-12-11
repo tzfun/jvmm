@@ -1,8 +1,8 @@
 package org.beifengtz.jvmm.core;
 
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerEvent;
-import org.beifengtz.jvmm.tools.factory.ExecutorFactory;
-import org.beifengtz.jvmm.tools.util.PlatformUtil;
+import org.beifengtz.jvmm.common.factory.ExecutorFactory;
+import org.beifengtz.jvmm.common.util.PlatformUtil;
 
 import java.io.File;
 import java.io.IOException;

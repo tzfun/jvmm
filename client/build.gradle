@@ -1,0 +1,25 @@
+version '0.1'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile(project(':convey'))
+    compile(project(':core'))
+    compile("commons-cli:commons-cli:${commonsCli}")
+}
+
+jar {
+    manifestContentCharset 'utf-8'
+    metadataCharset 'utf-8'
+
+    archiveName("jvmm-client.jar")
+    manifest{
+        attributes 'Main-Class': 'org.beifengtz.jvmm.client.ClientApplication'
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}

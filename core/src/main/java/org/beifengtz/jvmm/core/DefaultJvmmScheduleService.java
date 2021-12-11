@@ -1,7 +1,7 @@
 package org.beifengtz.jvmm.core;
 
-import org.beifengtz.jvmm.tools.factory.ExecutorFactory;
-import org.beifengtz.jvmm.tools.factory.LoggerFactory;
+import org.beifengtz.jvmm.common.factory.ExecutorFactory;
+import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.slf4j.Logger;
 
 import java.util.concurrent.ScheduledExecutorService;

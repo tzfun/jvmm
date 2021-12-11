@@ -2,7 +2,7 @@ package org.beifengtz.jvmm.server.logger;
 
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
-import org.beifengtz.jvmm.tools.logger.LoggerLevel;
+import org.beifengtz.jvmm.common.logger.LoggerLevel;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 
