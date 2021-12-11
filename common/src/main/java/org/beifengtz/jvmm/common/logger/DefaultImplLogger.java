@@ -16,7 +16,7 @@ public class DefaultImplLogger implements Logger {
     protected static final String DEBUG_PREFIX = "[Jvmm] [Debug] ";
     protected static final String WARN_PREFIX = "[Jvmm] [Warn ] ";
     protected static final String INFO_PREFIX = "[Jvmm] [Info ] ";
-    protected static final String ERROR_PREFIX = "[Jvmm] [Warn] ";
+    protected static final String ERROR_PREFIX = "[Jvmm] [Error] ";
 
     protected LoggerLevel level = LoggerLevel.INFO;
 

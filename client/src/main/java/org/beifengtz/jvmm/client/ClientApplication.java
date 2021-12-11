@@ -1,11 +1,8 @@
 package org.beifengtz.jvmm.client;
 
+import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.logger.LoggerLevel;
-import org.beifengtz.jvmm.common.util.PidUtil;
-import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
-import org.beifengtz.jvmm.core.AttachProvider;
-import org.beifengtz.jvmm.core.conf.Configuration;
 
 /**
  * <p>
@@ -19,10 +16,12 @@ import org.beifengtz.jvmm.core.conf.Configuration;
 public class ClientApplication {
     static {
         LoggerFactory.setDefaultLoggerLevel(LoggerLevel.DEBUG);
+        InternalLoggerFactory.setDefaultFactory(new DefaultInternalLoggerFactory());
     }
 
     public static void main(String[] args) throws Throwable {
         Commander.parse(args);
+        System.exit(0);
 
 //        int tp = 8090;
 //        String homePath = SystemPropertyUtil.get("user.dir").replaceAll("\\\\", "/");

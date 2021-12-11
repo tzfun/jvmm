@@ -1,5 +1,6 @@
 package org.beifengtz.jvmm.client;
 
+import io.netty.channel.EventLoopGroup;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -10,12 +11,16 @@ import org.apache.commons.cli.ParseException;
 import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.util.FileUtil;
 import org.beifengtz.jvmm.common.util.PidUtil;
+import org.beifengtz.jvmm.convey.channel.JvmmChannelInitializer;
+import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 import org.beifengtz.jvmm.core.AttachProvider;
 import org.beifengtz.jvmm.core.conf.ConfigParser;
 import org.beifengtz.jvmm.core.conf.Configuration;
 import org.slf4j.Logger;
 
 import java.io.File;
+import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -51,7 +56,7 @@ public class Commander {
         options.addOption(mode);
 
         Option a = Option.builder("a")
-                .required(true)
+                .required(false)
                 .hasArg()
                 .argName("agentJarFile")
                 .desc("The path of the 'jvmm-agent.jar' file. Support relative path, absolute path and network address.")
@@ -60,7 +65,7 @@ public class Commander {
         attachOptions.addOption(a);
 
         Option s = Option.builder("s")
-                .required(true)
+                .required(false)
                 .hasArg()
                 .argName("serverJarFile")
                 .desc("The path of the 'jvmm-server.jar' file. Support relative path, absolute path and network address.")
@@ -145,8 +150,51 @@ public class Commander {
         }
     }
 
-    private static void handleClient(CommandLine cmd) {
-        logger.info("Not support now.");
+    private static void handleClient(CommandLine cmd) throws Throwable {
+        String address;
+        if (!cmd.hasOption("h")) {
+            logger.error("Missing required address");
+            return;
+        } else {
+            address = cmd.getOptionValue("h");
+        }
+
+        String[] split = address.split(":");
+        if (split.length != 2) {
+            logger.error("Invalid address: " + address);
+            return;
+        }
+        String host = split[0];
+        int port = Integer.parseInt(split[1]);
+        String username = cmd.getOptionValue("u");
+        String password = cmd.getOptionValue("pass");
+
+        EventLoopGroup group = JvmmChannelInitializer.newEventLoopGroup(1);
+
+        logger.info("Start to connect jvmm agent server...");
+        JvmmConnector connector = JvmmConnector.newInstance(host, port, true, username, password, group);
+        if (connector.connect().await(3, TimeUnit.SECONDS)) {
+            logger.info("Connect successful! Enter 'exit' to safely exit the connection.");
+        } else {
+            logger.error("Connect server failed! case: time out");
+            System.exit(-1);
+            return;
+        }
+
+        Scanner sc = new Scanner(System.in);
+        System.out.print("> ");
+        while (sc.hasNext()) {
+            String in = sc.nextLine();
+
+            if ("exit".equalsIgnoreCase(in)) {
+                logger.info("bye bye...");
+                connector.close();
+                group.shutdownGracefully();
+                break;
+            }
+            System.out.print("> ");
+        }
+        System.exit(0);
     }
 
     private static void handleAttach(CommandLine cmd) throws Throwable {
@@ -214,6 +262,7 @@ public class Commander {
 
         if (pid < 0) {
             logger.error("Target java program not running.");
+            return;
         }
 
         Configuration conf;

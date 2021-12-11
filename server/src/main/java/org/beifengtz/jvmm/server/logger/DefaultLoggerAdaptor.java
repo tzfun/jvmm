@@ -275,7 +275,7 @@ public class DefaultLoggerAdaptor extends DefaultImplLogger implements InternalL
 
     @Override
     public boolean isEnabled(InternalLogLevel level) {
-        return false;
+        return true;
     }
 
     @Override
