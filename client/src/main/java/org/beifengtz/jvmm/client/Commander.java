@@ -154,6 +154,7 @@ public class Commander {
         String address;
         if (!cmd.hasOption("h")) {
             logger.error("Missing required address");
+            printHelp();
             return;
         } else {
             address = cmd.getOptionValue("h");
@@ -181,9 +182,15 @@ public class Commander {
             return;
         }
 
+        connector.registerCloseListener(() -> {
+            System.out.println();
+            logger.info("Connected channel inactive, trigger to close connector...");
+            System.exit(0);
+        });
+
         Scanner sc = new Scanner(System.in);
         System.out.print("> ");
-        while (sc.hasNext()) {
+        while (connector.isConnected()) {
             String in = sc.nextLine();
 
             if ("exit".equalsIgnoreCase(in)) {
@@ -191,9 +198,20 @@ public class Commander {
                 connector.close();
                 group.shutdownGracefully();
                 break;
+            } else {
+                try {
+                    ServerService.handle(connector, in);
+                } catch (Throwable e) {
+                    logger.error("An exception occurred during processing.", e);
+                }
+            }
+
+            if (!connector.isConnected()) {
+                break;
             }
             System.out.print("> ");
         }
+        sc.close();
         System.exit(0);
     }
 

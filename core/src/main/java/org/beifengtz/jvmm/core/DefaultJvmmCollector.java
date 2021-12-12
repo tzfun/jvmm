@@ -197,6 +197,7 @@ class DefaultJvmmCollector implements JvmmCollector {
 
         try {
             Method committedVirtualMemorySize = clazz.getMethod("getCommittedVirtualMemorySize");
+            committedVirtualMemorySize.setAccessible(true);
             info.setCommittedVirtualMemorySize((long) committedVirtualMemorySize.invoke(operatingSystemMXBean));
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             log.warn("Get system dynamic info failed. [getCommittedVirtualMemorySize] " + e.getMessage(), e);
@@ -204,6 +205,7 @@ class DefaultJvmmCollector implements JvmmCollector {
 
         try {
             Method freePhysicalMemorySize = clazz.getMethod("getFreePhysicalMemorySize");
+            freePhysicalMemorySize.setAccessible(true);
             info.setFreePhysicalMemorySize((long) freePhysicalMemorySize.invoke(operatingSystemMXBean));
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             log.warn("Get system dynamic info failed. [getFreePhysicalMemorySize] " + e.getMessage(), e);
@@ -211,6 +213,7 @@ class DefaultJvmmCollector implements JvmmCollector {
 
         try {
             Method freeSwapSpaceSize = clazz.getMethod("getFreeSwapSpaceSize");
+            freeSwapSpaceSize.setAccessible(true);
             info.setFreeSwapSpaceSize((long) freeSwapSpaceSize.invoke(operatingSystemMXBean));
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             log.warn("Get system dynamic info failed. [getFreeSwapSpaceSize] " + e.getMessage(), e);
@@ -218,6 +221,7 @@ class DefaultJvmmCollector implements JvmmCollector {
 
         try {
             Method processCpuLoad = clazz.getMethod("getProcessCpuLoad");
+            processCpuLoad.setAccessible(true);
             info.setProcessCpuLoad((double) processCpuLoad.invoke(operatingSystemMXBean));
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             log.warn("Get system dynamic info failed. [getProcessCpuLoad] " + e.getMessage(), e);
@@ -225,6 +229,7 @@ class DefaultJvmmCollector implements JvmmCollector {
 
         try {
             Method processCpuTime = clazz.getMethod("getProcessCpuTime");
+            processCpuTime.setAccessible(true);
             info.setProcessCpuTime((long) processCpuTime.invoke(operatingSystemMXBean));
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             log.warn("Get system dynamic info failed. [getProcessCpuTime] " + e.getMessage(), e);
@@ -232,6 +237,7 @@ class DefaultJvmmCollector implements JvmmCollector {
 
         try {
             Method systemCpuLoad = clazz.getMethod("getSystemCpuLoad");
+            systemCpuLoad.setAccessible(true);
             info.setSystemCpuLoad((double) systemCpuLoad.invoke(operatingSystemMXBean));
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             log.warn("Get system dynamic info failed. [getSystemCpuLoad] " + e.getMessage(), e);
@@ -239,6 +245,7 @@ class DefaultJvmmCollector implements JvmmCollector {
 
         try {
             Method totalPhysicalMemorySize = clazz.getMethod("getTotalPhysicalMemorySize");
+            totalPhysicalMemorySize.setAccessible(true);
             info.setTotalSwapSpaceSize((long) totalPhysicalMemorySize.invoke(operatingSystemMXBean));
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             log.warn("Get system dynamic info failed. [getTotalPhysicalMemorySize] " + e.getMessage(), e);
@@ -246,6 +253,7 @@ class DefaultJvmmCollector implements JvmmCollector {
 
         try {
             Method totalSwapSpaceSize = clazz.getMethod("getTotalSwapSpaceSize");
+            totalSwapSpaceSize.setAccessible(true);
             info.setTotalSwapSpaceSize((long) totalSwapSpaceSize.invoke(operatingSystemMXBean));
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             log.warn("Get system dynamic info failed. [getTotalSwapSpaceSize] " + e.getMessage(), e);

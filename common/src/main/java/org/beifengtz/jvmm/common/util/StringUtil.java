@@ -48,4 +48,69 @@ public class StringUtil {
         }
         return true;
     }
+
+    /**
+     * 将JSON字符串格式化
+     *
+     * @param json 未格式化的JSON字符串。
+     * @return 格式化的JSON字符串。
+     */
+    public static String formatJsonCode(String json) {
+        StringBuilder result = new StringBuilder();
+
+        int length = json.length();
+        int number = 0;
+        char key = 0;
+        for (int i = 0; i < length; i++) {
+            key = json.charAt(i);
+
+            if ((key == '[') || (key == '{')) {
+                if ((i - 1 > 0) && (json.charAt(i - 1) == ':')) {
+                    result.append(" ");
+                }
+
+                result.append(key);
+                result.append('\n');
+
+                number++;
+                result.append(indent(number));
+                continue;
+            }
+
+            if ((key == ']') || (key == '}')) {
+                result.append('\n');
+
+                number--;
+                result.append(indent(number));
+
+                result.append(key);
+                continue;
+            }
+
+            if ((key == ',')) {
+                result.append(key);
+                result.append('\n');
+                result.append(indent(number));
+                continue;
+            }
+
+            result.append(key);
+        }
+
+        return result.toString();
+    }
+
+    /**
+     * 返回指定次数的缩进字符串。每一次缩进三个空格，即SPACE。
+     *
+     * @param number 缩进次数。
+     * @return 指定缩进次数的字符串。
+     */
+    private static String indent(int number) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < number; i++) {
+            result.append("   ");
+        }
+        return result.toString();
+    }
 }

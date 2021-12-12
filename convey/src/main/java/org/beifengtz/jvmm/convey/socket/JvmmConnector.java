@@ -14,6 +14,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.concurrent.DefaultPromise;
 import io.netty.util.concurrent.Future;
 import org.beifengtz.jvmm.common.exception.SocketExecuteException;
+import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.convey.GlobalStatus;
 import org.beifengtz.jvmm.convey.GlobalType;
 import org.beifengtz.jvmm.convey.auth.JvmmBubbleDecrypt;
@@ -22,7 +23,6 @@ import org.beifengtz.jvmm.convey.channel.JvmmChannelInitializer;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.handler.HandlerProvider;
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.slf4j.Logger;
 
 import java.net.InetSocketAddress;
@@ -60,6 +60,7 @@ public class JvmmConnector {
     private boolean keepAlive;
 
     private final List<MsgReceiveListener> listeners;
+    private CloseListener closeListener;
 
     private JvmmConnector() {
         listeners = new LinkedList<>();
@@ -71,6 +72,10 @@ public class JvmmConnector {
 
     public interface MsgReceiveListener {
         void onMessage(JvmmResponse response);
+    }
+
+    public interface CloseListener {
+        void onclose();
     }
 
     class HeartBeatHandler implements Runnable {
@@ -197,13 +202,22 @@ public class JvmmConnector {
         this.listeners.clear();
     }
 
+    public void registerCloseListener(CloseListener closeListener) {
+        this.closeListener = closeListener;
+    }
+
     public Future<Boolean> connect() {
         if (state != State.CONNECTED) {
             openPromise = new DefaultPromise<>(workGroup.next());
             Bootstrap b = new Bootstrap();
             b.group(workGroup).channel(JvmmChannelInitializer.channelClass(workGroup)).handler(new JvmmChannelInitializer(new SocketResponseHandler()));
             channel = b.connect(host, port).channel();
-            channel.closeFuture().addListener(future -> state = State.CLOSED);
+            channel.closeFuture().addListener(future -> {
+                state = State.CLOSED;
+                if (closeListener != null) {
+                    closeListener.onclose();
+                }
+            });
             state = State.CONNECTED;
         } else {
             logger.warn("Jvmm socket connector is already connected.");
