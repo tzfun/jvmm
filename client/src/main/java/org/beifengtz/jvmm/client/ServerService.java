@@ -7,14 +7,19 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.beifengtz.jvmm.client.annotation.JvmmCmdDesc;
 import org.beifengtz.jvmm.client.annotation.JvmmOption;
 import org.beifengtz.jvmm.client.annotation.JvmmOptions;
+import org.beifengtz.jvmm.common.exception.ErrorStatusException;
 import org.beifengtz.jvmm.common.util.StringUtil;
+import org.beifengtz.jvmm.convey.entity.JvmmRequest;
+import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 /**
  * <p>
@@ -29,6 +34,7 @@ public class ServerService {
 
     protected static final Map<String, Method> methodMap = new HashMap<>();
     protected static final Map<String, Options> optionsMap = new HashMap<>();
+    protected static final Map<String, String> descMap = new HashMap<>();
     protected static final CommandLineParser commandParser = DefaultParser.builder().build();
     protected static final String HELP_KEY = "help";
 
@@ -39,18 +45,24 @@ public class ServerService {
     protected static void init() {
         Method[] methods = ServerServiceImpl.class.getMethods();
         for (Method method : methods) {
+            String name = method.getName();
             JvmmOption[] arr;
             if (method.isAnnotationPresent(JvmmOptions.class)) {
                 JvmmOptions ops = method.getAnnotation(JvmmOptions.class);
                 arr = ops.value();
             } else if (method.isAnnotationPresent(JvmmOption.class)) {
                 arr = new JvmmOption[]{method.getAnnotation(JvmmOption.class)};
+            } else if (method.isAnnotationPresent(JvmmCmdDesc.class)) {
+                arr = new JvmmOption[0];
+                descMap.put(name, method.getAnnotation(JvmmCmdDesc.class).desc());
             } else {
                 continue;
             }
 
-            String name = method.getName();
             methodMap.put(name, method);
+            if (method.isAnnotationPresent(JvmmCmdDesc.class)){
+                descMap.put(name, method.getAnnotation(JvmmCmdDesc.class).desc());
+            }
 
             Options options = new Options();
             for (JvmmOption op : arr) {
@@ -118,8 +130,19 @@ public class ServerService {
         System.out.println();
         for (String name : names) {
             helper.setSyntaxPrefix(name + " usage: ");
-            helper.printHelp(width, HelpFormatter.DEFAULT_OPT_PREFIX, null, optionsMap.get(name), "\n");
+            helper.printHelp(width, HelpFormatter.DEFAULT_OPT_PREFIX, descMap.get(name), optionsMap.get(name), "\n");
         }
+    }
+
+    protected static JvmmResponse request(JvmmConnector connector, JvmmRequest request) {
+        try {
+            return connector.waitForResponse(request);
+        } catch (ErrorStatusException e) {
+            System.err.printf("Wrong response status: '%s', msg: %s%n", e.getStatus(), e.getMessage());
+        } catch (InterruptedException | TimeoutException e) {
+            System.err.println("Request failed: " + e.getMessage());
+        }
+        return null;
     }
 
 }

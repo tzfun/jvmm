@@ -13,6 +13,8 @@ import org.beifengtz.jvmm.core.conf.Configuration;
  */
 public class ServerConfig {
 
+    public static final String STATUS_OK = "ok";
+
     private static volatile Configuration configuration;
 
     private static volatile int realBindPort = -1;
