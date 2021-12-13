@@ -18,7 +18,7 @@ import org.beifengtz.jvmm.server.annotation.JvmmMapping;
 public class ServerController {
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_HEARTBEAT)
-    public void heartbeat(){
+    public void heartbeat() {
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_SERVER_SHUTDOWN)

@@ -13,6 +13,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.concurrent.DefaultPromise;
 import io.netty.util.concurrent.Future;
+import org.beifengtz.jvmm.common.exception.ErrorStatusException;
 import org.beifengtz.jvmm.common.exception.SocketExecuteException;
 import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.convey.GlobalStatus;
@@ -25,24 +26,24 @@ import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.handler.HandlerProvider;
 import org.slf4j.Logger;
 
+import java.io.Closeable;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
  * <p>
- * Description: TODO
+ * Description: Jvmm通信工具，与Jvmm Server建立通信通道，提供connect、close、send等基础方法
  * </p>
  * <p>
  * Created in 4:57 下午 2021/5/29
  *
  * @author beifengtz
  */
-public class JvmmConnector {
+public class JvmmConnector implements Closeable {
 
     private static final Logger logger = LoggerFactory.logger(JvmmConnector.class);
 
@@ -266,6 +267,7 @@ public class JvmmConnector {
         return state == State.CONNECTED && channel != null && channel.isActive();
     }
 
+    @Override
     public void close() {
         if (channel != null) {
             channel.close();
@@ -278,39 +280,19 @@ public class JvmmConnector {
         }
     }
 
-    public static JvmmResponse waitForResponse(EventLoopGroup group, String address, JvmmRequest request)
-            throws ExecutionException, InterruptedException, TimeoutException {
-        return waitForResponse(group, address, request, request.getType(), 5, TimeUnit.SECONDS);
+    public JvmmResponse waitForResponse(JvmmRequest request)
+            throws ErrorStatusException, InterruptedException, TimeoutException {
+        return waitForResponse(request, 5, TimeUnit.SECONDS);
     }
 
-    public static JvmmResponse waitForResponse(EventLoopGroup group, String address, JvmmRequest request, long timeout, TimeUnit timeunit)
-            throws ExecutionException, InterruptedException, TimeoutException {
-        return waitForResponse(group, address, request, request.getType(), timeout, timeunit);
+    public JvmmResponse waitForResponse(JvmmRequest request, long timeout, TimeUnit timeunit) throws ErrorStatusException,
+            InterruptedException, TimeoutException {
+        return waitForResponse(request, null, timeout, timeunit);
     }
 
-    /**
-     * 一次性连接
-     *
-     * @param group    executor
-     * @param address  地址，比如：127.0.0.1:5010
-     * @param request  {@link JvmmRequest}
-     * @param waitType 监听返回类型，如果为null则默认监听请求的类型。见：{@link GlobalType}
-     * @param timeout  超时时间
-     * @param timeunit 超时单位
-     * @return {@link JvmmResponse}
-     * @throws ExecutionException   执行时异常
-     * @throws InterruptedException 中断异常，不可控
-     * @throws TimeoutException     超时未返回后抛出
-     */
-    public static JvmmResponse waitForResponse(EventLoopGroup group, String address, JvmmRequest request, String waitType, long timeout, TimeUnit timeunit)
-            throws ExecutionException, InterruptedException, TimeoutException {
-        if (group == null) {
-            throw new IllegalArgumentException("Can not execute one request with null event loop group.");
-        }
-        String[] split = address.split(":");
-        JvmmConnector connector = newInstance(split[0], Integer.parseInt(split[1]), group);
-
-        final DefaultPromise<JvmmResponse> promise = new DefaultPromise<>(group.next());
+    public JvmmResponse waitForResponse(JvmmRequest request, String waitType, long timeout, TimeUnit timeunit)
+            throws ErrorStatusException, InterruptedException, TimeoutException {
+        final DefaultPromise<JvmmResponse> promise = new DefaultPromise<>(workGroup.next());
         MsgReceiveListener listener = response -> {
             String waitFor = waitType;
             if (waitFor == null) {
@@ -320,17 +302,60 @@ public class JvmmConnector {
                 if (GlobalStatus.JVMM_STATUS_OK.name().equals(response.getStatus())) {
                     promise.trySuccess(response);
                 } else {
-                    promise.tryFailure(new Exception(response.getMessage()));
+                    promise.tryFailure(new ErrorStatusException(response.getStatus(), response.getMessage()));
                 }
             }
         };
-        connector.registerListener(listener);
-        if (!connector.isConnected()) {
-            throw new IllegalStateException("Socket is closed");
+        registerListener(listener);
+        send(request);
+        if (promise.await(timeout, timeunit)) {
+            if (promise.isSuccess()) {
+                return promise.getNow();
+            } else {
+                if (promise.cause() instanceof ErrorStatusException) {
+                    throw (ErrorStatusException) promise.cause();
+                } else {
+                    throw new RuntimeException(promise.cause());
+                }
+            }
+        } else {
+            throw new TimeoutException("request time out");
         }
-        connector.send(request);
+    }
+
+    public static JvmmResponse waitForResponse(EventLoopGroup group, String address, JvmmRequest request)
+            throws ErrorStatusException, InterruptedException, TimeoutException {
+        return waitForResponse(group, address, request, request.getType(), 5, TimeUnit.SECONDS);
+    }
+
+    public static JvmmResponse waitForResponse(EventLoopGroup group, String address, JvmmRequest request, long timeout, TimeUnit timeunit)
+            throws ErrorStatusException, InterruptedException, TimeoutException {
+        return waitForResponse(group, address, request, request.getType(), timeout, timeunit);
+    }
+
+    /**
+     * 一次性连接请求
+     *
+     * @param group    executor
+     * @param address  地址，比如：127.0.0.1:5010
+     * @param request  {@link JvmmRequest}
+     * @param waitType 监听返回类型，如果为null则默认监听请求的类型。见：{@link GlobalType}
+     * @param timeout  超时时间
+     * @param timeunit 超时单位
+     * @return {@link JvmmResponse}
+     * @throws ErrorStatusException 响应状态码错误时抛出，非 {@link GlobalStatus#JVMM_STATUS_OK} 状态均会抛出
+     * @throws InterruptedException 中断异常，不可控
+     * @throws TimeoutException     超时未返回后抛出
+     */
+    public static JvmmResponse waitForResponse(EventLoopGroup group, String address, JvmmRequest request, String waitType, long timeout, TimeUnit timeunit)
+            throws ErrorStatusException, InterruptedException, TimeoutException {
+        if (group == null) {
+            throw new IllegalArgumentException("Can not execute one request with null event loop group.");
+        }
+        String[] split = address.split(":");
+        JvmmConnector connector = newInstance(split[0], Integer.parseInt(split[1]), group);
         try {
-            return promise.get(timeout, timeunit);
+            return connector.waitForResponse(request, waitType, timeout, timeunit);
         } finally {
             connector.close();
         }

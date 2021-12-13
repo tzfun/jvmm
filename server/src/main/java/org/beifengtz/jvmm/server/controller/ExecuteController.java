@@ -8,6 +8,7 @@ import org.beifengtz.jvmm.convey.GlobalType;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.entity.result.JpsResult;
+import org.beifengtz.jvmm.server.ServerConfig;
 import org.beifengtz.jvmm.server.annotation.JvmmController;
 import org.beifengtz.jvmm.server.annotation.JvmmMapping;
 
@@ -28,7 +29,7 @@ public class ExecuteController {
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_EXECUTE_GC)
     public String gc() {
         JvmmFactory.getExecutor().gc();
-        return "ok";
+        return ServerConfig.STATUS_OK;
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_EXECUTE_SET_CLASSLOADING_VERBOSE)
@@ -38,7 +39,7 @@ public class ExecuteController {
         }
 
         JvmmFactory.getExecutor().setClassLoadingVerbose(data.getAsBoolean());
-        return "ok";
+        return ServerConfig.STATUS_OK;
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_EXECUTE_SET_MEMORY_VERBOSE)
@@ -48,7 +49,7 @@ public class ExecuteController {
         }
 
         JvmmFactory.getExecutor().setMemoryVerbose(data.getAsBoolean());
-        return "ok";
+        return ServerConfig.STATUS_OK;
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_EXECUTE_SET_THREAD_CPU_TIME_ENABLED)
@@ -57,7 +58,7 @@ public class ExecuteController {
             throw new IllegalArgumentException("Missing data");
         }
         JvmmFactory.getExecutor().setThreadCpuTimeEnabled(data.getAsBoolean());
-        return "ok";
+        return ServerConfig.STATUS_OK;
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_EXECUTE_SET_THREAD_CONTENTION_MONITOR_ENABLED)
@@ -66,13 +67,13 @@ public class ExecuteController {
             throw new IllegalArgumentException("Missing data");
         }
         JvmmFactory.getExecutor().setThreadContentionMonitoringEnabled(data.getAsBoolean());
-        return "ok";
+        return ServerConfig.STATUS_OK;
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_EXECUTE_RESET_PEAK_THREAD_COUNT)
     public String resetPeakThreadCount() {
         JvmmFactory.getExecutor().resetPeakThreadCount();
-        return "ok";
+        return ServerConfig.STATUS_OK;
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_EXECUTE_JAVA_PROCESS)
