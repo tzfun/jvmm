@@ -46,7 +46,14 @@ public class ProfilerController {
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_PROFILER_SAMPLE)
     public JvmmResponse sample(String type, EventExecutor executor, JsonObject data) throws Exception {
 
-        File to = new File(SystemPropertyUtil.get("user.dir") + "/TempFile", UUID.randomUUID().toString());
+        String format;
+        if (data.has("format")) {
+            format = data.get("format").getAsString();
+        } else {
+            format = "html";
+        }
+
+        File to = new File(SystemPropertyUtil.get("user.dir") + "/TempFile", UUID.randomUUID() + "." + format);
         if (to.getParentFile() != null && !to.getParentFile().exists()) {
             to.getParentFile().mkdirs();
         }
@@ -73,9 +80,9 @@ public class ProfilerController {
 
         Future<String> future;
         if (data.has("interval")) {
-            future = JvmmFactory.getProfiler().sample(executor, to, event, counter, data.get("interval").getAsLong(), time, TimeUnit.SECONDS);
+            future = JvmmFactory.getProfiler().sample(to, event, counter, data.get("interval").getAsLong(), time, TimeUnit.SECONDS);
         } else {
-            future = JvmmFactory.getProfiler().sample(executor, to, event, counter, time, TimeUnit.SECONDS);
+            future = JvmmFactory.getProfiler().sample(to, event, counter, time, TimeUnit.SECONDS);
         }
         JvmmResponse response = JvmmResponse.create().setType(type);
         String result = future.get();

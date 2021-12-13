@@ -19,6 +19,7 @@ import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -60,7 +61,7 @@ public class ServerService {
             }
 
             methodMap.put(name, method);
-            if (method.isAnnotationPresent(JvmmCmdDesc.class)){
+            if (method.isAnnotationPresent(JvmmCmdDesc.class)) {
                 descMap.put(name, method.getAnnotation(JvmmCmdDesc.class).desc());
             }
 
@@ -135,8 +136,12 @@ public class ServerService {
     }
 
     protected static JvmmResponse request(JvmmConnector connector, JvmmRequest request) {
+        return request(connector, request, 5, TimeUnit.SECONDS);
+    }
+
+    protected static JvmmResponse request(JvmmConnector connector, JvmmRequest request, long timeout, TimeUnit timeUnit) {
         try {
-            return connector.waitForResponse(request);
+            return connector.waitForResponse(request, timeout, timeUnit);
         } catch (ErrorStatusException e) {
             System.err.printf("Wrong response status: '%s', msg: %s%n", e.getStatus(), e.getMessage());
         } catch (InterruptedException | TimeoutException e) {

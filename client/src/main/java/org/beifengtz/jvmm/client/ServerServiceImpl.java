@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -185,7 +186,7 @@ public class ServerServiceImpl extends ServerService {
                     required = true,
                     hasArg = true,
                     argName = "file",
-                    desc = "Output file path"
+                    desc = "Output file path, file type indicates format type."
             )
     })
     @JvmmCmdDesc(desc = "Get server sampling report. Only supported on MacOS and Linux.")
@@ -200,17 +201,27 @@ public class ServerServiceImpl extends ServerService {
             data.addProperty("counter", cmd.getOptionValue("c"));
         }
 
+        long waitSecs = 12;
         if (cmd.hasOption("t")) {
-            data.addProperty("time", Long.parseLong(cmd.getOptionValue("t")));
+            long time = Long.parseLong(cmd.getOptionValue("t"));
+            data.addProperty("time", time);
+            waitSecs = time + 2;
         }
 
         if (cmd.hasOption("i")) {
             data.addProperty("interval", Long.parseLong(cmd.getOptionValue("i")));
         }
 
+        String filePath = cmd.getOptionValue("f");
+        int dotIdx = filePath.lastIndexOf(".");
+        if (dotIdx >= 0) {
+            data.addProperty("format", filePath.substring(dotIdx));
+        }
+
         request.setData(data);
 
-        JvmmResponse response = request(connector, request);
+
+        JvmmResponse response = request(connector, request, waitSecs, TimeUnit.SECONDS);
         if (response == null) {
             return;
         }
@@ -218,7 +229,7 @@ public class ServerServiceImpl extends ServerService {
         String hexStr = response.getData().getAsString();
         byte[] bytes = CodingUtil.hexStr2Bytes(hexStr);
         try {
-            File file = new File(cmd.getOptionValue("f"));
+            File file = new File(filePath);
             FileUtil.writeByteArrayToFile(file, bytes);
             System.out.println("Write profiler to file successful, path is " + file.getAbsolutePath());
         } catch (IOException e) {

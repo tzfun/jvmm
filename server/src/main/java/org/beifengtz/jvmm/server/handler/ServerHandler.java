@@ -19,6 +19,7 @@ import org.beifengtz.jvmm.common.util.ReflexUtil;
 import org.slf4j.Logger;
 
 import java.io.Closeable;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
@@ -134,7 +135,11 @@ public class ServerHandler extends JvmmChannelHandler {
                 ctx.channel().writeAndFlush(response.serialize());
             }
         } catch (Throwable e) {
-            handleException(ctx, reqMsg, e);
+            if (e instanceof InvocationTargetException) {
+                handleException(ctx, reqMsg, ((InvocationTargetException) e).getTargetException());
+            } else {
+                handleException(ctx, reqMsg, e);
+            }
         }
     }
 

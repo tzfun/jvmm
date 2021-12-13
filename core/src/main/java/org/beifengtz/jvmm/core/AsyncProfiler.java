@@ -1,12 +1,15 @@
 package org.beifengtz.jvmm.core;
 
-import org.beifengtz.jvmm.core.entity.profiler.ProfilerEvent;
 import org.beifengtz.jvmm.common.factory.ExecutorFactory;
 import org.beifengtz.jvmm.common.util.PlatformUtil;
+import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
+import org.beifengtz.jvmm.core.entity.profiler.ProfilerEvent;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -14,17 +17,18 @@ import java.util.concurrent.TimeUnit;
  * <p>
  * Description: async profiler实现
  * </p>
+ *
+ * @author beifengtz
  * @see <a href="https://github.com/jvm-profiling-tools/async-profiler">https://github.com/jvm-profiling-tools/async-profiler</a>
  * <p>
  * Created in 6:28 下午 2021/6/23
- *
- * @author beifengtz
  */
 public class AsyncProfiler {
 
     private static AsyncProfiler instance = null;
 
-    private static String libFilePath;
+    private static InputStream soStream;
+    private static String soName;
 
     static {
         String soPath = null;
@@ -47,9 +51,10 @@ public class AsyncProfiler {
         }
 
         if (soPath != null) {
-            URL resource = AsyncProfiler.class.getResource(soPath);
-            if (resource != null) {
-                libFilePath = resource.getFile();
+            InputStream stream = AsyncProfiler.class.getResourceAsStream(soPath);
+            if (stream != null) {
+                soStream = stream;
+                soName = soPath.substring(soPath.lastIndexOf("/"));
             }
         }
     }
@@ -58,24 +63,40 @@ public class AsyncProfiler {
     }
 
     public static synchronized AsyncProfiler getInstance() {
-        return getInstance(null);
+        try {
+            return getInstance(null);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public static synchronized AsyncProfiler getInstance(String soFilePath) {
+    public static synchronized AsyncProfiler getInstance(String soFilePath) throws IOException {
 
         if (instance != null) {
             return instance;
         }
 
         if (soFilePath != null) {
-            libFilePath = soFilePath;
+            soStream = new FileInputStream(soFilePath);
+            soFilePath = soFilePath.replaceAll("\\\\", "/");
+            soName = soFilePath.substring(soFilePath.lastIndexOf("/"));
         }
 
-        if (libFilePath == null) {
+        if (soStream == null) {
             throw new IllegalStateException("Can not found libasyncProfiler.so, Only support Linux & Mac.");
         }
+        String home = SystemPropertyUtil.get("user.dir").replaceAll("\\\\", "/");
+        File file = new File(home + "/lib", soName);
+        if (!file.getParentFile().exists()) {
+            file.getParentFile().mkdirs();
+        }
+        if (file.exists()) {
+            file.delete();
+        }
 
-        System.load(libFilePath);
+        Files.copy(soStream, file.toPath());
+        System.load(file.getAbsolutePath());
+
         instance = new AsyncProfiler();
         return instance;
     }
