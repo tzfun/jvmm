@@ -2,7 +2,6 @@ package org.beifengtz.jvmm.core;
 
 import org.beifengtz.jvmm.common.factory.ExecutorFactory;
 import org.beifengtz.jvmm.common.util.PlatformUtil;
-import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerEvent;
 
 import java.io.File;
@@ -26,15 +25,15 @@ import java.util.concurrent.TimeUnit;
 public class AsyncProfiler {
 
     private static AsyncProfiler instance = null;
+    private static final File tmpdir = new File(System.getProperty("java.io.tmpdir"));
 
     private static InputStream soStream;
-    private static String soName;
 
     static {
         String soPath = null;
 
         if (PlatformUtil.isMac()) {
-            //  兼容 arm64 和 x64架构
+            //  兼容 arm64 和 x86_64 架构
             soPath = "/async-profiler/libasyncProfiler-macos-x64-arm64.so";
         } else if (PlatformUtil.isLinux()) {
             if (PlatformUtil.isArm32()) {
@@ -54,7 +53,6 @@ public class AsyncProfiler {
             InputStream stream = AsyncProfiler.class.getResourceAsStream(soPath);
             if (stream != null) {
                 soStream = stream;
-                soName = soPath.substring(soPath.lastIndexOf("/"));
             }
         }
     }
@@ -78,15 +76,13 @@ public class AsyncProfiler {
 
         if (soFilePath != null) {
             soStream = new FileInputStream(soFilePath);
-            soFilePath = soFilePath.replaceAll("\\\\", "/");
-            soName = soFilePath.substring(soFilePath.lastIndexOf("/"));
         }
 
         if (soStream == null) {
             throw new IllegalStateException("Can not found libasyncProfiler.so, Only support Linux & Mac.");
         }
-        String home = SystemPropertyUtil.get("user.dir").replaceAll("\\\\", "/");
-        File file = new File(home + "/lib", soName);
+
+        File file = new File(tmpdir, "libasyncProfiler.so");
         if (!file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
         }
@@ -95,6 +91,7 @@ public class AsyncProfiler {
         }
 
         Files.copy(soStream, file.toPath());
+
         System.load(file.getAbsolutePath());
 
         instance = new AsyncProfiler();

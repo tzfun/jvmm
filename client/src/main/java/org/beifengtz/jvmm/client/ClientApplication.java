@@ -20,10 +20,10 @@ public class ClientApplication {
     }
 
     public static void main(String[] args) throws Throwable {
-//        Commander.parse(args);
-        Commander.parse(new String[]{
-                "-h","127.0.0.1:5010"
-        });
+        Commander.parse(args);
+//        Commander.parse(new String[]{
+//                "-h","127.0.0.1:5010"
+//        });
         System.exit(0);
 
 //        int tp = 8090;

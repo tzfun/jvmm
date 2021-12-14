@@ -40,7 +40,7 @@ public class AgentBootStrap {
 
     private static final AtomicBoolean isRunning = new AtomicBoolean(true);
     private static volatile JvmmAgentClassLoader agentClassLoader;
-    private static volatile boolean premainAttached;
+    private static volatile boolean agentAttached;
 
     private static final BlockingQueue<LoggerEvent> logQueue = new LinkedBlockingQueue<>();
 
@@ -171,28 +171,22 @@ public class AgentBootStrap {
         main(agentArgs, inst, "agentmain");
     }
 
+    /**
+     * 代理载入 jvmm-server.jar 包，期间会由新的ClassLoader载入这些jar包，对一些需要预加载的jar包，在attach前会搜索过滤出这些jar
+     * 然后再由自定义的ClassLoader载入。
+     *
+     * 如果 jvmm-server.jar 未加载过，并且 server 未启动，将会执行：解析参数、下载jar依赖、共享日志jar包、加载jar包、启动服务、启动日志处理线程；
+     * 如果 jvmm-server.jar 已加载过，并且 server 未启动，将会执行：解析参数、启动服务、启动日志处理线程；
+     * 如果 jvmm-server.jar 已加载过，并且 server 已启动，操作将被禁止；
+     *
+     * @param args 参数
+     * @param inst {@link Instrumentation}
+     * @param type 载入类型：
+     *             agentmain - 运行时动态载入
+     *             premain - 启动时载入
+     */
     private static synchronized void main(String args, final Instrumentation inst, String type) {
-        if ("premain".equals(type)) {
-            if (premainAttached) {
-                return;
-            }
-            premainAttached = true;
-        }
         log.info("Jvm monitor Agent attached by {}.", type);
-        try {
-            Class<?> configClazz = Class.forName(SERVER_CONFIG_CLASS);
-            Method isInited = configClazz.getMethod("isInited");
-            if ((boolean) isInited.invoke(null)) {
-                log.info("Jvmm server already inited.");
-                Method getRealBindPort = configClazz.getMethod("getRealBindPort");
-                int realBindPort = (int) getRealBindPort.invoke(null);
-                if (realBindPort >= 0) {
-                    log.info("Jvmm server already started on {}", realBindPort);
-                    return;
-                }
-            }
-        } catch (Throwable ignored) {
-        }
 
         if (Objects.isNull(args)) {
             args = "";
@@ -207,6 +201,38 @@ public class AgentBootStrap {
         } else {
             serverJar = args.substring(0, idx).trim();
             agentArgs = args.substring(idx).trim();
+        }
+
+        if ("agentmain".equals(type)) {
+            if (agentAttached) {
+                if (isRunning.get()) {
+                    log.warn("The jvmm agent has been loaded once and the server is running. Repeated startup is not allowed.");
+                } else {
+                    try {
+                        log.info("The jvmm agent has been loaded once and enters the server startup phase...");
+                        bootServer(inst, null, agentArgs);
+                    } catch (InterruptedException e) {
+                        log.error(e.getMessage(), e);
+                        throw new RuntimeException(e);
+                    }
+                }
+                return;
+            }
+            agentAttached = true;
+        }
+        try {
+            Class<?> configClazz = Class.forName(SERVER_CONFIG_CLASS);
+            Method isInited = configClazz.getMethod("isInited");
+            if ((boolean) isInited.invoke(null)) {
+                log.info("Jvmm server already inited.");
+                Method getRealBindPort = configClazz.getMethod("getRealBindPort");
+                int realBindPort = (int) getRealBindPort.invoke(null);
+                if (realBindPort >= 0) {
+                    log.info("Jvmm server already started on {}", realBindPort);
+                    return;
+                }
+            }
+        } catch (Throwable ignored) {
         }
 
         File serverJarFile = null;
@@ -259,7 +285,7 @@ public class AgentBootStrap {
             //  拓展搜索范围
             inst.appendToSystemClassLoaderSearch(new JarFile(serverJarFile));
 
-//              需要预装载的文件，这里共享装载logger
+            //  需要预装载的文件，这里共享装载logger
             List<URL> needPreLoad = new ArrayList<>();
             if (agentClassLoader == null) {
                 List<URL> urlList = new LinkedList<>();
@@ -283,28 +309,41 @@ public class AgentBootStrap {
                 agentClassLoader = new JvmmAgentClassLoader(urlList.toArray(new URL[0]), ClassLoader.getSystemClassLoader());
             }
 
-            //  启动日志打印代理消费线程
-            runLoggerConsumer();
+            bootServer(inst, needPreLoad, agentArgs);
 
-            Thread bindThread = new Thread(() -> {
-                try {
-                    for (URL url : needPreLoad) {
-                        ClassLoaderUtil.classLoaderAddURL(agentClassLoader, url);
-                    }
-                    bind(inst, agentClassLoader, agentArgs);
-                } catch (Throwable e) {
-                    log.error(e.getMessage(), e);
-                }
-            });
-
-            bindThread.setName("jvmm-binding");
-            bindThread.setContextClassLoader(agentClassLoader);
-            bindThread.start();
-            Thread.sleep(3000);
         } catch (Throwable e) {
             log.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
+    }
+
+    private static void bootServer(Instrumentation inst, List<URL> needPreLoad, String agentArgs) throws InterruptedException {
+        //  启动日志打印代理消费线程
+        runLoggerConsumer();
+
+        Thread bindThread = new Thread(() -> {
+            try {
+                if (needPreLoad != null && !needPreLoad.isEmpty()) {
+                    for (URL url : needPreLoad) {
+                        ClassLoaderUtil.classLoaderAddURL(agentClassLoader, url);
+                    }
+                }
+
+                Class<?> bootClazz = agentClassLoader.loadClass(SERVER_MAIN_CLASS);
+                Object boot = bootClazz.getMethod("getInstance", Instrumentation.class, String.class)
+                        .invoke(null, inst, agentArgs);
+                bootClazz.getMethod("start").invoke(boot);
+
+                isRunning.set(true);
+            } catch (Throwable e) {
+                log.error(e.getMessage(), e);
+            }
+        });
+
+        bindThread.setName("jvmm-binding");
+        bindThread.setContextClassLoader(agentClassLoader);
+        bindThread.start();
+        Thread.sleep(3000);
     }
 
     /**
@@ -401,9 +440,4 @@ public class AgentBootStrap {
         isRunning.set(false);
     }
 
-    private static void bind(Instrumentation inst, ClassLoader classLoader, String args) throws Throwable {
-        Class<?> bootClazz = classLoader.loadClass(SERVER_MAIN_CLASS);
-        Object boot = bootClazz.getMethod("getInstance", Instrumentation.class, String.class).invoke(null, inst, args);
-        bootClazz.getMethod("start").invoke(boot);
-    }
 }
