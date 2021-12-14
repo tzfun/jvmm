@@ -169,6 +169,7 @@ public class FileUtil {
      *
      * @param bytes 单位为byte的大小
      * @param scale 保留小数位
+     * @return 可视化的字符
      */
     public static String parseByteSize(long bytes, int scale) {
         final String suffix;

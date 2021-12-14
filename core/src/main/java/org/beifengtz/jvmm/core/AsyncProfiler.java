@@ -18,8 +18,8 @@ import java.util.concurrent.TimeUnit;
  * </p>
  *
  * @author beifengtz
- * @see <a href="https://github.com/jvm-profiling-tools/async-profiler">https://github.com/jvm-profiling-tools/async-profiler</a>
- * <p>
+ * <a href="https://github.com/jvm-profiling-tools/async-profiler">https://github.com/jvm-profiling-tools/async-profiler</a>
+ *
  * Created in 6:28 下午 2021/6/23
  */
 public class AsyncProfiler {

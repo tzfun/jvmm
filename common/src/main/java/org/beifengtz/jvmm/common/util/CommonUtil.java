@@ -80,6 +80,7 @@ public class CommonUtil {
      * 多个对象都不为空
      *
      * @param objects 对象数组
+     * @return true - if all objects is not null
      */
     public static boolean nonNull(Object... objects) {
         for (Object obj : objects) {

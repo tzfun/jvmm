@@ -174,9 +174,9 @@ public class JvmmConnector implements Closeable {
      *
      * @param host         目标Server ip或域名
      * @param port         目标Server端口
-     * @param keepAlive    是否自动保持连接活跃。<p><p>
-     *                     true - 自动向Server发送心跳包，直至断开连接，断开连接调用{@link #close()}方法；<p>
-     *                     false - 不自动发送心跳包，连接闲置后会自动断开连接。<p>
+     * @param keepAlive    是否自动保持连接活跃。
+     *                     true - 自动向Server发送心跳包，直至断开连接，断开连接调用{@link #close()}方法；
+     *                     false - 不自动发送心跳包，连接闲置后会自动断开连接。
      * @param authAccount  安全认证账号
      * @param authPassword 安全认证密码
      * @param workerGroup  连接工作线程组，建议使用{@link JvmmChannelInitializer#newEventLoopGroup(int)}方法获得

@@ -81,6 +81,7 @@ public class SignatureUtil {
      * 生成公钥私钥对
      *
      * @return left: public key, right: private key
+     * @throws NoSuchAlgorithmException if no Provider supports a KeyPairGeneratorSpi implementation for the specified algorithm.
      */
     public static Pair<String, String> genRSAKeyPair() throws NoSuchAlgorithmException {
         // KeyPairGenerator类用于生成公钥和私钥对，基于RSA算法生成对象

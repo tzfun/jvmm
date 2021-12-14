@@ -40,3 +40,5 @@ out/
 */log/
 */logs/
 /web/src/main/resources/application.yml
+
+gradle.properties

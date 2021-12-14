@@ -111,6 +111,7 @@ public class IPUtil {
      * C类  192.168.0.0-192.168.255.255
      *
      * @param ip 被检测的ip地址
+     * @return true - 如果是ipv4类型的内网地址
      */
     public static boolean isInnerIpv4(String ip) {
         boolean isInnerIp = false;

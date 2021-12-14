@@ -39,6 +39,7 @@ public class StringUtil {
      * 多个字符串都不为空
      *
      * @param strings 字符串数组
+     * @return true 如果所有字符串都不为逻辑意义上的空
      */
     public static boolean nonNull(String... strings) {
         for (String obj : strings) {

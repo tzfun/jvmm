@@ -31,6 +31,7 @@ public class ReflexUtil {
      * 从包package中获取所有的Class
      *
      * @param pack 包地址
+     * @param recursive 是否递归搜索
      * @return Class集合
      */
     public static Set<Class<?>> getClasses(String pack, boolean recursive) {
@@ -86,6 +87,11 @@ public class ReflexUtil {
 
     /**
      * 以文件的形式来获取包下的所有Class
+     *
+     * @param packageName 包名
+     * @param packagePath 包路径
+     * @param recursive 是否递归搜索
+     * @param classes 类集合，搜索后会存进此集合
      */
     public static void findAndAddClassesInPackageByFile(String packageName, String packagePath, final boolean recursive,
                                                         Set<Class<?>> classes) {
@@ -145,6 +151,10 @@ public class ReflexUtil {
 
     /**
      * 从某个类中扫描被注解有 annotation 的方法
+     *
+     * @param clazz 类
+     * @param annotation 注解类
+     * @return 方法集合
      */
     public static Set<Method> scanMethodAnnotation(Class<?> clazz, Class<? extends Annotation> annotation) {
         return scanMethodAnnotation(Sets.newHashSet(clazz), annotation);

@@ -17,6 +17,7 @@ public interface JvmmScheduleService {
      * 设置执行周期数
      *
      * @param times 周期数，小于等于0时表示无限循环，默认-1
+     * @return {@link JvmmScheduleService}
      */
     JvmmScheduleService setTimes(int times);
 
@@ -24,12 +25,13 @@ public interface JvmmScheduleService {
      * 更新任务周期执行间隙
      *
      * @param gapSeconds 秒为单位的时间间隙
-     * @return 更新后的时间间隙，秒为单位
+     * @return {@link JvmmScheduleService} 更新后的时间间隙，秒为单位
      */
     JvmmScheduleService setTimeGap(int gapSeconds);
 
     /**
      * @param stopOnError true-遇到异常时停止循环 ，false-忽略异常，默认值是true
+     * @return {@link JvmmScheduleService}
      */
     JvmmScheduleService setStopOnError(boolean stopOnError);
 

@@ -24,7 +24,8 @@ subprojects {
     group 'org.beifengtz.jvmm'
 
     apply plugin: 'java'
-    apply plugin: 'maven-publish'
+    apply plugin: 'maven'
+    apply plugin: 'signing'
 
     [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
 
