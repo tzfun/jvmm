@@ -1,6 +1,6 @@
 import javax.tools.ToolProvider
 
-version '0.1'
+version '1.0.0'
 
 dependencies {
     compile(project(':common'))

@@ -57,11 +57,11 @@ public class AgentBootStrap {
             Class<?> springLauncher = null;
             try {
                 springLauncher = Class.forName("org.springframework.boot.loader.JarLauncher", false, systemClassLoader);
-                System.out.println("[Jvmm] Target spring application launched by jar.");
+                log.debug("The target program is a spring application and is started as a jar.");
             } catch (NoClassDefFoundError | ClassNotFoundException ignored1) {
                 try {
                     springLauncher = Class.forName("org.springframework.boot.loader.WarLauncher", false, systemClassLoader);
-                    System.out.println("[Jvmm] Target spring application launched by war.");
+                    log.debug("The target program is a spring application and is started as a war.");
                 } catch (NoClassDefFoundError | ClassNotFoundException ignored2) {
                 }
             }
@@ -92,23 +92,14 @@ public class AgentBootStrap {
 
     private static void loadLogClassFromAnotherClassLoader(URLClassLoader loader, ClassLoader another) throws Throwable {
         String logMsg = String.format("Class loader [%s] load logger class from [%s]", loader.getClass().getName(), another.getClass().getName());
-        if (log != null) {
-            log.info(logMsg);
-        } else {
-            System.out.println("[Jvmm] " + logMsg);
-        }
+        log.info(logMsg);
 
         loadResourceFromAnother(loader, another, STATIC_LOGGER_BINDER_CLASS);
         while (true) {
             try {
                 Class.forName(STATIC_LOGGER_BINDER_PATH);
                 logMsg = "Agent logger initialization is ok.";
-                if (log != null) {
-                    log.info(logMsg);
-                } else {
-                    System.out.println("[Jvmm] " + logMsg);
-                }
-
+                log.info(logMsg);
                 break;
             } catch (NoClassDefFoundError e) {
                 if (!loadResourceFromAnother(loader, another, e.getMessage() + ".class")) {
@@ -151,12 +142,7 @@ public class AgentBootStrap {
 
                 URL jarFile = new File(finalJarPath).toURI().toURL();
                 ClassLoaderUtil.classLoaderAddURL(loader, jarFile);
-                String logMsg = "Load jar file from " + finalJarPath;
-                if (log != null) {
-                    log.info(logMsg);
-                } else {
-                    System.out.println("[Jvmm] " + logMsg);
-                }
+                log.info("Load jar file from " + finalJarPath);
                 return true;
             }
         }

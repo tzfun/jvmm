@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'org.beifengtz'
-version '0.1'
+version '1.0.0'
 
 ext {
     commonsCodecVersion = "1.10"
@@ -24,6 +24,8 @@ subprojects {
     group 'org.beifengtz.jvmm'
 
     apply plugin: 'java'
+    apply plugin: 'maven-publish'
+
     [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
 
     sourceCompatibility = 1.8
