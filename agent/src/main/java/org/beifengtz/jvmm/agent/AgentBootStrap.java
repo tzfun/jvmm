@@ -18,7 +18,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.jar.JarFile;
 
 /**
@@ -38,7 +37,8 @@ public class AgentBootStrap {
     private static final String SERVER_MAIN_CLASS = "org.beifengtz.jvmm.server.ServerBootstrap";
     private static final String SERVER_CONFIG_CLASS = "org.beifengtz.jvmm.server.ServerConfig";
 
-    private static final AtomicBoolean isRunning = new AtomicBoolean(true);
+    private static volatile boolean running;
+    private static volatile Thread bindThread;
     private static volatile JvmmAgentClassLoader agentClassLoader;
     private static volatile boolean agentAttached;
 
@@ -160,7 +160,7 @@ public class AgentBootStrap {
     /**
      * 代理载入 jvmm-server.jar 包，期间会由新的ClassLoader载入这些jar包，对一些需要预加载的jar包，在attach前会搜索过滤出这些jar
      * 然后再由自定义的ClassLoader载入。
-     *
+     * <p>
      * 如果 jvmm-server.jar 未加载过，并且 server 未启动，将会执行：解析参数、下载jar依赖、共享日志jar包、加载jar包、启动服务、启动日志处理线程；
      * 如果 jvmm-server.jar 已加载过，并且 server 未启动，将会执行：解析参数、启动服务、启动日志处理线程；
      * 如果 jvmm-server.jar 已加载过，并且 server 已启动，操作将被禁止；
@@ -188,10 +188,9 @@ public class AgentBootStrap {
             serverJar = args.substring(0, idx).trim();
             agentArgs = args.substring(idx).trim();
         }
-
         if ("agentmain".equals(type)) {
             if (agentAttached) {
-                if (isRunning.get()) {
+                if (running) {
                     log.warn("The jvmm agent has been loaded once and the server is running. Repeated startup is not allowed.");
                 } else {
                     try {
@@ -304,10 +303,11 @@ public class AgentBootStrap {
     }
 
     private static void bootServer(Instrumentation inst, List<URL> needPreLoad, String agentArgs) throws InterruptedException {
+        running = true;
         //  启动日志打印代理消费线程
         runLoggerConsumer();
 
-        Thread bindThread = new Thread(() -> {
+        bindThread = new Thread(() -> {
             try {
                 if (needPreLoad != null && !needPreLoad.isEmpty()) {
                     for (URL url : needPreLoad) {
@@ -319,8 +319,6 @@ public class AgentBootStrap {
                 Object boot = bootClazz.getMethod("getInstance", Instrumentation.class, String.class)
                         .invoke(null, inst, agentArgs);
                 bootClazz.getMethod("start").invoke(boot);
-
-                isRunning.set(true);
             } catch (Throwable e) {
                 log.error(e.getMessage(), e);
             }
@@ -337,7 +335,7 @@ public class AgentBootStrap {
      */
     private static void runLoggerConsumer() {
         Thread thread = new Thread(() -> {
-            while (isRunning.get()) {
+            while (running) {
                 try {
                     LoggerEvent info = logQueue.take();
                     Logger logger = LoggerFactory.getLogger(info.getName());
@@ -415,7 +413,7 @@ public class AgentBootStrap {
 
     /**
      * 由Agent Server反射调用
-     *
+     * <p>
      * 这里的参数不能直接用LoggerEvent，两个ClassLoader上下文不一样，会出现找不到方法的情况
      */
     public static boolean logger(Map<String, Object> event) {
@@ -423,7 +421,9 @@ public class AgentBootStrap {
     }
 
     public static void serverStop() {
-        isRunning.set(false);
+        running = false;
+        if (bindThread != null) {
+            bindThread.interrupt();
+        }
     }
-
 }

@@ -16,6 +16,7 @@ import io.netty.util.concurrent.Future;
 import org.beifengtz.jvmm.common.exception.ErrorStatusException;
 import org.beifengtz.jvmm.common.exception.SocketExecuteException;
 import org.beifengtz.jvmm.common.factory.LoggerFactory;
+import org.beifengtz.jvmm.common.util.SignatureUtil;
 import org.beifengtz.jvmm.convey.GlobalStatus;
 import org.beifengtz.jvmm.convey.GlobalType;
 import org.beifengtz.jvmm.convey.auth.JvmmBubbleDecrypt;
@@ -32,6 +33,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -126,10 +128,15 @@ public class JvmmConnector implements Closeable {
             }
         }
 
-        private void handleResponse(ChannelHandlerContext ctx, JvmmResponse response) {
+        private void handleResponse(ChannelHandlerContext ctx, JvmmResponse response) throws Exception {
             String type = response.getType();
+            if (Objects.equals(response.getStatus(), GlobalStatus.JVMM_STATUS_AUTHENTICATION_FAILED.name())) {
+                logger.error("Authentication failed.");
+                openPromise.trySuccess(false);
+                close();
+                return;
+            }
             if (GlobalType.JVMM_TYPE_BUBBLE.name().equals(type)) {
-
                 JsonObject data = response.getData().getAsJsonObject();
                 String key = data.get("key").getAsString();
                 int seed = data.get("seed").getAsInt();
@@ -140,14 +147,16 @@ public class JvmmConnector implements Closeable {
                         .addAfter(ctx.executor(), JvmmChannelInitializer.STRING_DECODER_HANDLER,
                                 JvmmChannelInitializer.JVMM_BUBBLE_DECODER, new JvmmBubbleDecrypt(seed, key));
 
+                JvmmRequest authReq = JvmmRequest.create().setType(GlobalType.JVMM_TYPE_AUTHENTICATION);
+
                 if (authAccount != null && authPassword != null) {
                     JsonObject reqData = new JsonObject();
-                    reqData.addProperty("account", authAccount);
-                    reqData.addProperty("password", authPassword);
-                    JvmmRequest request = JvmmRequest.create().setType(GlobalType.JVMM_TYPE_AUTHENTICATION).setData(reqData);
-                    ctx.pipeline().writeAndFlush(request.serialize());
+                    reqData.addProperty("account", SignatureUtil.MD5(authAccount));
+                    reqData.addProperty("password", SignatureUtil.MD5(authPassword));
+                    authReq.setData(reqData);
                 }
-                openPromise.trySuccess(true);
+
+                ctx.pipeline().writeAndFlush(authReq.serialize());
 
                 if (keepAlive) {
                     workGroup.next().execute(new HeartBeatHandler());

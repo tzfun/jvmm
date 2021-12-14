@@ -9,7 +9,9 @@ package org.beifengtz.jvmm.common.exception;
  *
  * @author beifengtz
  */
-public class AuthenticationFailedException extends RuntimeException{
+public class AuthenticationFailedException extends RuntimeException {
+
+    private String type;
 
     public AuthenticationFailedException() {
     }

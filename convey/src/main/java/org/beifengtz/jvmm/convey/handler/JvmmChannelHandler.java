@@ -90,25 +90,28 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
             if (!request.isHeartbeat()) {
                 logger().debug(String.format("%s %dms", request.getType(), stopWatch.stop().elapsed(TimeUnit.MILLISECONDS)));
             }
+        } catch (AuthenticationFailedException e) {
+            ctx.channel().writeAndFlush(JvmmResponse.create()
+                    .setType(GlobalType.JVMM_TYPE_AUTHENTICATION)
+                    .setStatus(GlobalStatus.JVMM_STATUS_AUTHENTICATION_FAILED.name())
+                    .setMessage("Authentication failed.")
+                    .serialize());
+            ctx.close();
+            logger().debug("Channel closed by auth failed");
         } catch (JsonSyntaxException e) {
             ctx.channel().writeAndFlush(JvmmResponse.create()
                     .setType(GlobalType.JVMM_TYPE_HANDLE_MSG)
                     .setStatus(GlobalStatus.JVMM_STATUS_UNRECOGNIZED_CONTENT.name())
                     .setMessage(e.getMessage())
                     .serialize());
+        } catch (Throwable e) {
+            ctx.fireExceptionCaught(e);
         }
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        if (cause instanceof AuthenticationFailedException) {
-            ctx.channel().writeAndFlush(JvmmResponse.create()
-                    .setStatus(GlobalStatus.JVMM_STATUS_AUTHENTICATION_FAILED.name())
-                    .setMessage("Authentication failed.")
-                    .serialize());
-            ctx.close();
-            logger().debug("Channel closed by auth failed");
-        } else if (cause instanceof InvalidMsgException) {
+        if (cause instanceof InvalidMsgException) {
             logger().error("Invalid message verify, seed: {}, ip: {}", ((InvalidMsgException) cause).getSeed(), JvmmConnector.getIpByCtx(ctx));
             ctx.close();
             logger().debug("Channel closed by message verify");

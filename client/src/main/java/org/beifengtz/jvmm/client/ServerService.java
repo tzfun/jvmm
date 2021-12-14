@@ -130,10 +130,12 @@ public class ServerService {
             names = methodMap.keySet().toArray(new String[0]);
         }
 
-        System.out.println();
+        System.out.println("You can use the following command in client mode.\n");
         for (String name : names) {
             helper.setSyntaxPrefix(name + ": ");
-            helper.printHelp(width, HelpFormatter.DEFAULT_OPT_PREFIX, descMap.get(name), optionsMap.get(name), "\n");
+            Options options = optionsMap.get(name);
+            int optionNum = options.getOptions().size();
+            helper.printHelp(width, HelpFormatter.DEFAULT_OPT_PREFIX, descMap.get(name), options, optionNum == 0 ? null : "\n");
         }
     }
 

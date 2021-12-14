@@ -1,6 +1,7 @@
 package org.beifengtz.jvmm.client;
 
 import io.netty.channel.EventLoopGroup;
+import io.netty.util.concurrent.Future;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -37,15 +38,17 @@ public class Commander {
 
     private static final String TEMP_DIR = "lib";
     private static final Options options;
+    private static final Options rootOptions;
     private static final Options attachOptions;
     private static final Options clientOptions;
 
     static {
         options = new Options();
+        rootOptions = new Options();
         attachOptions = new Options();
 
-
         options.addOption("help", false, "Help information.");
+        rootOptions.addOption("help", false, "Help information.");
 
         Option mode = Option.builder("m")
                 .required(false)
@@ -54,6 +57,7 @@ public class Commander {
                 .desc("Choose action mode: 'client' or 'attach', default value is client")
                 .build();
         options.addOption(mode);
+        rootOptions.addOption(mode);
 
         Option a = Option.builder("a")
                 .required(false)
@@ -106,12 +110,12 @@ public class Commander {
                 .required(false)
                 .hasArg()
                 .argName("address")
-                .desc("The address that will connect to the Jvmm server, like '127.0.0.1：5010'.")
+                .desc("The address that will connect to the Jvmm server, like '127.0.0.1:5010'.")
                 .build();
         options.addOption(host);
         clientOptions.addOption(host);
 
-        Option username = Option.builder("u")
+        Option username = Option.builder("user")
                 .required(false)
                 .hasArg()
                 .argName("username")
@@ -167,15 +171,20 @@ public class Commander {
         }
         String host = split[0];
         int port = Integer.parseInt(split[1]);
-        String username = cmd.getOptionValue("u");
+        String username = cmd.getOptionValue("user");
         String password = cmd.getOptionValue("pass");
 
         EventLoopGroup group = JvmmChannelInitializer.newEventLoopGroup(1);
 
         logger.info("Start to connect jvmm agent server...");
         JvmmConnector connector = JvmmConnector.newInstance(host, port, true, username, password, group);
-        if (connector.connect().await(3, TimeUnit.SECONDS)) {
-            logger.info("Connect successful! Enter 'exit' to safely exit the connection.");
+        Future<Boolean> connectF = connector.connect();
+        if (connectF.await(3, TimeUnit.SECONDS)) {
+            if (connectF.getNow()) {
+                logger.info("Connect successful! You can use the 'help' command to learn how to use. Enter 'exit' to safely exit the connection.");
+            } else {
+                return;
+            }
         } else {
             logger.error("Connect server failed! case: time out");
             System.exit(-1);
@@ -299,9 +308,7 @@ public class Commander {
         HelpFormatter helper = new HelpFormatter();
 
         helper.setSyntaxPrefix("Command usage");
-        helper.printHelp(width, HelpFormatter.DEFAULT_OPT_PREFIX, "Below will list all of parameters. You need choose running mode firstly.\n\n", options, "\n");
-
-        System.out.println("The following explains the interpretation of the parameters that may be used in each mode:\n");
+        helper.printHelp(width, HelpFormatter.DEFAULT_OPT_PREFIX, "Below will list all of parameters. You need choose running mode firstly.\n\n", rootOptions, "\n");
         helper.setSyntaxPrefix("Attach mode");
         helper.printHelp(width, HelpFormatter.DEFAULT_OPT_PREFIX, "Attach jvmm server to another java program in this computer.\n\n", attachOptions, "\n");
         helper.setSyntaxPrefix("Client mode");

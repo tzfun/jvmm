@@ -2,20 +2,26 @@ package org.beifengtz.jvmm.server.handler;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.concurrent.EventExecutor;
 import org.beifengtz.jvmm.common.JsonParsable;
+import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
 import org.beifengtz.jvmm.common.exception.InvalidJvmmMappingException;
+import org.beifengtz.jvmm.common.factory.LoggerFactory;
+import org.beifengtz.jvmm.common.util.ReflexUtil;
+import org.beifengtz.jvmm.common.util.SignatureUtil;
 import org.beifengtz.jvmm.convey.GlobalStatus;
+import org.beifengtz.jvmm.convey.GlobalType;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.handler.JvmmChannelHandler;
+import org.beifengtz.jvmm.core.conf.Configuration;
+import org.beifengtz.jvmm.server.ServerConfig;
 import org.beifengtz.jvmm.server.annotation.JvmmController;
 import org.beifengtz.jvmm.server.annotation.JvmmMapping;
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
-import org.beifengtz.jvmm.common.util.ReflexUtil;
 import org.slf4j.Logger;
 
 import java.io.Closeable;
@@ -24,6 +30,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -68,9 +75,22 @@ public class ServerHandler extends JvmmChannelHandler {
         }
     }
 
+    private boolean authed = !ServerConfig.getConfiguration().isSecurityEnable();
+
     @Override
     public void handleRequest(ChannelHandlerContext ctx, JvmmRequest reqMsg) {
         try {
+            Configuration conf = ServerConfig.getConfiguration();
+
+            if (Objects.equals(reqMsg.getType(), GlobalType.JVMM_TYPE_AUTHENTICATION.name())) {
+                auth(ctx, reqMsg, conf);
+                return;
+            } else {
+                if (conf.isSecurityEnable() && !authed) {
+                    throw new AuthenticationFailedException();
+                }
+            }
+
             Method method = mappings.get(reqMsg.getType());
 
             if (method == null) {
@@ -135,7 +155,9 @@ public class ServerHandler extends JvmmChannelHandler {
                 ctx.channel().writeAndFlush(response.serialize());
             }
         } catch (Throwable e) {
-            if (e instanceof InvocationTargetException) {
+            if (e instanceof AuthenticationFailedException) {
+                throw (AuthenticationFailedException) e;
+            } else if (e instanceof InvocationTargetException) {
                 handleException(ctx, reqMsg, ((InvocationTargetException) e).getTargetException());
             } else {
                 handleException(ctx, reqMsg, e);
@@ -177,6 +199,29 @@ public class ServerHandler extends JvmmChannelHandler {
     @Override
     public Logger logger() {
         return logger;
+    }
+
+    private void auth(ChannelHandlerContext ctx, JvmmRequest req, Configuration conf) throws Exception {
+        if (conf.isSecurityEnable()) {
+            try {
+                JsonObject data = req.getData().getAsJsonObject();
+
+                String account = data.get("account").getAsString();
+                String password = data.get("password").getAsString();
+                if (Objects.equals(SignatureUtil.MD5(conf.getSecurityAccount()), account)
+                        && Objects.equals(SignatureUtil.MD5(conf.getSecurityPassword()), password)) {
+                    logger().debug("Auth successful. channelId: {}", ctx.channel().hashCode());
+                } else {
+                    throw new AuthenticationFailedException();
+                }
+            } catch (IllegalStateException | NullPointerException e) {
+                throw new AuthenticationFailedException();
+            }
+        }
+        authed = true;
+        JvmmResponse response = JvmmResponse.create().setType(GlobalType.JVMM_TYPE_AUTHENTICATION)
+                .setStatus(GlobalStatus.JVMM_STATUS_OK.name());
+        ctx.writeAndFlush(response.serialize());
     }
 
 }

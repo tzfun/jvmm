@@ -42,13 +42,13 @@ public class ServerServiceImpl extends ServerService {
                     required = true,
                     argName = "type",
                     desc = "Info type, optional values: system, systemDynamic, classloading, compilation, gc, process, " +
-                            "memory, memoryManager, memoryPool, thread, threadStack"
+                            "memory, memoryManager, memoryPool, thread, threadStack."
             ),
             @JvmmOption(
                     name = "f",
                     hasArg = true,
                     argName = "output",
-                    desc = "File path, output info to file"
+                    desc = "File path, output info to file."
             )
     })
     @JvmmCmdDesc(desc = "Get information about the target server")
@@ -161,25 +161,25 @@ public class ServerServiceImpl extends ServerService {
                     name = "e",
                     hasArg = true,
                     argName = "event",
-                    desc = "Sample event, optional values: cpu, alloc, lock, wall, itimer. Default value: cpu"
+                    desc = "Sample event, optional values: cpu, alloc, lock, wall, itimer. Default value: cpu."
             ),
             @JvmmOption(
                     name = "c",
                     hasArg = true,
                     argName = "counter",
-                    desc = "Sample counter type, optional values: samples, total. Default value: samples"
+                    desc = "Sample counter type, optional values: samples, total. Default value: samples."
             ),
             @JvmmOption(
                     name = "t",
                     hasArg = true,
                     argName = "time",
-                    desc = "Sampling interval time, the unit is second. Default value: 10 s"
+                    desc = "Sampling interval time, the unit is second. Default value: 10 s."
             ),
             @JvmmOption(
                     name = "i",
                     hasArg = true,
                     argName = "interval",
-                    desc = "The time interval of the unit to collect samples, the unit is nanosecond. Default value: 10000000 ns"
+                    desc = "The time interval of the unit to collect samples, the unit is nanosecond. Default value: 10000000 ns."
             ),
             @JvmmOption(
                     name = "f",
