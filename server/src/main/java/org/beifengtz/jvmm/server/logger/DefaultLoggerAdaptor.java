@@ -2,9 +2,12 @@ package org.beifengtz.jvmm.server.logger;
 
 import io.netty.util.internal.logging.InternalLogLevel;
 import io.netty.util.internal.logging.InternalLogger;
+import org.apache.commons.lang3.reflect.TypeUtils;
 import org.beifengtz.jvmm.common.logger.DefaultImplLogger;
 import org.beifengtz.jvmm.common.logger.LoggerEvent;
 import org.beifengtz.jvmm.common.logger.LoggerLevel;
+
+import java.util.Map;
 
 import static org.beifengtz.jvmm.server.ServerBootstrap.AGENT_BOOT_CLASS;
 
@@ -22,7 +25,7 @@ public class DefaultLoggerAdaptor extends DefaultImplLogger implements InternalL
     private static void publish(LoggerEvent event) {
         try {
             Class<?> bootClazz = Thread.currentThread().getContextClassLoader().loadClass(AGENT_BOOT_CLASS);
-            bootClazz.getMethod("logger", String.class, Throwable.class).invoke(null, event.toString(), event.getThrowable());
+            bootClazz.getMethod("logger", Map.class).invoke(null, event.toMap());
         } catch (Throwable e) {
             System.err.println("Invoke agent boot method(#logger) failed!");
             e.printStackTrace();

@@ -1,13 +1,6 @@
 package org.beifengtz.jvmm.agent;
 
-
-import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
-
 /**
- * <p>
- * Description: TODO
- * </p>
- * <p>
  * Created in 11:45 2021/5/22
  *
  * @author beifengtz
@@ -20,7 +13,7 @@ public class AppUtil {
 
     static {
         try {
-            HOME_PATH = SystemPropertyUtil.get("user.dir").replaceAll("\\\\", "/");
+            HOME_PATH = System.getProperty("user.dir").replaceAll("\\\\", "/");
 
             LOG_PATH = HOME_PATH + "/logs";
             System.setProperty("jvmm.log.path", LOG_PATH);

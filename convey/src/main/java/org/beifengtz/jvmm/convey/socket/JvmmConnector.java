@@ -27,6 +27,7 @@ import org.beifengtz.jvmm.convey.handler.HandlerProvider;
 import org.slf4j.Logger;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.LinkedList;
@@ -115,6 +116,13 @@ public class JvmmConnector implements Closeable {
             }
             if (response != null) {
                 handleResponse(ctx, response);
+            }
+        }
+
+        @Override
+        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+            if (cause instanceof IOException) {
+                logger.debug(cause.toString());
             }
         }
 

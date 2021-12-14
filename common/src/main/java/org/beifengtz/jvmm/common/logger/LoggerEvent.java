@@ -3,6 +3,9 @@ package org.beifengtz.jvmm.common.logger;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Description: TODO
  *
@@ -71,31 +74,15 @@ public class LoggerEvent {
         return this;
     }
 
-    @Override
-    public String toString() {
-        Throwable t = this.throwable;
-        try {
-            setThrowable(null);
-            JsonObject json = new JsonObject();
-            if (type != null) {
-                json.addProperty("type", type.name());
-            }
-            if (msg != null) {
-                json.addProperty("msg", msg);
-            }
-            if (args != null) {
-                JsonArray arr = new JsonArray(args.length);
-                for (Object arg : args) {
-                    arr.add(arg.toString());
-                }
-                json.add("args", arr);
-            }
-            if (name != null) {
-                json.addProperty("name", name);
-            }
-            return json.toString();
-        } finally {
-            setThrowable(t);
-        }
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> map = new HashMap<>();
+
+        map.put("throwable", throwable);
+        map.put("type", type.name());
+        map.put("msg", msg);
+        map.put("args", args);
+        map.put("name", name);
+
+        return map;
     }
 }

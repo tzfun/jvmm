@@ -1,10 +1,5 @@
 package org.beifengtz.jvmm.agent;
 
-import com.google.gson.Gson;
-import org.beifengtz.jvmm.common.JvmmAgentClassLoader;
-import org.beifengtz.jvmm.common.logger.LoggerEvent;
-import org.beifengtz.jvmm.common.util.ClassLoaderUtil;
-import org.beifengtz.jvmm.common.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
@@ -321,7 +317,7 @@ public class AgentBootStrap {
                     LoggerEvent info = logQueue.take();
                     Logger logger = LoggerFactory.getLogger(info.getName());
                     switch (info.getType()) {
-                        case TRACE: {
+                        case "TRACE": {
                             if (info.getArgs() == null) {
                                 if (info.getThrowable() == null) {
                                     logger.trace(info.getMsg());
@@ -333,7 +329,7 @@ public class AgentBootStrap {
                             }
                         }
                         break;
-                        case INFO: {
+                        case "INFO": {
                             if (info.getArgs() == null) {
                                 if (info.getThrowable() == null) {
                                     logger.info(info.getMsg());
@@ -345,7 +341,7 @@ public class AgentBootStrap {
                             }
                         }
                         break;
-                        case DEBUG: {
+                        case "DEBUG": {
                             if (info.getArgs() == null) {
                                 if (info.getThrowable() == null) {
                                     logger.debug(info.getMsg());
@@ -357,7 +353,7 @@ public class AgentBootStrap {
                             }
                         }
                         break;
-                        case WARN: {
+                        case "WARN": {
                             if (info.getArgs() == null) {
                                 if (info.getThrowable() == null) {
                                     logger.warn(info.getMsg());
@@ -369,7 +365,7 @@ public class AgentBootStrap {
                             }
                         }
                         break;
-                        case ERROR: {
+                        case "ERROR": {
                             if (info.getArgs() == null) {
                                 if (info.getThrowable() == null) {
                                     logger.error(info.getMsg());
@@ -397,10 +393,8 @@ public class AgentBootStrap {
      *
      * 这里的参数不能直接用LoggerEvent，两个ClassLoader上下文不一样，会出现找不到方法的情况
      */
-    public static void logger(String event, Throwable t) {
-        LoggerEvent info = new Gson().fromJson(event, LoggerEvent.class);
-        info.setThrowable(t);
-        logQueue.offer(info);
+    public static boolean logger(Map<String, Object> event) {
+        return logQueue.offer(LoggerEvent.fromMap(event));
     }
 
     public static void serverStop() {

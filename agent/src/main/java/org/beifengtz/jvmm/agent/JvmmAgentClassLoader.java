@@ -1,4 +1,4 @@
-package org.beifengtz.jvmm.common;
+package org.beifengtz.jvmm.agent;
 
 import java.io.IOException;
 import java.net.URL;
@@ -6,10 +6,6 @@ import java.net.URLClassLoader;
 import java.util.Enumeration;
 
 /**
- * <p>
- * Description: TODO
- * </p>
- * <p>
  * Created in 16:34 2021/5/22
  *
  * @author beifengtz
