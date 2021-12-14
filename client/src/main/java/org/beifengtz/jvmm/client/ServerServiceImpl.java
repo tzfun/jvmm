@@ -91,7 +91,7 @@ public class ServerServiceImpl extends ServerService {
                 request.setType(GlobalType.JVMM_TYPE_DUMP_THREAD_INFO);
                 break;
             default:
-                System.out.println("Invalid info type: " + type);
+                printErr("Invalid info type: " + type);
                 return;
         }
 
@@ -105,7 +105,7 @@ public class ServerServiceImpl extends ServerService {
                 FileUtil.writeByteArrayToFile(file, response.getData().toString().getBytes(StandardCharsets.UTF_8));
                 System.out.println("Write server info to file successful, path is " + file.getAbsolutePath());
             } catch (IOException e) {
-                System.err.println("Write failed, " + e.getMessage());
+                printErr("Write failed, " + e.getMessage());
             }
         } else {
             if (Objects.equals(type, "threadStack")) {
@@ -233,7 +233,7 @@ public class ServerServiceImpl extends ServerService {
             FileUtil.writeByteArrayToFile(file, bytes);
             System.out.println("Write profiler to file successful, path is " + file.getAbsolutePath());
         } catch (IOException e) {
-            System.err.println("Write failed, " + e.getMessage());
+            printErr("Write failed, " + e.getMessage());
         }
     }
 }

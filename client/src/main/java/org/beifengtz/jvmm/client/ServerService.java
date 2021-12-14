@@ -17,6 +17,8 @@ import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 
 import java.lang.reflect.Method;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -106,7 +108,7 @@ public class ServerService {
         }
 
         if (!methodMap.containsKey(key)) {
-            System.err.println("Unknown command: " + key);
+            printErr("Unknown command: " + key);
             return;
         }
 
@@ -115,7 +117,7 @@ public class ServerService {
             methodMap.get(key).invoke(null, connector, cmd);
             Thread.sleep(50);
         } catch (ParseException e) {
-            System.err.println("Invalid command arguments, case: " + e.getMessage());
+            printErr("Invalid command arguments, case: " + e.getMessage());
         }
     }
 
@@ -130,7 +132,7 @@ public class ServerService {
 
         System.out.println();
         for (String name : names) {
-            helper.setSyntaxPrefix(name + " usage: ");
+            helper.setSyntaxPrefix(name + ": ");
             helper.printHelp(width, HelpFormatter.DEFAULT_OPT_PREFIX, descMap.get(name), optionsMap.get(name), "\n");
         }
     }
@@ -143,11 +145,19 @@ public class ServerService {
         try {
             return connector.waitForResponse(request, timeout, timeUnit);
         } catch (ErrorStatusException e) {
-            System.err.printf("Wrong response status: '%s', msg: %s%n", e.getStatus(), e.getMessage());
+            printErr(String.format("Wrong response status: '%s', msg: %s", e.getStatus(), e.getMessage()));
         } catch (InterruptedException | TimeoutException e) {
-            System.err.println("Request failed: " + e.getMessage());
+            printErr("Request failed: " + e.getMessage());
         }
         return null;
+    }
+
+    protected static void printErr(String str) {
+        if (Charset.defaultCharset() == StandardCharsets.UTF_8) {
+            System.out.format("\33[31;1m%s\33[30;0m%n", str);
+        } else {
+            System.out.format("%s%n", str);
+        }
     }
 
 }
