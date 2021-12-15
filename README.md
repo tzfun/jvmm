@@ -1,21 +1,21 @@
-中文版 | [English](README.md)
+[中文版](README_ZH.md) | English
 
 # Jvmm
 
-Jvmm是一个轻量且安全的Java虚拟机监控器。你可以使用它在运行时（Runtime）进行：数据采集、执行任务、生成火焰图等，比较适合用于服务状态监控、调试、性能测试。
+Jvmm is a lightweight and secure Java Virtual Machine monitor. You can use it to perform at runtime (Runtime): data collection, task execution, flame graph generation, etc. It is more suitable for service status monitoring, debugging, and performance testing.
 
-# 使用
+# Use Jvmm
 
-本项目提供了 `java agent`、`API调用`、`Server服务` 三种方式可供选择，并且制作了`client命令行工具`与server进行通信，*在未来的版本将支持 web client。*
+This project provides three ways to choose from: `java agent`, `API call`, and `Server service`. I made a `client commandline tool` to connect with the server.*In future versions, it will support web client.*
 
-## client命令行工具
+## Commandline Tool
 
-client命令行工具有两个模式：Attach 和 Client，使用它必须先选择一个模式进入，你可以这样查看帮助
+The client command line tool has two modes: `Attach` and `Client`. To use it, you must first select a mode to enter. You can view the help like this
 ```shell
 java -jar jvmm-client.jar -help
 ```
 
-你将会看到：
+You will see:
 ```
 Command usage-
 Below will list all of parameters. You need choose running mode firstly.
@@ -40,9 +40,9 @@ Connect to jvmm server and execute some commands.
  -user <username>   Jvmm server authentication account. If the target jvmm server is auth enable.
 ```
 
-**Client模式命令**
+**Client mode commands**
 
-进入Client模式且与jvmm server连接成功后，你将可以使用以下命令（键入help查看）：
+After entering the Client mode and successfully connecting with the jvmm server, you will be able to use the following command (type help to view):
 ```
 You can use the following command in client mode.
 
@@ -70,69 +70,69 @@ Get information about the target server
                memoryManager, memoryPool, thread, threadStack.
 ```
 
-## 使用agent
+## Use Agent
 
-Jvmm提供了 java agent 使用，你可以在被监控程序（这里称之为宿主程序）启动时加入参数载入Jvmm，比如：`-agentpath:/path/jvmm-agent.jar=/path/jvmm-server.jar;config=config.yml`。
+Jvmm provides the java agent. You can add parameters to load Jvmm when the monitored program (here called the host program) starts, such as:`-agentpath:/path/jvmm-agent.jar=/path/jvmm-server.jar;config=config.yml`.
 
-如果宿主程序已经启动，并且不太方便重启时，你也可以使用本项目提供的Client工具动态地将 agent 和 server 载入到宿主程序。client工具不仅支持载入功能，还支持与jvmm server通信，不过 client 只是提供一些简单的命令，更多更全的功能需调用API。
+If the host program has been started and it is not convenient to restart, you can also use the Client to dynamically attach the agent and server into the host program. The client tool not only supports the loading function, but also supports communication with the jvmm server, but the client only provides some simple commands, and more and more complete functions need to call the API.
 
-你可以前往 [tag](tags) 页下载打包好的程序，解压后将会看到这些文件：
+You can go to [tag](tags) page and download packaged program. After decompression, you will see these files:
 
 ```
-|-- jvmm-agent.jar      //  agent包，负责将server载入到宿主程序虚拟机
-    jvmm-server.jar     //  server包，对外提供接口服务
-    jvmm-client.jar     //  client包，命令行工具，负责将agent和server载入宿主程序
-    attach              //  unix环境的attach工具，封装自client命令行
-    attach.bat          //  windows环境的attach工具，封装自client命令行
-    config.yml          //  server配置文件
+|-- jvmm-agent.jar      //  Agent jar, responsible for loading the server into the host program virtual machine.
+    jvmm-server.jar     //  Server jar, provide external web interface services.
+    jvmm-client.jar     //  Client jar, command line tool, responsible for loading agent and server into host program.
+    attach              //  Attach tool for unix environment, encapsulated from client jar.
+    attach.bat          //  Attach tool for windows environment, encapsulated from client jar.
+    config.yml          //  Server config file.
 ```
 
-### 运行时attach agent
+### Dynamically Attach Agent
 
-直接执行client工具包，以下几个方法任选一个即可
+Execute the client toolkit, choose one of the following commands
 ```
-//  向运行在8080端口的程序载入agent
+//  Attach agent into the program running on port 8080
 java -jar jvmm-client.jar -m attach -a ./jvmm-agent.jar -s ./jvmm-server.jar -c config=./config.yml -p 8080
 
-//  向进程号pid为15000的程序载入agent
+//  Attach the agent to the program with the pid of 15000
 java -jar jvmm-client.jar -m attach -a ./jvmm-agent.jar -s ./jvmm-server.jar -c config=./config.yml -pid 15000
 
-//  不引用config.yml单独定义配置，未填配置都将使用默认值
+//  Do not refer to config.yml to define the configuration separately, and the unfilled configuration will use the default value
 java -jar jvmm-client.jar -m attach -a ./jvmm-agent.jar -s ./jvmm-server.jar -c name=jvmm_test;port.bind=9000;port.autoIncrease=false -pid 15000
 ```
 
-如果你觉得命令行太长，也可以使用attach可执行程序来达到相同的效果，你只需要修改同级目录下的config.yml以及传入宿主程序运行端口或进程号pid。
+If you think the command line is too long, you can also use the `attach` executable program to achieve the same effect. You only need to modify the config.yml in the same level directory and pass in the host program running port or process number pid.
 
-Linux 或 Mac 中执行
+Run in Linux or Mac
 ```
 ./attach -p 8080
 
 ./attach -pid 15000
 ```
 
-windows中执行
+Run in windows
 ```
 attach.bat -p 8080
 
 attach.bat -pid 15000
 ```
 
-### 启动时attach agent
+### Startup Attach Agent
 
-启动时添加启动参数即可，例如：
+Just add parameters at startup, for example:
 ```
-//  引用配置文件方式
+//  Reference configuration file
 java -agentpath:/path/jvmm-agent.jar=/path/jvmm-server.jar;config=/path/config.yml ...
 
-//  参数配置方式
+//  Parameter configuration
 java -agentpath:/path/jvmm-agent.jar=/path/jvmm-server.jar;name=jvmm_test;port.bind=9000;port.autoIncrease=false ...
 ```
 
-### 配置
+### Config
 
-配置文件支持 Yaml 和 Properties文件格式，当然也支持参数配置（方法见上面示例），以下是全部配置项及默认配置值：
+The configuration file supports `Yaml` and `Properties` file formats. Of course, it also supports parameter configuration (see the example above for the method). The following are all configuration items and default configuration values.
 
-yml文件
+example of yml file 
 ```yaml
 name: jvmm_server
 port:
@@ -154,7 +154,7 @@ log:
 workThread: 1
 ```
 
-properties文件
+example of properties file
 ```properties
 name=jvmm_server
 
@@ -173,11 +173,11 @@ log.useJvmm=false
 workThread=1
 ```
 
-## API调用
+## API Call
 
-如果你想在自己的程序中调用接口，Jvmm也提供了相应的方案。当前最新版本是 `1.2.0`
+If you want to call the interface in your own program, Jvmm also provides a corresponding solution. The current latest version is `1.2.0`
 
-maven引入
+Maven dependencies
 ```xml
 <dependency>
   <groupId>io.github.tzfun.jvmm</groupId>
@@ -186,14 +186,14 @@ maven引入
 </dependency>
 ```
 
-或
+or
 
-gradle引入
+Gradle dependencies
 ```gradle
 implementation "io.github.tzfun.jvmm:jvmm-core:${jvmmVersion}"
 ```
 
-**快速上手**
+**Quick start**
 
 ```java
 import org.beifengtz.jvmm.core.JvmmCollector;
@@ -222,9 +222,9 @@ import java.util.concurrent.TimeoutException;
 
 public class ApiCallDemo {
     public static void main(String[] args) {
-        //  jvmm收集器，可以获取以下信息：
-        //  操作系统：基础信息、Memory、CPU、Process信息
-        //  Java虚拟机：Memory、GC、Class、Thread、Compilation信息
+        //  The jvmm collector can obtain the following information:
+        //  Operating system: basic information, Memory, CPU, Process information
+        //  JVM: Memory, GC, Class, Thread, Compilation information
         JvmmCollector collector = JvmmFactory.getCollector();
 
         MemoryInfo memory = collector.getMemory();
@@ -239,7 +239,7 @@ public class ApiCallDemo {
         ThreadDynamicInfo threadDynamic = collector.getThreadDynamic();
         String[] threadsInfo = collector.dumpAllThreads();
 
-        //  jvmm执行器
+        //  The jvmm executor
         JvmmExecutor executor = JvmmFactory.getExecutor();
 
         executor.gc();
@@ -249,14 +249,14 @@ public class ApiCallDemo {
         executor.setThreadCpuTimeEnabled(true);
         executor.resetPeakThreadCount();
 
-        //  jvmm采样器，仅支持 MacOS 和 Linux环境
+        //  The jvmm profiler, only supports MacOS and Linux environments
         JvmmProfiler profiler = JvmmFactory.getProfiler();
         File file = new File("jvmm_test.html");
-        //  采集cpu信息，持续时间10秒，输出html报告
+        //  Sampling cpu information, duration 10 seconds, output with html report
         Future<String> future = JvmmFactory.getProfiler().sample(file, ProfilerEvent.cpu, ProfilerCounter.samples, 10, TimeUnit.SECONDS);
 
         try {
-            //  等待时间建议长于采样时间
+            //  The waiting time is recommended to be longer than the sampling time
             future.get(12, TimeUnit.SECONDS);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             e.printStackTrace();
@@ -265,13 +265,13 @@ public class ApiCallDemo {
 }
 ```
 
-## Server服务
+## Server Service
 
-如果你想在你的项目中以服务的方式启动，可以使用本项目提供的 server 模块，一些读取信息接口在server中支持循环读取。
+If you want to start as a service in your project, you can use the server module provided by this project. Some collecting information interfaces support circular reading in the server.
 
-为了访问安全着想，Jvmm构造了一个独有的通信协议，即使在不开启身份认证的情况下，不使用 *JvmmConnector* 无法与 server 通信，当然在实际应用时更建议你开启身份认证。
+For the sake of access security, Jvmm has constructed a unique communication protocol. Even if the identity authentication is not turned on, it cannot communicate with the server without using the *JvmmConnector*. Of course, it is recommended that you turn on the identity authentication in actual applications.
 
-maven引入
+maven dependencies
 ```xml
 <dependency>
   <groupId>io.github.tzfun.jvmm</groupId>
@@ -280,16 +280,16 @@ maven引入
 </dependency>
 ```
 
-或
+or
 
-gradle引入
+gradle dependencies
 ```gradle
 implementation "io.github.tzfun.jvmm:jvmm-server:${jvmmVersion}"
 ```
 
-**快速上手**
+**Quick start**
 
-启动 server 样例代码：
+Start server for example:
 
 ```java
 import org.beifengtz.jvmm.core.conf.Configuration;
@@ -318,7 +318,7 @@ public class ServerBootDemo {
 }
 ```
 
-与server通信样例代码：
+Sample code for connect with server:
 ```java
 package org.beifengtz.jvmm.demo;
 
@@ -363,7 +363,7 @@ public class ServerConveyDemo {
 }
 ```
 
-# 感谢
+# Thanks
 
-* profiler支持：https://github.com/jvm-profiling-tools/async-profiler
-* 灵感来源以及借鉴参考：https://github.com/alibaba/arthas
+* profiler support: [https://github.com/jvm-profiling-tools/async-profiler](https://github.com/jvm-profiling-tools/async-profiler)
+* Source of inspiration and reference: [https://github.com/alibaba/arthas](https://github.com/alibaba/arthas)
