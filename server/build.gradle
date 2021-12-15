@@ -1,7 +1,7 @@
 ext.projectName = 'jvmm-server'
 archivesBaseName = "jvmm-server"
 group = "io.github.tzfun.jvmm"
-version = "1.1.0"
+version = "1.2.0"
 
 dependencies {
     compile(project(':core'))
@@ -19,9 +19,9 @@ jar {
     archiveName("jvmm-server.jar")
 
     //  发布时去掉
-    from {
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-    }
+//    from {
+//        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+//    }
 }
 
 task sourcesJar(type: Jar) {

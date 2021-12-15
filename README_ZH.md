@@ -303,6 +303,7 @@ public class ServerBootDemo {
                 .setAutoIncrease(true)
                 .setHttpMaxChunkSize(52428800)
                 .setLogLevel("info")
+                .setLogUseJvmm(true)
                 .setSecurityEnable(true)
                 .setSecurityAccount("jvmm_acc")
                 .setSecurityPassword("jvmm_pwd")

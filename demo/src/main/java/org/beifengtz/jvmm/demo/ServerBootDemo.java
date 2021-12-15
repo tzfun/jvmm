@@ -18,12 +18,13 @@ public class ServerBootDemo {
                 .setAutoIncrease(true)
                 .setHttpMaxChunkSize(52428800)
                 .setLogLevel("info")
+                .setLogUseJvmm(true)
                 .setSecurityEnable(true)
                 .setSecurityAccount("jvmm_acc")
                 .setSecurityPassword("jvmm_pwd")
                 .setWorkThread(2)
                 .build();
-        ServerBootstrap server = ServerBootstrap.getInstance(null, config);
+        ServerBootstrap server = ServerBootstrap.getInstance(config);
         server.start();
 
         Thread.sleep(3000);
