@@ -6,11 +6,13 @@ import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.logger.LoggerLevel;
 import org.beifengtz.jvmm.common.util.PlatformUtil;
+import org.beifengtz.jvmm.convey.DefaultInternalLoggerFactory;
 import org.beifengtz.jvmm.convey.channel.JvmmChannelInitializer;
 import org.beifengtz.jvmm.core.conf.ConfigParser;
 import org.beifengtz.jvmm.core.conf.Configuration;
 import org.beifengtz.jvmm.server.handler.ServerHandlerProvider;
 import org.beifengtz.jvmm.server.logger.DefaultILoggerFactory;
+import org.beifengtz.jvmm.server.logger.DefaultJvmmILoggerFactory;
 import org.slf4j.Logger;
 
 import java.lang.instrument.Instrumentation;
@@ -46,17 +48,18 @@ public class ServerBootstrap {
     }
 
     public static ServerBootstrap getInstance() {
-        if (bootstrap == null) {
-            throw new IllegalStateException("Server bootstrap has not been instantiated.");
-        }
-        return bootstrap;
+        return getInstance(null, Configuration.defaultInstance());
     }
 
-    public synchronized static ServerBootstrap getInstance(String args) throws Throwable {
+    public synchronized static ServerBootstrap getInstance(String args) {
         return getInstance(null, args);
     }
 
-    public synchronized static ServerBootstrap getInstance(Instrumentation inst, String args) throws Throwable {
+    public synchronized static ServerBootstrap getInstance(Configuration config) {
+        return getInstance(null, config);
+    }
+
+    public synchronized static ServerBootstrap getInstance(Instrumentation inst, String args) {
         if (bootstrap != null) {
             return bootstrap;
         }
@@ -64,14 +67,19 @@ public class ServerBootstrap {
         return getInstance(inst, ConfigParser.parseFromArgs(args));
     }
 
-    public synchronized static ServerBootstrap getInstance(Instrumentation inst, Configuration config) throws Throwable {
+    public synchronized static ServerBootstrap getInstance(Instrumentation inst, Configuration config) {
         if (bootstrap != null) {
             return bootstrap;
         }
-        if (config.isFromAgent()) {
-            initAgentLogger(config.getLogLevel());
+
+        if (config.isLogUseJvmm()) {
+            initJvmmLogger(config.getLogLevel());
         } else {
-            initBaseLogger();
+            if (config.isFromAgent()) {
+                initAgentLogger(config.getLogLevel());
+            } else {
+                initBaseLogger();
+            }
         }
 
         bootstrap = new ServerBootstrap(inst);
@@ -80,31 +88,18 @@ public class ServerBootstrap {
         return bootstrap;
     }
 
+    private static void initJvmmLogger(String levelStr) {
+        LoggerLevel level = LoggerLevel.valueOf(levelStr.toUpperCase(Locale.ROOT));
+        InternalLoggerFactory.setDefaultFactory(DefaultInternalLoggerFactory.newInstance(level));
+        LoggerFactory.register(DefaultJvmmILoggerFactory.newInstance(level));
+    }
+
     private static void initBaseLogger() {
         LoggerFactory.register(org.slf4j.LoggerFactory.getILoggerFactory());
     }
 
     private static void initAgentLogger(String levelStr) {
-        String lvl = levelStr.toUpperCase(Locale.ROOT);
-        LoggerLevel level = LoggerLevel.INFO;
-
-        switch (lvl) {
-            case "WARN":
-                level = LoggerLevel.WARN;
-                break;
-            case "DEBUG":
-                level = LoggerLevel.DEBUG;
-                break;
-            case "ERROR":
-                level = LoggerLevel.ERROR;
-                break;
-            case "OFF":
-                level = LoggerLevel.OFF;
-                break;
-            case "TRACE":
-                level = LoggerLevel.TRACE;
-                break;
-        }
+        LoggerLevel level = LoggerLevel.valueOf(levelStr.toUpperCase(Locale.ROOT));
 
         DefaultILoggerFactory defaultILoggerFactory = DefaultILoggerFactory.newInstance(level);
 

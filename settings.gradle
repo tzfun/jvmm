@@ -6,4 +6,5 @@ include 'convey'
 include 'common'
 include 'server'
 include 'client'
+include 'demo'
 

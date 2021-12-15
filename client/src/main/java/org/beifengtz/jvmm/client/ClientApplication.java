@@ -3,6 +3,7 @@ package org.beifengtz.jvmm.client;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.logger.LoggerLevel;
+import org.beifengtz.jvmm.convey.DefaultInternalLoggerFactory;
 
 /**
  * <p>
@@ -15,8 +16,8 @@ import org.beifengtz.jvmm.common.logger.LoggerLevel;
  */
 public class ClientApplication {
     static {
-        LoggerFactory.setDefaultLoggerLevel(LoggerLevel.DEBUG);
-        InternalLoggerFactory.setDefaultFactory(new DefaultInternalLoggerFactory());
+        LoggerFactory.setDefaultLoggerLevel(LoggerLevel.INFO);
+        InternalLoggerFactory.setDefaultFactory(DefaultInternalLoggerFactory.newInstance(LoggerLevel.INFO));
     }
 
     public static void main(String[] args) throws Throwable {

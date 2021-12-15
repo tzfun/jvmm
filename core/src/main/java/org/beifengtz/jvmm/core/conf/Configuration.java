@@ -26,6 +26,7 @@ public final class Configuration {
     private final String securityPassword;
 
     private final String logLevel;
+    private final boolean logUseJvmm;
 
     private final int workThread;
     /**
@@ -42,6 +43,7 @@ public final class Configuration {
         this.securityAccount = builder.securityAccount;
         this.securityPassword = builder.securityPassword;
         this.logLevel = builder.logLevel;
+        this.logUseJvmm = builder.logUseJvmm;
         this.workThread = builder.workThread;
         this.fromAgent = builder.fromAgent;
     }
@@ -71,6 +73,7 @@ public final class Configuration {
         sb.append("security.enable=").append(securityEnable).append(";");
 
         sb.append("log.level=").append(logLevel).append(";");
+        sb.append("log.useJvmm=").append(logUseJvmm).append(";");
         sb.append("workThread=").append(workThread).append(";");
         sb.append("fromAgent=").append(fromAgent).append(";");
         return sb.toString();
@@ -86,6 +89,7 @@ public final class Configuration {
         private String securityPassword = "";
 
         private String logLevel = "info";
+        private boolean logUseJvmm = false;
 
         private int workThread = 1;
         private boolean fromAgent = false;
@@ -183,6 +187,15 @@ public final class Configuration {
             this.fromAgent = fromAgent;
         }
 
+        public boolean isLogUseJvmm() {
+            return logUseJvmm;
+        }
+
+        public Builder setLogUseJvmm(boolean logUseJvmm) {
+            this.logUseJvmm = logUseJvmm;
+            return this;
+        }
+
         public void mergeFromProperties(Map<String, String> argMap) {
             String name = argMap.get("name");
             if (StringUtil.nonEmpty(name)) {
@@ -219,6 +232,11 @@ public final class Configuration {
             String logLevel = argMap.get("log.level");
             if (StringUtil.nonEmpty(logLevel)) {
                 setLogLevel(logLevel);
+            }
+
+            String logUseJvmm = argMap.get("log.useJvmm");
+            if (StringUtil.nonEmpty(logUseJvmm)) {
+                setLogUseJvmm(Boolean.parseBoolean(logUseJvmm));
             }
 
             String workThread = argMap.get("workThread");
@@ -271,6 +289,10 @@ public final class Configuration {
             if (StringUtil.nonEmpty(logLevel)) {
                 setLogLevel(logLevel);
             }
+            String logUseJvmm = logConfig.get("useJvmm");
+            if (StringUtil.nonEmpty(logUseJvmm)) {
+                setLogUseJvmm(Boolean.parseBoolean(logUseJvmm));
+            }
 
             if (StringUtil.nonEmpty(mapping.getWorkThread())) {
                 setWorkThread(Math.max(Integer.parseInt(mapping.getWorkThread()), 1));
@@ -320,5 +342,9 @@ public final class Configuration {
 
     public boolean isFromAgent() {
         return fromAgent;
+    }
+
+    public boolean isLogUseJvmm() {
+        return logUseJvmm;
     }
 }

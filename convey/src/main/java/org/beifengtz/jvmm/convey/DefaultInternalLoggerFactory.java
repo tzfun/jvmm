@@ -1,9 +1,10 @@
-package org.beifengtz.jvmm.client;
+package org.beifengtz.jvmm.convey;
 
 import io.netty.util.internal.logging.InternalLogLevel;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.logger.DefaultImplLogger;
+import org.beifengtz.jvmm.common.logger.LoggerLevel;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,7 +20,34 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DefaultInternalLoggerFactory extends InternalLoggerFactory {
 
+    private static DefaultInternalLoggerFactory INSTANCE = null;
     private static final Map<String, InternalLogger> loggerMap = new ConcurrentHashMap<>();
+    static LoggerLevel level = LoggerLevel.INFO;
+
+    private DefaultInternalLoggerFactory(){}
+
+    public static DefaultInternalLoggerFactory newInstance() {
+        return newInstance(LoggerLevel.INFO);
+    }
+
+    public static DefaultInternalLoggerFactory newInstance(LoggerLevel level) {
+        if (INSTANCE == null) {
+            synchronized (DefaultInternalLoggerFactory.class) {
+                if (INSTANCE != null) {
+                    return INSTANCE;
+                }
+                INSTANCE = new DefaultInternalLoggerFactory();
+                setLevel(level);
+                return INSTANCE;
+            }
+        } else {
+            return INSTANCE;
+        }
+    }
+
+    private static void setLevel(LoggerLevel lvl) {
+        level = lvl;
+    }
 
     @Override
     protected InternalLogger newInstance(String name) {
