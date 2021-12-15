@@ -15,6 +15,7 @@ import java.util.Map;
 public class ConfigFileMapping {
     private String name;
     private String workThread;
+    private String fromAgent;
     private Map<String, String> port = new HashMap<>();
     private Map<String, String> http = new HashMap<>();
     private Map<String, String> security = new HashMap<>();
@@ -66,5 +67,13 @@ public class ConfigFileMapping {
 
     public void setWorkThread(String workThread) {
         this.workThread = workThread;
+    }
+
+    public String getFromAgent() {
+        return fromAgent;
+    }
+
+    public void setFromAgent(String fromAgent) {
+        this.fromAgent = fromAgent;
     }
 }

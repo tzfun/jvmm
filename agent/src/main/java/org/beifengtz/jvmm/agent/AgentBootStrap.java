@@ -183,10 +183,10 @@ public class AgentBootStrap {
         final String agentArgs;
         if (idx < 0) {
             serverJar = "";
-            agentArgs = args.trim();
+            agentArgs = args.trim() + ";fromAgent=true";
         } else {
             serverJar = args.substring(0, idx).trim();
-            agentArgs = args.substring(idx).trim();
+            agentArgs = args.substring(idx).trim() + ";fromAgent=true";
         }
         if ("agentmain".equals(type)) {
             if (agentAttached) {
@@ -321,6 +321,7 @@ public class AgentBootStrap {
                 bootClazz.getMethod("start").invoke(boot);
             } catch (Throwable e) {
                 log.error(e.getMessage(), e);
+                running = false;
             }
         });
 

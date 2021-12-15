@@ -3,8 +3,8 @@ plugins {
     id 'application'
 }
 
-group 'org.beifengtz'
-version '1.0.0'
+group = 'io.github.tzfun.jvmm'
+version = '1.1.0'
 
 ext {
     commonsCodecVersion = "1.10"
@@ -34,6 +34,7 @@ subprojects {
 
     repositories {
         maven { url 'https://maven.aliyun.com/repository/public/' }
+        maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
         mavenCentral()
     }
 

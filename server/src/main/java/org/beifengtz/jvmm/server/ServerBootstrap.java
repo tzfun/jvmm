@@ -61,8 +61,18 @@ public class ServerBootstrap {
             return bootstrap;
         }
 
-        Configuration config = ConfigParser.parseFromArgs(args);
-        initLogger(config.getLogLevel());
+        return getInstance(inst, ConfigParser.parseFromArgs(args));
+    }
+
+    public synchronized static ServerBootstrap getInstance(Instrumentation inst, Configuration config) throws Throwable {
+        if (bootstrap != null) {
+            return bootstrap;
+        }
+        if (config.isFromAgent()) {
+            initAgentLogger(config.getLogLevel());
+        } else {
+            initBaseLogger();
+        }
 
         bootstrap = new ServerBootstrap(inst);
         ServerConfig.setConfiguration(config);
@@ -70,7 +80,11 @@ public class ServerBootstrap {
         return bootstrap;
     }
 
-    private static void initLogger(String levelStr) {
+    private static void initBaseLogger() {
+        LoggerFactory.register(org.slf4j.LoggerFactory.getILoggerFactory());
+    }
+
+    private static void initAgentLogger(String levelStr) {
         String lvl = levelStr.toUpperCase(Locale.ROOT);
         LoggerLevel level = LoggerLevel.INFO;
 
@@ -91,8 +105,6 @@ public class ServerBootstrap {
                 level = LoggerLevel.TRACE;
                 break;
         }
-
-//        java.util.logging.Logger.getGlobal().setLevel(l1);
 
         DefaultILoggerFactory defaultILoggerFactory = DefaultILoggerFactory.newInstance(level);
 

@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import org.apache.commons.cli.CommandLine;
 import org.beifengtz.jvmm.client.annotation.JvmmCmdDesc;
 import org.beifengtz.jvmm.client.annotation.JvmmOption;
@@ -41,14 +40,14 @@ public class ServerServiceImpl extends ServerService {
                     hasArg = true,
                     required = true,
                     argName = "type",
-                    desc = "Info type, optional values: system, systemDynamic, classloading, compilation, gc, process, " +
+                    desc = "Info type (required *), optional values: system, systemDynamic, classloading, compilation, gc, process, " +
                             "memory, memoryManager, memoryPool, thread, threadStack."
             ),
             @JvmmOption(
                     name = "f",
                     hasArg = true,
                     argName = "output",
-                    desc = "File path, output info to file."
+                    desc = "File path (optional), output info to file."
             )
     })
     @JvmmCmdDesc(desc = "Get information about the target server")
@@ -186,7 +185,7 @@ public class ServerServiceImpl extends ServerService {
                     required = true,
                     hasArg = true,
                     argName = "file",
-                    desc = "Output file path, file type indicates format type."
+                    desc = "Output file path (required *), file type indicates format type."
             )
     })
     @JvmmCmdDesc(desc = "Get server sampling report. Only supported on MacOS and Linux.")

@@ -28,6 +28,10 @@ public final class Configuration {
     private final String logLevel;
 
     private final int workThread;
+    /**
+     * 是否是从agent加载
+     */
+    private final boolean fromAgent;
 
     private Configuration(Builder builder) {
         this.name = builder.name;
@@ -39,6 +43,7 @@ public final class Configuration {
         this.securityPassword = builder.securityPassword;
         this.logLevel = builder.logLevel;
         this.workThread = builder.workThread;
+        this.fromAgent = builder.fromAgent;
     }
 
     public static Builder newBuilder() {
@@ -67,6 +72,7 @@ public final class Configuration {
 
         sb.append("log.level=").append(logLevel).append(";");
         sb.append("workThread=").append(workThread).append(";");
+        sb.append("fromAgent=").append(fromAgent).append(";");
         return sb.toString();
     }
 
@@ -82,6 +88,7 @@ public final class Configuration {
         private String logLevel = "info";
 
         private int workThread = 1;
+        private boolean fromAgent = false;
 
         public Configuration build() {
             return new Configuration(this);
@@ -168,6 +175,14 @@ public final class Configuration {
             return this;
         }
 
+        public boolean isFromAgent() {
+            return fromAgent;
+        }
+
+        public void setFromAgent(boolean fromAgent) {
+            this.fromAgent = fromAgent;
+        }
+
         public void mergeFromProperties(Map<String, String> argMap) {
             String name = argMap.get("name");
             if (StringUtil.nonEmpty(name)) {
@@ -209,6 +224,11 @@ public final class Configuration {
             String workThread = argMap.get("workThread");
             if (StringUtil.nonEmpty(workThread)) {
                 setWorkThread(Math.max(Integer.parseInt(workThread), 1));
+            }
+
+            String fromAgent = argMap.get("fromAgent");
+            if (StringUtil.nonEmpty(fromAgent)) {
+                setFromAgent(Boolean.parseBoolean(fromAgent));
             }
 
         }
@@ -255,6 +275,10 @@ public final class Configuration {
             if (StringUtil.nonEmpty(mapping.getWorkThread())) {
                 setWorkThread(Math.max(Integer.parseInt(mapping.getWorkThread()), 1));
             }
+
+            if (StringUtil.nonEmpty(mapping.getFromAgent())) {
+                setFromAgent(Boolean.parseBoolean(mapping.getFromAgent()));
+            }
         }
     }
 
@@ -292,5 +316,9 @@ public final class Configuration {
 
     public int getWorkThread() {
         return workThread;
+    }
+
+    public boolean isFromAgent() {
+        return fromAgent;
     }
 }

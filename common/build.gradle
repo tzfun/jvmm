@@ -1,7 +1,7 @@
 ext.projectName = 'jvmm-common'
 archivesBaseName = "jvmm-common"
 group = "io.github.tzfun.jvmm"
-version = "1.0.0"
+version = "1.1.0"
 
 dependencies {
     compile "com.google.code.gson:gson:${gsonVersoion}"
