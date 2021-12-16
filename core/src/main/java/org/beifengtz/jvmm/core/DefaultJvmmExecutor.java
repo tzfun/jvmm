@@ -1,16 +1,15 @@
 package org.beifengtz.jvmm.core;
 
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableSet;
-import org.apache.commons.lang3.tuple.Pair;
-import org.beifengtz.jvmm.core.entity.result.JpsResult;
 import org.beifengtz.jvmm.common.factory.LoggerFactory;
+import org.beifengtz.jvmm.common.tuple.Pair;
+import org.beifengtz.jvmm.common.util.CommonUtil;
 import org.beifengtz.jvmm.common.util.ExecuteNativeUtil;
 import org.beifengtz.jvmm.common.util.JavaEnvUtil;
 import org.beifengtz.jvmm.common.util.PlatformUtil;
 import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
+import org.beifengtz.jvmm.core.entity.result.JpsResult;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -40,7 +39,7 @@ class DefaultJvmmExecutor implements JvmmExecutor {
 
     private static final Logger log = LoggerFactory.logger(DefaultJvmmExecutor.class);
 
-    private static final Set<String> ENABLED_PROGRAM_NAME = ImmutableSet.of("jps");
+    private static final Set<String> ENABLED_PROGRAM_NAME = CommonUtil.hashSetOf("jps");
 
     DefaultJvmmExecutor() {
     }
@@ -117,7 +116,7 @@ class DefaultJvmmExecutor implements JvmmExecutor {
 
         if (process.waitFor() != 0) {
             err.addAll(output);
-            String errOutput = Joiner.on("\n").join(err);
+            String errOutput = CommonUtil.join("\n", err);
             log.error("Execute command with exit value '{}'. {}. [{}]", process.exitValue(), errOutput, newCmd);
             return Pair.of(err, false);
         } else {
@@ -151,7 +150,7 @@ class DefaultJvmmExecutor implements JvmmExecutor {
                     resList.add(res);
                 }
             } else {
-                error = Joiner.on("\n").join(pair.getLeft());
+                error = CommonUtil.join("\n", pair.getLeft());
             }
         } catch (IOException | TimeoutException | InterruptedException e) {
             error = "List java process on localhost failed. " + e.getMessage();

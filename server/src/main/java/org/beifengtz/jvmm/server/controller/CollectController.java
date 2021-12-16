@@ -1,6 +1,5 @@
 package org.beifengtz.jvmm.server.controller;
 
-import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import io.netty.channel.Channel;
@@ -26,6 +25,8 @@ import org.beifengtz.jvmm.server.annotation.JvmmMapping;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -116,7 +117,7 @@ public class CollectController implements Closeable {
             depth = data.get("depth").getAsInt();
         }
         String[] infos = JvmmFactory.getCollector().getThreadInfo(ids, depth);
-        return ImmutableList.copyOf(infos);
+        return new ArrayList<>(Arrays.asList(infos));
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_TIMER_COLLECT_MEMORY_INFO)

@@ -250,58 +250,6 @@ public final class Configuration {
             }
 
         }
-
-        public void mergeFromMapping(ConfigFileMapping mapping) {
-            if (StringUtil.nonEmpty(mapping.getName())) {
-                setName(mapping.getName());
-            }
-            String portStr = mapping.getPort().get("bind");
-            if (StringUtil.nonEmpty(portStr)) {
-                setPort(Integer.parseInt(portStr));
-            }
-            String autoIncreaseStr = mapping.getPort().get("autoIncrease");
-            if (StringUtil.nonEmpty(autoIncreaseStr)) {
-                setAutoIncrease(Boolean.parseBoolean(autoIncreaseStr));
-            }
-
-            String maxChunkSize = mapping.getHttp().get("maxChunkSize");
-            if (StringUtil.nonEmpty(maxChunkSize)) {
-                setHttpMaxChunkSize(Integer.parseInt(maxChunkSize));
-            }
-
-            String account = mapping.getSecurity().get("account");
-            if (StringUtil.nonEmpty(account)) {
-                setSecurityAccount(account);
-            }
-
-            String password = mapping.getSecurity().get("password");
-            if (StringUtil.nonEmpty(password)) {
-                setSecurityPassword(password);
-            }
-
-            String enable = mapping.getSecurity().get("enable");
-            if (StringUtil.nonEmpty(enable)) {
-                setSecurityEnable(Boolean.parseBoolean(enable));
-            }
-
-            Map<String, String> logConfig = mapping.getLog();
-            String logLevel = logConfig.get("level");
-            if (StringUtil.nonEmpty(logLevel)) {
-                setLogLevel(logLevel);
-            }
-            String logUseJvmm = logConfig.get("useJvmm");
-            if (StringUtil.nonEmpty(logUseJvmm)) {
-                setLogUseJvmm(Boolean.parseBoolean(logUseJvmm));
-            }
-
-            if (StringUtil.nonEmpty(mapping.getWorkThread())) {
-                setWorkThread(Math.max(Integer.parseInt(mapping.getWorkThread()), 1));
-            }
-
-            if (StringUtil.nonEmpty(mapping.getFromAgent())) {
-                setFromAgent(Boolean.parseBoolean(mapping.getFromAgent()));
-            }
-        }
     }
 
     public int getPort() {

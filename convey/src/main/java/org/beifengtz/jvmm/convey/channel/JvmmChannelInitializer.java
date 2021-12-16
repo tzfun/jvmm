@@ -17,7 +17,7 @@ import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
-import org.apache.commons.lang3.SystemUtils;
+import org.beifengtz.jvmm.common.util.PlatformUtil;
 import org.beifengtz.jvmm.convey.handler.HandlerProvider;
 
 import java.nio.charset.StandardCharsets;
@@ -87,6 +87,6 @@ public class JvmmChannelInitializer extends ChannelInitializer<Channel> {
     }
 
     public static EventLoopGroup newEventLoopGroup(int nThreads) {
-        return SystemUtils.IS_OS_LINUX ? new EpollEventLoopGroup(nThreads) : new NioEventLoopGroup(nThreads);
+        return PlatformUtil.isLinux() ? new EpollEventLoopGroup(nThreads) : new NioEventLoopGroup(nThreads);
     }
 }

@@ -1,11 +1,11 @@
 package org.beifengtz.jvmm.convey.auth;
 
-import com.google.common.collect.ImmutableSet;
-import org.apache.commons.lang3.RandomUtils;
+import org.beifengtz.jvmm.common.util.CommonUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -21,7 +21,7 @@ public class JvmmBubble {
 
     private static final byte ASCII_START = 33;
     private static final byte ASCII_END = 122;
-    private static final Set<Byte> ASCII_EXCLUDE = ImmutableSet.of((byte) 60, (byte) 61, (byte) 62, (byte) 94, (byte) 95, (byte) 96);
+    private static final Set<Byte> ASCII_EXCLUDE = CommonUtil.hashSetOf((byte) 60, (byte) 61, (byte) 62, (byte) 94, (byte) 95, (byte) 96);
 
     private static final List<Byte> asciiList;
 
@@ -37,19 +37,15 @@ public class JvmmBubble {
     }
 
     public int generateSeed() {
-        int seed;
-        try {
-            seed = RandomUtils.nextInt(1, 2021);
-            ArrayList<Byte> pool = new ArrayList<>(asciiList);
-            Collections.shuffle(pool);
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < 16; ++i) {
-                sb.append((char) pool.get(i).byteValue());
-            }
-            key = sb.toString();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        Random random = new Random();
+        int seed = random.ints(1, 1, 2021).findAny().orElse(1998);
+        ArrayList<Byte> pool = new ArrayList<>(asciiList);
+        Collections.shuffle(pool);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 16; ++i) {
+            sb.append((char) pool.get(i).byteValue());
         }
+        key = sb.toString();
         return seed;
     }
 
