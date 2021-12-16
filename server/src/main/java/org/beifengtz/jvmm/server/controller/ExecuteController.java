@@ -2,7 +2,7 @@ package org.beifengtz.jvmm.server.controller;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import org.apache.commons.lang3.tuple.Pair;
+import org.beifengtz.jvmm.common.tuple.Pair;
 import org.beifengtz.jvmm.convey.GlobalStatus;
 import org.beifengtz.jvmm.convey.GlobalType;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;

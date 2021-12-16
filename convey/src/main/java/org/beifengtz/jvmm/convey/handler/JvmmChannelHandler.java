@@ -1,6 +1,5 @@
 package org.beifengtz.jvmm.convey.handler;
 
-import com.google.common.base.Stopwatch;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import io.netty.channel.ChannelHandlerContext;
@@ -22,7 +21,6 @@ import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 import org.slf4j.Logger;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -36,8 +34,6 @@ import java.util.concurrent.TimeUnit;
 public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<String> {
 
     protected final JvmmBubble bubble = new JvmmBubble();
-
-    private final Stopwatch stopWatch = Stopwatch.createUnstarted();
 
     public JvmmChannelHandler() {
         super(false);
@@ -74,7 +70,7 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
         try {
-            stopWatch.reset().start();
+            long startTime = System.currentTimeMillis();
             JvmmRequest request = JvmmRequest.parseFrom(msg);
             if (request.getType() == null) {
                 return;
@@ -88,7 +84,7 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
                 handleRequest(ctx, request);
             }
             if (!request.isHeartbeat()) {
-                logger().debug(String.format("%s %dms", request.getType(), stopWatch.stop().elapsed(TimeUnit.MILLISECONDS)));
+                logger().debug(String.format("%s %dms", request.getType(), System.currentTimeMillis() - startTime));
             }
         } catch (AuthenticationFailedException e) {
             ctx.channel().writeAndFlush(JvmmResponse.create()

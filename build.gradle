@@ -7,16 +7,11 @@ group = 'io.github.tzfun.jvmm'
 version = '1.2.0'
 
 ext {
-    commonsCodecVersion = "1.10"
-    commonsLangVersion = "3.11"
     nettyVersion = "4.1.65.Final"
-    junitVersion = "4.11"
     junitJupiterVersion = "5.7.0"
     slf4jVersion = "1.7.30"
     logbackVersion = "1.2.3"
-    guavaVersion = "30.1-jre"
     gsonVersoion = "2.8.6"
-    snakeyamlVersion = "1.27"
     commonsCli="1.5.0"
 }
 
@@ -39,7 +34,6 @@ subprojects {
     }
 
     dependencies {
-        testImplementation "junit:junit:${junitVersion}"
         testImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
     }

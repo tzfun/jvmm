@@ -2,7 +2,6 @@ package org.beifengtz.jvmm.server.logger;
 
 import io.netty.util.internal.logging.InternalLogLevel;
 import io.netty.util.internal.logging.InternalLogger;
-import org.apache.commons.lang3.reflect.TypeUtils;
 import org.beifengtz.jvmm.common.logger.DefaultImplLogger;
 import org.beifengtz.jvmm.common.logger.LoggerEvent;
 import org.beifengtz.jvmm.common.logger.LoggerLevel;

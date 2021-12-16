@@ -56,8 +56,9 @@ public class ConfigParser {
             try {
                 String lowerCase = configPath.toLowerCase(Locale.ROOT);
                 if (lowerCase.endsWith("yml") || lowerCase.endsWith("yaml")) {
-                    ConfigFileMapping mapping = FileUtil.readYml(configFile.getAbsolutePath(), ConfigFileMapping.class);
-                    cb.mergeFromMapping(mapping);
+                    Map<String, String> propMap = FileUtil.readYml(configFile.getAbsolutePath());
+                    propMap.putAll(argMap);
+                    argMap = propMap;
                 } else if (lowerCase.endsWith("properties")) {
                     Map<String, String> propMap = FileUtil.readProperties(configFile.getAbsolutePath());
                     propMap.putAll(argMap);

@@ -1,7 +1,5 @@
 package org.beifengtz.jvmm.common.util;
 
-import com.google.common.collect.Sets;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -157,7 +155,7 @@ public class ReflexUtil {
      * @return 方法集合
      */
     public static Set<Method> scanMethodAnnotation(Class<?> clazz, Class<? extends Annotation> annotation) {
-        return scanMethodAnnotation(Sets.newHashSet(clazz), annotation);
+        return scanMethodAnnotation(CommonUtil.hashSetOf(clazz), annotation);
     }
 
     /**

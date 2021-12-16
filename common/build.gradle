@@ -3,13 +3,11 @@ archivesBaseName = "jvmm-common"
 group = "io.github.tzfun.jvmm"
 version = "1.2.0"
 
+apply plugin: 'application'
+
 dependencies {
     compile "com.google.code.gson:gson:${gsonVersoion}"
-    compile "commons-codec:commons-codec:${commonsCodecVersion}"
-    compile "org.apache.commons:commons-lang3:${commonsLangVersion}"
     compile "org.slf4j:slf4j-api:${slf4jVersion}"
-    compile "com.google.guava:guava:${guavaVersion}"
-    compile "org.yaml:snakeyaml:${snakeyamlVersion}"
 }
 
 jar {

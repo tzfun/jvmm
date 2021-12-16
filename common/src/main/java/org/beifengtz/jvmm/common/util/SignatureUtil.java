@@ -1,7 +1,6 @@
 package org.beifengtz.jvmm.common.util;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.tuple.Pair;
+import org.beifengtz.jvmm.common.tuple.Pair;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -16,6 +15,7 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 import java.util.Objects;
 
 /**
@@ -50,7 +50,7 @@ public class SignatureUtil {
         cipher.init(Cipher.ENCRYPT_MODE, spec);
         byte[] encrypted = cipher.doFinal(src.getBytes(StandardCharsets.UTF_8));
 
-        return new Base64().encodeToString(encrypted);//此处使用BASE64做转码功能，同时能起到2次加密的作用。
+        return Base64.getEncoder().encodeToString(encrypted);//此处使用BASE64做转码功能，同时能起到2次加密的作用。
     }
 
     /**
@@ -69,7 +69,7 @@ public class SignatureUtil {
             SecretKeySpec spec = new SecretKeySpec(raw, "AES");
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
             cipher.init(Cipher.DECRYPT_MODE, spec);
-            byte[] encrypted1 = new Base64().decode(src);
+            byte[] encrypted1 = Base64.getDecoder().decode(src);
             byte[] original = cipher.doFinal(encrypted1);
             return new String(original, StandardCharsets.UTF_8);
         } catch (Exception ignore) {
@@ -93,8 +93,8 @@ public class SignatureUtil {
         RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
         RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
 
-        String publicKeyString = new String(Base64.encodeBase64(publicKey.getEncoded()));
-        String privateKeyString = new String(Base64.encodeBase64((privateKey.getEncoded())));
+        String publicKeyString = new String(Base64.getEncoder().encode(publicKey.getEncoded()));
+        String privateKeyString = new String(Base64.getEncoder().encode((privateKey.getEncoded())));
         return Pair.of(publicKeyString, privateKeyString);
     }
 
@@ -108,12 +108,12 @@ public class SignatureUtil {
      */
     public static String RSAEncrypt(String content, String publicKey) throws Exception {
         //base64编码的公钥
-        byte[] decoded = Base64.decodeBase64(publicKey);
+        byte[] decoded = Base64.getDecoder().decode(publicKey);
         RSAPublicKey pubKey = (RSAPublicKey) KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(decoded));
         //RSA加密
         Cipher cipher = Cipher.getInstance("RSA");
         cipher.init(Cipher.ENCRYPT_MODE, pubKey);
-        return Base64.encodeBase64String(cipher.doFinal(content.getBytes(StandardCharsets.UTF_8)));
+        return Base64.getEncoder().encodeToString(cipher.doFinal(content.getBytes(StandardCharsets.UTF_8)));
     }
 
     /**
@@ -126,9 +126,9 @@ public class SignatureUtil {
      */
     public static String RSADecrypt(String str, String privateKey) throws Exception {
         //64位解码加密后的字符串
-        byte[] inputByte = Base64.decodeBase64(str.getBytes(StandardCharsets.UTF_8));
+        byte[] inputByte = Base64.getDecoder().decode(str.getBytes(StandardCharsets.UTF_8));
         //base64编码的私钥
-        byte[] decoded = Base64.decodeBase64(privateKey);
+        byte[] decoded = Base64.getDecoder().decode(privateKey);
         RSAPrivateKey priKey = (RSAPrivateKey) KeyFactory.getInstance("RSA").generatePrivate(new PKCS8EncodedKeySpec(decoded));
         //RSA解密
         Cipher cipher = Cipher.getInstance("RSA");

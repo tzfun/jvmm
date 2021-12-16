@@ -2,7 +2,6 @@ package org.beifengtz.jvmm.common.util;
 
 import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.slf4j.Logger;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,11 +16,17 @@ import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Scanner;
+import java.util.Stack;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -104,11 +109,41 @@ public class FileUtil {
         }
     }
 
-    public static <T> T readYml(String file, Class<T> type) throws IOException {
-        Yaml yaml = new Yaml();
-        try (InputStream in = new FileInputStream(file)) {
-            return yaml.loadAs(in, type);
+    public static Map<String, String> readYml(String file) throws IOException {
+        Map<String, String> map = new HashMap<>();
+        try (Scanner scanner = new Scanner(new FileInputStream(file))) {
+            LinkedList<String> stack = new LinkedList<>();
+            while (scanner.hasNext()) {
+                String line = scanner.nextLine();
+                if (line.trim().isEmpty() || line.trim().startsWith("#")) {
+                    continue;
+                }
+
+                int blankCount = 0;
+                for (char c : line.toCharArray()) {
+                    if (c == ' ') {
+                        blankCount ++;
+                    } else {
+                        break;
+                    }
+                }
+                int lvl = blankCount / 2;
+                String[] kv = line.trim().split(":");
+
+                if (stack.size() > lvl) {
+                    while (stack.size() != lvl) {
+                        stack.removeLast();
+                    }
+                }
+
+                stack.add(kv[0]);
+
+                if (kv.length > 1 && !kv[1].trim().isEmpty()) {
+                    map.put(CommonUtil.join(".", stack), kv[1].trim());
+                }
+            }
         }
+        return map;
     }
 
     /**
