@@ -2,11 +2,48 @@
 
 # Jvmm
 
-Jvmm is a lightweight and secure Java Virtual Machine monitor. You can use it to perform at runtime (Runtime): data collection, task execution, flame graph generation, etc. It is more suitable for service status monitoring, debugging, and performance testing.
+Jvmm is a lightweight and secure Java Virtual Machine monitor. You can use it to perform at runtime (Runtime): JVM monitoring (memory, cpu, gc, thread, etc.), OS monitor (cpu, memory, basic info, etc.), execution, flame graph generation, etc. It is more suitable for service status monitoring, debugging, and performance testing.
 
-# Use Jvmm
+# Quick start
 
-This project provides three ways to choose from: `java agent`, `API call`, and `Server service`. I made a `client commandline tool` to connect with the server.*In future versions, it will support web client.*
+Go to the **tag** page and download jvmm, unzip and execute:
+```shell
+//  Attach to the process running on port 8080
+./attach -p 8080
+```
+
+In the target process, the log will prompt the running port, the default is 5010.
+
+Connect Jvmm, then get system and thread information:
+```shell
+java -jar jvmm-client.jar -h 127.0.0.1:5010
+[Jvmm] [Info ] Start to connect jvmm agent server...
+[Jvmm] [Info ] Connect successful! You can use the 'help' command to learn how to use. Enter 'exit' to safely exit the connection.
+> info -t systemDynamic
+{
+   "committedVirtualMemorySize":739393536,
+   "freePhysicalMemorySize":4804407296,
+   "freeSwapSpaceSize":3897561088,
+   "processCpuLoad":2.5464865506569934E-4,
+   "processCpuTime":8531250000,
+   "systemCpuLoad":0.09008395604971231,
+   "totalPhysicalMemorySize":0,
+   "totalSwapSpaceSize":27989778432
+}
+> info -t thread
+{
+   "peakThreadCount":39,
+   "daemonThreadCount":25,
+   "threadCount":34,
+   "totalStartedThreadCount":52
+}
+> exit
+[Jvmm] [Info ] bye bye...
+```
+
+# More Usage
+
+This project provides three ways to choose from: `java agent`, `java API`, and `Server service`. I made a `client commandline tool` to connect with the server.*In future versions, it will support web client.*
 
 ## Commandline Tool
 

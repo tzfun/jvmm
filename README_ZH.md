@@ -2,11 +2,47 @@
 
 # Jvmm
 
-Jvmm是一个轻量且安全的Java虚拟机监控器。你可以使用它在运行时（Runtime）进行：数据采集、执行任务、生成火焰图等，比较适合用于服务状态监控、调试、性能测试。
+Jvmm是一个轻量且安全的Java虚拟机监控器。你可以使用它在运行时（Runtime）进行：JVM监控(内存、CPU负载、GC、Thread Info)、操作系统监控(负载、内存使用率、基础信息等)、执行任务、生成火焰图等，比较适合用于服务状态监控、调试、性能测试。
 
-# 使用
+# 快速使用
+tag页下载后解压，执行
+```shell
+//  向运行在8080端口的进程attach
+./attach -p 8080
+```
 
-本项目提供了 `java agent`、`API调用`、`Server服务` 三种方式可供选择，并且制作了`client命令行工具`与server进行通信，*在未来的版本将支持 web client。*
+在目标进程中日志会提示运行端口，默认是5010
+
+连接Jvmm,然后获取系统和线程信息
+```shell
+java -jar jvmm-client.jar -h 127.0.0.1:5010
+[Jvmm] [Info ] Start to connect jvmm agent server...
+[Jvmm] [Info ] Connect successful! You can use the 'help' command to learn how to use. Enter 'exit' to safely exit the connection.
+> info -t systemDynamic
+{
+   "committedVirtualMemorySize":739393536,
+   "freePhysicalMemorySize":4804407296,
+   "freeSwapSpaceSize":3897561088,
+   "processCpuLoad":2.5464865506569934E-4,
+   "processCpuTime":8531250000,
+   "systemCpuLoad":0.09008395604971231,
+   "totalPhysicalMemorySize":0,
+   "totalSwapSpaceSize":27989778432
+}
+> info -t thread
+{
+   "peakThreadCount":39,
+   "daemonThreadCount":25,
+   "threadCount":34,
+   "totalStartedThreadCount":52
+}
+> exit
+[Jvmm] [Info ] bye bye...
+```
+
+# 详细使用
+
+本项目提供了 `java agent`、`API`、`Server服务` 三种方式可供选择，并且制作了`client命令行工具`与server进行通信，*在未来的版本将支持 web client。*
 
 ## client命令行工具
 
@@ -76,7 +112,7 @@ Jvmm提供了 java agent 使用，你可以在被监控程序（这里称之为�
 
 如果宿主程序已经启动，并且不太方便重启时，你也可以使用本项目提供的Client工具动态地将 agent 和 server 载入到宿主程序。client工具不仅支持载入功能，还支持与jvmm server通信，不过 client 只是提供一些简单的命令，更多更全的功能需调用API。
 
-你可以前往 [tag](tags) 页下载打包好的程序，解压后将会看到这些文件：
+你可以前往 **标签** 页下载打包好的程序，解压后将会看到这些文件：
 
 ```
 |-- jvmm-agent.jar      //  agent包，负责将server载入到宿主程序虚拟机
