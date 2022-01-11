@@ -319,7 +319,7 @@ public class JvmmConnector implements Closeable {
                 if (GlobalStatus.JVMM_STATUS_OK.name().equals(response.getStatus())) {
                     promise.trySuccess(response);
                 } else {
-                    promise.tryFailure(new ErrorStatusException(response.getStatus(), response.getMessage()));
+                    promise.tryFailure(new ErrorStatusException(response.getMessage(), response.getStatus()));
                 }
             }
         };

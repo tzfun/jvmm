@@ -7,7 +7,6 @@ import org.beifengtz.jvmm.core.entity.profiler.ProfilerCounter;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerEvent;
 import org.beifengtz.jvmm.common.factory.ExecutorFactory;
 import org.beifengtz.jvmm.common.factory.LoggerFactory;
-import org.beifengtz.jvmm.core.thirdpart.AsyncProfiler;
 import org.slf4j.Logger;
 
 import java.io.File;

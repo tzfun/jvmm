@@ -2,12 +2,11 @@ import javax.tools.ToolProvider
 
 ext.projectName = 'jvmm-core'
 archivesBaseName = "jvmm-core"
-group = "io.github.tzfun.jvmm"
-version = "1.2.0"
 
 dependencies {
     compile(project(':common'))
     compileOnly(files(((URLClassLoader) ToolProvider.getSystemToolClassLoader()).getURLs()))
+    compile "org.ow2.asm:asm:9.2"
 }
 
 jar {
