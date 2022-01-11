@@ -42,3 +42,4 @@ out/
 /web/src/main/resources/application.yml
 
 gradle.properties
+web/src/main/resources/application*.yml
