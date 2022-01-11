@@ -200,11 +200,11 @@ public class ServerServiceImpl extends ServerService {
             data.addProperty("counter", cmd.getOptionValue("c"));
         }
 
-        long waitSecs = 12;
+        long waitSecs = 20;
         if (cmd.hasOption("t")) {
             long time = Long.parseLong(cmd.getOptionValue("t"));
             data.addProperty("time", time);
-            waitSecs = time + 2;
+            waitSecs = time + 10;
         }
 
         if (cmd.hasOption("i")) {

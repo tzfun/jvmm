@@ -16,8 +16,6 @@ ext {
 }
 
 subprojects {
-    group 'org.beifengtz.jvmm'
-
     apply plugin: 'java'
     apply plugin: 'maven'
     apply plugin: 'signing'
