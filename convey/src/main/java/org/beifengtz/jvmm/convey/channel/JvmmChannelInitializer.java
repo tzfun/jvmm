@@ -7,6 +7,9 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.epoll.EpollSocketChannel;
+import io.netty.channel.kqueue.KQueueEventLoopGroup;
+import io.netty.channel.kqueue.KQueueServerSocketChannel;
+import io.netty.channel.kqueue.KQueueSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -17,8 +20,10 @@ import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
+import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.util.PlatformUtil;
 import org.beifengtz.jvmm.convey.handler.HandlerProvider;
+import org.slf4j.Logger;
 
 import java.nio.charset.StandardCharsets;
 
@@ -32,6 +37,8 @@ import java.nio.charset.StandardCharsets;
  * @author beifengtz
  */
 public class JvmmChannelInitializer extends ChannelInitializer<Channel> {
+
+    private static final Logger logger = LoggerFactory.logger(JvmmChannelInitializer.class);
 
     public static final String IDLE_STATE_HANDLER = "idleStateHandler";
 
@@ -70,6 +77,8 @@ public class JvmmChannelInitializer extends ChannelInitializer<Channel> {
                 return NioSocketChannel.class;
             case "EpollEventLoop":
                 return EpollSocketChannel.class;
+            case "KQueueEventLoop":
+                return KQueueSocketChannel.class;
             default:
                 throw new IllegalArgumentException("unsupported loop");
         }
@@ -81,12 +90,23 @@ public class JvmmChannelInitializer extends ChannelInitializer<Channel> {
                 return NioServerSocketChannel.class;
             case "EpollEventLoop":
                 return EpollServerSocketChannel.class;
+            case "KQueueEventLoop":
+                return KQueueServerSocketChannel.class;
             default:
                 throw new IllegalArgumentException("unsupported loop");
         }
     }
 
     public static EventLoopGroup newEventLoopGroup(int nThreads) {
-        return PlatformUtil.isLinux() ? new EpollEventLoopGroup(nThreads) : new NioEventLoopGroup(nThreads);
+        try {
+            if (PlatformUtil.isMac()) {
+                return new KQueueEventLoopGroup(nThreads);
+            } else if (PlatformUtil.isLinux()) {
+                return new EpollEventLoopGroup(nThreads);
+            }
+        } catch (Throwable e) {
+            logger.warn("New event loop group failed, try to use NioEventLoopGroup, platform: {}, case:{}", PlatformUtil.arch(), e.getMessage());
+        }
+        return new NioEventLoopGroup(nThreads);
     }
 }
