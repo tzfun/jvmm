@@ -34,9 +34,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 @Slf4j
 public class WebSocketHandler {
-    private static final String CONNECT_FLAG = "connected";
-    public static final String START_FLAG = "start";
-    public static final String FINISH_FLAG = "finished";
+    private static final String FLAG_CONNECT = "connected";
+    public static final String FLAG_START = "start";
+    public static final String FLAG_FINISH = "finished";
 
     private static final AtomicInteger onlineCount = new AtomicInteger();
     private static final ConcurrentHashMap<String, WebSocketHandler> webSocketMap = new ConcurrentHashMap<>();
@@ -56,7 +56,7 @@ public class WebSocketHandler {
             onlineCount.incrementAndGet();
         }
         webSocketMap.put(socketKey, this);
-        sendMessage(CONNECT_FLAG);
+        sendMessage(FLAG_CONNECT);
 
         log.debug("{} opened websocket connection", socketKey);
     }
@@ -86,7 +86,7 @@ public class WebSocketHandler {
         if (StringUtil.nonEmpty(socketKey) && webSocketMap.containsKey(socketKey)) {
             WebSocketHandler handler = webSocketMap.get(socketKey);
             handler.sendMessage(message);
-            if (message.equals(FINISH_FLAG)) {
+            if (message.equals(FLAG_FINISH)) {
                 handler.close();
             }
         }

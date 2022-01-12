@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 public class ServerConveyDemo {
     public static void main(String[] args) throws InterruptedException {
         EventLoopGroup executor = JvmmChannelInitializer.newEventLoopGroup(1);
-        JvmmConnector connector = JvmmConnector.newInstance("127.0.0.1", 5010, false, "jvmm_acc", "jvmm_pwd", executor);
+        JvmmConnector connector = JvmmConnector.newInstance("127.0.0.1", 5010, executor, false, "jvmm_acc", "jvmm_pwd");
         Future<Boolean> f1 = connector.connect();
         if (f1.await(3, TimeUnit.SECONDS)) {
             if (f1.getNow()) {

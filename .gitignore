@@ -43,3 +43,4 @@ out/
 
 gradle.properties
 web/src/main/resources/application*.yml
+/logs/*
