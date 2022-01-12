@@ -81,6 +81,12 @@ public class ProfilerCommander {
             }
         }
 
+        if (sb.lastIndexOf(",") == sb.length() - 1) {
+            sb.delete(sb.length() - 1, sb.length());
+        }
+
+        sb.append(" --fdtransfer --all-user");
+
         return sb.toString();
     }
 
