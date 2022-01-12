@@ -1,8 +1,11 @@
 package org.beifengtz.jvmm.web.manage.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.beifengtz.jvmm.web.manage.factory.JvmmConnectorFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 
 /**
  * <p>
@@ -17,8 +20,12 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class DisposableConfig implements DisposableBean {
 
+    @Resource
+    private JvmmConnectorFactory jvmmConnectorFactory;
+
     @Override
     public void destroy() throws Exception {
-        log.info("Jvmm web server shutdown ......");
+        log.info("Jvmm web server shutdown...");
+        jvmmConnectorFactory.closeAll();
     }
 }

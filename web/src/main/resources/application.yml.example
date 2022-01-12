@@ -56,3 +56,5 @@ jvmm:
   username: jvmm_acct
   #  明文：jvmm_pass
   password: 974783dafc6b4e7552516913eea3ada2
+  token-expire-day: 5
+  log-controller: true

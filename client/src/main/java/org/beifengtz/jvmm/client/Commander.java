@@ -177,7 +177,7 @@ public class Commander {
         EventLoopGroup group = JvmmChannelInitializer.newEventLoopGroup(1);
 
         logger.info("Start to connect jvmm agent server...");
-        JvmmConnector connector = JvmmConnector.newInstance(host, port, true, username, password, group);
+        JvmmConnector connector = JvmmConnector.newInstance(host, port, group, true, username, password);
         Future<Boolean> connectF = connector.connect();
         if (connectF.await(3, TimeUnit.SECONDS)) {
             if (connectF.getNow()) {

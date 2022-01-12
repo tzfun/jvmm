@@ -171,11 +171,11 @@ public class JvmmConnector implements Closeable {
     }
 
     public static JvmmConnector newInstance(String host, int port, EventLoopGroup workerGroup) {
-        return newInstance(host, port, false, null, null, workerGroup);
+        return newInstance(host, port, workerGroup, false, null, null);
     }
 
-    public static JvmmConnector newInstance(String host, int port, boolean keepAlive, EventLoopGroup workerGroup) {
-        return newInstance(host, port, keepAlive, null, null, workerGroup);
+    public static JvmmConnector newInstance(String host, int port, EventLoopGroup workerGroup, boolean keepAlive) {
+        return newInstance(host, port, workerGroup, keepAlive, null, null);
     }
 
     /**
@@ -191,7 +191,7 @@ public class JvmmConnector implements Closeable {
      * @param workerGroup  连接工作线程组，建议使用{@link JvmmChannelInitializer#newEventLoopGroup(int)}方法获得
      * @return {@link JvmmConnector} 实例
      */
-    public static JvmmConnector newInstance(String host, int port, boolean keepAlive, String authAccount, String authPassword, EventLoopGroup workerGroup) {
+    public static JvmmConnector newInstance(String host, int port, EventLoopGroup workerGroup, boolean keepAlive, String authAccount, String authPassword) {
         JvmmConnector connector = new JvmmConnector();
         connector.host = host;
         connector.port = port;
