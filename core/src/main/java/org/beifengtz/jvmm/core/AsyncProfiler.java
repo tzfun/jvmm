@@ -15,6 +15,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * <p>
  * Description: async profiler实现
+ *
+ * 在linux中如果内核权限访问被限制，执行命令： sudo sysctl -w kernel.perf_event_paranoid=1
  * </p>
  *
  * @author beifengtz
@@ -27,7 +29,7 @@ public class AsyncProfiler {
     private static AsyncProfiler instance = null;
     private static final File tmpdir = new File(System.getProperty("java.io.tmpdir"));
 
-    private static InputStream soStream;
+    private static String libPath;
 
     static {
         String soPath = null;
@@ -52,7 +54,19 @@ public class AsyncProfiler {
         if (soPath != null) {
             InputStream stream = AsyncProfiler.class.getResourceAsStream(soPath);
             if (stream != null) {
-                soStream = stream;
+                File file = new File(tmpdir, "libasyncProfiler.so");
+                if (!file.getParentFile().exists()) {
+                    file.getParentFile().mkdirs();
+                }
+                if (file.exists()) {
+                    file.delete();
+                }
+                try {
+                    Files.copy(stream, file.toPath());
+                    libPath = file.getAbsolutePath();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -75,24 +89,14 @@ public class AsyncProfiler {
         }
 
         if (soFilePath != null) {
-            soStream = new FileInputStream(soFilePath);
+            libPath = soFilePath;
         }
 
-        if (soStream == null) {
+        if (libPath == null) {
             throw new IllegalStateException("Can not found libasyncProfiler.so, Only support Linux & Mac.");
         }
 
-        File file = new File(tmpdir, "libasyncProfiler.so");
-        if (!file.getParentFile().exists()) {
-            file.getParentFile().mkdirs();
-        }
-        if (file.exists()) {
-            file.delete();
-        }
-
-        Files.copy(soStream, file.toPath());
-
-        System.load(file.getAbsolutePath());
+        System.load(libPath);
 
         instance = new AsyncProfiler();
         return instance;

@@ -1,5 +1,3 @@
-version '1.0.0'
-
 repositories {
     mavenCentral()
 }
@@ -14,12 +12,22 @@ jar {
     manifestContentCharset 'utf-8'
     metadataCharset 'utf-8'
 
-    archiveName("jvmm-client.jar")
-    manifest{
+    def jarName = "jvmm-client.jar"
+    archiveName(jarName)
+    manifest {
         attributes 'Main-Class': 'org.beifengtz.jvmm.client.ClientApplication'
     }
 
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    doLast {
+        def targetDir = "${rootProject.rootDir}/bin/jvmm-${rootProject.version}"
+        copy {
+            println("copy ${jarName} to ${targetDir}")
+            from "${project.buildDir}/libs/${jarName}", "${project.buildDir}/resources/main/attach", "${project.buildDir}/resources/main/attach.bat"
+            into targetDir
+        }
     }
 }

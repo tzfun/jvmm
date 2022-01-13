@@ -213,8 +213,8 @@ public class ServerServiceImpl extends ServerService {
 
         String filePath = cmd.getOptionValue("f");
         int dotIdx = filePath.lastIndexOf(".");
-        if (dotIdx >= 0) {
-            data.addProperty("format", filePath.substring(dotIdx));
+        if (dotIdx >= 0 && dotIdx < filePath.length() - 1) {
+            data.addProperty("format", filePath.substring(dotIdx + 1));
         }
 
         request.setData(data);

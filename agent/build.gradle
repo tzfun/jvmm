@@ -14,9 +14,19 @@ jar {
                 "Agent-Class": "org.beifengtz.jvmm.agent.AgentBootStrap",
                 "Can-Redefine-Classes": true, "Can-Retransform-Classes": true)
     }
-    archiveName("jvmm-agent.jar")
+    def jarName = "jvmm-agent.jar"
+    archiveName(jarName)
 
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    doLast {
+        def targetDir = "${rootProject.rootDir}/bin/jvmm-${rootProject.version}"
+        copy {
+            println("copy ${jarName} to ${targetDir}")
+            from "${project.buildDir}/libs/${jarName}"
+            into targetDir
+        }
     }
 }

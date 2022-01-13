@@ -63,7 +63,12 @@ class DefaultJvmmProfiler implements JvmmProfiler {
             throw new ProfilerNotSupportedException("System not supported async-profiler");
         }
         log.info("Execute profiler command: " + command);
-        return profiler.execute(command);
+        try {
+            return profiler.execute(command);
+        } catch (IOException e) {
+            profiler.stop();
+            throw e;
+        }
     }
 
     @Override

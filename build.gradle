@@ -8,6 +8,7 @@ version = '1.2.0'
 
 ext {
     nettyVersion = "4.1.65.Final"
+    nettyNativeSslVersion = "2.0.41.Final"
     junitJupiterVersion = "5.7.0"
     slf4jVersion = "1.7.30"
     logbackVersion = "1.2.3"
