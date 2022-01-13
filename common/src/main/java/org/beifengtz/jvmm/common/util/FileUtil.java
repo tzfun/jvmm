@@ -306,7 +306,7 @@ public class FileUtil {
             throw new IOException("File not found: " + f);
         }
         byte[] bytes = Files.readAllBytes(f.toPath());
-        return CodingUtil.bytes2HexStr(bytes);
+        return CodingUtil.bytes2HexString(bytes);
     }
 
     /**

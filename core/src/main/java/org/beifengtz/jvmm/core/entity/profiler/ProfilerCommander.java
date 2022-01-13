@@ -16,16 +16,30 @@ public class ProfilerCommander {
     private ProfilerAction action;
     private ProfilerEvent event;
     private ProfilerCounter counter;
+    /**
+     * 生成文件，文件名后缀指定了类型，例如：test、test.html、test.csv、test.jfr
+     *
+     * 只有 *.jfr 是在 action 为{@link ProfilerAction#start}时生效，在stop时传入无效，其余的类型都是在 action 为{@link ProfilerAction#stop}时传入
+     */
     private String file;
     private Long interval;
     private Integer traces;
     private Integer flat;
+    /**
+     * 如果生成的csv或html出现frame_buffer_overflow，需要扩大此值（默认值1_000_000）
+     */
     private String frameBuf;
     private boolean threads;
     private boolean allUser;
     private boolean allKernel;
     private boolean fdtransfer;
+    /**
+     * 采样包含类，例如：org/beifengtz/*
+     */
     private List<String> includes;
+    /**
+     * 排除采样类，例如：[java/*, demo/*]
+     */
     private List<String> excludes;
 
     private ProfilerCommander() {
