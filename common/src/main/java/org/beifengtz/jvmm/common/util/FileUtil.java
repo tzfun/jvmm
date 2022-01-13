@@ -95,6 +95,9 @@ public class FileUtil {
             properties.forEach((k, v) -> {
                 String key;
                 if (globalPrefix != null) {
+                    if (!k.toString().startsWith(globalPrefix)){
+                        return;
+                    }
                     key = k.toString().replaceFirst(globalPrefix, "");
                 } else {
                     key = k.toString();

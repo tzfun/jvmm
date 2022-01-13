@@ -1,7 +1,6 @@
 ext.projectName = 'jvmm-convey'
 archivesBaseName = "jvmm-convey"
 group = "io.github.tzfun.jvmm"
-version = "1.2.0"
 
 dependencies {
     compile "io.netty:netty-all:${nettyVersion}"

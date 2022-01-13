@@ -1,8 +1,8 @@
 name: jvmm_server
 port:
   bind: 5010
-  #  遇到冲突时监听端口自动自增
-  autoIncrease: false
+  #  The listening port is automatically incremented when a conflict is encountered.
+  autoIncrease: true
 
 http:
   maxChunkSize: 52428800
@@ -14,5 +14,6 @@ security:
 
 log:
   level: info
+  useJvmm: false
 
 workThread: 1

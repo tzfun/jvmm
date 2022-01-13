@@ -212,7 +212,7 @@ workThread=1
 
 ## API Call
 
-If you want to call the interface in your own program, Jvmm also provides a corresponding solution. The current latest version is `1.2.0`
+If you want to call the interface in your own program, Jvmm also provides a corresponding solution. The current latest version is `1.2.1`
 
 Maven dependencies
 ```xml
@@ -373,7 +373,7 @@ import java.util.concurrent.TimeUnit;
 public class ServerConveyDemo {
     public static void main(String[] args) throws InterruptedException {
         EventLoopGroup executor = JvmmChannelInitializer.newEventLoopGroup(1);
-        JvmmConnector connector = JvmmConnector.newInstance("127.0.0.1", 5010, false, "jvmm_acc", "jvmm_pwd", executor);
+        JvmmConnector connector = JvmmConnector.newInstance("127.0.0.1", 5010, executor, false, "jvmm_acc", "jvmm_pwd");
         Future<Boolean> f1 = connector.connect();
         if (f1.await(3, TimeUnit.SECONDS)) {
             if (f1.getNow()) {

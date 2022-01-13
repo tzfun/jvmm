@@ -1,7 +1,6 @@
 ext.projectName = 'jvmm-common'
 archivesBaseName = "jvmm-common"
 group = "io.github.tzfun.jvmm"
-version = "1.2.0"
 
 apply plugin: 'application'
 
