@@ -24,6 +24,7 @@ public class ProfilerCommander {
     private boolean threads;
     private boolean allUser;
     private boolean allKernel;
+    private boolean fdtransfer;
     private List<String> includes;
     private List<String> excludes;
 
@@ -62,13 +63,16 @@ public class ProfilerCommander {
             sb.append("framebuf=").append(this.frameBuf).append(',');
         }
         if (this.threads) {
-            sb.append("threads").append(',');
+            sb.append("threads,");
         }
         if (this.allKernel) {
-            sb.append("allkernel").append(',');
+            sb.append("allkernel,");
         }
         if (this.allUser) {
-            sb.append("alluser").append(',');
+            sb.append("alluser,");
+        }
+        if (this.fdtransfer) {
+            sb.append("fdtransfer,");
         }
         if (this.includes != null) {
             for (String include : includes) {
@@ -84,8 +88,6 @@ public class ProfilerCommander {
         if (sb.lastIndexOf(",") == sb.length() - 1) {
             sb.delete(sb.length() - 1, sb.length());
         }
-
-        sb.append(" --fdtransfer --all-user");
 
         return sb.toString();
     }
@@ -142,6 +144,11 @@ public class ProfilerCommander {
 
     public ProfilerCommander setAllKernel(boolean allKernel) {
         this.allKernel = allKernel;
+        return this;
+    }
+
+    public ProfilerCommander setFdtransfer(boolean fdtransfer) {
+        this.fdtransfer = fdtransfer;
         return this;
     }
 

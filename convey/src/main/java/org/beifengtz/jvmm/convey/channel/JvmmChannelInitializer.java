@@ -105,7 +105,7 @@ public class JvmmChannelInitializer extends ChannelInitializer<Channel> {
                 return new EpollEventLoopGroup(nThreads);
             }
         } catch (Throwable e) {
-            logger.warn("New event loop group failed, try to use NioEventLoopGroup, platform: {}, case:{}", PlatformUtil.arch(), e.getMessage());
+            logger.debug("New event loop group failed, try to use NioEventLoopGroup, platform: {}, case: {}", PlatformUtil.arch(), e.getMessage());
         }
         return new NioEventLoopGroup(nThreads);
     }

@@ -1,7 +1,6 @@
 ext.projectName = 'jvmm-server'
 archivesBaseName = "jvmm-server"
 group = "io.github.tzfun.jvmm"
-version = "1.2.0"
 
 dependencies {
     compile(project(':core'))
@@ -16,11 +15,23 @@ jar {
     manifestContentCharset 'utf-8'
     metadataCharset 'utf-8'
 
-    archiveName("jvmm-server.jar")
+    def jarName = "jvmm-server.jar"
+    archiveName(jarName)
 
     //  发布时去掉
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    doLast {
+        def targetDir = "${rootProject.rootDir}/bin/jvmm-${rootProject.version}"
+
+        copy {
+            println("copy ${jarName} to ${targetDir}")
+
+            from "${project.buildDir}/libs/${jarName}","${project.buildDir}/resources/main/config.yml"
+            into targetDir
+        }
     }
 }
 
@@ -29,7 +40,7 @@ task sourcesJar(type: Jar) {
     getArchiveClassifier().set('sources')
 }
 
-task javadocJar(type:Jar) {
+task javadocJar(type: Jar) {
     from javadoc
     getArchiveClassifier().set('javadoc')
 }

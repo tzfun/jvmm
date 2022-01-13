@@ -24,7 +24,7 @@ public class TestConfig {
 
         Method parseConfig = ServerBootstrap.class.getDeclaredMethod("parseConfig", String.class);
         parseConfig.setAccessible(true);
-        Configuration configuration = (Configuration)parseConfig.invoke(null, "config="+homePath+"/src/main/resources/jvmm-server.yml;port.bind=1000");
+        Configuration configuration = (Configuration)parseConfig.invoke(null, "config="+homePath+"/src/main/resources/config.yml;port.bind=1000");
         Assertions.assertEquals(configuration.getPort(), 1000);
         Assertions.assertEquals(configuration.getName(), "jvmm_server");
     }
