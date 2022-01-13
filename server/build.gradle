@@ -15,7 +15,8 @@ jar {
     manifestContentCharset 'utf-8'
     metadataCharset 'utf-8'
 
-    archiveName("jvmm-server.jar")
+    def jarName = "jvmm-server.jar"
+    archiveName(jarName)
 
     //  发布时去掉
 //    from {

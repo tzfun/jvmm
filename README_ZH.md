@@ -211,7 +211,7 @@ workThread=1
 
 ## API调用
 
-如果你想在自己的程序中调用接口，Jvmm也提供了相应的方案。当前最新版本是 `1.2.0`
+如果你想在自己的程序中调用接口，Jvmm也提供了相应的方案。当前最新版本是 `1.2.1`
 
 maven引入
 ```xml
@@ -372,7 +372,7 @@ import java.util.concurrent.TimeUnit;
 public class ServerConveyDemo {
     public static void main(String[] args) throws InterruptedException {
         EventLoopGroup executor = JvmmChannelInitializer.newEventLoopGroup(1);
-        JvmmConnector connector = JvmmConnector.newInstance("127.0.0.1", 5010, false, "jvmm_acc", "jvmm_pwd", executor);
+        JvmmConnector connector = JvmmConnector.newInstance("127.0.0.1", 5010, executor, false, "jvmm_acc", "jvmm_pwd");
         Future<Boolean> f1 = connector.connect();
         if (f1.await(3, TimeUnit.SECONDS)) {
             if (f1.getNow()) {
