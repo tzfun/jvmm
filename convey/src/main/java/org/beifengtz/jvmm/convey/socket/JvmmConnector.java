@@ -370,11 +370,8 @@ public class JvmmConnector implements Closeable {
             throw new IllegalArgumentException("Can not execute one request with null event loop group.");
         }
         String[] split = address.split(":");
-        JvmmConnector connector = newInstance(split[0], Integer.parseInt(split[1]), group);
-        try {
+        try (JvmmConnector connector = newInstance(split[0], Integer.parseInt(split[1]), group)) {
             return connector.waitForResponse(request, waitType, timeout, timeunit);
-        } finally {
-            connector.close();
         }
     }
 

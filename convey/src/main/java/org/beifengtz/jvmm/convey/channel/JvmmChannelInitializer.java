@@ -26,6 +26,7 @@ import org.beifengtz.jvmm.convey.handler.HandlerProvider;
 import org.slf4j.Logger;
 
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.Executor;
 
 /**
  * <p>
@@ -98,15 +99,19 @@ public class JvmmChannelInitializer extends ChannelInitializer<Channel> {
     }
 
     public static EventLoopGroup newEventLoopGroup(int nThreads) {
+        return newEventLoopGroup(nThreads, null);
+    }
+
+    public static EventLoopGroup newEventLoopGroup(int nThreads, Executor executor) {
         try {
             if (PlatformUtil.isMac()) {
-                return new KQueueEventLoopGroup(nThreads);
+                return new KQueueEventLoopGroup(nThreads, executor);
             } else if (PlatformUtil.isLinux()) {
-                return new EpollEventLoopGroup(nThreads);
+                return new EpollEventLoopGroup(nThreads, executor);
             }
         } catch (Throwable e) {
             logger.debug("New event loop group failed, try to use NioEventLoopGroup, platform: {}, case: {}", PlatformUtil.arch(), e.getMessage());
         }
-        return new NioEventLoopGroup(nThreads);
+        return new NioEventLoopGroup(nThreads, executor);
     }
 }

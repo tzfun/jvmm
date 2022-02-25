@@ -27,5 +27,6 @@ public class DisposableConfig implements DisposableBean {
     public void destroy() throws Exception {
         log.info("Jvmm web server shutdown...");
         jvmmConnectorFactory.closeAll();
+        jvmmConnectorFactory.getGlobalGroup().shutdownGracefully();
     }
 }

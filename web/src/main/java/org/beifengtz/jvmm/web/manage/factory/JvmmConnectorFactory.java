@@ -3,7 +3,10 @@ package org.beifengtz.jvmm.web.manage.factory;
 import io.netty.channel.EventLoopGroup;
 import io.netty.util.concurrent.Future;
 import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
+import org.beifengtz.jvmm.common.factory.ExecutorFactory;
+import org.beifengtz.jvmm.convey.channel.JvmmChannelInitializer;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
+import org.beifengtz.jvmm.web.entity.po.NodePO;
 import org.springframework.stereotype.Component;
 
 import java.util.Iterator;
@@ -23,8 +26,25 @@ import static com.google.gson.internal.$Gson$Preconditions.checkArgument;
  */
 @Component
 public class JvmmConnectorFactory {
+    private static final EventLoopGroup GLOBAL_GROUP = JvmmChannelInitializer.newEventLoopGroup(4, ExecutorFactory.getScheduleThreadPool());
+
     private final Map<String, JvmmConnector> connectorPool = new ConcurrentHashMap<>(2);
     private final Map<String, Object> addressLock = new ConcurrentHashMap<>(2);
+
+    public JvmmConnector getConnector(NodePO node) throws TimeoutException, AuthenticationFailedException {
+        return getConnector(null, node);
+    }
+
+    public JvmmConnector getConnector(EventLoopGroup group, NodePO node) throws TimeoutException, AuthenticationFailedException {
+        return getConnector(group, node.getIp() + ":" + node.getPort(),
+                node.isAuthEnable() ? node.getAuthName() : null,
+                node.isAuthEnable() ? node.getAuthPass() : null);
+    }
+
+    public JvmmConnector getConnector(String address, String authAccount, String authPassword)
+            throws TimeoutException, AuthenticationFailedException {
+        return getConnector(null, address, authAccount, authPassword);
+    }
 
     public JvmmConnector getConnector(EventLoopGroup group, String address, String authAccount, String authPassword)
             throws TimeoutException, AuthenticationFailedException {
@@ -43,7 +63,7 @@ public class JvmmConnectorFactory {
 
         synchronized (lock) {
             String[] split = address.split(":");
-            connector = JvmmConnector.newInstance(split[0], Integer.parseInt(split[1]), group, true, authAccount, authPassword);
+            connector = JvmmConnector.newInstance(split[0], Integer.parseInt(split[1]), group == null ? GLOBAL_GROUP : group, true, authAccount, authPassword);
             Future<Boolean> future = connector.connect();
             if (future.awaitUninterruptibly(3, TimeUnit.SECONDS)) {
                 Boolean success = future.getNow();
@@ -84,5 +104,9 @@ public class JvmmConnectorFactory {
             }
             connectorPool.remove(address);
         }
+    }
+
+    public EventLoopGroup getGlobalGroup() {
+        return GLOBAL_GROUP;
     }
 }

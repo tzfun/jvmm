@@ -8,14 +8,15 @@ package org.beifengtz.jvmm.web.common;
  * @author beifengtz
  */
 public enum RestfulStatus {
-    SERVER_ERR(-1, "Server error"),
+    SERVER_ERR(-1, "Server error."),
     OK(10000, "OK"),
-    AUTH_ERR(10001, "Authentication failed"),
-    OPERATION_FREQUENT(10002, "The operation is too frequent"),
+    AUTH_ERR(10001, "Authentication failed."),
+    OPERATION_FREQUENT(10002, "The operation is too frequent."),
     ILLEGAL_ARGUMENT(10003, "Illegal argument."),
-    TIMEOUT(10004, "Connect timeout"),
-    RESOURCE_EXIST(10005,"Resource has exist"),
-    RESOURCE_NOT_FOUND(10006,"Resource not found")
+    TIMEOUT(10004, "Connect timeout."),
+    RESOURCE_EXIST(10005,"Resource has exist."),
+    RESOURCE_NOT_FOUND(10006,"Resource not found."),
+    JVMM_CONNECT_FAILED(10007, "Jvmm node connect failed.")
     ;
 
     private final int status;
