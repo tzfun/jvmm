@@ -56,7 +56,6 @@ class DefaultJvmmCollector implements JvmmCollector {
         info.setArch(operatingSystemMXBean.getArch());
         info.setVersion(operatingSystemMXBean.getVersion());
         info.setAvailableProcessors(operatingSystemMXBean.getAvailableProcessors());
-        info.setLoadAverage(operatingSystemMXBean.getSystemLoadAverage());
         info.setTimeZone(TimeZone.getDefault().toZoneId().toString());
         return info;
     }
@@ -258,6 +257,9 @@ class DefaultJvmmCollector implements JvmmCollector {
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             log.warn("Get system dynamic info failed. [getTotalSwapSpaceSize] " + e.getMessage(), e);
         }
+
+        info.setLoadAverage(operatingSystemMXBean.getSystemLoadAverage());
+
         return info;
     }
 

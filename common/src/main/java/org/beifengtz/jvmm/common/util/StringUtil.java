@@ -1,5 +1,6 @@
 package org.beifengtz.jvmm.common.util;
 
+import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -31,7 +32,7 @@ public class StringUtil {
         return Objects.isNull(str) || str.trim().isEmpty();
     }
 
-    public static boolean nonEmpty(String str){
+    public static boolean nonEmpty(String str) {
         return !isEmpty(str);
     }
 
@@ -113,5 +114,32 @@ public class StringUtil {
             result.append("   ");
         }
         return result.toString();
+    }
+
+    @SafeVarargs
+    public static <T> String join(String splitter, T... arr) {
+        if (arr == null || arr.length == 0) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < arr.length; i++) {
+            sb.append(arr[i]);
+            if (i < arr.length - 1) {
+                sb.append(splitter);
+            }
+        }
+        return sb.toString();
+    }
+
+    public static String join(String splitter, Collection<?> arr) {
+        if (arr == null || arr.size() == 0) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (Object o : arr) {
+            sb.append(o).append(splitter);
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        return sb.toString();
     }
 }

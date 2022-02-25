@@ -19,10 +19,6 @@ public class SystemStaticInfo implements JsonParsable {
      */
     private String arch;
     /**
-     * 最后一分钟的系统平均负载，如果为负值表示不可用
-     */
-    private double loadAverage;
-    /**
      * 可用处理器数量
      */
     private int availableProcessors;
@@ -57,14 +53,6 @@ public class SystemStaticInfo implements JsonParsable {
 
     public void setArch(String arch) {
         this.arch = arch;
-    }
-
-    public double getLoadAverage() {
-        return loadAverage;
-    }
-
-    public void setLoadAverage(double loadAverage) {
-        this.loadAverage = loadAverage;
     }
 
     public int getAvailableProcessors() {

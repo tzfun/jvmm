@@ -36,13 +36,18 @@ public class SystemDynamicInfo implements JsonParsable {
      * 系统cpu负载
      */
     private double systemCpuLoad;
+    /**
+     * 最后一分钟的系统平均负载，如果为负值表示不可用
+     */
+    private double loadAverage;
+
     private long totalPhysicalMemorySize;
     private long totalSwapSpaceSize;
 
-    private SystemDynamicInfo(){
+    private SystemDynamicInfo() {
     }
 
-    public static SystemDynamicInfo create(){
+    public static SystemDynamicInfo create() {
         return new SystemDynamicInfo();
     }
 
@@ -108,6 +113,14 @@ public class SystemDynamicInfo implements JsonParsable {
 
     public void setTotalSwapSpaceSize(long totalSwapSpaceSize) {
         this.totalSwapSpaceSize = totalSwapSpaceSize;
+    }
+
+    public double getLoadAverage() {
+        return loadAverage;
+    }
+
+    public void setLoadAverage(double loadAverage) {
+        this.loadAverage = loadAverage;
     }
 
     @Override

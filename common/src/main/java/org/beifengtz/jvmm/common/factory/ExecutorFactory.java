@@ -32,15 +32,15 @@ public class ExecutorFactory {
         return new DefaultThreadFactory(StringUtil.isEmpty(name) ? "jvmm" : name);
     }
 
-    private static int getProcessors() {
-        return SystemPropertyUtil.getInt("jvmm.workThread", Runtime.getRuntime().availableProcessors());
+    public static int getNThreads() {
+        return SystemPropertyUtil.getInt("jvmm.workThread", 2 * Runtime.getRuntime().availableProcessors());
     }
 
     public static ScheduledExecutorService getScheduleThreadPool() {
         if (SCHEDULE_THREAD_POOL == null || SCHEDULE_THREAD_POOL.isShutdown()) {
             synchronized (ExecutorFactory.class) {
                 if (SCHEDULE_THREAD_POOL == null || SCHEDULE_THREAD_POOL.isShutdown()) {
-                    SCHEDULE_THREAD_POOL = Executors.newScheduledThreadPool(getProcessors(), getThreadFactory("jvmm-schedule"));
+                    SCHEDULE_THREAD_POOL = Executors.newScheduledThreadPool(getNThreads(), getThreadFactory("jvmm-schedule"));
                 }
             }
         }

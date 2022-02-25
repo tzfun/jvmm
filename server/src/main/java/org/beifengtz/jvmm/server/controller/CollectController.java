@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import io.netty.channel.Channel;
 import io.netty.util.concurrent.EventExecutor;
+import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
 import org.beifengtz.jvmm.convey.GlobalStatus;
 import org.beifengtz.jvmm.convey.GlobalType;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
@@ -40,6 +41,8 @@ import java.util.List;
  */
 @JvmmController
 public class CollectController implements Closeable {
+
+    private static final boolean ENABLE_SERVER_TIMER = SystemPropertyUtil.getBoolean("jvmm.enableServerTimer", false);
 
     private static final int DEFAULT_TIMER_DELAY = 3;
     private static final int DEFAULT_TIMER_TIMES = 10;
@@ -122,7 +125,7 @@ public class CollectController implements Closeable {
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_TIMER_COLLECT_MEMORY_INFO)
     public void timerGetMemoryInfo(JsonObject data, String type, Channel channel, EventExecutor executor) {
-
+        checkServerTimer();
         int gapSeconds = DEFAULT_TIMER_DELAY;
         int times = DEFAULT_TIMER_TIMES;
 
@@ -165,7 +168,7 @@ public class CollectController implements Closeable {
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_TIMER_COLLECT_SYSTEM_DYNAMIC_INFO)
     public void timerGetSystemDynamicInfo(JsonObject data, String type, Channel channel, EventExecutor executor) {
-
+        checkServerTimer();
         int gapSeconds = DEFAULT_TIMER_DELAY;
         int times = DEFAULT_TIMER_TIMES;
         if (data != null) {
@@ -207,6 +210,7 @@ public class CollectController implements Closeable {
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_TIMER_COLLECT_THREAD_INFO)
     public void timerGetThreadDynamicInfo(JsonObject data, String type, Channel channel, EventExecutor executor) {
+        checkServerTimer();
         int gapSeconds = DEFAULT_TIMER_DELAY;
         int times = DEFAULT_TIMER_TIMES;
 
@@ -267,6 +271,12 @@ public class CollectController implements Closeable {
         }
         if (systemDynamicCollectTimer != null) {
             systemDynamicCollectTimer.stop();
+        }
+    }
+
+    private void checkServerTimer() {
+        if (!ENABLE_SERVER_TIMER) {
+            throw new UnsupportedOperationException("Server timing collection function is not supported");
         }
     }
 }

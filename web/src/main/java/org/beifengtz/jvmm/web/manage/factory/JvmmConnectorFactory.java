@@ -26,7 +26,7 @@ import static com.google.gson.internal.$Gson$Preconditions.checkArgument;
  */
 @Component
 public class JvmmConnectorFactory {
-    private static final EventLoopGroup GLOBAL_GROUP = JvmmChannelInitializer.newEventLoopGroup(4, ExecutorFactory.getScheduleThreadPool());
+    private static final EventLoopGroup GLOBAL_GROUP = JvmmChannelInitializer.newEventLoopGroup(ExecutorFactory.getNThreads(), ExecutorFactory.getScheduleThreadPool());
 
     private final Map<String, JvmmConnector> connectorPool = new ConcurrentHashMap<>(2);
     private final Map<String, Object> addressLock = new ConcurrentHashMap<>(2);

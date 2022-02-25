@@ -15,16 +15,14 @@ import lombok.Data;
 public class NodeConfPO {
     private int id;
     private boolean auto;
+    private boolean store;
     private int frequency;
-    private boolean pickCl;
-    private boolean pickC;
-    private boolean pickP;
+    private boolean pickClassloading;
     private boolean pickGc;
-    private boolean pickMm;
-    private boolean pickMp;
-    private boolean pickM;
-    private boolean pickSd;
-    private boolean pickTd;
+    private boolean pickMemoryPool;
+    private boolean pickMemory;
+    private boolean pickSystem;
+    private boolean pickThread;
 
     public void check() {
         if (frequency < 0) {
