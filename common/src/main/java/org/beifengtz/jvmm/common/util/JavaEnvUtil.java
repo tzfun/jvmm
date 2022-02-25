@@ -75,7 +75,7 @@ public class JavaEnvUtil {
 
     public static File findToolsJar(String javaHome) {
         if (JavaVersionUtils.isGreaterThanJava8()) {
-            throw new RuntimeException("Do not support greater than java 1.8");
+            return null;
         }
 
         File toolsJar = new File(javaHome, "lib/tools.jar");
