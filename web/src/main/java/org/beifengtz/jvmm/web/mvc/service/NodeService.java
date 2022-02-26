@@ -9,6 +9,7 @@ import org.beifengtz.jvmm.web.entity.po.NodePO;
 import org.beifengtz.jvmm.web.manage.factory.JvmmConnectorFactory;
 import org.beifengtz.jvmm.web.mvc.dao.NodeConfMapper;
 import org.beifengtz.jvmm.web.mvc.dao.NodeMapper;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -21,6 +22,7 @@ import java.util.concurrent.TimeoutException;
  *
  * @author beifengtz
  */
+@Service
 public class NodeService {
 
     @Resource

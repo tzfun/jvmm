@@ -1,6 +1,7 @@
 package org.beifengtz.jvmm.web.mvc.dao;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
 import org.beifengtz.jvmm.web.entity.po.NodePO;
 
 /**
@@ -10,6 +11,7 @@ import org.beifengtz.jvmm.web.entity.po.NodePO;
  *
  * @author beifengtz
  */
+@Mapper
 public interface NodeMapper extends BaseMapper<NodePO> {
 
 }

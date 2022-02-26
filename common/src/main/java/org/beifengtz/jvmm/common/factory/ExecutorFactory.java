@@ -2,7 +2,6 @@ package org.beifengtz.jvmm.common.factory;
 
 import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
-import org.slf4j.Logger;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -20,12 +19,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ExecutorFactory {
 
-    private static final Logger log = LoggerFactory.logger(ExecutorFactory.class);
-
     private static volatile ScheduledExecutorService SCHEDULE_THREAD_POOL;
 
     static {
-        Runtime.getRuntime().addShutdownHook(new Thread(ExecutorFactory::shutdown));
+        Thread shutdownHook = new Thread(ExecutorFactory::shutdown);
+        shutdownHook.setName("jvmmExtHook");
+        Runtime.getRuntime().addShutdownHook(shutdownHook);
     }
 
     private static ThreadFactory getThreadFactory(String name) {
@@ -51,7 +50,7 @@ public class ExecutorFactory {
         if (SCHEDULE_THREAD_POOL != null) {
             SCHEDULE_THREAD_POOL.shutdown();
             if (SCHEDULE_THREAD_POOL.isShutdown()) {
-                log.info("jvmm schedule thread pool shutdown.");
+                LoggerFactory.logger(ExecutorFactory.class).info("jvmm schedule thread pool shutdown.");
             }
         }
     }
