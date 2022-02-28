@@ -1,6 +1,8 @@
 package org.beifengtz.jvmm.server.controller;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.netty.channel.Channel;
 import io.netty.util.concurrent.EventExecutor;
@@ -9,6 +11,7 @@ import org.beifengtz.jvmm.convey.GlobalStatus;
 import org.beifengtz.jvmm.convey.GlobalType;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.core.DefaultJvmmScheduleService;
+import org.beifengtz.jvmm.core.JvmmCollector;
 import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.JvmmScheduleService;
 import org.beifengtz.jvmm.core.entity.mx.ClassLoadingInfo;
@@ -259,6 +262,30 @@ public class CollectController implements Closeable {
             result.add(info);
         }
         return result;
+    }
+
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_BATCH)
+    public JsonObject collectBatch(JsonArray items) {
+        JsonObject res = new JsonObject();
+        JvmmCollector collector = JvmmFactory.getCollector();
+        Gson gson = new Gson();
+        for (JsonElement item : items) {
+            String it = item.getAsString();
+            if ("classloading".equals(it)) {
+                res.add(it, collector.getClassLoading().toJson());
+            } else if ("gc".equals(it)) {
+                res.add(it, gson.toJsonTree(collector.getGarbageCollector()));
+            } else if ("memory".equals(it)) {
+                res.add(it, collector.getMemory().toJson());
+            } else if ("memoryPool".equals(it)) {
+                res.add(it, gson.toJsonTree(collector.getMemoryPool()));
+            } else if ("system".equals(it)) {
+                res.add(it, collector.getSystemDynamic().toJson());
+            } else if ("thread".equals(it)) {
+                res.add(it, collector.getThreadDynamic().toJson());
+            }
+        }
+        return res;
     }
 
     @Override

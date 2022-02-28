@@ -1,8 +1,8 @@
 package org.beifengtz.jvmm.web.mvc.service;
 
 import com.baomidou.mybatisplus.mapper.Condition;
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.netty.channel.ChannelFuture;
 import lombok.extern.slf4j.Slf4j;
@@ -11,12 +11,32 @@ import org.beifengtz.jvmm.convey.GlobalType;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
+import org.beifengtz.jvmm.core.entity.mx.ClassLoadingInfo;
+import org.beifengtz.jvmm.core.entity.mx.GarbageCollectorInfo;
+import org.beifengtz.jvmm.core.entity.mx.MemoryInfo;
+import org.beifengtz.jvmm.core.entity.mx.MemoryPoolInfo;
+import org.beifengtz.jvmm.core.entity.mx.SystemDynamicInfo;
+import org.beifengtz.jvmm.core.entity.mx.ThreadDynamicInfo;
+import org.beifengtz.jvmm.web.entity.po.LogClassloadingPO;
+import org.beifengtz.jvmm.web.entity.po.LogGcPO;
+import org.beifengtz.jvmm.web.entity.po.LogMemoryPO;
+import org.beifengtz.jvmm.web.entity.po.LogMemoryPoolPO;
+import org.beifengtz.jvmm.web.entity.po.LogSystemPO;
+import org.beifengtz.jvmm.web.entity.po.LogThreadPO;
 import org.beifengtz.jvmm.web.entity.po.NodeConfPO;
 import org.beifengtz.jvmm.web.entity.po.NodePO;
 import org.beifengtz.jvmm.web.manage.factory.JvmmConnectorFactory;
+import org.beifengtz.jvmm.web.mvc.dao.LogClassloadingMapper;
+import org.beifengtz.jvmm.web.mvc.dao.LogGcMapper;
+import org.beifengtz.jvmm.web.mvc.dao.LogMemoryMapper;
+import org.beifengtz.jvmm.web.mvc.dao.LogMemoryPoolMapper;
+import org.beifengtz.jvmm.web.mvc.dao.LogSystemMapper;
+import org.beifengtz.jvmm.web.mvc.dao.LogThreadMapper;
 import org.beifengtz.jvmm.web.mvc.dao.NodeConfMapper;
 import org.beifengtz.jvmm.web.mvc.dao.NodeMapper;
+import org.beifengtz.jvmm.web.mvc.handler.WebSocketHandler;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -24,6 +44,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import static com.google.gson.internal.$Gson$Types.newParameterizedTypeWithOwner;
 
 /**
  * Description: TODO
@@ -45,6 +67,18 @@ public class CollectService {
     private NodeMapper nodeMapper;
     @Resource
     private NodeConfMapper nodeConfMapper;
+    @Resource
+    private LogClassloadingMapper logClassloadingMapper;
+    @Resource
+    private LogGcMapper logGcMapper;
+    @Resource
+    private LogMemoryMapper logMemoryMapper;
+    @Resource
+    private LogMemoryPoolMapper logMemoryPoolMapper;
+    @Resource
+    private LogSystemMapper logSystemMapper;
+    @Resource
+    private LogThreadMapper logThreadMapper;
 
     public void startScheduleTask() {
         List<NodePO> nodes = nodeMapper.selectList(Condition.empty());
@@ -108,12 +142,16 @@ public class CollectService {
                     JvmmConnector.MsgReceiveListener listener = new JvmmConnector.MsgReceiveListener() {
                         @Override
                         public void onMessage(JvmmResponse rsp) {
+                            if (!Objects.equals(rsp.getType(), GlobalType.JVMM_TYPE_COLLECT_BATCH.name())) {
+                                return;
+                            }
                             try {
                                 if (Objects.equals(rsp.getStatus(), GlobalStatus.JVMM_STATUS_OK.name())) {
-                                    trySendWebsocket(rsp.getData());
+                                    long now = System.currentTimeMillis();
+                                    JsonObject data = rsp.getData().getAsJsonObject();
+                                    trySendWebsocket(now, data);
                                     if (nodeConf.isStore()) {
-                                        JsonObject data = rsp.getData().getAsJsonObject();
-                                        storeLog(data);
+                                        storeLog(now, data);
                                     }
                                 }
                             } finally {
@@ -149,6 +187,9 @@ public class CollectService {
             if (nodeConf.isPickMemory()) {
                 items.add("memory");
             }
+            if (nodeConf.isPickMemoryPool()) {
+                items.add("memoryPool");
+            }
             if (nodeConf.isPickSystem()) {
                 items.add("system");
             }
@@ -158,12 +199,60 @@ public class CollectService {
             return items;
         }
 
-        private void trySendWebsocket(JsonElement data) {
-
+        private void trySendWebsocket(long now, JsonObject data) {
+            if (WebSocketHandler.hasSession(String.valueOf(nodeId))) {
+                JsonObject notify = new JsonObject();
+                notify.addProperty("type", "schedule");
+                notify.addProperty("time", now);
+                notify.add("data", data);
+                try {
+                    WebSocketHandler.send(notify.toString(), String.valueOf(nodeId));
+                } catch (Exception e) {
+                    log.error("Notify websocket failed: " + e.getMessage(), e);
+                }
+            }
         }
 
-        private void storeLog(JsonObject data) {
+        @Transactional
+        public void storeLog(long now, JsonObject data) {
+            Gson gson = new Gson();
 
+            for (String key : data.keySet()) {
+                if ("classloading".equals(key)) {
+                    LogClassloadingPO po = new LogClassloadingPO();
+                    po.merge(gson.fromJson(data.get(key), ClassLoadingInfo.class));
+                    po.setCreateTime(now);
+                    logClassloadingMapper.insert(po);
+                } else if ("gc".equals(key)) {
+                    LogGcPO po = new LogGcPO();
+                    po.merge(gson.fromJson(data.get(key), GarbageCollectorInfo.class));
+                    po.setCreateTime(now);
+                    logGcMapper.insert(po);
+                } else if ("memory".equals(key)) {
+                    LogMemoryPO po = new LogMemoryPO();
+                    po.merge(gson.fromJson(data.get(key), MemoryInfo.class));
+                    po.setCreateTime(now);
+                    logMemoryMapper.insert(po);
+                } else if ("memoryPool".equals(key)) {
+                    List<MemoryPoolInfo> list = gson.fromJson(data.get(key), newParameterizedTypeWithOwner(List.class, MemoryPoolInfo.class));
+                    for (MemoryPoolInfo info : list) {
+                        LogMemoryPoolPO po = new LogMemoryPoolPO();
+                        po.merge(info);
+                        po.setCreateTime(now);
+                        logMemoryPoolMapper.insert(po);
+                    }
+                } else if ("system".equals(key)) {
+                    LogSystemPO po = new LogSystemPO();
+                    po.merge(gson.fromJson(data.get(key), SystemDynamicInfo.class));
+                    po.setCreateTime(now);
+                    logSystemMapper.insert(po);
+                } else if ("thread".equals(key)) {
+                    LogThreadPO po = new LogThreadPO();
+                    po.setCreateTime(now);
+                    po.merge(gson.fromJson(data.get(key), ThreadDynamicInfo.class));
+                    logThreadMapper.insert(po);
+                }
+            }
         }
 
         public void terminate() {
