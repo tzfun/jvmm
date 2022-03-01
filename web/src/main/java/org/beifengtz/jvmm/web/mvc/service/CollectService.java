@@ -111,19 +111,33 @@ public class CollectService {
         }
     }
 
+    public void refreshScheduleTask(int nodeId) {
+        ScheduleTask task = TASK_MAP.get(nodeId);
+        if (task == null || task.getState() == ScheduleTask.STATE_TERMINATED) {
+            addScheduleTask(nodeId);
+        }
+    }
+
     class ScheduleTask implements Runnable {
+        public static final int STATE_NEW = 1;
+        public static final int STATE_RUNNING = 2;
+        public static final int STATE_TERMINATED = 3;
+
         private static final int DEFAULT_FREQUENCY = 10;
         private final int nodeId;
+        private int state;
         private volatile boolean TASK_FLAG = true;
 
         public ScheduleTask(int nodeId) {
             this.nodeId = nodeId;
+            this.state = STATE_NEW;
         }
 
         @Override
         public void run() {
             int frequency = -1;
             try {
+                state = STATE_RUNNING;
                 NodePO node = nodeMapper.selectById(nodeId);
                 if (node != null) {
                     NodeConfPO nodeConf = nodeConfMapper.selectById(nodeId);
@@ -168,10 +182,14 @@ public class CollectService {
                     });
                 }
             } catch (TimeoutException e) {
+                log.error("Connect jvmm server timeout, node: {}", nodeId);
+            } catch (Throwable e) {
                 log.error("Error executing scheduled task: " + e.getMessage(), e);
             } finally {
                 if (frequency > 0 && TASK_FLAG && SCHEDULE_TASK_FLAG) {
                     jvmmConnectorFactory.getGlobalGroup().next().schedule(this, frequency, TimeUnit.SECONDS);
+                } else {
+                    state = STATE_TERMINATED;
                 }
             }
         }
@@ -272,6 +290,10 @@ public class CollectService {
         @Override
         public int hashCode() {
             return nodeId;
+        }
+
+        public int getState() {
+            return state;
         }
     }
 }

@@ -31,31 +31,36 @@ public class NodeService {
     private NodeConfMapper nodeConfMapper;
     @Resource
     private JvmmConnectorFactory jvmmConnectorFactory;
+    @Resource
+    private CollectService collectService;
 
     @Transactional
     public int newNode(NodeDTO nodeInfo) {
-        testConnect(nodeInfo.getNode());
+        tryConnect(nodeInfo.getNode());
         nodeMapper.insert(nodeInfo.getNode());
         int nodeId = nodeInfo.getNode().getId();
         nodeInfo.getNodeConf().setId(nodeId);
         nodeConfMapper.insert(nodeInfo.getNodeConf());
+        collectService.addScheduleTask(nodeId);
         return nodeId;
     }
 
     @Transactional
     public void updateNode(NodeDTO nodeInfo) {
-        testConnect(nodeInfo.getNode());
+        tryConnect(nodeInfo.getNode());
         nodeMapper.updateById(nodeInfo.getNode());
         nodeConfMapper.updateById(nodeInfo.getNodeConf());
+        collectService.refreshScheduleTask(nodeInfo.getNode().getId());
     }
 
     @Transactional
     public void delNode(int nodeId) {
         nodeMapper.deleteById(nodeId);
         nodeConfMapper.deleteById(nodeId);
+        collectService.remScheduleTask(nodeId);
     }
 
-    public void testConnect(NodePO node) throws JvmmConnectFailedException {
+    public void tryConnect(NodePO node) throws JvmmConnectFailedException {
         try {
             JvmmConnector connector = jvmmConnectorFactory.getConnector(node);
             connector.ping();
