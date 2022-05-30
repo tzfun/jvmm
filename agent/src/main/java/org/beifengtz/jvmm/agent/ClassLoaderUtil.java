@@ -12,10 +12,13 @@ import java.net.URLClassLoader;
 public class ClassLoaderUtil {
 
     public static ClassLoader systemLoadJar(URL jar) throws Throwable {
-        URLClassLoader systemClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-
-        classLoaderAddURL(systemClassLoader, jar);
-        return systemClassLoader;
+        ClassLoader cl = ClassLoader.getSystemClassLoader();
+        if (cl instanceof URLClassLoader) {
+            classLoaderAddURL((URLClassLoader) cl, jar);
+            return cl;
+        } else {
+            throw new UnsupportedOperationException("Can not load jar library from " + cl.getClass());
+        }
     }
 
     public static void classLoaderAddURL(URLClassLoader classLoader, URL url) throws Throwable {

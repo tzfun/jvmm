@@ -1,5 +1,7 @@
 package org.beifengtz.jvmm.core;
 
+import org.beifengtz.jvmm.common.factory.LoggerFactory;
+import org.beifengtz.jvmm.common.util.PidUtil;
 import org.beifengtz.jvmm.core.entity.mx.ClassLoadingInfo;
 import org.beifengtz.jvmm.core.entity.mx.CompilationInfo;
 import org.beifengtz.jvmm.core.entity.mx.GarbageCollectorInfo;
@@ -10,8 +12,6 @@ import org.beifengtz.jvmm.core.entity.mx.ProcessInfo;
 import org.beifengtz.jvmm.core.entity.mx.SystemDynamicInfo;
 import org.beifengtz.jvmm.core.entity.mx.SystemStaticInfo;
 import org.beifengtz.jvmm.core.entity.mx.ThreadDynamicInfo;
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
-import org.beifengtz.jvmm.common.util.PidUtil;
 import org.slf4j.Logger;
 
 import java.lang.management.ClassLoadingMXBean;
@@ -25,8 +25,6 @@ import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -192,70 +190,19 @@ class DefaultJvmmCollector implements JvmmCollector {
     public SystemDynamicInfo getSystemDynamic() {
         OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
         SystemDynamicInfo info = SystemDynamicInfo.create();
-        Class<? extends OperatingSystemMXBean> clazz = operatingSystemMXBean.getClass();
 
         try {
-            Method committedVirtualMemorySize = clazz.getMethod("getCommittedVirtualMemorySize");
-            committedVirtualMemorySize.setAccessible(true);
-            info.setCommittedVirtualMemorySize((long) committedVirtualMemorySize.invoke(operatingSystemMXBean));
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            log.warn("Get system dynamic info failed. [getCommittedVirtualMemorySize] " + e.getMessage(), e);
-        }
-
-        try {
-            Method freePhysicalMemorySize = clazz.getMethod("getFreePhysicalMemorySize");
-            freePhysicalMemorySize.setAccessible(true);
-            info.setFreePhysicalMemorySize((long) freePhysicalMemorySize.invoke(operatingSystemMXBean));
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            log.warn("Get system dynamic info failed. [getFreePhysicalMemorySize] " + e.getMessage(), e);
-        }
-
-        try {
-            Method freeSwapSpaceSize = clazz.getMethod("getFreeSwapSpaceSize");
-            freeSwapSpaceSize.setAccessible(true);
-            info.setFreeSwapSpaceSize((long) freeSwapSpaceSize.invoke(operatingSystemMXBean));
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            log.warn("Get system dynamic info failed. [getFreeSwapSpaceSize] " + e.getMessage(), e);
-        }
-
-        try {
-            Method processCpuLoad = clazz.getMethod("getProcessCpuLoad");
-            processCpuLoad.setAccessible(true);
-            info.setProcessCpuLoad((double) processCpuLoad.invoke(operatingSystemMXBean));
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            log.warn("Get system dynamic info failed. [getProcessCpuLoad] " + e.getMessage(), e);
-        }
-
-        try {
-            Method processCpuTime = clazz.getMethod("getProcessCpuTime");
-            processCpuTime.setAccessible(true);
-            info.setProcessCpuTime((long) processCpuTime.invoke(operatingSystemMXBean));
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            log.warn("Get system dynamic info failed. [getProcessCpuTime] " + e.getMessage(), e);
-        }
-
-        try {
-            Method systemCpuLoad = clazz.getMethod("getSystemCpuLoad");
-            systemCpuLoad.setAccessible(true);
-            info.setSystemCpuLoad((double) systemCpuLoad.invoke(operatingSystemMXBean));
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            log.warn("Get system dynamic info failed. [getSystemCpuLoad] " + e.getMessage(), e);
-        }
-
-        try {
-            Method totalPhysicalMemorySize = clazz.getMethod("getTotalPhysicalMemorySize");
-            totalPhysicalMemorySize.setAccessible(true);
-            info.setTotalSwapSpaceSize((long) totalPhysicalMemorySize.invoke(operatingSystemMXBean));
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            log.warn("Get system dynamic info failed. [getTotalPhysicalMemorySize] " + e.getMessage(), e);
-        }
-
-        try {
-            Method totalSwapSpaceSize = clazz.getMethod("getTotalSwapSpaceSize");
-            totalSwapSpaceSize.setAccessible(true);
-            info.setTotalSwapSpaceSize((long) totalSwapSpaceSize.invoke(operatingSystemMXBean));
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            log.warn("Get system dynamic info failed. [getTotalSwapSpaceSize] " + e.getMessage(), e);
+            com.sun.management.OperatingSystemMXBean sunSystemMXBean = (com.sun.management.OperatingSystemMXBean) operatingSystemMXBean;
+            info.setCommittedVirtualMemorySize(sunSystemMXBean.getCommittedVirtualMemorySize());
+            info.setFreePhysicalMemorySize(sunSystemMXBean.getFreePhysicalMemorySize());
+            info.setFreeSwapSpaceSize(sunSystemMXBean.getFreeSwapSpaceSize());
+            info.setProcessCpuLoad(sunSystemMXBean.getProcessCpuLoad());
+            info.setProcessCpuTime(sunSystemMXBean.getProcessCpuTime());
+            info.setSystemCpuLoad(sunSystemMXBean.getSystemCpuLoad());
+            info.setTotalPhysicalMemorySize(sunSystemMXBean.getTotalPhysicalMemorySize());
+            info.setTotalSwapSpaceSize(sunSystemMXBean.getTotalSwapSpaceSize());
+        } catch (Throwable e) {
+            log.warn("Get system dynamic info failed. " + e.getMessage(), e);
         }
 
         info.setLoadAverage(operatingSystemMXBean.getSystemLoadAverage());
