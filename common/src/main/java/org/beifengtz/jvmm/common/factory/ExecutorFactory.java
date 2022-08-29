@@ -2,9 +2,7 @@ package org.beifengtz.jvmm.common.factory;
 
 import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
-import org.slf4j.Logger;
 
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
@@ -21,57 +19,38 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ExecutorFactory {
 
-    private static final Logger log = LoggerFactory.logger(ExecutorFactory.class);
-
     private static volatile ScheduledExecutorService SCHEDULE_THREAD_POOL;
-    private static volatile ExecutorService FIXED_THREAD_POOL;
 
     static {
-        Runtime.getRuntime().addShutdownHook(new Thread(ExecutorFactory::shutdown));
+        Thread shutdownHook = new Thread(ExecutorFactory::shutdown);
+        shutdownHook.setName("jvmmExtHook");
+        Runtime.getRuntime().addShutdownHook(shutdownHook);
     }
 
     private static ThreadFactory getThreadFactory(String name) {
         return new DefaultThreadFactory(StringUtil.isEmpty(name) ? "jvmm" : name);
     }
 
-    private static int getProcessors() {
-        return SystemPropertyUtil.getInt("jvmm.workThread", Runtime.getRuntime().availableProcessors());
+    public static int getNThreads() {
+        return SystemPropertyUtil.getInt("jvmm.workThread", 2 * Runtime.getRuntime().availableProcessors());
     }
 
     public static ScheduledExecutorService getScheduleThreadPool() {
         if (SCHEDULE_THREAD_POOL == null || SCHEDULE_THREAD_POOL.isShutdown()) {
             synchronized (ExecutorFactory.class) {
                 if (SCHEDULE_THREAD_POOL == null || SCHEDULE_THREAD_POOL.isShutdown()) {
-                    SCHEDULE_THREAD_POOL = Executors.newSingleThreadScheduledExecutor(getThreadFactory("jvmm-schedule"));
+                    SCHEDULE_THREAD_POOL = Executors.newScheduledThreadPool(getNThreads(), getThreadFactory("jvmm-schedule"));
                 }
             }
         }
         return SCHEDULE_THREAD_POOL;
     }
 
-    public static ExecutorService getMultiThreadPool() {
-        if (FIXED_THREAD_POOL == null || FIXED_THREAD_POOL.isShutdown()) {
-            synchronized (ExecutorFactory.class) {
-                if (FIXED_THREAD_POOL == null || FIXED_THREAD_POOL.isShutdown()) {
-                    FIXED_THREAD_POOL = Executors.newFixedThreadPool(getProcessors(), getThreadFactory("jvmm-fixed"));
-                }
-            }
-        }
-        return FIXED_THREAD_POOL;
-    }
-
     public static void shutdown() {
         if (SCHEDULE_THREAD_POOL != null) {
             SCHEDULE_THREAD_POOL.shutdown();
             if (SCHEDULE_THREAD_POOL.isShutdown()) {
-                log.info("jvmm schedule thread pool shutdown.");
-            }
-        }
-
-        if (FIXED_THREAD_POOL != null) {
-            FIXED_THREAD_POOL.shutdown();
-            if (FIXED_THREAD_POOL.isShutdown()) {
-                log.info("jvmm multi thread pool shutdown.");
+                LoggerFactory.logger(ExecutorFactory.class).info("jvmm schedule thread pool shutdown.");
             }
         }
     }

@@ -24,6 +24,7 @@ jar {
 //    from {
 //        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
 //    }
+
     doLast {
         def targetDir = "${rootProject.rootDir}/bin/jvmm-${rootProject.version}"
 
@@ -41,11 +42,10 @@ task sourcesJar(type: Jar) {
     getArchiveClassifier().set('sources')
 }
 
-task javadocJar(type:Jar) {
+task javadocJar(type: Jar) {
     from javadoc
     getArchiveClassifier().set('javadoc')
 }
-
 
 artifacts {
     archives javadocJar, sourcesJar

@@ -1,13 +1,17 @@
 package org.beifengtz.jvmm.server.controller;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.netty.channel.Channel;
 import io.netty.util.concurrent.EventExecutor;
+import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
 import org.beifengtz.jvmm.convey.GlobalStatus;
 import org.beifengtz.jvmm.convey.GlobalType;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.core.DefaultJvmmScheduleService;
+import org.beifengtz.jvmm.core.JvmmCollector;
 import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.JvmmScheduleService;
 import org.beifengtz.jvmm.core.entity.mx.ClassLoadingInfo;
@@ -40,6 +44,8 @@ import java.util.List;
  */
 @JvmmController
 public class CollectController implements Closeable {
+
+    private static final boolean ENABLE_SERVER_TIMER = SystemPropertyUtil.getBoolean("jvmm.enableServerTimer", false);
 
     private static final int DEFAULT_TIMER_DELAY = 3;
     private static final int DEFAULT_TIMER_TIMES = 10;
@@ -122,7 +128,7 @@ public class CollectController implements Closeable {
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_TIMER_COLLECT_MEMORY_INFO)
     public void timerGetMemoryInfo(JsonObject data, String type, Channel channel, EventExecutor executor) {
-
+        checkServerTimer();
         int gapSeconds = DEFAULT_TIMER_DELAY;
         int times = DEFAULT_TIMER_TIMES;
 
@@ -165,7 +171,7 @@ public class CollectController implements Closeable {
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_TIMER_COLLECT_SYSTEM_DYNAMIC_INFO)
     public void timerGetSystemDynamicInfo(JsonObject data, String type, Channel channel, EventExecutor executor) {
-
+        checkServerTimer();
         int gapSeconds = DEFAULT_TIMER_DELAY;
         int times = DEFAULT_TIMER_TIMES;
         if (data != null) {
@@ -207,6 +213,7 @@ public class CollectController implements Closeable {
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_TIMER_COLLECT_THREAD_INFO)
     public void timerGetThreadDynamicInfo(JsonObject data, String type, Channel channel, EventExecutor executor) {
+        checkServerTimer();
         int gapSeconds = DEFAULT_TIMER_DELAY;
         int times = DEFAULT_TIMER_TIMES;
 
@@ -257,6 +264,30 @@ public class CollectController implements Closeable {
         return result;
     }
 
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_BATCH)
+    public JsonObject collectBatch(JsonArray items) {
+        JsonObject res = new JsonObject();
+        JvmmCollector collector = JvmmFactory.getCollector();
+        Gson gson = new Gson();
+        for (JsonElement item : items) {
+            String it = item.getAsString();
+            if ("classloading".equals(it)) {
+                res.add(it, collector.getClassLoading().toJson());
+            } else if ("gc".equals(it)) {
+                res.add(it, gson.toJsonTree(collector.getGarbageCollector()));
+            } else if ("memory".equals(it)) {
+                res.add(it, collector.getMemory().toJson());
+            } else if ("memoryPool".equals(it)) {
+                res.add(it, gson.toJsonTree(collector.getMemoryPool()));
+            } else if ("system".equals(it)) {
+                res.add(it, collector.getSystemDynamic().toJson());
+            } else if ("thread".equals(it)) {
+                res.add(it, collector.getThreadDynamic().toJson());
+            }
+        }
+        return res;
+    }
+
     @Override
     public void close() throws IOException {
         if (memoryCollectTimer != null) {
@@ -267,6 +298,12 @@ public class CollectController implements Closeable {
         }
         if (systemDynamicCollectTimer != null) {
             systemDynamicCollectTimer.stop();
+        }
+    }
+
+    private void checkServerTimer() {
+        if (!ENABLE_SERVER_TIMER) {
+            throw new UnsupportedOperationException("Server timing collection function is not supported");
         }
     }
 }

@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'io.github.tzfun.jvmm'
-version = '1.2.1'
+version = '1.2.2'
 
 ext {
     nettyVersion = "4.1.65.Final"
@@ -23,8 +23,8 @@ subprojects {
 
     [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
 
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 
     repositories {
         maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }

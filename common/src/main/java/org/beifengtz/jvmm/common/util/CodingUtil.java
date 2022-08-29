@@ -15,6 +15,8 @@ import java.net.URLEncoder;
  */
 public class CodingUtil {
 
+    private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
+
     public static String encodeUrl(String url, String enc) {
         try {
             return URLEncoder.encode(url, enc);
@@ -59,12 +61,30 @@ public class CodingUtil {
      *
      * @param b byte array
      * @return hex string
+     * @deprecated 改用 {@link CodingUtil#bytes2HexString(byte[])}
      */
+    @Deprecated
     public static String bytes2HexStr(byte[] b) {
         StringBuilder sb = new StringBuilder();
         for (byte value : b) {
             sb.append(String.format("%02X", value));
         }
         return sb.toString();
+    }
+
+    /**
+     * 将byte数组转为hex字符串
+     *
+     * @param bytes byte array
+     * @return hex  string
+     */
+    public static String bytes2HexString(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = HEX_ARRAY[v >>> 4];
+            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
+        }
+        return new String(hexChars);
     }
 }

@@ -68,6 +68,11 @@ public enum GlobalType {
     JVMM_TYPE_DUMP_THREAD_INFO,
 
     /**
+     * Web端批量采集
+     */
+    JVMM_TYPE_COLLECT_BATCH,
+
+    /**
      * async-profiler数据采样相关协议
      */
     JVMM_TYPE_PROFILER_EXECUTE,

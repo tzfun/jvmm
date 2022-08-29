@@ -147,6 +147,14 @@ public class AsyncProfiler {
 
     private native void stop0() throws IllegalStateException;
 
+    /**
+     * 命令格式：https://github.com/jvm-profiling-tools/async-profiler/blob/v1.8.1/src/arguments.cpp#L50
+     *
+     * @param command 命令行参数错误
+     * @return 响应结果
+     * @throws IllegalArgumentException 命令行参数错误
+     * @throws IOException IO异常
+     */
     private native String execute0(String command) throws IllegalArgumentException, IOException;
 
     private native void filterThread0(Thread thread, boolean enable);

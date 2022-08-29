@@ -1,6 +1,7 @@
 package org.beifengtz.jvmm.server.handler;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -113,14 +114,16 @@ public class ServerHandler extends JvmmChannelHandler {
                     parameter[i] = ctx.channel();
                 } else if (JvmmRequest.class.isAssignableFrom(parameterType)) {
                     parameter[i] = reqMsg;
+                } else if (JsonObject.class.isAssignableFrom(parameterType)) {
+                    parameter[i] = reqMsg.getData() == null ? null : reqMsg.getData().getAsJsonObject();
+                } else if (JsonArray.class.isAssignableFrom(parameterType)) {
+                    parameter[i] = reqMsg.getData() == null ? null : reqMsg.getData().getAsJsonArray();
                 } else if (JsonElement.class.isAssignableFrom(parameterType)) {
                     parameter[i] = reqMsg.getData();
                 } else if (String.class.isAssignableFrom(parameterType)) {
                     parameter[i] = reqMsg.getType();
                 } else if (EventExecutor.class.isAssignableFrom(parameterType)) {
                     parameter[i] = ctx.executor();
-                } else if (JsonElement.class.isAssignableFrom(parameterType)) {
-                    parameter[i] = reqMsg.getData();
                 } else if (ChannelHandlerContext.class.isAssignableFrom(parameterType)) {
                     parameter[i] = ctx;
                 } else if (ServerHandler.class.isAssignableFrom(parameterType)) {

@@ -95,7 +95,7 @@ gc: -
 Execute gc, no arguments.
 
 jps: -
-Shutdown jvmm server, no arguments.
+View all java processes running on this physical machine.
 
 shutdown: -
 Shutdown jvmm server, no arguments.

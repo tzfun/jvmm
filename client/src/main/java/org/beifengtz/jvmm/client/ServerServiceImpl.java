@@ -140,7 +140,7 @@ public class ServerServiceImpl extends ServerService {
         System.out.println("ok");
     }
 
-    @JvmmCmdDesc(desc = "Shutdown jvmm server, no arguments.")
+    @JvmmCmdDesc(desc = "View all java processes running on this physical machine.")
     public static void jps(JvmmConnector connector, CommandLine cmd) {
         JvmmRequest request = JvmmRequest.create().setType(GlobalType.JVMM_TYPE_EXECUTE_JAVA_PROCESS);
         JvmmResponse response = request(connector, request);

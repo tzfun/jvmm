@@ -1,6 +1,7 @@
 package org.beifengtz.jvmm.web.mvc.handler;
 
 import lombok.extern.slf4j.Slf4j;
+import org.beifengtz.jvmm.common.exception.JvmmConnectFailedException;
 import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.web.common.RestfulStatus;
 import org.beifengtz.jvmm.web.common.exception.AuthException;
@@ -66,5 +67,14 @@ public class LogicExceptionHandler {
             log.info("{}; {}", e.getMessage(), e.getClass().getName());
         }
         return resultFactory.error(RestfulStatus.RESOURCE_EXIST, e.getMessage());
+    }
+
+    @ExceptionHandler(value = JvmmConnectFailedException.class)
+    @ResponseBody
+    public ResultVO<?> jvmmConnectFailedHandler(JvmmConnectFailedException e) {
+        if (!StringUtil.isEmpty(e.getMessage())) {
+            log.debug(e.getMessage(), e);
+        }
+        return resultFactory.error(RestfulStatus.JVMM_CONNECT_FAILED, e.getMessage());
     }
 }

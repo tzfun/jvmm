@@ -44,15 +44,24 @@ public class AttachProvider {
 
     protected synchronized void initToolsClassLoader() throws Throwable {
         if (toolsClassLoader == null) {
-            File toolsJar = JavaEnvUtil.findToolsJar(JavaEnvUtil.findJavaHome());
-            try {
-                toolsClassLoader = ClassLoaderUtil.systemLoadJar(toolsJar.toURI().toURL());
-                log.debug("Init tools classes successful.");
-            } catch (MalformedURLException e) {
-                //  ignored
-            } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
-                log.error("Init class loader failed. " + e.getMessage(), e);
-                throw e;
+            String javaHome = JavaEnvUtil.findJavaHome();
+            File toolsJar = JavaEnvUtil.findToolsJar(javaHome);
+
+            if (JavaVersionUtils.isLessThanJava9()) {
+                if (toolsJar == null || !toolsJar.exists()) {
+                    throw new IllegalArgumentException("Can not find tools.jar under java home: " + javaHome);
+                }
+                try {
+                    toolsClassLoader = ClassLoaderUtil.systemLoadJar(toolsJar.toURI().toURL());
+                    log.debug("Init tools classes successful.");
+                } catch (MalformedURLException e) {
+                    //  ignored
+                } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+                    log.error("Init class loader failed. " + e.getMessage(), e);
+                    throw e;
+                }
+            } else {
+                toolsClassLoader = ClassLoader.getSystemClassLoader();
             }
         }
     }
@@ -89,8 +98,8 @@ public class AttachProvider {
                 }
             }
 
-            virtualMachine.loadAgent(agentJarPath.replaceAll("\\\\","/"),
-                    serverJarPath.replaceAll("\\\\","/") + ";" + config.argFormat());
+            virtualMachine.loadAgent(agentJarPath.replaceAll("\\\\", "/"),
+                    serverJarPath.replaceAll("\\\\", "/") + ";" + config.argFormat());
         } finally {
             if (null != virtualMachine) {
                 virtualMachine.detach();
