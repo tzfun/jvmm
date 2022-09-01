@@ -98,7 +98,6 @@ signing {
     sign configurations.archives
 }
 
-
 javadoc {
     options.addStringOption("charset", "UTF-8")
 }
