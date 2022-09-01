@@ -295,7 +295,7 @@ class DefaultJvmmCollector implements JvmmCollector {
         List<String> results = ExecuteNativeUtil.execute("free");
         LinuxMemoryResult result = new LinuxMemoryResult();
         if (results.size() > 1) {
-            String[] split = results.get(1).split("\\s");
+            String[] split = results.get(1).split("\\s+");
             if (split.length > 6) {
                 result.setTotal(Long.parseLong(split[1]));
                 result.setUsed(Long.parseLong(split[2]));

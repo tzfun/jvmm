@@ -330,7 +330,7 @@ public class Commander {
                             if (content.startsWith("ok")) {
                                 logger.info("Jvmm server started on {}", content.split(":")[1]);
                             } else {
-                                logger.info("Jvmm server start with error: {}", content);
+                                logger.error("Jvmm server start with error: {}", content);
                             }
                             break;
                         }
