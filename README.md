@@ -2,33 +2,43 @@
 
 # Jvmm
 
-Jvmm is a lightweight and secure Java Virtual Machine monitor. You can use it to perform at runtime (Runtime): JVM monitoring (memory, cpu, gc, thread, etc.), OS monitor (cpu, memory, basic info, etc.), execution, flame graph generation, etc. It is more suitable for service status monitoring, debugging, and performance testing.
+Jvmm is a lightweight and secure Java Virtual Machine monitor. You can use it to perform at runtime (Runtime): JVM monitoring (memory, cpu, gc, thread, etc.), OS monitor (cpu, memory, disk ,basic info, etc.), execution, flame graph generation, etc. It is more suitable for service status monitoring, debugging, and performance testing.
 
 # Quick start
 
 Go to the **tag** page and download jvmm, unzip and execute:
 ```shell
-//  Attach to the process running on port 8080
-./attach -p 8080
+#  Attach to the process running on port 8080
+./jvmm-c -m attach -p 8080
 ```
 
 In the target process, the log will prompt the running port, the default is 5010.
 
 Connect Jvmm, then get system and thread information:
 ```shell
-java -jar jvmm-client.jar -h 127.0.0.1:5010
+./jvmm-c -h 127.0.0.1:5010
 [Jvmm] [Info ] Start to connect jvmm agent server...
 [Jvmm] [Info ] Connect successful! You can use the 'help' command to learn how to use. Enter 'exit' to safely exit the connection.
 > info -t systemDynamic
 {
-   "committedVirtualMemorySize":739393536,
-   "freePhysicalMemorySize":4804407296,
-   "freeSwapSpaceSize":3897561088,
-   "processCpuLoad":2.5464865506569934E-4,
-   "processCpuTime":8531250000,
-   "systemCpuLoad":0.09008395604971231,
-   "totalPhysicalMemorySize":0,
-   "totalSwapSpaceSize":27989778432
+   "committedVirtualMemorySize":3218759680,
+   "freePhysicalMemorySize":556617728,
+   "freeSwapSpaceSize":0,
+   "processCpuLoad":0.0,
+   "processCpuTime":9110000000,
+   "systemCpuLoad":0.0,
+   "loadAverage":0.19,
+   "totalPhysicalMemorySize":8366346240,
+   "totalSwapSpaceSize":0,
+   "bufferCacheSize":1917852,
+   "sharedSize":12160,
+   "disks": [
+      {
+         "name":"/",
+         "total":63278391296,
+         "usable":47176683520
+      }
+   ]
 }
 > info -t thread
 {
@@ -45,7 +55,9 @@ java -jar jvmm-client.jar -h 127.0.0.1:5010
 
 This project provides three ways to choose from: `java agent`, `java API`, and `Server service`. I made a `client commandline tool` to connect with the server.*In future versions, it will support web client.*
 
-## Commandline Tool
+## Client Tool
+
+The `jvmm-c | jvmm-c.bat` file is a packaged script to quickly run the client. The jar packages used are all files in the same directory. If your application scenario needs to use jar packages from other path, you need to use `java -jar jvmm-client.jar [gars...]` to customize the specification, the more usage is as follows:
 
 The client command line tool has two modes: `Attach` and `Client`. To use it, you must first select a mode to enter. You can view the help like this
 ```shell
@@ -119,8 +131,8 @@ You can go to [tag](tags) page and download packaged program. After decompressio
 |-- jvmm-agent.jar      //  Agent jar, responsible for loading the server into the host program virtual machine.
     jvmm-server.jar     //  Server jar, provide external web interface services.
     jvmm-client.jar     //  Client jar, command line tool, responsible for loading agent and server into host program.
-    attach              //  Attach tool for unix environment, encapsulated from client jar.
-    attach.bat          //  Attach tool for windows environment, encapsulated from client jar.
+    jvmm-c              //  Client tool for unix environment, encapsulated from client jar.
+    jvmm-c.bat          //  Client tool for windows environment, encapsulated from client jar.
     config.yml          //  Server config file.
 ```
 
@@ -138,20 +150,20 @@ java -jar jvmm-client.jar -m attach -a ./jvmm-agent.jar -s ./jvmm-server.jar -c 
 java -jar jvmm-client.jar -m attach -a ./jvmm-agent.jar -s ./jvmm-server.jar -c name=jvmm_test;port.bind=9000;port.autoIncrease=false -pid 15000
 ```
 
-If you think the command line is too long, you can also use the `attach` executable program to achieve the same effect. You only need to modify the config.yml in the same level directory and pass in the host program running port or process number pid.
+If you think the command line is too long, you can also use the `jvmm-c` executable program to achieve the same effect. You only need to modify the config.yml in the same level directory and pass in the host program running port or process number pid.
 
 Run in Linux or Mac
-```
-./attach -p 8080
+```shell
+./jvmm-c -p 8080
 
-./attach -pid 15000
+./jvmm-c -pid 15000
 ```
 
 Run in windows
 ```
-attach.bat -p 8080
+jvmm-c.bat -p 8080
 
-attach.bat -pid 15000
+jvmm-c.bat -pid 15000
 ```
 
 ### Startup Attach Agent
@@ -212,7 +224,7 @@ workThread=1
 
 ## API Call
 
-If you want to call the interface in your own program, Jvmm also provides a corresponding solution. The current latest version is `1.2.1`
+If you want to call the interface in your own program, Jvmm also provides a corresponding solution.
 
 Maven dependencies
 ```xml
