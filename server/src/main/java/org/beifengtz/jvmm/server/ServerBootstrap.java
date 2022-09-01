@@ -66,7 +66,7 @@ public class ServerBootstrap {
         if (bootstrap != null) {
             return bootstrap;
         }
-
+        System.out.println(args);
         return getInstance(inst, ConfigParser.parseFromArgs(args));
     }
 
@@ -118,7 +118,7 @@ public class ServerBootstrap {
         if (ServerConfig.isInited()) {
             int realBindPort = ServerConfig.getRealBindPort();
             if (realBindPort < 0) {
-                start(ServerConfig.getConfiguration().getPort(),callback);
+                start(ServerConfig.getConfiguration().getPort(), callback);
             } else {
                 callback.apply(realBindPort);
                 logger().info("Jvmm server already started on {}", realBindPort);
@@ -130,7 +130,7 @@ public class ServerBootstrap {
         }
     }
 
-    private void start(int bindPort,Function callback) {
+    private void start(int bindPort, Function callback) {
         if (PlatformUtil.portAvailable(bindPort)) {
             logger().info("Try to start jvmm server service. target port: {}", bindPort);
             rebindTimes++;
@@ -164,7 +164,7 @@ public class ServerBootstrap {
                 f.channel().closeFuture().syncUninterruptibly();
             } catch (BindException e) {
                 if (rebindTimes < BIND_LIMIT_TIMES && ServerConfig.getConfiguration().isAutoIncrease()) {
-                    start(bindPort + 1,callback);
+                    start(bindPort + 1, callback);
                 } else {
                     logger().error("Jvmm server start up failed. " + e.getMessage(), e);
                     stop();
@@ -175,9 +175,11 @@ public class ServerBootstrap {
                 stop();
             }
         } else {
-            logger().info("Port {} is not available.", bindPort);
+            logger().info("Port {} is not available, auto increase:{}", bindPort, ServerConfig.getConfiguration().isAutoIncrease());
             if (ServerConfig.getConfiguration().isAutoIncrease()) {
-                start(bindPort + 1,callback);
+                start(bindPort + 1, callback);
+            } else {
+                callback.apply("Port " + bindPort + " is not available and the auto increase switch is closed.");
             }
         }
     }

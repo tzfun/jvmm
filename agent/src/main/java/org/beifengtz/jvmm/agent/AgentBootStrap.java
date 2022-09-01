@@ -194,9 +194,10 @@ public class AgentBootStrap {
         }
         if ("agentmain".equals(type)) {
             if (agentAttached) {
-                if (running) {
+                int runningPort = -1;
+                if (running && (runningPort = getRunningPort()) > 0) {
                     log.warn("The jvmm agent has been loaded once and the server is running. Repeated startup is not allowed.");
-                    notifyListener(findListenerPortArg(args), getRunningPort(), "ok");
+                    notifyListener(findListenerPortArg(args), runningPort, "ok");
                 } else {
                     try {
                         log.info("The jvmm agent has been loaded once and enters the server startup phase...");
@@ -370,6 +371,7 @@ public class AgentBootStrap {
                     if (o instanceof Integer) {
                         notifyListener(findListenerPortArg(agentArgs), (int) o, "ok");
                     } else {
+                        running = false;
                         notifyListener(findListenerPortArg(agentArgs), -1, o.toString());
                     }
                     return null;
