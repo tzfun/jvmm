@@ -1,7 +1,9 @@
 package org.beifengtz.jvmm.core;
 
 import org.beifengtz.jvmm.common.factory.LoggerFactory;
+import org.beifengtz.jvmm.common.util.ExecuteNativeUtil;
 import org.beifengtz.jvmm.common.util.PidUtil;
+import org.beifengtz.jvmm.common.util.PlatformUtil;
 import org.beifengtz.jvmm.core.entity.mx.ClassLoadingInfo;
 import org.beifengtz.jvmm.core.entity.mx.CompilationInfo;
 import org.beifengtz.jvmm.core.entity.mx.GarbageCollectorInfo;
@@ -12,8 +14,10 @@ import org.beifengtz.jvmm.core.entity.mx.ProcessInfo;
 import org.beifengtz.jvmm.core.entity.mx.SystemDynamicInfo;
 import org.beifengtz.jvmm.core.entity.mx.SystemStaticInfo;
 import org.beifengtz.jvmm.core.entity.mx.ThreadDynamicInfo;
+import org.beifengtz.jvmm.core.entity.result.LinuxMemoryResult;
 import org.slf4j.Logger;
 
+import java.io.File;
 import java.lang.management.ClassLoadingMXBean;
 import java.lang.management.CompilationMXBean;
 import java.lang.management.GarbageCollectorMXBean;
@@ -201,6 +205,21 @@ class DefaultJvmmCollector implements JvmmCollector {
             info.setSystemCpuLoad(sunSystemMXBean.getSystemCpuLoad());
             info.setTotalPhysicalMemorySize(sunSystemMXBean.getTotalPhysicalMemorySize());
             info.setTotalSwapSpaceSize(sunSystemMXBean.getTotalSwapSpaceSize());
+
+            if (PlatformUtil.isLinux()) {
+                LinuxMemoryResult linuxMemoryResult = getLinuxMemoryResult();
+                info.setBufferCacheSize(linuxMemoryResult.getBuffCache());
+                info.setSharedSize(linuxMemoryResult.getShared());
+            }
+
+            File[] files = File.listRoots();
+            for (File file : files) {
+                info.addDisk(SystemDynamicInfo.DiskInfo.create()
+                        .setName(file.getCanonicalPath())
+                        .setTotal(file.getTotalSpace())
+                        .setUsable(file.getUsableSpace()));
+            }
+
         } catch (Throwable e) {
             log.warn("Get system dynamic info failed. " + e.getMessage(), e);
         }
@@ -267,6 +286,23 @@ class DefaultJvmmCollector implements JvmmCollector {
                 result[i] = info.toString();
             } else {
                 result[i] = null;
+            }
+        }
+        return result;
+    }
+
+    private LinuxMemoryResult getLinuxMemoryResult() {
+        List<String> results = ExecuteNativeUtil.execute("free");
+        LinuxMemoryResult result = new LinuxMemoryResult();
+        if (results.size() > 1) {
+            String[] split = results.get(1).split("\\s");
+            if (split.length > 6) {
+                result.setTotal(Long.parseLong(split[1]));
+                result.setUsed(Long.parseLong(split[2]));
+                result.setFree(Long.parseLong(split[3]));
+                result.setShared(Long.parseLong(split[4]));
+                result.setBuffCache(Long.parseLong(split[5]));
+                result.setAvailable(Long.parseLong(split[6]));
             }
         }
         return result;

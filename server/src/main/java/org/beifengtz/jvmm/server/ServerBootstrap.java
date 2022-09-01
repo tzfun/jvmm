@@ -18,7 +18,10 @@ import org.slf4j.Logger;
 import java.lang.instrument.Instrumentation;
 import java.net.BindException;
 import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 /**
  * <p>
@@ -111,20 +114,23 @@ public class ServerBootstrap {
         return LoggerFactory.logger(ServerBootstrap.class);
     }
 
-    public void start() {
+    public void start(Function callback) {
         if (ServerConfig.isInited()) {
             int realBindPort = ServerConfig.getRealBindPort();
             if (realBindPort < 0) {
-                start(ServerConfig.getConfiguration().getPort());
+                start(ServerConfig.getConfiguration().getPort(),callback);
             } else {
+                callback.apply(realBindPort);
                 logger().info("Jvmm server already started on {}", realBindPort);
             }
         } else {
-            logger().error("Jvmm Server start failed, configuration not inited.");
+            String msg = "Jvmm Server start failed, configuration not inited.";
+            callback.apply(msg);
+            logger().error(msg);
         }
     }
 
-    private void start(int bindPort) {
+    private void start(int bindPort,Function callback) {
         if (PlatformUtil.portAvailable(bindPort)) {
             logger().info("Try to start jvmm server service. target port: {}", bindPort);
             rebindTimes++;
@@ -148,6 +154,7 @@ public class ServerBootstrap {
 
                 logger().info("Jvmm server service started on {}, node name: {}", bindPort, ServerConfig.getConfiguration().getName());
                 ServerConfig.setRealBindPort(bindPort);
+                callback.apply(bindPort);
 
                 if (shutdownHook == null) {
                     shutdownHook = new Thread(this::stop);
@@ -157,19 +164,20 @@ public class ServerBootstrap {
                 f.channel().closeFuture().syncUninterruptibly();
             } catch (BindException e) {
                 if (rebindTimes < BIND_LIMIT_TIMES && ServerConfig.getConfiguration().isAutoIncrease()) {
-                    start(bindPort + 1);
+                    start(bindPort + 1,callback);
                 } else {
                     logger().error("Jvmm server start up failed. " + e.getMessage(), e);
                     stop();
                 }
             } catch (Throwable e) {
                 logger().error("Jvmm server start up failed. " + e.getMessage(), e);
+                callback.apply(e.getMessage());
                 stop();
             }
         } else {
             logger().info("Port {} is not available.", bindPort);
             if (ServerConfig.getConfiguration().isAutoIncrease()) {
-                start(bindPort + 1);
+                start(bindPort + 1,callback);
             }
         }
     }
@@ -203,5 +211,9 @@ public class ServerBootstrap {
 
     public boolean serverAvailable() {
         return ServerConfig.getRealBindPort() >= 0;
+    }
+
+    public int bindPort() {
+        return ServerConfig.getRealBindPort();
     }
 }
