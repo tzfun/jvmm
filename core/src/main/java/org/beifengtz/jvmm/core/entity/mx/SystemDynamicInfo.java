@@ -2,6 +2,9 @@ package org.beifengtz.jvmm.core.entity.mx;
 
 import org.beifengtz.jvmm.common.JsonParsable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * <p>
  * Description: TODO
@@ -43,6 +46,12 @@ public class SystemDynamicInfo implements JsonParsable {
 
     private long totalPhysicalMemorySize;
     private long totalSwapSpaceSize;
+    /**
+     * 缓冲区内存大小，仅限linux系统下
+     */
+    private long bufferCacheSize;
+    private long sharedSize;
+    private final List<DiskInfo> disks = new ArrayList<>();
 
     private SystemDynamicInfo() {
     }
@@ -123,8 +132,81 @@ public class SystemDynamicInfo implements JsonParsable {
         this.loadAverage = loadAverage;
     }
 
+    public long getBufferCacheSize() {
+        return bufferCacheSize;
+    }
+
+    public void setBufferCacheSize(long bufferCacheSize) {
+        this.bufferCacheSize = bufferCacheSize;
+    }
+
+    public long getSharedSize() {
+        return sharedSize;
+    }
+
+    public void setSharedSize(long sharedSize) {
+        this.sharedSize = sharedSize;
+    }
+
+    public List<DiskInfo> getDisks() {
+        return disks;
+    }
+
+    public void addDisk(DiskInfo disk) {
+        disks.add(disk);
+    }
+
+    public void clearDisk() {
+        disks.clear();
+    }
+
     @Override
     public String toString() {
         return toJsonStr();
+    }
+
+    public static class DiskInfo implements JsonParsable {
+        private String name;
+        private long total;
+        private long usable;
+
+        private DiskInfo() {
+        }
+
+        public static DiskInfo create() {
+            return new DiskInfo();
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public DiskInfo setName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public long getTotal() {
+            return total;
+        }
+
+        public DiskInfo setTotal(long total) {
+            this.total = total;
+            return this;
+        }
+
+        public long getUsable() {
+            return usable;
+        }
+
+        public DiskInfo setUsable(long usable) {
+            this.usable = usable;
+            return this;
+        }
+
+        @Override
+        public String toString() {
+            return toJsonStr();
+        }
     }
 }

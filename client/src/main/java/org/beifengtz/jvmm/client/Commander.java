@@ -20,8 +20,12 @@ import org.beifengtz.jvmm.core.conf.Configuration;
 import org.slf4j.Logger;
 
 import java.io.File;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.Scanner;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * <p>
@@ -298,9 +302,47 @@ public class Commander {
         } else {
             conf = Configuration.defaultInstance();
         }
+
+        //  开启目标服务启动状态监听
+        conf.setListenerPort(startAttachListener());
+
         logger.info("Start to attach program {} ...", pid);
-        AttachProvider.getInstance().attachAgent(pid, agentFile.getAbsolutePath(), serverFile.getAbsolutePath(), conf);
-        logger.info("Attach successful!");
+        try {
+            AttachProvider.getInstance().attachAgent(pid, agentFile.getAbsolutePath(), serverFile.getAbsolutePath(), conf);
+            logger.info("Attach successful!");
+        } catch (Exception e) {
+            logger.warn("An error was encountered while attaching: " + e.getMessage(), e);
+        }
+    }
+
+    private static int startAttachListener() throws Exception {
+        CountDownLatch bootLatch = new CountDownLatch(1);
+        AtomicInteger port = new AtomicInteger(-1);
+        new Thread(() -> {
+            try (ServerSocket server = new ServerSocket(0)) {
+                port.set(server.getLocalPort());
+                bootLatch.countDown();
+                while (true) {
+                    Socket socket = server.accept();
+                    try (Scanner sc = new Scanner(socket.getInputStream())) {
+                        if (sc.hasNextLine()) {
+                            String content = sc.nextLine();
+                            if (content.startsWith("ok")) {
+                                logger.info("Jvmm server started on {}", content.split(":")[1]);
+                            } else {
+                                logger.info("Jvmm server start with error: {}", content);
+                            }
+                            break;
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                bootLatch.countDown();
+                logger.error("Attach listener error: " + e, e);
+            }
+        }).start();
+        bootLatch.await(3, TimeUnit.SECONDS);
+        return port.get();
     }
 
     private static void printHelp() {

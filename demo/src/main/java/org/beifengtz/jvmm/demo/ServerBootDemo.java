@@ -25,7 +25,10 @@ public class ServerBootDemo {
                 .setWorkThread(2)
                 .build();
         ServerBootstrap server = ServerBootstrap.getInstance(config);
-        server.start();
+        server.start(port -> {
+            System.out.println("Server start on " + port);
+            return null;
+        });
 
         Thread.sleep(3000);
 

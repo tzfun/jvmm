@@ -33,6 +33,7 @@ public final class Configuration {
      * 是否是从agent加载
      */
     private final boolean fromAgent;
+    private int listenerPort;
 
     private Configuration(Builder builder) {
         this.name = builder.name;
@@ -76,6 +77,7 @@ public final class Configuration {
         sb.append("log.useJvmm=").append(logUseJvmm).append(";");
         sb.append("workThread=").append(workThread).append(";");
         sb.append("fromAgent=").append(fromAgent).append(";");
+        sb.append("listenerPort=").append(listenerPort).append(";");
         return sb.toString();
     }
 
@@ -294,5 +296,14 @@ public final class Configuration {
 
     public boolean isLogUseJvmm() {
         return logUseJvmm;
+    }
+
+    public int getListenerPort() {
+        return listenerPort;
+    }
+
+    public Configuration setListenerPort(int listenerPort) {
+        this.listenerPort = listenerPort;
+        return this;
     }
 }

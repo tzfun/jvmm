@@ -4,8 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.PrintWriter;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
+import java.net.Socket;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.CodeSource;
@@ -18,6 +20,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.function.Function;
 import java.util.jar.JarFile;
 
 /**
@@ -41,6 +44,7 @@ public class AgentBootStrap {
     private static volatile Thread bindThread;
     private static volatile JvmmAgentClassLoader agentClassLoader;
     private static volatile boolean agentAttached;
+    private static volatile Object bootInstance;
 
     private static final BlockingQueue<LoggerEvent> logQueue = new LinkedBlockingQueue<>();
 
@@ -192,6 +196,7 @@ public class AgentBootStrap {
             if (agentAttached) {
                 if (running) {
                     log.warn("The jvmm agent has been loaded once and the server is running. Repeated startup is not allowed.");
+                    notifyListener(findListenerPortArg(args), getRunningPort(), "ok");
                 } else {
                     try {
                         log.info("The jvmm agent has been loaded once and enters the server startup phase...");
@@ -214,6 +219,7 @@ public class AgentBootStrap {
                 int realBindPort = (int) getRealBindPort.invoke(null);
                 if (realBindPort >= 0) {
                     log.info("Jvmm server already started on {}", realBindPort);
+                    notifyListener(findListenerPortArg(agentArgs), realBindPort, "ok");
                     return;
                 }
             }
@@ -263,6 +269,7 @@ public class AgentBootStrap {
         }
 
         if (!serverJarFile.exists()) {
+            notifyListener(findListenerPortArg(agentArgs), -1, "Jvmm server jar file not found");
             return;
         }
 
@@ -298,15 +305,55 @@ public class AgentBootStrap {
 
         } catch (Throwable e) {
             log.error(e.getMessage(), e);
+            notifyListener(findListenerPortArg(agentArgs), -1, e.getMessage());
             throw new RuntimeException(e);
         }
+    }
+
+    private static int findListenerPortArg(String args) {
+        String[] argKv = args.split(";");
+        for (String s : argKv) {
+            String[] split = s.split("=");
+            if (split.length > 1 && "listenerPort".equalsIgnoreCase(split[0])) {
+                return Integer.parseInt(split[1]);
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * 通知client端启动进程
+     */
+    private static void notifyListener(int listenerPort, int runningPort, String message) {
+        try {
+            try (Socket socket = new Socket("127.0.0.1", listenerPort);
+                 PrintWriter writer = new PrintWriter(socket.getOutputStream())) {
+                if ("ok".equalsIgnoreCase(message)) {
+                    writer.write("ok:" + runningPort);
+                } else {
+                    writer.write(message);
+                }
+            }
+        } catch (Exception e) {
+            log.error("Notify listener failed: " + e.getMessage(), e);
+        }
+    }
+
+    private static int getRunningPort() {
+        if (bootInstance != null) {
+            try {
+                Class<?> bootClazz = agentClassLoader.loadClass(SERVER_MAIN_CLASS);
+                return (int) bootClazz.getMethod("bindPort").invoke(bootInstance);
+            } catch (Throwable ignored) {
+            }
+        }
+        return -1;
     }
 
     private static void bootServer(Instrumentation inst, List<URL> needPreLoad, String agentArgs) throws InterruptedException {
         running = true;
         //  启动日志打印代理消费线程
         runLoggerConsumer();
-
         bindThread = new Thread(() -> {
             try {
                 if (needPreLoad != null && !needPreLoad.isEmpty()) {
@@ -318,10 +365,20 @@ public class AgentBootStrap {
                 Class<?> bootClazz = agentClassLoader.loadClass(SERVER_MAIN_CLASS);
                 Object boot = bootClazz.getMethod("getInstance", Instrumentation.class, String.class)
                         .invoke(null, inst, agentArgs);
-                bootClazz.getMethod("start").invoke(boot);
+                bootInstance = boot;
+                Function callback = o -> {
+                    if (o instanceof Integer) {
+                        notifyListener(findListenerPortArg(agentArgs), (int) o, "ok");
+                    } else {
+                        notifyListener(findListenerPortArg(agentArgs), -1, o.toString());
+                    }
+                    return null;
+                };
+                bootClazz.getMethod("start", Function.class).invoke(boot, callback);
             } catch (Throwable e) {
                 log.error(e.getMessage(), e);
                 running = false;
+                notifyListener(findListenerPortArg(agentArgs), -1, e.getMessage());
             }
         });
 
