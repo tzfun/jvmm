@@ -2,32 +2,45 @@
 
 # Jvmm
 
-Jvmm是一个轻量且安全的Java虚拟机监控器。你可以使用它在运行时（Runtime）进行：JVM监控(内存、CPU负载、GC、Thread Info)、操作系统监控(负载、内存使用率、基础信息等)、执行任务、生成火焰图等，比较适合用于服务状态监控、调试、性能测试。
+Jvmm是一个轻量且安全的Java虚拟机监控器。你可以使用它在运行时（Runtime）进行：JVM监控(内存、CPU负载、GC、Thread Info)、操作系统监控(负载、内存使用率、磁盘使用率、基础信息等)、执行任务、生成火焰图等，比较适合用于服务状态监控、调试、性能测试。
 
 # 快速使用
 tag页下载后解压，执行
 ```shell
-//  向运行在8080端口的进程attach
-./attach -p 8080
+#  向运行在8080端口的进程attach
+./jvmm-c -m attach -p 8080
+
+# 可能有的时候会出现两个进程，可以指定pid
+./jvmm-c -m attach -pid 22345
 ```
 
 在目标进程中日志会提示运行端口，默认是5010
 
 连接Jvmm,然后获取系统和线程信息
 ```shell
-java -jar jvmm-client.jar -h 127.0.0.1:5010
+./jvmm-c -h 127.0.0.1:5010
 [Jvmm] [Info ] Start to connect jvmm agent server...
 [Jvmm] [Info ] Connect successful! You can use the 'help' command to learn how to use. Enter 'exit' to safely exit the connection.
 > info -t systemDynamic
 {
-   "committedVirtualMemorySize":739393536,
-   "freePhysicalMemorySize":4804407296,
-   "freeSwapSpaceSize":3897561088,
-   "processCpuLoad":2.5464865506569934E-4,
-   "processCpuTime":8531250000,
-   "systemCpuLoad":0.09008395604971231,
-   "totalPhysicalMemorySize":0,
-   "totalSwapSpaceSize":27989778432
+   "committedVirtualMemorySize":3218759680,
+   "freePhysicalMemorySize":556617728,
+   "freeSwapSpaceSize":0,
+   "processCpuLoad":0.0,
+   "processCpuTime":9110000000,
+   "systemCpuLoad":0.0,
+   "loadAverage":0.19,
+   "totalPhysicalMemorySize":8366346240,
+   "totalSwapSpaceSize":0,
+   "bufferCacheSize":1917852,
+   "sharedSize":12160,
+   "disks": [
+      {
+         "name":"/",
+         "total":63278391296,
+         "usable":47176683520
+      }
+   ]
 }
 > info -t thread
 {
@@ -42,9 +55,11 @@ java -jar jvmm-client.jar -h 127.0.0.1:5010
 
 # 详细使用
 
-本项目提供了 `java agent`、`API`、`Server服务` 三种方式可供选择，并且制作了`client命令行工具`与server进行通信，*在未来的版本将支持 web client。*
+本项目提供了 `java agent`、`API`、`Server service` 三种方式可供选择，并且制作了`client命令行工具`与server进行通信，*在未来的版本将支持 web client*。
 
 ## client命令行工具
+
+`jvmm-c | jvmm-c.bat`文件是封装好了的快速运行client的脚本，其中使用的jar包都是同目录下的文件，如果你的应用场景需要使用其他地方的jar包需要通过 `java -jar jvmm-client.jar [gars...]`来自定义指定，具体使用方法如下：
 
 client命令行工具有两个模式：Attach 和 Client，使用它必须先选择一个模式进入，你可以这样查看帮助
 ```shell
@@ -118,8 +133,8 @@ Jvmm提供了 java agent 使用，你可以在被监控程序（这里称之为�
 |-- jvmm-agent.jar      //  agent包，负责将server载入到宿主程序虚拟机
     jvmm-server.jar     //  server包，对外提供接口服务
     jvmm-client.jar     //  client包，命令行工具，负责将agent和server载入宿主程序
-    attach              //  unix环境的attach工具，封装自client命令行
-    attach.bat          //  windows环境的attach工具，封装自client命令行
+    jvmm-c              //  unix环境的client工具，封装自client命令行
+    jvmm-c.bat          //  windows环境的client工具，封装自client命令行
     config.yml          //  server配置文件
 ```
 
@@ -137,20 +152,20 @@ java -jar jvmm-client.jar -m attach -a ./jvmm-agent.jar -s ./jvmm-server.jar -c 
 java -jar jvmm-client.jar -m attach -a ./jvmm-agent.jar -s ./jvmm-server.jar -c name=jvmm_test;port.bind=9000;port.autoIncrease=false -pid 15000
 ```
 
-如果你觉得命令行太长，也可以使用attach可执行程序来达到相同的效果，你只需要修改同级目录下的config.yml以及传入宿主程序运行端口或进程号pid。
+如果你觉得命令行太长，也可以使用`jvmm-c`可执行程序来达到相同的效果，你只需要修改同级目录下的config.yml以及传入宿主程序运行端口或进程号pid。
 
 Linux 或 Mac 中执行
 ```
-./attach -p 8080
+./jvmm-c -p 8080
 
-./attach -pid 15000
+./jvmm-c -pid 15000
 ```
 
 windows中执行
 ```
-attach.bat -p 8080
+jvmm-c.bat -p 8080
 
-attach.bat -pid 15000
+jvmm-c.bat -pid 15000
 ```
 
 ### 启动时attach agent
@@ -211,7 +226,7 @@ workThread=1
 
 ## API调用
 
-如果你想在自己的程序中调用接口，Jvmm也提供了相应的方案。当前最新版本是 `1.2.1`
+如果你想在自己的程序中调用接口，Jvmm也提供了相应的方案。
 
 maven引入
 ```xml
