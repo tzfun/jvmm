@@ -114,6 +114,7 @@ public class ServerBootstrap {
         return LoggerFactory.logger(ServerBootstrap.class);
     }
 
+    @SuppressWarnings("unchecked")
     public void start(Function callback) {
         if (ServerConfig.isInited()) {
             int realBindPort = ServerConfig.getRealBindPort();
@@ -130,6 +131,7 @@ public class ServerBootstrap {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void start(int bindPort, Function callback) {
         if (PlatformUtil.portAvailable(bindPort)) {
             logger().info("Try to start jvmm server service. target port: {}", bindPort);
