@@ -185,7 +185,7 @@ public class ServerServiceImpl extends ServerService {
                     required = true,
                     hasArg = true,
                     argName = "file",
-                    desc = "Output file path (required *), file type indicates format type."
+                    desc = "Output file path (required *), supported file type: csv, html, jfr."
             )
     })
     @JvmmCmdDesc(desc = "Get server sampling report. Only supported on MacOS and Linux.")
