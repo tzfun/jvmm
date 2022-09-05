@@ -51,6 +51,16 @@ Connect Jvmm, then get system and thread information:
 [Jvmm] [Info ] bye bye...
 ```
 
+Generate flame graph on linux and unix:
+```shell
+> profiler -f profiler.html
+Write profiler to file successful, path is /home/jvmm/profiler.html
+```
+
+You will get a flame graph file like this.
+
+![profiler.png](./doc/profiler.png)
+
 # More Usage
 
 This project provides three ways to choose from: `java agent`, `java API`, and `Server service`. I made a `client commandline tool` to connect with the server.*In future versions, it will support web client.*
@@ -99,7 +109,7 @@ profiler: -
 Get server sampling report. Only supported on MacOS and Linux.
  -c <counter>    Sample counter type, optional values: samples, total. Default value: samples.
  -e <event>      Sample event, optional values: cpu, alloc, lock, wall, itimer. Default value: cpu.
- -f <file>       Output file path (required *), file type indicates format type.
+ -f <file>       Output file path (required *), supported file type: csv, html, jfr.
  -i <interval>   The time interval of the unit to collect samples, the unit is nanosecond. Default value: 10000000 ns.
  -t <time>       Sampling interval time, the unit is second. Default value: 10 s.
 
@@ -411,6 +421,22 @@ public class ServerConveyDemo {
         }
     }
 }
+```
+
+# QAS
+
+## 1.`kernel.perf_event_paranoid` permission switch
+If you are prompted `No access to perf events. Try --fdtransfer or --all-user option or 'sysctl kernel.perf_event_paranoid=1'`when generating the flame graph, the reason is that the system kernel disables the detection of system performance by default, you need to enable this option.
+
+```shell
+sudo systcl -w kernel.perf_event_paranoid=1
+```
+
+Or modify the sysctl file
+
+```shell
+sudo sh -c 'echo "kernel.perf_event_paranoid=1" >> /etc/sysctl.conf'
+sudo sysctl -p
 ```
 
 # Thanks

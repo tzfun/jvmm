@@ -53,6 +53,16 @@ tag页下载后解压，执行
 [Jvmm] [Info ] bye bye...
 ```
 
+在 linux、unix 操作系统下生成火焰图
+```shell
+> profiler -f profiler.html
+Write profiler to file successful, path is /home/jvmm/profiler.html
+```
+
+你会得到这样的火焰图
+
+![profiler.png](./doc/profiler.png)
+
 # 详细使用
 
 本项目提供了 `java agent`、`API`、`Server service` 三种方式可供选择，并且制作了`client命令行工具`与server进行通信，*在未来的版本将支持 web client*。
@@ -101,7 +111,7 @@ profiler: -
 Get server sampling report. Only supported on MacOS and Linux.
  -c <counter>    Sample counter type, optional values: samples, total. Default value: samples.
  -e <event>      Sample event, optional values: cpu, alloc, lock, wall, itimer. Default value: cpu.
- -f <file>       Output file path (required *), file type indicates format type.
+ -f <file>       Output file path (required *), supported file type: csv, html, jfr.
  -i <interval>   The time interval of the unit to collect samples, the unit is nanosecond. Default value: 10000000 ns.
  -t <time>       Sampling interval time, the unit is second. Default value: 10 s.
 
@@ -413,6 +423,22 @@ public class ServerConveyDemo {
         }
     }
 }
+```
+
+# QAS
+
+## 1.kernel.perf_event_paranoid权限开关
+如果你在生成火焰图时提示`No access to perf events. Try --fdtransfer or --all-user option or 'sysctl kernel.perf_event_paranoid=1'`，原因是系统内核默认禁止了检测系统性能，你需要开启这个选项。
+
+```shell
+sudo systcl -w kernel.perf_event_paranoid=1
+```
+
+或者修改sysctl文件
+
+```shell
+sudo sh -c 'echo "kernel.perf_event_paranoid=1" >> /etc/sysctl.conf'
+sudo sysctl -p
 ```
 
 # 感谢
