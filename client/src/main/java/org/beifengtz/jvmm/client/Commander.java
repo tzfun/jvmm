@@ -12,11 +12,9 @@ import org.apache.commons.cli.ParseException;
 import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.util.FileUtil;
 import org.beifengtz.jvmm.common.util.PidUtil;
-import org.beifengtz.jvmm.convey.channel.JvmmChannelInitializer;
+import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 import org.beifengtz.jvmm.core.AttachProvider;
-import org.beifengtz.jvmm.core.conf.ConfigParser;
-import org.beifengtz.jvmm.core.conf.Configuration;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -67,7 +65,7 @@ public class Commander {
                 .required(false)
                 .hasArg()
                 .argName("agentJarFile")
-                .desc("The path of the 'jvmm-agent.jar' file. Support relative path, absolute path and network address.")
+                .desc("The path of the 'jvmm-agent.jar' file, support relative path, absolute path and network address. Required in attach mode.")
                 .build();
         options.addOption(a);
         attachOptions.addOption(a);
@@ -76,7 +74,7 @@ public class Commander {
                 .required(false)
                 .hasArg()
                 .argName("serverJarFile")
-                .desc("The path of the 'jvmm-server.jar' file. Support relative path, absolute path and network address.")
+                .desc("The path of the 'jvmm-server.jar' file, support relative path, absolute path and network address. Required in attach mode.")
                 .build();
         options.addOption(s);
         attachOptions.addOption(s);
@@ -85,7 +83,7 @@ public class Commander {
                 .required(false)
                 .hasArg()
                 .argName("config")
-                .desc("Agent startup configuration parameters, if not filled in, the default configuration will be used.")
+                .desc("The path of the config file, support relative path, absolute path and network address. Required in attach mode.")
                 .build();
         options.addOption(c);
         attachOptions.addOption(c);
@@ -178,7 +176,7 @@ public class Commander {
         String username = cmd.getOptionValue("user");
         String password = cmd.getOptionValue("pass");
 
-        EventLoopGroup group = JvmmChannelInitializer.newEventLoopGroup(1);
+        EventLoopGroup group = ChannelInitializers.newEventLoopGroup(1);
 
         logger.info("Start to connect jvmm agent server...");
         JvmmConnector connector = JvmmConnector.newInstance(host, port, group, true, username, password);
@@ -241,6 +239,12 @@ public class Commander {
             return;
         }
 
+        if (!cmd.hasOption("c")) {
+            logger.error("Missing config file, you need to configure the file path via the '-c' parameter.");
+            printHelp();
+            return;
+        }
+
         if (!cmd.hasOption("p") && !cmd.hasOption("pid")) {
             logger.error("Missing required parameter: port or pid");
             printHelp();
@@ -296,19 +300,13 @@ public class Commander {
             return;
         }
 
-        Configuration conf;
-        if (cmd.hasOption("c")) {
-            conf = ConfigParser.parseFromArgs(cmd.getOptionValue("c"));
-        } else {
-            conf = Configuration.defaultInstance();
-        }
-
         //  开启目标服务启动状态监听
-        conf.setListenerPort(startAttachListener());
+        int listenerPort = startAttachListener();
+        String args = String.format("config=%s;listenerPort=%d;", cmd.getOptionValue("c"), listenerPort);
 
         logger.info("Start to attach program {} ...", pid);
         try {
-            AttachProvider.getInstance().attachAgent(pid, agentFile.getAbsolutePath(), serverFile.getAbsolutePath(), conf);
+            AttachProvider.getInstance().attachAgent(pid, agentFile.getAbsolutePath(), serverFile.getAbsolutePath(), args);
             logger.info("Attach successful!");
         } catch (Exception e) {
             logger.warn("An error was encountered while attaching: " + e.getMessage(), e);

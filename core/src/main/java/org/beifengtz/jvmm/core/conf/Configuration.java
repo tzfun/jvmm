@@ -1,9 +1,12 @@
 package org.beifengtz.jvmm.core.conf;
 
 import com.google.gson.Gson;
-import org.beifengtz.jvmm.common.util.StringUtil;
+import org.beifengtz.jvmm.common.util.FileUtil;
+import org.beifengtz.jvmm.core.conf.entity.LogConf;
+import org.beifengtz.jvmm.core.conf.entity.ServerConf;
 
-import java.util.Map;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * <p>
@@ -16,45 +19,27 @@ import java.util.Map;
  */
 public final class Configuration {
 
-    private final String name;
-    private final int port;
-    private final boolean autoIncrease;
-    private final int httpMaxChunkSize;
+    private String name = "jvmm-server";
+    private ServerConf server = new ServerConf();
+    private LogConf log = new LogConf();
 
-    private final boolean securityEnable;
-    private final String securityAccount;
-    private final String securityPassword;
+    private int workThread = 2;
 
-    private final String logLevel;
-    private final boolean logUseJvmm;
-
-    private final int workThread;
-    /**
-     * 是否是从agent加载
-     */
-    private final boolean fromAgent;
-    private int listenerPort;
-
-    private Configuration(Builder builder) {
-        this.name = builder.name;
-        this.port = builder.port;
-        this.autoIncrease = builder.autoIncrease;
-        this.httpMaxChunkSize = builder.httpMaxChunkSize;
-        this.securityEnable = builder.securityEnable;
-        this.securityAccount = builder.securityAccount;
-        this.securityPassword = builder.securityPassword;
-        this.logLevel = builder.logLevel;
-        this.logUseJvmm = builder.logUseJvmm;
-        this.workThread = builder.workThread;
-        this.fromAgent = builder.fromAgent;
-    }
-
-    public static Builder newBuilder() {
-        return new Builder();
-    }
-
-    public static Configuration defaultInstance() {
-        return new Builder().build();
+    public static Configuration parseFromUrl(String url) {
+        try {
+            if (url.startsWith("http://") || url.startsWith("https://")) {
+                boolean loaded = FileUtil.readFileFromNet(url, "tmp", "config.yml");
+                if (loaded) {
+                    return new Gson().fromJson(FileUtil.readYml2Json(new File(url)), Configuration.class);
+                } else {
+                    throw new RuntimeException("Can not load 'config.yml' from " + url);
+                }
+            } else {
+                return new Gson().fromJson(FileUtil.readYml2Json(new File(url)), Configuration.class);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -62,248 +47,39 @@ public final class Configuration {
         return new Gson().toJson(this);
     }
 
-    public String argFormat() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("name=").append(name).append(";");
-        sb.append("port.bind=").append(port).append(";");
-        sb.append("port.autoIncrease=").append(autoIncrease).append(";");
-        sb.append("http.maxChunkSize=").append(httpMaxChunkSize).append(";");
-
-        sb.append("security.account=").append(securityAccount).append(";");
-        sb.append("security.password=").append(securityPassword).append(";");
-        sb.append("security.enable=").append(securityEnable).append(";");
-
-        sb.append("log.level=").append(logLevel).append(";");
-        sb.append("log.useJvmm=").append(logUseJvmm).append(";");
-        sb.append("workThread=").append(workThread).append(";");
-        sb.append("fromAgent=").append(fromAgent).append(";");
-        sb.append("listenerPort=").append(listenerPort).append(";");
-        return sb.toString();
-    }
-
-    public static class Builder {
-        private String name = "jvmm_server";
-        private int port = 5010;
-        private boolean autoIncrease = true;
-        private int httpMaxChunkSize = 52428800;   //  50MB
-        private boolean securityEnable = false;
-        private String securityAccount = "";
-        private String securityPassword = "";
-
-        private String logLevel = "info";
-        private boolean logUseJvmm = false;
-
-        private int workThread = 1;
-        private boolean fromAgent = false;
-
-        public Configuration build() {
-            return new Configuration(this);
-        }
-
-        public int getPort() {
-            return port;
-        }
-
-        public Builder setPort(int port) {
-            this.port = port;
-            return this;
-        }
-
-        public boolean isAutoIncrease() {
-            return autoIncrease;
-        }
-
-        public Builder setAutoIncrease(boolean autoIncrease) {
-            this.autoIncrease = autoIncrease;
-            return this;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public Builder setName(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public int getHttpMaxChunkSize() {
-            return httpMaxChunkSize;
-        }
-
-        public Builder setHttpMaxChunkSize(int httpMaxChunkSize) {
-            this.httpMaxChunkSize = httpMaxChunkSize;
-            return this;
-        }
-
-        public boolean isSecurityEnable() {
-            return securityEnable;
-        }
-
-        public Builder setSecurityEnable(boolean securityEnable) {
-            this.securityEnable = securityEnable;
-            return this;
-        }
-
-        public String getSecurityAccount() {
-            return securityAccount;
-        }
-
-        public Builder setSecurityAccount(String securityAccount) {
-            this.securityAccount = securityAccount;
-            return this;
-        }
-
-        public String getSecurityPassword() {
-            return securityPassword;
-        }
-
-        public Builder setSecurityPassword(String securityPassword) {
-            this.securityPassword = securityPassword;
-            return this;
-        }
-
-        public String getLogLevel() {
-            return logLevel;
-        }
-
-        public Builder setLogLevel(String logLevel) {
-            this.logLevel = logLevel;
-            return this;
-        }
-
-        public int getWorkThread() {
-            return workThread;
-        }
-
-        public Builder setWorkThread(int workThread) {
-            this.workThread = workThread;
-            return this;
-        }
-
-        public boolean isFromAgent() {
-            return fromAgent;
-        }
-
-        public void setFromAgent(boolean fromAgent) {
-            this.fromAgent = fromAgent;
-        }
-
-        public boolean isLogUseJvmm() {
-            return logUseJvmm;
-        }
-
-        public Builder setLogUseJvmm(boolean logUseJvmm) {
-            this.logUseJvmm = logUseJvmm;
-            return this;
-        }
-
-        public void mergeFromProperties(Map<String, String> argMap) {
-            String name = argMap.get("name");
-            if (StringUtil.nonEmpty(name)) {
-                setName(name);
-            }
-
-            String portBind = argMap.get("port.bind");
-            if (StringUtil.nonEmpty(portBind)) {
-                setPort(Integer.parseInt(portBind));
-            }
-            String portAutoIncrease = argMap.get("port.autoIncrease");
-            if (StringUtil.nonEmpty(portAutoIncrease)) {
-                setAutoIncrease(Boolean.parseBoolean(portAutoIncrease));
-            }
-
-            String httpMaxChunkSize = argMap.get("http.maxChunkSize");
-            if (StringUtil.nonEmpty(httpMaxChunkSize)) {
-                setHttpMaxChunkSize(Integer.parseInt(httpMaxChunkSize));
-            }
-
-            String securityEnable = argMap.get("security.enable");
-            if (StringUtil.nonEmpty(securityEnable)) {
-                setSecurityEnable(Boolean.parseBoolean(securityEnable));
-            }
-            String securityAccount = argMap.get("security.account");
-            if (StringUtil.nonEmpty(securityAccount)) {
-                setSecurityAccount(securityAccount);
-            }
-            String securityPassword = argMap.get("security.password");
-            if (StringUtil.nonEmpty(securityPassword)) {
-                setSecurityPassword(securityPassword);
-            }
-
-            String logLevel = argMap.get("log.level");
-            if (StringUtil.nonEmpty(logLevel)) {
-                setLogLevel(logLevel);
-            }
-
-            String logUseJvmm = argMap.get("log.useJvmm");
-            if (StringUtil.nonEmpty(logUseJvmm)) {
-                setLogUseJvmm(Boolean.parseBoolean(logUseJvmm));
-            }
-
-            String workThread = argMap.get("workThread");
-            if (StringUtil.nonEmpty(workThread)) {
-                setWorkThread(Math.max(Integer.parseInt(workThread), 1));
-            }
-
-            String fromAgent = argMap.get("fromAgent");
-            if (StringUtil.nonEmpty(fromAgent)) {
-                setFromAgent(Boolean.parseBoolean(fromAgent));
-            }
-
-        }
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public boolean isAutoIncrease() {
-        return autoIncrease;
-    }
-
     public String getName() {
         return name;
     }
 
-    public int getHttpMaxChunkSize() {
-        return httpMaxChunkSize;
+    public Configuration setName(String name) {
+        this.name = name;
+        return this;
     }
 
-    public boolean isSecurityEnable() {
-        return securityEnable;
+    public ServerConf getServer() {
+        return server;
     }
 
-    public String getSecurityAccount() {
-        return securityAccount;
+    public Configuration setServer(ServerConf server) {
+        this.server = server;
+        return this;
     }
 
-    public String getSecurityPassword() {
-        return securityPassword;
+    public LogConf getLog() {
+        return log;
     }
 
-    public String getLogLevel() {
-        return logLevel;
+    public Configuration setLog(LogConf log) {
+        this.log = log;
+        return this;
     }
 
     public int getWorkThread() {
         return workThread;
     }
 
-    public boolean isFromAgent() {
-        return fromAgent;
-    }
-
-    public boolean isLogUseJvmm() {
-        return logUseJvmm;
-    }
-
-    public int getListenerPort() {
-        return listenerPort;
-    }
-
-    public Configuration setListenerPort(int listenerPort) {
-        this.listenerPort = listenerPort;
+    public Configuration setWorkThread(int workThread) {
+        this.workThread = workThread;
         return this;
     }
 }

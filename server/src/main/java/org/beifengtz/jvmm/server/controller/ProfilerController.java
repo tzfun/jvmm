@@ -5,14 +5,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import io.netty.util.concurrent.EventExecutor;
 import org.beifengtz.jvmm.common.util.FileUtil;
-import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
 import org.beifengtz.jvmm.convey.GlobalStatus;
 import org.beifengtz.jvmm.convey.GlobalType;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerCounter;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerEvent;
-import org.beifengtz.jvmm.server.ServerConfig;
+import org.beifengtz.jvmm.server.ServerContext;
 import org.beifengtz.jvmm.server.annotation.JvmmController;
 import org.beifengtz.jvmm.server.annotation.JvmmMapping;
 import org.slf4j.Logger;
@@ -54,7 +53,7 @@ public class ProfilerController {
             format = "html";
         }
 
-        File to = new File(ServerConfig.getTempPath(), UUID.randomUUID() + "." + format);
+        File to = new File(ServerContext.getTempPath(), UUID.randomUUID() + "." + format);
         if (to.getParentFile() != null && !to.getParentFile().exists()) {
             to.getParentFile().mkdirs();
         }

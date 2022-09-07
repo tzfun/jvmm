@@ -1,19 +1,57 @@
 name: jvmm_server
-port:
-  bind: 5010
-  #  The listening port is automatically incremented when a conflict is encountered.
-  autoIncrease: true
 
-http:
-  maxChunkSize: 52428800
+server:
+  # Config server type, jvmm is the default type. You can enable multiple options like this: http,sentinel,jvmm
+  type: jvmm
 
-security:
-  enable: false
-  account: jvmm_test_acc
-  password: jvmm_test_pwd
+  # Jvmm server config options
+  jvmm:
+    port: 5010
+    adaptivePort: true
+    auth:
+      enable: false
+      username: 123456
+      password: 123456
+    thread: 2
+    maxChunkSize: 52428800
 
+  # Http server config options
+  http:
+    port: 8080
+    adaptivePort: true
+    auth:
+      enable: true
+      username: 123456
+      password: 123456
+    thread: 2
+    maxChunkSize: 52428800
+    ssl:
+      certCa: ./config/cert-ca.pem
+      cert: ./config/cert.pem
+      certKey: ./config/cert.key
+      keyPassword: 123456
+      openssl: true
+
+  # Sentinel config options
+  sentinel:
+    subscribers:
+      - url: http://127.0.0.1:9999/monitor/subscriber
+        auth:
+          enable: true
+          username: 123456
+          password: 123456
+      - url: http://monitor.example.com:9999/monitor/subscriber
+    interval: 15
+    sendStaticInfoTimes: 10
+    options:
+      enableClassloading: false
+      enableCompilation: false
+      enableGarbageCollector: false
+      enableMemory: false
+      enableMemoryManage: false
+      enableMemoryPool: false
+      enableSystemDynamic: false
+      enableThreadDynamic: false
 log:
   level: info
   useJvmm: false
-
-workThread: 1

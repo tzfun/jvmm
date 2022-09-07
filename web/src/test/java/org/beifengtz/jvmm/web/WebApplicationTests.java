@@ -2,7 +2,7 @@ package org.beifengtz.jvmm.web;
 
 import io.netty.channel.EventLoopGroup;
 import org.beifengtz.jvmm.convey.GlobalType;
-import org.beifengtz.jvmm.convey.channel.JvmmChannelInitializer;
+import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,7 @@ class WebApplicationTests {
 
     @Test
     void contextLoads() throws Exception {
-        EventLoopGroup group = JvmmChannelInitializer.newEventLoopGroup(1);
+        EventLoopGroup group = ChannelInitializers.newEventLoopGroup(1);
         JvmmConnector client = JvmmConnector.newInstance("127.0.0.1", 5010, group, true);
 
         CountDownLatch latch = new CountDownLatch(5);

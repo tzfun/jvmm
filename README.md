@@ -385,7 +385,7 @@ package org.beifengtz.jvmm.demo;
 import io.netty.channel.EventLoopGroup;
 import io.netty.util.concurrent.Future;
 import org.beifengtz.jvmm.convey.GlobalType;
-import org.beifengtz.jvmm.convey.channel.JvmmChannelInitializer;
+import org.beifengtz.jvmm.convey.channel.JvmmServerChannelInitializer;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 

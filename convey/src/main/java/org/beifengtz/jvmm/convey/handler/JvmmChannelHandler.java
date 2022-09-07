@@ -14,7 +14,8 @@ import org.beifengtz.jvmm.convey.GlobalType;
 import org.beifengtz.jvmm.convey.auth.JvmmBubble;
 import org.beifengtz.jvmm.convey.auth.JvmmBubbleDecrypt;
 import org.beifengtz.jvmm.convey.auth.JvmmBubbleEncrypt;
-import org.beifengtz.jvmm.convey.channel.JvmmChannelInitializer;
+import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
+import org.beifengtz.jvmm.convey.channel.JvmmServerChannelInitializer;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
@@ -53,10 +54,10 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
         ctx.writeAndFlush(bubbleResp.serialize());
 
         ctx.pipeline()
-                .addAfter(ctx.executor(), JvmmChannelInitializer.STRING_DECODER_HANDLER,
-                        JvmmChannelInitializer.JVMM_BUBBLE_ENCODER, new JvmmBubbleEncrypt(seed, bubble.getKey()))
-                .addAfter(ctx.executor(), JvmmChannelInitializer.STRING_DECODER_HANDLER,
-                        JvmmChannelInitializer.JVMM_BUBBLE_DECODER, new JvmmBubbleDecrypt(seed, bubble.getKey()));
+                .addAfter(ctx.executor(), ChannelInitializers.STRING_DECODER_HANDLER,
+                        JvmmServerChannelInitializer.JVMM_BUBBLE_ENCODER, new JvmmBubbleEncrypt(seed, bubble.getKey()))
+                .addAfter(ctx.executor(), ChannelInitializers.STRING_DECODER_HANDLER,
+                        JvmmServerChannelInitializer.JVMM_BUBBLE_DECODER, new JvmmBubbleDecrypt(seed, bubble.getKey()));
 
         super.channelActive(ctx);
     }
