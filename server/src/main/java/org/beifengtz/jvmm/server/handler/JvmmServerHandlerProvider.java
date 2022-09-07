@@ -13,20 +13,22 @@ import org.beifengtz.jvmm.convey.handler.HandlerProvider;
  *
  * @author beifengtz
  */
-public class ServerHandlerProvider implements HandlerProvider {
+public class JvmmServerHandlerProvider implements HandlerProvider {
+
+    public static final String JVMM_SERVER_HANDLER_NAME = "jvmmServerHandler";
 
     private int idleTime;
     private String name;
     private EventExecutorGroup group;
 
-    private ServerHandlerProvider() {
+    private JvmmServerHandlerProvider() {
     }
 
-    public ServerHandlerProvider(int idleTime, EventExecutorGroup group) {
-        this(idleTime, "jvmmServerHandler", group);
+    public JvmmServerHandlerProvider(int idleTime, EventExecutorGroup group) {
+        this(idleTime, JVMM_SERVER_HANDLER_NAME, group);
     }
 
-    public ServerHandlerProvider(int idleTime, String name, EventExecutorGroup group) {
+    public JvmmServerHandlerProvider(int idleTime, String name, EventExecutorGroup group) {
         this.idleTime = idleTime;
         this.name = name;
         this.group = group;
@@ -34,7 +36,7 @@ public class ServerHandlerProvider implements HandlerProvider {
 
     @Override
     public ChannelHandler getHandler() {
-        return new ServerHandler();
+        return new JvmmServerHandler();
     }
 
     @Override

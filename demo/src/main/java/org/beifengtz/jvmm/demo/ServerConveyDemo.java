@@ -3,7 +3,7 @@ package org.beifengtz.jvmm.demo;
 import io.netty.channel.EventLoopGroup;
 import io.netty.util.concurrent.Future;
 import org.beifengtz.jvmm.convey.GlobalType;
-import org.beifengtz.jvmm.convey.channel.JvmmChannelInitializer;
+import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 
@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ServerConveyDemo {
     public static void main(String[] args) throws InterruptedException {
-        EventLoopGroup executor = JvmmChannelInitializer.newEventLoopGroup(1);
+        EventLoopGroup executor = ChannelInitializers.newEventLoopGroup(1);
         JvmmConnector connector = JvmmConnector.newInstance("127.0.0.1", 5010, executor, false, "jvmm_acc", "jvmm_pwd");
         Future<Boolean> f1 = connector.connect();
         if (f1.await(3, TimeUnit.SECONDS)) {

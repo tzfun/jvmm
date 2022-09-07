@@ -367,7 +367,7 @@ public class AgentBootStrap {
                 Object boot = bootClazz.getMethod("getInstance", Instrumentation.class, String.class)
                         .invoke(null, inst, agentArgs);
                 bootInstance = boot;
-                Function callback = o -> {
+                Function<Object,Object> callback = o -> {
                     if (o instanceof Integer) {
                         notifyListener(findListenerPortArg(agentArgs), (int) o, "ok");
                     } else {

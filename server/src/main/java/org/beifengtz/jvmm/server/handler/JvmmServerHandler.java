@@ -19,8 +19,8 @@ import org.beifengtz.jvmm.convey.GlobalType;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.handler.JvmmChannelHandler;
-import org.beifengtz.jvmm.core.conf.Configuration;
-import org.beifengtz.jvmm.server.ServerConfig;
+import org.beifengtz.jvmm.core.conf.entity.JvmmServerConf;
+import org.beifengtz.jvmm.server.ServerContext;
 import org.beifengtz.jvmm.server.annotation.JvmmController;
 import org.beifengtz.jvmm.server.annotation.JvmmMapping;
 import org.slf4j.Logger;
@@ -44,8 +44,8 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author beifengtz
  */
-public class ServerHandler extends JvmmChannelHandler {
-    private static final Logger logger = LoggerFactory.logger(ServerHandler.class);
+public class JvmmServerHandler extends JvmmChannelHandler {
+    private static final Logger logger = LoggerFactory.logger(JvmmServerHandler.class);
 
     private static final Set<Class<?>> controllers;
     private static final Map<String, Method> mappings;
@@ -76,18 +76,18 @@ public class ServerHandler extends JvmmChannelHandler {
         }
     }
 
-    private boolean authed = !ServerConfig.getConfiguration().isSecurityEnable();
+    private boolean authed = !ServerContext.getConfiguration().getServer().getJvmm().getAuth().isEnable();
 
     @Override
     public void handleRequest(ChannelHandlerContext ctx, JvmmRequest reqMsg) {
         try {
-            Configuration conf = ServerConfig.getConfiguration();
+            JvmmServerConf conf = ServerContext.getConfiguration().getServer().getJvmm();
 
             if (Objects.equals(reqMsg.getType(), GlobalType.JVMM_TYPE_AUTHENTICATION.name())) {
                 auth(ctx, reqMsg, conf);
                 return;
             } else {
-                if (conf.isSecurityEnable() && !authed) {
+                if (conf.getAuth().isEnable() && !authed) {
                     throw new AuthenticationFailedException();
                 }
             }
@@ -126,7 +126,7 @@ public class ServerHandler extends JvmmChannelHandler {
                     parameter[i] = ctx.executor();
                 } else if (ChannelHandlerContext.class.isAssignableFrom(parameterType)) {
                     parameter[i] = ctx;
-                } else if (ServerHandler.class.isAssignableFrom(parameterType)) {
+                } else if (JvmmServerHandler.class.isAssignableFrom(parameterType)) {
                     parameter[i] = this;
                 } else {
                     parameter[i] = null;
@@ -204,15 +204,15 @@ public class ServerHandler extends JvmmChannelHandler {
         return logger;
     }
 
-    private void auth(ChannelHandlerContext ctx, JvmmRequest req, Configuration conf) throws Exception {
-        if (conf.isSecurityEnable()) {
+    private void auth(ChannelHandlerContext ctx, JvmmRequest req, JvmmServerConf conf) throws Exception {
+        if (conf.getAuth().isEnable()) {
             try {
                 JsonObject data = req.getData().getAsJsonObject();
 
                 String account = data.get("account").getAsString();
                 String password = data.get("password").getAsString();
-                if (Objects.equals(SignatureUtil.MD5(conf.getSecurityAccount()), account)
-                        && Objects.equals(SignatureUtil.MD5(conf.getSecurityPassword()), password)) {
+                if (Objects.equals(SignatureUtil.MD5(conf.getAuth().getUsername()), account)
+                        && Objects.equals(SignatureUtil.MD5(conf.getAuth().getPassword()), password)) {
                     logger().debug("Auth successful. channelId: {}", ctx.channel().hashCode());
                 } else {
                     throw new AuthenticationFailedException();
