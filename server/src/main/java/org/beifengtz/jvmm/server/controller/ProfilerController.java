@@ -3,17 +3,22 @@ package org.beifengtz.jvmm.server.controller;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import io.netty.util.concurrent.EventExecutor;
 import org.beifengtz.jvmm.common.util.FileUtil;
-import org.beifengtz.jvmm.convey.GlobalStatus;
-import org.beifengtz.jvmm.convey.GlobalType;
+import org.beifengtz.jvmm.convey.annotation.HttpController;
+import org.beifengtz.jvmm.convey.annotation.HttpRequest;
+import org.beifengtz.jvmm.convey.annotation.JvmmController;
+import org.beifengtz.jvmm.convey.annotation.JvmmMapping;
+import org.beifengtz.jvmm.convey.annotation.RequestBody;
+import org.beifengtz.jvmm.convey.annotation.RequestParam;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
+import org.beifengtz.jvmm.convey.enums.GlobalStatus;
+import org.beifengtz.jvmm.convey.enums.GlobalType;
+import org.beifengtz.jvmm.convey.enums.Method;
 import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerCounter;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerEvent;
 import org.beifengtz.jvmm.server.ServerContext;
-import org.beifengtz.jvmm.server.annotation.JvmmController;
-import org.beifengtz.jvmm.server.annotation.JvmmMapping;
+import org.beifengtz.jvmm.server.entity.dto.ProfilerSampleDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,57 +39,37 @@ import java.util.concurrent.TimeUnit;
  * @author beifengtz
  */
 @JvmmController
+@HttpController
 public class ProfilerController {
 
     private static final Logger log = LoggerFactory.getLogger(ProfilerController.class);
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_PROFILER_EXECUTE)
-    public String execute(JsonElement data) throws IOException {
-        return JvmmFactory.getProfiler().execute(data.getAsString());
+    @HttpRequest("/profiler/execute")
+    public String execute(@RequestParam String command) throws IOException {
+        return JvmmFactory.getProfiler().execute(command);
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_PROFILER_SAMPLE)
-    public JvmmResponse sample(String type, EventExecutor executor, JsonObject data) throws Exception {
+    @HttpRequest(value = "/profiler/execute", method = Method.POST)
+    public JvmmResponse sample(@RequestBody ProfilerSampleDTO data) throws Exception {
 
-        String format;
-        if (data.has("format")) {
-            format = data.get("format").getAsString();
-        } else {
-            format = "html";
-        }
-
-        File to = new File(ServerContext.getTempPath(), UUID.randomUUID() + "." + format);
+        File to = new File(ServerContext.getTempPath(), UUID.randomUUID() + "." + data.getFormat());
         if (to.getParentFile() != null && !to.getParentFile().exists()) {
             to.getParentFile().mkdirs();
         }
 
-        ProfilerEvent event;
-        if (data.has("event")) {
-            event = ProfilerEvent.valueOf(data.get("event").getAsString().toLowerCase(Locale.ROOT));
-        } else {
-            event = ProfilerEvent.cpu;
-        }
-
-        ProfilerCounter counter;
-        if (data.has("counter")) {
-            counter = ProfilerCounter.valueOf(data.get("counter").getAsString().toLowerCase(Locale.ROOT));
-        } else {
-            counter = ProfilerCounter.samples;
-        }
-
-        //  单位秒
-        int time = 10;
-        if (data.has("time")) {
-            time = data.get("time").getAsInt();
-        }
+        ProfilerEvent event = data.getEvent();
+        ProfilerCounter counter = data.getCounter();
+        int time = data.getTime();
 
         Future<String> future;
-        if (data.has("interval")) {
-            future = JvmmFactory.getProfiler().sample(to, event, counter, data.get("interval").getAsLong(), time, TimeUnit.SECONDS);
+        if (data.getInterval() != null) {
+            future = JvmmFactory.getProfiler().sample(to, event, counter, data.getInterval(), time, TimeUnit.SECONDS);
         } else {
             future = JvmmFactory.getProfiler().sample(to, event, counter, time, TimeUnit.SECONDS);
         }
-        JvmmResponse response = JvmmResponse.create().setType(type);
+        JvmmResponse response = JvmmResponse.create().setType(GlobalType.JVMM_TYPE_PROFILER_SAMPLE.name());
         String result = future.get();
         if (to.exists()) {
             String hexStr = FileUtil.readToHexStr(to);

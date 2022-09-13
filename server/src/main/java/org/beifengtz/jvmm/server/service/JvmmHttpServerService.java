@@ -1,6 +1,13 @@
 package org.beifengtz.jvmm.server.service;
 
-import io.netty.util.concurrent.Promise;
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.EventLoopGroup;
+import org.beifengtz.jvmm.common.factory.LoggerFactory;
+import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
+import org.beifengtz.jvmm.convey.channel.JvmmServerChannelInitializer;
+import org.beifengtz.jvmm.server.ServerContext;
+import org.beifengtz.jvmm.server.handler.HttpServerHandlerProvider;
+import org.slf4j.Logger;
 
 /**
  * <p>
@@ -11,14 +18,30 @@ import io.netty.util.concurrent.Promise;
  *
  * @author beifengtz
  */
-public class JvmmHttpServerService implements JvmmService {
-    @Override
-    public void start(Promise<Integer> promise) {
+public class JvmmHttpServerService extends AbstractListenerServerService {
 
+    @Override
+    protected Logger logger() {
+        return LoggerFactory.logger(JvmmHttpServerService.class);
     }
 
     @Override
-    public void stop() {
+    protected void startUp() {
+        EventLoopGroup workerGroup = getWorkableGlobalWorkerGroup();
+        new ServerBootstrap()
+                .group(ServerContext.getBoosGroup(), workerGroup)
+                .channel(ChannelInitializers.serverChannelClass(ServerContext.getBoosGroup()))
+                .childHandler(new JvmmServerChannelInitializer(new HttpServerHandlerProvider(10, workerGroup)))
+                .bind(runningPort)
+                .syncUninterruptibly()
+                .channel()
+                .closeFuture()
+                .syncUninterruptibly();
+        logger().info("Jvmm Http server service started on {}, node name: {}", runningPort, ServerContext.getConfiguration().getName());
+    }
+
+    @Override
+    protected void shutdown() {
 
     }
 }

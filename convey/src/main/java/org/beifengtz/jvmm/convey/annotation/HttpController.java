@@ -1,4 +1,4 @@
-package org.beifengtz.jvmm.server.annotation;
+package org.beifengtz.jvmm.convey.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -10,14 +10,12 @@ import java.lang.annotation.Target;
  * Description: TODO
  * </p>
  * <p>
- * Created in 5:07 下午 2021/5/30
+ * Created in 11:27 2022/9/13
  *
  * @author beifengtz
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface JvmmController {
-
+public @interface HttpController {
     String name() default "";
-
 }
