@@ -1,6 +1,6 @@
-package org.beifengtz.jvmm.server.annotation;
+package org.beifengtz.jvmm.convey.annotation;
 
-import org.beifengtz.jvmm.convey.GlobalType;
+import org.beifengtz.jvmm.convey.enums.Method;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -12,15 +12,15 @@ import java.lang.annotation.Target;
  * Description: TODO
  * </p>
  * <p>
- * Created in 5:08 下午 2021/5/30
+ * Created in 11:28 2022/9/13
  *
  * @author beifengtz
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface JvmmMapping {
+public @interface HttpRequest {
 
-    String type() default "";
+    String value();
 
-    GlobalType typeEnum() default GlobalType.JVMM_TYPE_HANDLE_MSG;
+    Method method() default Method.GET;
 }

@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import org.beifengtz.jvmm.common.JsonParsable;
 import org.beifengtz.jvmm.common.exception.MessageSerializeException;
-import org.beifengtz.jvmm.convey.GlobalStatus;
-import org.beifengtz.jvmm.convey.GlobalType;
+import org.beifengtz.jvmm.convey.enums.GlobalStatus;
+import org.beifengtz.jvmm.convey.enums.GlobalType;
 
 /**
  * <p>

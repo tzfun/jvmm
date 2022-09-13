@@ -1,4 +1,4 @@
-package org.beifengtz.jvmm.convey;
+package org.beifengtz.jvmm.convey.enums;
 
 /**
  * <p>

@@ -1,16 +1,27 @@
 package org.beifengtz.jvmm.convey.handler;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSyntaxException;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.TooLongFrameException;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
+import io.netty.util.concurrent.EventExecutor;
+import org.beifengtz.jvmm.common.JsonParsable;
 import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
+import org.beifengtz.jvmm.common.exception.InvalidJvmmMappingException;
 import org.beifengtz.jvmm.common.exception.InvalidMsgException;
-import org.beifengtz.jvmm.convey.GlobalStatus;
-import org.beifengtz.jvmm.convey.GlobalType;
+import org.beifengtz.jvmm.common.util.ReflexUtil;
+import org.beifengtz.jvmm.convey.enums.GlobalStatus;
+import org.beifengtz.jvmm.convey.enums.GlobalType;
+import org.beifengtz.jvmm.convey.annotation.JvmmController;
+import org.beifengtz.jvmm.convey.annotation.JvmmMapping;
 import org.beifengtz.jvmm.convey.auth.JvmmBubble;
 import org.beifengtz.jvmm.convey.auth.JvmmBubbleDecrypt;
 import org.beifengtz.jvmm.convey.auth.JvmmBubbleEncrypt;
@@ -21,7 +32,15 @@ import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 import org.slf4j.Logger;
 
+import java.io.Closeable;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <p>
@@ -35,6 +54,37 @@ import java.io.IOException;
 public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<String> {
 
     protected final JvmmBubble bubble = new JvmmBubble();
+    private final Map<Class<?>, Object> controllerInstance = new ConcurrentHashMap<>(controllers.size());
+    private static final Set<Class<?>> controllers;
+    private static final Map<String, Method> mappings;
+
+    static {
+        controllers = ReflexUtil.scanAnnotation(getScanPack(), JvmmController.class);
+        mappings = new HashMap<>(controllers.size() * 5);
+
+        for (Class<?> controller : controllers) {
+            Set<Method> methods = ReflexUtil.scanMethodAnnotation(controller, JvmmMapping.class);
+            for (Method method : methods) {
+                JvmmMapping mapping = method.getAnnotation(JvmmMapping.class);
+                String type = mapping.type();
+                if ("".equals(type)) {
+                    type = mapping.typeEnum().name();
+                }
+                if (mappings.containsKey(type)) {
+                    throw new InvalidJvmmMappingException("There are duplicate jvmm mapping: " + type);
+                }
+
+                if (!Modifier.isPublic(method.getModifiers())) {
+                    throw new InvalidJvmmMappingException("The method annotated with '@JvmmMapping' in the controller must be public: " + method.getName());
+                }
+                mappings.put(type, method);
+            }
+        }
+    }
+
+    public static String getScanPack() {
+        return "org.beifengtz.jvmm";
+    }
 
     public JvmmChannelHandler() {
         super(false);
@@ -64,7 +114,12 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        cleanup(ctx);
+        for (Object controller : controllerInstance.values()) {
+            if (controller.getClass().isAssignableFrom(Closeable.class)) {
+                ((Closeable) controller).close();
+            }
+        }
+        controllerInstance.clear();
         super.channelInactive(ctx);
     }
 
@@ -127,16 +182,116 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent event = (IdleStateEvent) evt;
             if (event.state() == IdleState.READER_IDLE) {
-                handleIdle(ctx);
+                ctx.close();
+                logger().debug("Channel close by idle");
             }
         }
     }
 
     public abstract Logger logger();
 
-    public abstract void handleRequest(ChannelHandlerContext ctx, JvmmRequest reqMsg);
+    public void handleRequest(ChannelHandlerContext ctx, JvmmRequest reqMsg) {
+        try {
+            if (!handleBefore(ctx, reqMsg)) {
+                return;
+            }
 
-    public abstract void handleIdle(ChannelHandlerContext ctx);
+            Method method = mappings.get(reqMsg.getType());
 
-    public abstract void cleanup(ChannelHandlerContext ctx) throws Exception;
+            if (method == null) {
+                logger().warn("Unsupported message type: " + reqMsg.getType());
+                return;
+            }
+
+            Class<?> controller = method.getDeclaringClass();
+            Object instance = controllerInstance.computeIfAbsent(controller, o -> {
+                try {
+                    return controller.newInstance();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
+            Class<?>[] parameterTypes = method.getParameterTypes();
+            Object[] parameter = new Object[parameterTypes.length];
+            for (int i = 0; i < parameterTypes.length; i++) {
+                Class<?> parameterType = parameterTypes[i];
+                if (Channel.class.isAssignableFrom(parameterType)) {
+                    parameter[i] = ctx.channel();
+                } else if (JvmmRequest.class.isAssignableFrom(parameterType)) {
+                    parameter[i] = reqMsg;
+                } else if (JsonObject.class.isAssignableFrom(parameterType)) {
+                    parameter[i] = reqMsg.getData() == null ? null : reqMsg.getData().getAsJsonObject();
+                } else if (JsonArray.class.isAssignableFrom(parameterType)) {
+                    parameter[i] = reqMsg.getData() == null ? null : reqMsg.getData().getAsJsonArray();
+                } else if (JsonElement.class.isAssignableFrom(parameterType)) {
+                    parameter[i] = reqMsg.getData();
+                } else if (String.class.isAssignableFrom(parameterType)) {
+                    parameter[i] = reqMsg.getData().getAsString();
+                } else if (EventExecutor.class.isAssignableFrom(parameterType)) {
+                    parameter[i] = ctx.executor();
+                } else if (ChannelHandlerContext.class.isAssignableFrom(parameterType)) {
+                    parameter[i] = ctx;
+                } else if (getClass().isAssignableFrom(parameterType)) {
+                    parameter[i] = this;
+                } else {
+                    parameter[i] = new Gson().fromJson(reqMsg.getData(), parameterType);
+                }
+            }
+
+            Object result = method.invoke(instance, parameter);
+            if (result instanceof JvmmResponse) {
+                ctx.channel().writeAndFlush(((JvmmResponse) result).serialize());
+            } else if (result != null) {
+                JvmmResponse response = JvmmResponse.create().setStatus(GlobalStatus.JVMM_STATUS_OK).setType(reqMsg.getType());
+                JsonElement data = null;
+                if (result instanceof Boolean) {
+                    data = new JsonPrimitive((Boolean) result);
+                } else if (result instanceof Number) {
+                    data = new JsonPrimitive((Number) result);
+                } else if (result instanceof String) {
+                    data = new JsonPrimitive((String) result);
+                } else if (result instanceof Character) {
+                    data = new JsonPrimitive((Character) result);
+                } else if (result instanceof JsonElement) {
+                    data = (JsonElement) result;
+                } else if (result instanceof JsonParsable) {
+                    data = ((JsonParsable) result).toJson();
+                } else {
+                    data = new Gson().toJsonTree(result);
+                }
+                response.setData(data);
+                ctx.channel().writeAndFlush(response.serialize());
+            }
+        } catch (Throwable e) {
+            if (e instanceof AuthenticationFailedException) {
+                throw (AuthenticationFailedException) e;
+            } else if (e instanceof InvocationTargetException) {
+                handleException(ctx, reqMsg, ((InvocationTargetException) e).getTargetException());
+            } else {
+                handleException(ctx, reqMsg, e);
+            }
+        }
+    }
+
+    protected void handleException(ChannelHandlerContext ctx, JvmmRequest req, Throwable e) {
+        JvmmResponse response = JvmmResponse.create().setType(req.getType());
+        if (e instanceof IllegalArgumentException) {
+            logger().error(e.getMessage(), e);
+            response.setStatus(GlobalStatus.JVMM_STATUS_ILLEGAL_ARGUMENTS);
+        } else {
+            logger().error(e.getMessage(), e);
+            response.setStatus(GlobalStatus.JVMM_STATUS_SERVER_ERROR);
+        }
+        if (e.getMessage() != null) {
+            response.setMessage(e.getMessage());
+        }
+        ctx.writeAndFlush(response.serialize());
+    }
+
+    /**
+     *
+     * @return true-继续处理消息 false-消息已被拦截，无需继续处理
+     */
+    protected abstract boolean handleBefore(ChannelHandlerContext ctx, JvmmRequest reqMsg) throws Exception;
 }
