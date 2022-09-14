@@ -20,9 +20,11 @@ import org.slf4j.Logger;
  */
 public class JvmmHttpServerService extends AbstractListenerServerService {
 
+    private static final Logger logger = LoggerFactory.logger(JvmmHttpServerService.class);
+
     @Override
     protected Logger logger() {
-        return LoggerFactory.logger(JvmmHttpServerService.class);
+        return logger;
     }
 
     @Override

@@ -1,15 +1,15 @@
-package org.beifengtz.jvmm.server.entity.dto;
+package org.beifengtz.jvmm.core.conf.entity;
 
 /**
  * <p>
- * Description: TODO
+ * Description: 对应 config.yml 文件的配置
  * </p>
  * <p>
  * Created in 18:00 2022/9/13
  *
  * @author beifengtz
  */
-public class CollectOptionsDTO {
+public class CollectOptions {
     private boolean classloading;
     private boolean compilation;
     private boolean memory;
@@ -19,6 +19,7 @@ public class CollectOptionsDTO {
     private boolean system;
     private boolean systemDynamic;
     private boolean threadDynamic;
+    private boolean process;
 
     public boolean isClassloading() {
         return classloading;
@@ -54,5 +55,9 @@ public class CollectOptionsDTO {
 
     public boolean isThreadDynamic() {
         return threadDynamic;
+    }
+
+    public boolean isProcess() {
+        return process;
     }
 }

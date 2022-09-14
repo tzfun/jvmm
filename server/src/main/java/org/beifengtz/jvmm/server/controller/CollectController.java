@@ -8,8 +8,8 @@ import org.beifengtz.jvmm.convey.annotation.JvmmController;
 import org.beifengtz.jvmm.convey.annotation.JvmmMapping;
 import org.beifengtz.jvmm.convey.annotation.RequestBody;
 import org.beifengtz.jvmm.convey.enums.GlobalType;
-import org.beifengtz.jvmm.core.JvmmCollector;
 import org.beifengtz.jvmm.core.JvmmFactory;
+import org.beifengtz.jvmm.core.conf.entity.CollectOptions;
 import org.beifengtz.jvmm.core.entity.mx.ClassLoadingInfo;
 import org.beifengtz.jvmm.core.entity.mx.CompilationInfo;
 import org.beifengtz.jvmm.core.entity.mx.GarbageCollectorInfo;
@@ -20,8 +20,8 @@ import org.beifengtz.jvmm.core.entity.mx.ProcessInfo;
 import org.beifengtz.jvmm.core.entity.mx.SystemDynamicInfo;
 import org.beifengtz.jvmm.core.entity.mx.SystemStaticInfo;
 import org.beifengtz.jvmm.core.entity.mx.ThreadDynamicInfo;
-import org.beifengtz.jvmm.server.entity.dto.CollectOptionsDTO;
 import org.beifengtz.jvmm.server.entity.dto.JvmmDataDTO;
+import org.beifengtz.jvmm.server.service.JvmmService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -136,49 +136,7 @@ public class CollectController {
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_BATCH)
     @HttpRequest("/collect/by_options")
-    public JvmmDataDTO collectBatch(@RequestBody CollectOptionsDTO options) {
-        JvmmDataDTO res = new JvmmDataDTO();
-        JvmmCollector collector = JvmmFactory.getCollector();
-
-        if (options.isClassloading()) {
-            res.setClassloading(collector.getClassLoading());
-        }
-
-        if (options.isCompilation()) {
-            res.setCompilation(collector.getCompilation());
-        }
-
-        if (options.isGc()) {
-            res.setGarbageCollector(collector.getGarbageCollector());
-        }
-
-        if (options.isMemory()) {
-            res.setMemory(collector.getMemory());
-        }
-
-        if (options.isMemoryManager()) {
-            res.setMemoryManager(collector.getMemoryManager());
-        }
-
-        if (options.isMemoryPool()) {
-            res.setMemoryPool(collector.getMemoryPool());
-        }
-
-        if (options.isSystemDynamic()) {
-            res.setSystemDynamic(collector.getSystemDynamic());
-        }
-
-        if (options.isThreadDynamic()) {
-            res.setThread(collector.getThreadDynamic());
-        }
-
-        if (options.isSystem()) {
-            res.setSystem(collector.getSystemStatic());
-        }
-
-        if (options.isSystemDynamic()) {
-            res.setSystemDynamic(collector.getSystemDynamic());
-        }
-        return res;
+    public JvmmDataDTO collectBatch(@RequestBody CollectOptions options) {
+        return JvmmService.collectByOptions(options);
     }
 }

@@ -19,6 +19,7 @@ import io.netty.util.concurrent.EventExecutor;
 import org.beifengtz.jvmm.common.JsonParsable;
 import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
 import org.beifengtz.jvmm.common.exception.InvalidJvmmMappingException;
+import org.beifengtz.jvmm.common.util.CommonUtil;
 import org.beifengtz.jvmm.common.util.ReflexUtil;
 import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.common.util.meta.PairKey;
@@ -113,9 +114,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
     }
 
     protected void response401(ChannelHandlerContext ctx) {
-        response(ctx, HttpResponseStatus.UNAUTHORIZED, null, new HashMap<String, Object>() {{
-            put("WWW-Authenticate", "Basic realm=\"Restricted Access\"");
-        }});
+        response(ctx, HttpResponseStatus.UNAUTHORIZED, null, CommonUtil.hasMapOf("WWW-Authenticate", "Basic realm=\"Restricted Access\""));
     }
 
     protected void response400(ChannelHandlerContext ctx, String msg) {
@@ -242,7 +241,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
             }
             String[] kv = str.split("=");
             if (kv.length > 1) {
-                params.put(kv[0], URLDecoder.decode(kv[1],"UTF-8"));
+                params.put(kv[0], URLDecoder.decode(kv[1], "UTF-8"));
             } else {
                 params.put(kv[0], "");
             }
