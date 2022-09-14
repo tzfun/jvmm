@@ -1,4 +1,4 @@
-package org.beifengtz.jvmm.core.conf.entity;
+package org.beifengtz.jvmm.server.entity.conf;
 
 /**
  * <p>
@@ -11,4 +11,8 @@ package org.beifengtz.jvmm.core.conf.entity;
  */
 public class HttpServerConf extends JvmmServerConf {
     private SslConf ssl;
+
+    public SslConf getSsl() {
+        return ssl;
+    }
 }

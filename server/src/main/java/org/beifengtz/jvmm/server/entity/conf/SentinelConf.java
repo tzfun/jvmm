@@ -1,4 +1,4 @@
-package org.beifengtz.jvmm.core.conf.entity;
+package org.beifengtz.jvmm.server.entity.conf;
 
 import java.util.List;
 
@@ -51,5 +51,9 @@ public class SentinelConf {
     public SentinelConf setOptions(CollectOptions options) {
         this.options = options;
         return this;
+    }
+
+    public boolean isValid() {
+        return subscribers != null && subscribers.size() > 0;
     }
 }

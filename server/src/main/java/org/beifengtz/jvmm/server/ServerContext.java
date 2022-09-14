@@ -3,7 +3,7 @@ package org.beifengtz.jvmm.server;
 import io.netty.channel.EventLoopGroup;
 import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
-import org.beifengtz.jvmm.core.conf.Configuration;
+import org.beifengtz.jvmm.server.entity.conf.Configuration;
 import org.beifengtz.jvmm.server.enums.ServerType;
 import org.beifengtz.jvmm.server.service.JvmmService;
 import org.slf4j.Logger;

@@ -7,9 +7,9 @@ import org.beifengtz.jvmm.common.util.CommonUtil;
 import org.beifengtz.jvmm.common.util.HttpUtil;
 import org.beifengtz.jvmm.core.JvmmCollector;
 import org.beifengtz.jvmm.core.JvmmFactory;
-import org.beifengtz.jvmm.core.conf.entity.AuthOptionConf;
-import org.beifengtz.jvmm.core.conf.entity.SentinelConf;
-import org.beifengtz.jvmm.core.conf.entity.SubscriberConf;
+import org.beifengtz.jvmm.server.entity.conf.AuthOptionConf;
+import org.beifengtz.jvmm.server.entity.conf.SentinelConf;
+import org.beifengtz.jvmm.server.entity.conf.SubscriberConf;
 import org.beifengtz.jvmm.server.ServerContext;
 import org.beifengtz.jvmm.server.entity.dto.JvmmDataDTO;
 import org.slf4j.Logger;
@@ -59,40 +59,45 @@ public class JvmmSentinelService implements JvmmService {
 
     @Override
     public void start(Promise<Integer> promise) {
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                SentinelConf conf = ServerContext.getConfiguration().getServer().getSentinel();
-                try {
-                    int count = counter.incrementAndGet();
-                    JvmmDataDTO data = JvmmService.collectByOptions(conf.getOptions());
-                    data.setNode(ServerContext.getConfiguration().getName());
+        if(ServerContext.getConfiguration().getServer().getSentinel().isValid()) {
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    SentinelConf conf = ServerContext.getConfiguration().getServer().getSentinel();
+                    try {
+                        int count = counter.incrementAndGet();
+                        JvmmDataDTO data = JvmmService.collectByOptions(conf.getOptions());
+                        data.setNode(ServerContext.getConfiguration().getName());
 
-                    if (count <= conf.getSendStaticInfoTimes()) {
-                        JvmmCollector collector = JvmmFactory.getCollector();
-                        if (data.getProcess() == null) {
-                            data.setProcess(collector.getProcess());
+                        if (count <= conf.getSendStaticInfoTimes()) {
+                            JvmmCollector collector = JvmmFactory.getCollector();
+                            if (data.getProcess() == null) {
+                                data.setProcess(collector.getProcess());
+                            }
+                            if (data.getSystem() == null) {
+                                data.setSystem(collector.getSystemStatic());
+                            }
                         }
-                        if (data.getSystem() == null) {
-                            data.setSystem(collector.getSystemStatic());
+                        String body = data.toJsonStr();
+                        for (SubscriberConf subscriber : conf.getSubscribers()) {
+                            publish(subscriber, body);
                         }
-                    }
-                    String body = data.toJsonStr();
-                    for (SubscriberConf subscriber : conf.getSubscribers()) {
-                        publish(subscriber, body);
-                    }
-                } catch (Exception e) {
-                    logger.error("Jvmm sentinel error: " + e.getMessage(), e);
-                } finally {
-                    if (flag.get()) {
-                        executor.schedule(this, conf.getInterval(), TimeUnit.SECONDS);
-                    } else {
-                        logger.info("Jvmm sentinel shutdown by trigger");
+                    } catch (Exception e) {
+                        logger.error("Jvmm sentinel error: " + e.getMessage(), e);
+                    } finally {
+                        if (flag.get()) {
+                            executor.schedule(this, conf.getInterval(), TimeUnit.SECONDS);
+                        } else {
+                            logger.info("Jvmm sentinel shutdown by trigger");
+                        }
                     }
                 }
-            }
-        });
-        promise.trySuccess(0);
+            });
+            promise.trySuccess(0);
+        } else {
+            promise.tryFailure(new RuntimeException("Jvmm sentinel is invalid, no subscribers."));
+        }
+
     }
 
     @Override

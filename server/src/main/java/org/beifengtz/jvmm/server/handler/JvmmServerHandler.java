@@ -10,7 +10,7 @@ import org.beifengtz.jvmm.convey.enums.GlobalType;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.handler.JvmmChannelHandler;
-import org.beifengtz.jvmm.core.conf.entity.JvmmServerConf;
+import org.beifengtz.jvmm.server.entity.conf.JvmmServerConf;
 import org.beifengtz.jvmm.server.ServerContext;
 import org.slf4j.Logger;
 

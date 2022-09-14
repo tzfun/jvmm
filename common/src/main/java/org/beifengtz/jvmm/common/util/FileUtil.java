@@ -178,13 +178,12 @@ public class FileUtil {
                 }
 
                 String[] kv = line.trim().split(":");
+
                 //  堆栈回溯
-                if (stack.size() > lvl) {
-                    while (stack.size() != lvl) {
-                        nameStack.removeLast();
-                        stack.removeLast();
-                        tmp = stack.getLast();
-                    }
+                while (type == 2 ? stack.size() >= lvl : stack.size() > lvl) {
+                    nameStack.removeLast();
+                    stack.removeLast();
+                    tmp = stack.isEmpty() ? json : stack.getLast();
                 }
 
                 //  对类型进行矫正
@@ -193,6 +192,7 @@ public class FileUtil {
                     Object name = nameStack.getLast();
                     if (name instanceof String) {
                         tmp = new JsonArray();
+                        stack.removeLast();
                         stack.getLast().getAsJsonObject().add((String) name, tmp);
                     } else {
                         //  数字后继元素需要再回退一次，tmp为当前数组
@@ -211,7 +211,7 @@ public class FileUtil {
                     tmp = sub;
                 } else {
                     JsonPrimitive value;
-                    String valueStr = kv[1].trim();
+                    String valueStr = line.substring(line.indexOf(":")+1).trim();
                     if (valueStr.matches("\\d+")) {
                         value = new JsonPrimitive(Integer.parseInt(valueStr));
                     } else if (valueStr.matches("(true|false)")) {

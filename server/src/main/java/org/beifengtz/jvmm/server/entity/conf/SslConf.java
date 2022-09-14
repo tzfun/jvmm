@@ -1,4 +1,4 @@
-package org.beifengtz.jvmm.core.conf.entity;
+package org.beifengtz.jvmm.server.entity.conf;
 
 /**
  * <p>
@@ -10,11 +10,21 @@ package org.beifengtz.jvmm.core.conf.entity;
  * @author beifengtz
  */
 public class SslConf {
+    private boolean enable;
     private String certCa;
     private String cert;
     private String certKey;
     private String keyPassword;
     private boolean openssl = true;
+
+    public boolean isEnable() {
+        return enable;
+    }
+
+    public SslConf setEnable(boolean enable) {
+        this.enable = enable;
+        return this;
+    }
 
     public String getCertCa() {
         return certCa;

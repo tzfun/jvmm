@@ -353,7 +353,7 @@ implementation "io.github.tzfun.jvmm:jvmm-server:${jvmmVersion}"
 启动 server 样例代码：
 
 ```java
-import org.beifengtz.jvmm.core.conf.Configuration;
+import org.beifengtz.jvmm.server.entity.conf.Configuration;
 import org.beifengtz.jvmm.server.ServerBootstrap;
 
 public class ServerBootDemo {

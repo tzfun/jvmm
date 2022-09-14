@@ -5,8 +5,8 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.convey.handler.HttpChannelHandler;
-import org.beifengtz.jvmm.core.conf.entity.AuthOptionConf;
-import org.beifengtz.jvmm.core.conf.entity.HttpServerConf;
+import org.beifengtz.jvmm.server.entity.conf.AuthOptionConf;
+import org.beifengtz.jvmm.server.entity.conf.HttpServerConf;
 import org.beifengtz.jvmm.server.ServerContext;
 import org.slf4j.Logger;
 

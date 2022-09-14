@@ -43,6 +43,9 @@ public class AgentBootStrap {
     private static volatile boolean running;
     private static volatile Thread bindThread;
     private static volatile JvmmAgentClassLoader agentClassLoader;
+    /**
+     * server模块是否已载入，如果已载入后续不需要重复装载
+     */
     private static volatile boolean agentAttached;
     private static volatile Object bootInstance;
 
@@ -194,18 +197,12 @@ public class AgentBootStrap {
         }
         if ("agentmain".equals(type)) {
             if (agentAttached) {
-                int runningPort = -1;
-                if (running && (runningPort = getRunningPort()) > 0) {
-                    log.warn("The jvmm agent has been loaded once and the server is running. Repeated startup is not allowed.");
-                    notifyListener(findListenerPortArg(args), runningPort, "ok");
-                } else {
-                    try {
-                        log.info("The jvmm agent has been loaded once and enters the server startup phase...");
-                        bootServer(inst, null, agentArgs);
-                    } catch (InterruptedException e) {
-                        log.error(e.getMessage(), e);
-                        throw new RuntimeException(e);
-                    }
+                try {
+                    log.info("The jvmm agent has been loaded once and enters the server startup phase...");
+                    bootServer(inst, null, agentArgs);
+                } catch (InterruptedException e) {
+                    log.error(e.getMessage(), e);
+                    throw new RuntimeException(e);
                 }
                 return;
             }
@@ -340,17 +337,6 @@ public class AgentBootStrap {
         }
     }
 
-    private static int getRunningPort() {
-        if (bootInstance != null) {
-            try {
-                Class<?> bootClazz = agentClassLoader.loadClass(SERVER_MAIN_CLASS);
-                return (int) bootClazz.getMethod("bindPort").invoke(bootInstance);
-            } catch (Throwable ignored) {
-            }
-        }
-        return -1;
-    }
-
     private static void bootServer(Instrumentation inst, List<URL> needPreLoad, String agentArgs) throws InterruptedException {
         running = true;
         //  启动日志打印代理消费线程
@@ -367,7 +353,7 @@ public class AgentBootStrap {
                 Object boot = bootClazz.getMethod("getInstance", Instrumentation.class, String.class)
                         .invoke(null, inst, agentArgs);
                 bootInstance = boot;
-                Function<Object,Object> callback = o -> {
+                Function<Object, Object> callback = o -> {
                     if (o instanceof Integer) {
                         notifyListener(findListenerPortArg(agentArgs), (int) o, "ok");
                     } else {
@@ -387,7 +373,7 @@ public class AgentBootStrap {
         bindThread.setName("jvmm-binding");
         bindThread.setContextClassLoader(agentClassLoader);
         bindThread.start();
-        Thread.sleep(3000);
+        bindThread.join(3000);
     }
 
     /**
@@ -474,12 +460,17 @@ public class AgentBootStrap {
     /**
      * 由Agent Server反射调用
      * <p>
+     * 调用位置：org.beifengtz.jvmm.server.logger.DefaultLoggerAdaptor#publish(org.beifengtz.jvmm.common.logger.LoggerEvent)
+     * <p>
      * 这里的参数不能直接用LoggerEvent，两个ClassLoader上下文不一样，会出现找不到方法的情况
      */
     public static boolean logger(Map<String, Object> event) {
         return logQueue.offer(LoggerEvent.fromMap(event));
     }
 
+    /**
+     * server模块中 org.beifengtz.jvmm.server.ServerBootstrap#stop() 调用
+     */
     public static void serverStop() {
         running = false;
         if (bindThread != null) {
