@@ -1,5 +1,6 @@
 package org.beifengtz.jvmm.server.entity.dto;
 
+import org.beifengtz.jvmm.common.JsonParsable;
 import org.beifengtz.jvmm.core.entity.mx.ClassLoadingInfo;
 import org.beifengtz.jvmm.core.entity.mx.CompilationInfo;
 import org.beifengtz.jvmm.core.entity.mx.GarbageCollectorInfo;
@@ -20,7 +21,7 @@ import java.util.List;
  *
  * @author beifengtz
  */
-public class JvmmDataDTO {
+public class JvmmDataDTO implements JsonParsable {
     private String node;
 
     private ClassLoadingInfo classloading;
@@ -79,5 +80,49 @@ public class JvmmDataDTO {
 
     public void setSystem(SystemStaticInfo system) {
         this.system = system;
+    }
+
+    public String getNode() {
+        return node;
+    }
+
+    public ClassLoadingInfo getClassloading() {
+        return classloading;
+    }
+
+    public CompilationInfo getCompilation() {
+        return compilation;
+    }
+
+    public List<GarbageCollectorInfo> getGarbageCollector() {
+        return garbageCollector;
+    }
+
+    public MemoryInfo getMemory() {
+        return memory;
+    }
+
+    public List<MemoryManagerInfo> getMemoryManager() {
+        return memoryManager;
+    }
+
+    public List<MemoryPoolInfo> getMemoryPool() {
+        return memoryPool;
+    }
+
+    public SystemDynamicInfo getSystemDynamic() {
+        return systemDynamic;
+    }
+
+    public ThreadDynamicInfo getThread() {
+        return thread;
+    }
+
+    public ProcessInfo getProcess() {
+        return process;
+    }
+
+    public SystemStaticInfo getSystem() {
+        return system;
     }
 }

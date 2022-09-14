@@ -44,14 +44,17 @@ server:
     interval: 15
     sendStaticInfoTimes: 10
     options:
-      enableClassloading: false
-      enableCompilation: false
-      enableGarbageCollector: false
-      enableMemory: false
-      enableMemoryManage: false
-      enableMemoryPool: false
-      enableSystemDynamic: false
-      enableThreadDynamic: false
+      classloading: false
+      compilation: false
+      gc: false
+      memory: false
+      memoryManager: false
+      memoryPool: false
+      systemDynamic: false
+      threadDynamic: false
+      # The next information is static and will not change over time
+      system: false
+      process: false
 log:
   level: info
   useJvmm: false

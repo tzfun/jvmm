@@ -4,8 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
-import org.slf4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -41,8 +39,6 @@ import java.util.jar.JarFile;
  * @author beifengtz
  */
 public class FileUtil {
-
-    private static final Logger logger = LoggerFactory.logger(FileUtil.class);
 
     private static final int SAFE_BYTE_LENGTH = 2048;
 
@@ -251,7 +247,6 @@ public class FileUtil {
      */
     public static boolean readFileFromNet(String url, String dir, String fileName) {
         File file = null;
-        long start = System.currentTimeMillis();
         try {
             URL httpUrl = new URL(url);
 
@@ -264,28 +259,21 @@ public class FileUtil {
                 file.delete();
             }
 
-            logger.info("Start download file from {}", url);
             HttpURLConnection conn = (HttpURLConnection) httpUrl.openConnection();
             conn.setConnectTimeout(3000);
             conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
 
-            long totalSize = 0;
             try (InputStream inputStream = conn.getInputStream(); FileOutputStream fos = new FileOutputStream(file)) {
-                logger.debug("Start save file to local path...");
                 int temp = 0;
                 byte[] bytes = new byte[SAFE_BYTE_LENGTH];
                 while ((temp = inputStream.read(bytes)) != -1) {
                     fos.write(bytes, 0, temp);
-                    totalSize += temp;
                 }
             }
-            logger.info("Save file from network successful. use: {} ms, totalSize: {}.",
-                    System.currentTimeMillis() - start, parseByteSize(totalSize, 2));
 
             return true;
         } catch (Exception e) {
-            logger.error(String.format("Download file form network filed. url:'%s'. %s", url, e.getMessage()), e);
-
+            e.printStackTrace();
             if (file != null && file.exists()) {
                 file.delete();
             }

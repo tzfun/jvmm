@@ -14,8 +14,8 @@ import java.util.List;
 public class SentinelConf {
     private List<SubscriberConf> subscribers;
     private int interval;
-    private int senStaticInfoTimes;
-    private SentinelOptions options;
+    private int sendStaticInfoTimes;
+    private CollectOptions options;
 
     public List<SubscriberConf> getSubscribers() {
         return subscribers;
@@ -35,20 +35,20 @@ public class SentinelConf {
         return this;
     }
 
-    public int getSenStaticInfoTimes() {
-        return senStaticInfoTimes;
+    public int getSendStaticInfoTimes() {
+        return sendStaticInfoTimes;
     }
 
-    public SentinelConf setSenStaticInfoTimes(int senStaticInfoTimes) {
-        this.senStaticInfoTimes = senStaticInfoTimes;
+    public SentinelConf setSendStaticInfoTimes(int sendStaticInfoTimes) {
+        this.sendStaticInfoTimes = sendStaticInfoTimes;
         return this;
     }
 
-    public SentinelOptions getOptions() {
+    public CollectOptions getOptions() {
         return options;
     }
 
-    public SentinelConf setOptions(SentinelOptions options) {
+    public SentinelConf setOptions(CollectOptions options) {
         this.options = options;
         return this;
     }
