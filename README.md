@@ -351,7 +351,7 @@ implementation "io.github.tzfun.jvmm:jvmm-server:${jvmmVersion}"
 Start server for example:
 
 ```java
-import org.beifengtz.jvmm.core.conf.Configuration;
+import org.beifengtz.jvmm.server.entity.conf.Configuration;
 import org.beifengtz.jvmm.server.ServerBootstrap;
 
 public class ServerBootDemo {

@@ -1,7 +1,6 @@
 package org.beifengtz.jvmm.common.util.meta;
 
-import com.google.common.base.Objects;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import java.util.Objects;
 
 /**
  * Description: TODO
@@ -35,12 +34,17 @@ public class PairKey<L, R> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         PairKey<?, ?> pairKey = (PairKey<?, ?>) o;
-        return Objects.equal(left, pairKey.left) && Objects.equal(right, pairKey.right);
+
+        if (!Objects.equals(left, pairKey.left)) return false;
+        return Objects.equals(right, pairKey.right);
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(left).append(right).toHashCode();
+        int result = left != null ? left.hashCode() : 0;
+        result = 31 * result + (right != null ? right.hashCode() : 0);
+        return result;
     }
 }

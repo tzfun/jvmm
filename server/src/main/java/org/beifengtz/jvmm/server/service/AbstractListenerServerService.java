@@ -4,7 +4,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.util.concurrent.Promise;
 import org.beifengtz.jvmm.common.util.PlatformUtil;
 import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
-import org.beifengtz.jvmm.core.conf.entity.JvmmServerConf;
+import org.beifengtz.jvmm.server.entity.conf.JvmmServerConf;
 import org.beifengtz.jvmm.server.ServerContext;
 import org.slf4j.Logger;
 

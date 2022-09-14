@@ -1,4 +1,4 @@
-package org.beifengtz.jvmm.core.conf.entity;
+package org.beifengtz.jvmm.server.entity.conf;
 
 /**
  * <p>

@@ -3,7 +3,7 @@ package org.beifengtz.jvmm.server.service;
 import io.netty.util.concurrent.Promise;
 import org.beifengtz.jvmm.core.JvmmCollector;
 import org.beifengtz.jvmm.core.JvmmFactory;
-import org.beifengtz.jvmm.core.conf.entity.CollectOptions;
+import org.beifengtz.jvmm.server.entity.conf.CollectOptions;
 import org.beifengtz.jvmm.server.entity.dto.JvmmDataDTO;
 
 /**
