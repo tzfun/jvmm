@@ -19,6 +19,7 @@ import io.netty.util.concurrent.EventExecutor;
 import org.beifengtz.jvmm.common.JsonParsable;
 import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
 import org.beifengtz.jvmm.common.exception.InvalidJvmmMappingException;
+import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.util.CommonUtil;
 import org.beifengtz.jvmm.common.util.ReflexUtil;
 import org.beifengtz.jvmm.common.util.StringUtil;
@@ -63,6 +64,8 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
         mappings = new HashMap<>(controllers.size() * 5);
         methodMappings = new HashMap<>(controllers.size() * 5);
 
+        Logger logger = LoggerFactory.logger(HttpChannelHandler.class);
+
         for (Class<?> controller : controllers) {
             Set<Method> methods = ReflexUtil.scanMethodAnnotation(controller, HttpRequest.class);
             for (Method method : methods) {
@@ -76,6 +79,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                     throw new InvalidJvmmMappingException("The method annotated with '@HttpRequest' in the controller must be public: " + method.getName());
                 }
 
+                logger.debug("Scanning http api: [{}] {}", request.method().name(), uri);
                 mappings.put(uri, method);
                 methodMappings.put(uri, request.method().getValue());
             }
@@ -234,6 +238,9 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
     private Map<String, String> loadParam(URI uri) throws UnsupportedEncodingException {
         String query = uri.getQuery();
         Map<String, String> params = new HashMap<>();
+        if (query == null) {
+            return params;
+        }
         String[] split = query.split("&");
         for (String str : split) {
             if (!str.contains("=")) {

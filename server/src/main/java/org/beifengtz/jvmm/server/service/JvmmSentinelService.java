@@ -7,19 +7,19 @@ import org.beifengtz.jvmm.common.util.CommonUtil;
 import org.beifengtz.jvmm.common.util.HttpUtil;
 import org.beifengtz.jvmm.core.JvmmCollector;
 import org.beifengtz.jvmm.core.JvmmFactory;
+import org.beifengtz.jvmm.server.ServerContext;
 import org.beifengtz.jvmm.server.entity.conf.AuthOptionConf;
 import org.beifengtz.jvmm.server.entity.conf.SentinelConf;
 import org.beifengtz.jvmm.server.entity.conf.SubscriberConf;
-import org.beifengtz.jvmm.server.ServerContext;
 import org.beifengtz.jvmm.server.entity.dto.JvmmDataDTO;
 import org.slf4j.Logger;
 
-import java.net.ConnectException;
-import java.net.SocketTimeoutException;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -46,8 +46,8 @@ public class JvmmSentinelService implements JvmmService {
     /**
      * 连续失败次数，如果超过10次后按 2的n次方 次数重试
      */
-    protected final Map<String, AtomicInteger> failTimes = new HashMap<>();
-    protected final Map<String, AtomicInteger> failStepCounter = new HashMap<>();
+    protected final Map<String, AtomicInteger> failTimes = new ConcurrentHashMap<>();
+    protected final Map<String, AtomicInteger> failStepCounter = new ConcurrentHashMap<>();
 
     public JvmmSentinelService() {
         this(ExecutorFactory.getScheduleThreadPool());
@@ -59,7 +59,7 @@ public class JvmmSentinelService implements JvmmService {
 
     @Override
     public void start(Promise<Integer> promise) {
-        if(ServerContext.getConfiguration().getServer().getSentinel().isValid()) {
+        if (ServerContext.getConfiguration().getServer().getSentinel().isValid()) {
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -94,10 +94,11 @@ public class JvmmSentinelService implements JvmmService {
                 }
             });
             promise.trySuccess(0);
+            SentinelConf conf = ServerContext.getConfiguration().getServer().getSentinel();
+            logger.info("Jvmm sentinel service started, subscriber num:{}, interval: {}s", conf.getSubscribers().size(), conf.getInterval());
         } else {
             promise.tryFailure(new RuntimeException("Jvmm sentinel is invalid, no subscribers."));
         }
-
     }
 
     @Override
@@ -107,10 +108,12 @@ public class JvmmSentinelService implements JvmmService {
     }
 
     protected void publish(SubscriberConf subscriber, String body) {
-        AtomicInteger failCounter = failTimes.get(subscriber.getUrl());
+        String url = subscriber.getUrl();
+        AtomicInteger failCounter = failTimes.computeIfAbsent(url, o -> new AtomicInteger(0));
+        failStepCounter.computeIfAbsent(url, o -> new AtomicInteger(0));
         try {
             if (failCounter.get() >= 10) {
-                int step = failStepCounter.get(subscriber.getUrl()).incrementAndGet();
+                int step = failStepCounter.get(url).incrementAndGet();
                 if (!judge(step)) {
                     return;
                 }
@@ -125,14 +128,14 @@ public class JvmmSentinelService implements JvmmService {
                 headers = globalHeaders;
             }
 
-            HttpUtil.post(subscriber.getUrl(), body, headers);
+            HttpUtil.post(url, body, headers);
             failCounter.set(0);
-            failStepCounter.get(subscriber.getUrl()).set(0);
-        } catch (ConnectException | SocketTimeoutException e) {
-            logger.debug("Can not connect monitor subscriber '{}': {}", subscriber.getUrl(), e.getMessage());
+            failStepCounter.get(url).set(0);
+        } catch (IOException e) {
+            logger.warn("Can not connect monitor subscriber '{}': {}", url, e.getMessage());
             failCounter.incrementAndGet();
         } catch (Exception e) {
-            logger.error("Monitor publish to " + subscriber.getUrl() + " failed: " + e.getMessage(), e);
+            logger.error("Monitor publish to " + url + " failed: " + e.getMessage(), e);
             failCounter.incrementAndGet();
         }
     }

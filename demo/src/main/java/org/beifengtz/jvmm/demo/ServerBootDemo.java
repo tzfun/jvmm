@@ -1,7 +1,7 @@
 package org.beifengtz.jvmm.demo;
 
-import org.beifengtz.jvmm.server.entity.conf.Configuration;
 import org.beifengtz.jvmm.server.ServerBootstrap;
+import org.beifengtz.jvmm.server.entity.conf.Configuration;
 
 import java.io.InputStream;
 
@@ -18,14 +18,10 @@ public class ServerBootDemo {
         if (is != null) {
             Configuration config = Configuration.parseFromStream(is);
             ServerBootstrap server = ServerBootstrap.getInstance(config);
-            server.start(port -> {
-                System.out.println("Server start on " + port);
+            server.start(msg -> {
+                System.out.println("Server started " + msg);
                 return null;
             });
-
-            Thread.sleep(3000);
-
-            server.stop();
         } else {
             System.err.println("Can not found config.yml in resources");
         }

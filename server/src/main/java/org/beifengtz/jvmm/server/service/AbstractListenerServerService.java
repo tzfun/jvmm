@@ -1,11 +1,12 @@
 package org.beifengtz.jvmm.server.service;
 
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.unix.Errors;
 import io.netty.util.concurrent.Promise;
 import org.beifengtz.jvmm.common.util.PlatformUtil;
 import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
-import org.beifengtz.jvmm.server.entity.conf.JvmmServerConf;
 import org.beifengtz.jvmm.server.ServerContext;
+import org.beifengtz.jvmm.server.entity.conf.JvmmServerConf;
 import org.slf4j.Logger;
 
 import java.net.BindException;
@@ -22,7 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public abstract class AbstractListenerServerService implements JvmmService {
 
-    protected int runningPort;
+    protected AtomicInteger runningPort = new AtomicInteger();
     protected final AtomicInteger retry = new AtomicInteger(0);
     private static EventLoopGroup globalWorkerGroup;
 
@@ -44,40 +45,41 @@ public abstract class AbstractListenerServerService implements JvmmService {
             promise.tryFailure(new IllegalArgumentException("No jvmm configuration"));
             return;
         }
-        runningPort = conf.getPort();
+        runningPort.set(conf.getPort());
+        execute(conf, promise);
+    }
+
+    protected void execute(JvmmServerConf conf, Promise<Integer> promise) {
         retry.incrementAndGet();
-
-        if (PlatformUtil.portAvailable(runningPort)) {
-            logger().info("Try to start jvmm server service. target port: {}", runningPort);
-
+        if (PlatformUtil.portAvailable(runningPort.get())) {
             try {
                 if (retry.get() > BIND_LIMIT_TIMES) {
                     throw new BindException("The number of port monitoring retries exceeds the limit: " + BIND_LIMIT_TIMES);
                 }
 
-                startUp();
-
-            } catch (BindException e) {
+                startUp(promise);
+            } catch (Errors.NativeIoException | BindException e) {
                 if (retry.get() <= BIND_LIMIT_TIMES && conf.isAdaptivePort()) {
-                    runningPort++;
-                    start(promise);
+                    logger().warn("Port {} is not available, trying to find available ports by auto-incrementing ports.", runningPort.get());
+                    runningPort.incrementAndGet();
+                    execute(conf, promise);
                 } else {
-                    logger().error("Jvmm server start up failed. " + e.getMessage(), e);
+                    logger().error("Jvmm service start up failed." + e.getMessage(), e);
                     promise.tryFailure(e);
                     stop();
                 }
             } catch (Throwable e) {
-                logger().error("Jvmm server start up failed. " + e.getMessage(), e);
+                logger().error("Jvmm service start up failed. " + e.getMessage(), e);
                 promise.tryFailure(e);
                 stop();
             }
         } else {
-            logger().info("Port {} is not available, auto increase:{}", runningPort, conf.isAdaptivePort());
             if (conf.isAdaptivePort()) {
-                runningPort++;
-                start(promise);
+                logger().warn("Port {} is not available, trying to find available ports by auto-incrementing ports.", runningPort.get());
+                runningPort.incrementAndGet();
+                execute(conf, promise);
             } else {
-                promise.tryFailure(new RuntimeException("Port " + runningPort + " is not available and the auto increase switch is closed."));
+                promise.tryFailure(new RuntimeException("Port " + runningPort.get() + " is not available and the auto increase switch is closed."));
                 stop();
             }
         }
@@ -89,18 +91,18 @@ public abstract class AbstractListenerServerService implements JvmmService {
         if (globalWorkerGroup != null) {
             globalWorkerGroup.shutdownGracefully();
         }
-        runningPort = -1;
+        runningPort.set(-1);
         retry.set(0);
     }
 
     @Override
     public int getPort() {
-        return runningPort;
+        return runningPort.get();
     }
 
     protected abstract Logger logger();
 
-    protected abstract void startUp();
+    protected abstract void startUp(Promise<Integer> promise) throws Exception;
 
     protected abstract void shutdown();
 }

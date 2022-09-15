@@ -1,7 +1,5 @@
 package org.beifengtz.jvmm.server.controller;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import org.beifengtz.jvmm.common.util.FileUtil;
 import org.beifengtz.jvmm.convey.annotation.HttpController;
@@ -19,12 +17,9 @@ import org.beifengtz.jvmm.core.entity.profiler.ProfilerCounter;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerEvent;
 import org.beifengtz.jvmm.server.ServerContext;
 import org.beifengtz.jvmm.server.entity.dto.ProfilerSampleDTO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -42,8 +37,6 @@ import java.util.concurrent.TimeUnit;
 @HttpController
 public class ProfilerController {
 
-    private static final Logger log = LoggerFactory.getLogger(ProfilerController.class);
-
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_PROFILER_EXECUTE)
     @HttpRequest("/profiler/execute")
     public String execute(@RequestParam String command) throws IOException {
@@ -51,8 +44,8 @@ public class ProfilerController {
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_PROFILER_SAMPLE)
-    @HttpRequest(value = "/profiler/execute", method = Method.POST)
-    public JvmmResponse sample(@RequestBody ProfilerSampleDTO data) throws Exception {
+    @HttpRequest(value = "/profiler/flame_graph", method = Method.POST)
+    public JvmmResponse flameGraph(@RequestBody ProfilerSampleDTO data) throws Exception {
 
         File to = new File(ServerContext.getTempPath(), UUID.randomUUID() + "." + data.getFormat());
         if (to.getParentFile() != null && !to.getParentFile().exists()) {
