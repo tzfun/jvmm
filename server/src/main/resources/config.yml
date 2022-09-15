@@ -92,6 +92,7 @@ server:
 
 # Log level configuration
 log:
+  # Log level: error, warn, info, debug, trace, off
   level: info
   #  Whether to use jvmm log, if it is false, it will try to use the log of the host program according to the host program environment.
   #  But this does not guarantee that the log provider of the host program can be successfully searched

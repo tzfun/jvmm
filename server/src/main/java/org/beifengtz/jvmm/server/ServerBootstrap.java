@@ -18,6 +18,7 @@ import org.beifengtz.jvmm.server.service.JvmmHttpServerService;
 import org.beifengtz.jvmm.server.service.JvmmSentinelService;
 import org.beifengtz.jvmm.server.service.JvmmServerService;
 import org.beifengtz.jvmm.server.service.JvmmService;
+import org.beifengtz.jvmm.server.service.ServiceManager;
 import org.slf4j.Logger;
 
 import java.lang.instrument.Instrumentation;
@@ -45,10 +46,8 @@ public class ServerBootstrap {
     private static boolean fromAgent;
 
     private Instrumentation instrumentation;
-    private int rebindTimes = 0;
-    private EventLoopGroup bossGroup;
-    private EventLoopGroup workerGroup;
     private Thread shutdownHook;
+    private volatile ServiceManager serviceManager;
 
     private ServerBootstrap(Instrumentation inst) {
         this.instrumentation = inst;
@@ -169,6 +168,10 @@ public class ServerBootstrap {
 
             CountDownLatch latch = new CountDownLatch(startServers.size());
 
+            if (serviceManager == null) {
+                serviceManager = new ServiceManager();
+            }
+
             for (ServerType server : startServers) {
                 JvmmService service = null;
                 Promise<Integer> promise = new DefaultPromise<>(ServerContext.getBoosGroup().next());
@@ -189,8 +192,7 @@ public class ServerBootstrap {
                     service = new JvmmSentinelService();
                 }
                 assert service != null;
-                JvmmService finalService = service;
-                ServerContext.getBoosGroup().next().execute(() -> finalService.start(promise));
+                serviceManager.startIfAbsent(service, promise);
             }
 
             if (shutdownHook == null) {
@@ -237,11 +239,13 @@ public class ServerBootstrap {
         }
         logger().info("Jvmm server service stopped.");
 
-        try {
-            Class<?> bootClazz = Thread.currentThread().getContextClassLoader().loadClass(AGENT_BOOT_CLASS);
-            bootClazz.getMethod("serverStop").invoke(null);
-        } catch (Throwable e) {
-            logger().error("Invoke agent boot method(#serverStop) failed", e);
+        if (fromAgent) {
+            try {
+                Class<?> bootClazz = Thread.currentThread().getContextClassLoader().loadClass(AGENT_BOOT_CLASS);
+                bootClazz.getMethod("serverStop").invoke(null);
+            } catch (Throwable e) {
+                logger().error("Invoke agent boot method(#serverStop) failed", e);
+            }
         }
     }
 }

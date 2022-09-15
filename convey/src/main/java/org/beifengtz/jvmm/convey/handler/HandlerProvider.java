@@ -32,4 +32,8 @@ public interface HandlerProvider {
     default SslContext getSslContext() {
         return null;
     }
+
+    default long getChunkedSize() {
+        return 0xFFFFF;
+    }
 }
