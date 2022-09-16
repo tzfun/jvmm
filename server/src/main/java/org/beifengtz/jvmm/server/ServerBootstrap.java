@@ -1,6 +1,5 @@
 package org.beifengtz.jvmm.server;
 
-import io.netty.channel.EventLoopGroup;
 import io.netty.util.concurrent.DefaultPromise;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
@@ -62,6 +61,7 @@ public class ServerBootstrap {
     }
 
     public synchronized static ServerBootstrap getInstance(Instrumentation inst, String args) {
+        System.out.println(args);
         String[] argKv = args.split(";");
         String configFileUrl = null;
         for (String s : argKv) {
@@ -130,94 +130,120 @@ public class ServerBootstrap {
     }
 
     public void start(Function<Object, Object> callback) {
-        if (ServerContext.isInited()) {
-            StringBuffer sb = new StringBuffer();
+        callback.apply("start");
+        try {
+            if (ServerContext.isInited()) {
 
-            //  如果服务类型不同，先关闭现有服务
-            Set<ServerType> serverSet = ServerContext.getServerSet();
-            ServerConf serverConf = ServerContext.getConfiguration().getServer();
-            String[] split = serverConf.getType().split(",");
+                //  如果服务类型不同，先关闭现有服务
+                Set<ServerType> serverSet = ServerContext.getServerSet();
+                ServerConf serverConf = ServerContext.getConfiguration().getServer();
+                String[] split = serverConf.getType().split(",");
 
-            Set<ServerType> argServers = new HashSet<>(split.length);
-            Set<ServerType> startServers = new HashSet<>();
-            Set<ServerType> stopServers = new HashSet<>();
+                Set<ServerType> argServers = new HashSet<>(split.length);
+                Set<ServerType> startServers = new HashSet<>();
+                Set<ServerType> stopServers = new HashSet<>();
 
-            for (String t : split) {
-                ServerType server = ServerType.of(t);
-                argServers.add(server);
-                if (!serverSet.contains(server)) {
-                    startServers.add(server);
-                } else {
-                    sb.append("ok:").append(server).append(":").append(ServerContext.getService(server).getPort()).append(";");
-                }
-            }
-
-            for (ServerType server : serverSet) {
-                if (!argServers.contains(server)) {
-                    stopServers.add(server);
-                }
-            }
-
-            for (ServerType server : stopServers) {
-                try {
-                    ServerContext.stop(server);
-                } catch (Exception e) {
-                    logger().error("An exception occurred while shutting down the jvmm service: " + e.getMessage(), e);
-                }
-            }
-
-            CountDownLatch latch = new CountDownLatch(startServers.size());
-
-            if (serviceManager == null) {
-                serviceManager = new ServiceManager();
-            }
-
-            for (ServerType server : startServers) {
-                JvmmService service = null;
-                Promise<Integer> promise = new DefaultPromise<>(ServerContext.getBoosGroup().next());
-                promise.addListener((GenericFutureListener<Future<Integer>>) future -> {
-                    latch.countDown();
-                    if (future.isSuccess()) {
-                        sb.append("ok:").append(server).append(":").append(future.get()).append(";");
-                    } else {
-                        sb.append(server).append(":").append(future.cause().getMessage()).append(";");
+                for (String t : split) {
+                    ServerType server = ServerType.of(t);
+                    if (server == ServerType.none) {
+                        continue;
                     }
-                });
-
-                if (server == ServerType.jvmm) {
-                    service = new JvmmServerService();
-                } else if (server == ServerType.http) {
-                    service = new JvmmHttpServerService();
-                } else if (server == ServerType.sentinel) {
-                    service = new JvmmSentinelService();
+                    argServers.add(server);
+                    if (!serverSet.contains(server)) {
+                        startServers.add(server);
+                    } else {
+                        callback.apply("ok:" + server + ":" + ServerContext.getService(server).getPort());
+                    }
                 }
-                assert service != null;
-                serviceManager.startIfAbsent(service, promise);
-            }
 
-            if (shutdownHook == null) {
-                shutdownHook = new Thread(this::stop);
-                shutdownHook.setName("jvmm-shutdown");
-                Runtime.getRuntime().addShutdownHook(shutdownHook);
-            }
-
-            try {
-                if (latch.await(15, TimeUnit.SECONDS)) {
-                    callback.apply(sb.toString());
-                } else {
-                    String msg = "A service timed out for unknown reasons";
-                    logger().error(msg);
-                    callback.apply(sb.append(msg).toString());
+                for (ServerType server : serverSet) {
+                    if (!argServers.contains(server)) {
+                        stopServers.add(server);
+                    }
                 }
-            } catch (InterruptedException e) {
-                String msg = "Failed to wait for service to start: " + e.getMessage();
-                logger().error(msg, e);
-                callback.apply(sb.append(msg).toString());
+
+                System.err.println("serverSet:" + serverSet);
+                System.err.println("arg:" + argServers);
+                System.err.println("start" + startServers);
+                System.err.println("stop:" + stopServers);
+
+                for (ServerType server : stopServers) {
+                    try {
+                        callback.apply("info:Try to stop running service: " + server);
+                        ServerContext.stop(server);
+                        callback.apply("info:" + server + " service stopped ");
+                    } catch (Exception e) {
+                        logger().error("An exception occurred while shutting down the jvmm service: " + e.getMessage(), e);
+                    }
+                }
+
+                if (startServers.size() == 0) {
+                    callback.apply("warn:No new jvmm service need start");
+                    callback.apply("end");
+                    return;
+                }
+
+                CountDownLatch latch = new CountDownLatch(startServers.size());
+
+                if (serviceManager == null) {
+                    serviceManager = new ServiceManager();
+                }
+
+                for (ServerType server : startServers) {
+                    JvmmService service = null;
+
+                    if (server == ServerType.jvmm) {
+                        service = new JvmmServerService();
+                    } else if (server == ServerType.http) {
+                        service = new JvmmHttpServerService();
+                    } else if (server == ServerType.sentinel) {
+                        service = new JvmmSentinelService();
+                    }
+                    assert service != null;
+
+                    Promise<Integer> promise = new DefaultPromise<>(ServerContext.getBoosGroup().next());
+                    JvmmService finalService = service;
+                    promise.addListener((GenericFutureListener<Future<Integer>>) future -> {
+                        latch.countDown();
+                        if (future.isSuccess()) {
+                            ServerContext.registerService(server, finalService);
+                            callback.apply("ok:" + server + ":" + future.get());
+                        } else {
+                            callback.apply(server + ":" + future.cause().getMessage());
+                        }
+                    });
+                    serviceManager.startIfAbsent(service, promise);
+                }
+
+                if (shutdownHook == null) {
+                    shutdownHook = new Thread(this::stop);
+                    shutdownHook.setName("jvmm-shutdown");
+                    Runtime.getRuntime().addShutdownHook(shutdownHook);
+                }
+
+                try {
+                    if (!latch.await(15, TimeUnit.SECONDS)) {
+                        String msg = "A service timed out for unknown reasons";
+                        logger().error(msg);
+                        callback.apply(msg);
+                    }
+                } catch (InterruptedException e) {
+                    String msg = "Failed to wait for service to start: " + e.getMessage();
+                    logger().error(msg, e);
+                    callback.apply(msg);
+                } finally {
+                    callback.apply("end");
+                }
+            } else {
+                String msg = "Jvmm Server start failed, configuration not inited.";
+                callback.apply(msg);
+                callback.apply("end");
+                logger().error(msg);
             }
-        } else {
-            String msg = "Jvmm Server start failed, configuration not inited.";
-            callback.apply(msg);
-            logger().error(msg);
+        } catch (Throwable e) {
+            logger().error("Jvmm service start failed " + e.getMessage(), e);
+            callback.apply(e.getMessage());
+            callback.apply("end");
         }
     }
 
