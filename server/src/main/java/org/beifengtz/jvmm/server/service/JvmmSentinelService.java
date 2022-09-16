@@ -87,8 +87,6 @@ public class JvmmSentinelService implements JvmmService {
                     } finally {
                         if (flag.get()) {
                             executor.schedule(this, conf.getInterval(), TimeUnit.SECONDS);
-                        } else {
-                            logger.info("Jvmm sentinel shutdown by trigger");
                         }
                     }
                 }
@@ -145,5 +143,10 @@ public class JvmmSentinelService implements JvmmService {
      */
     protected boolean judge(int n) {
         return (n & (n - 1)) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return 3;
     }
 }

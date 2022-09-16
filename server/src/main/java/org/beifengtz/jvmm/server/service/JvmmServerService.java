@@ -22,9 +22,11 @@ import org.slf4j.Logger;
  */
 public class JvmmServerService extends AbstractListenerServerService {
 
+    private static final Logger logger = LoggerFactory.logger(JvmmServerService.class);
+
     @Override
     protected Logger logger() {
-        return LoggerFactory.logger(JvmmServerService.class);
+        return logger;
     }
 
     @Override
@@ -45,6 +47,11 @@ public class JvmmServerService extends AbstractListenerServerService {
 
     @Override
     protected void shutdown() {
+        logger.info("Trigger to shutdown jvmm server");
+    }
 
+    @Override
+    public int hashCode() {
+        return 1;
     }
 }

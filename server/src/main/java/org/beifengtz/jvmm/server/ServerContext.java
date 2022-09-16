@@ -114,4 +114,8 @@ public class ServerContext {
     public static JvmmService getService(ServerType type) {
         return serviceContainer.get(type);
     }
+
+    public static void registerService(ServerType type, JvmmService service) {
+        serviceContainer.put(type, service);
+    }
 }

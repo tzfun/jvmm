@@ -98,7 +98,7 @@ public class AttachProvider {
             }
 
             virtualMachine.loadAgent(agentJarPath.replaceAll("\\\\", "/"),
-                    serverJarPath.replaceAll("\\\\", "/") + ";" + args);
+                    serverJarPath.replaceAll("\\\\", "/") + ";" +args);
         } finally {
             if (null != virtualMachine) {
                 virtualMachine.detach();

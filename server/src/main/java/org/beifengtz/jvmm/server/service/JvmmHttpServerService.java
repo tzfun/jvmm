@@ -7,7 +7,6 @@ import io.netty.util.concurrent.Promise;
 import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
 import org.beifengtz.jvmm.convey.channel.HttpServerChannelInitializer;
-import org.beifengtz.jvmm.convey.channel.JvmmServerChannelInitializer;
 import org.beifengtz.jvmm.server.ServerContext;
 import org.beifengtz.jvmm.server.handler.HttpServerHandlerProvider;
 import org.slf4j.Logger;
@@ -48,6 +47,11 @@ public class JvmmHttpServerService extends AbstractListenerServerService {
 
     @Override
     protected void shutdown() {
+        logger.info("Trigger to shutdown http server...");
+    }
 
+    @Override
+    public int hashCode() {
+        return 2;
     }
 }

@@ -12,6 +12,7 @@ import java.util.Locale;
  * @author beifengtz
  */
 public enum ServerType {
+    none,
     /**
      * 默认运行类型，tcp长连接，并对通讯数据加密
      */

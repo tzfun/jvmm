@@ -74,4 +74,9 @@ public class JvmmAgentClassLoader extends URLClassLoader {
 
         return super.loadClass(name, resolve);
     }
+
+    @Override
+    public void addURL(URL url) {
+        super.addURL(url);
+    }
 }

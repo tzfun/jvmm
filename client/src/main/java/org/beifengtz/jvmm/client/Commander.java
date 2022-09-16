@@ -12,6 +12,7 @@ import org.apache.commons.cli.ParseException;
 import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.util.FileUtil;
 import org.beifengtz.jvmm.common.util.PidUtil;
+import org.beifengtz.jvmm.common.util.meta.PairKey;
 import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 import org.beifengtz.jvmm.core.AttachProvider;
@@ -301,46 +302,60 @@ public class Commander {
         }
 
         //  开启目标服务启动状态监听
-        int listenerPort = startAttachListener();
-        String args = String.format("config=%s;listenerPort=%d;", cmd.getOptionValue("c"), listenerPort);
+        PairKey<Integer, Thread> pair = startAttachListener();
+        if (pair.getLeft() <= 0) {
+            logger.error("Start attach listener holder failed.");
+            return;
+        }
+        String args = String.format("config=%s;listenerPort=%d", new File(cmd.getOptionValue("c")).getAbsoluteFile(), pair.getLeft());
 
         logger.info("Start to attach program {} ...", pid);
         try {
             AttachProvider.getInstance().attachAgent(pid, agentFile.getAbsolutePath(), serverFile.getAbsolutePath(), args);
-            logger.info("Attach successful!");
+            pair.getRight().join(30000);
         } catch (Exception e) {
             logger.warn("An error was encountered while attaching: " + e.getMessage(), e);
         }
     }
 
-    private static int startAttachListener() throws Exception {
-        CountDownLatch bootLatch = new CountDownLatch(1);
+    private static PairKey<Integer, Thread> startAttachListener() throws Exception {
+        CountDownLatch latch = new CountDownLatch(1);
         AtomicInteger port = new AtomicInteger(-1);
-        new Thread(() -> {
+        Thread thread = new Thread(() -> {
             try (ServerSocket server = new ServerSocket(0)) {
                 port.set(server.getLocalPort());
-                bootLatch.countDown();
+                latch.countDown();
                 while (true) {
                     Socket socket = server.accept();
                     try (Scanner sc = new Scanner(socket.getInputStream())) {
                         if (sc.hasNextLine()) {
                             String content = sc.nextLine();
-                            if (content.startsWith("ok")) {
-                                logger.info("Jvmm server started on {}", content.split(":")[1]);
+                            if ("start".equals(content)) {
+                                logger.info("Attach successful! Try to start or stop services...");
+                            } else if (content.startsWith("info:")) {
+                                logger.info(content.substring(content.indexOf(":") + 1));
+                            } else if (content.startsWith("warn:")) {
+                                logger.warn(content.substring(content.indexOf(":") + 1));
+                            } else if (content.startsWith("ok:")) {
+                                logger.info("==> {}", content);
+                            } else if ("end".equals(content)) {
+                                logger.info("Attach finished");
+                                break;
                             } else {
-                                logger.error("Jvmm server start with error: {}", content);
+                                System.out.println(content);
                             }
-                            break;
                         }
                     }
                 }
             } catch (Exception e) {
-                bootLatch.countDown();
+                latch.countDown();
                 logger.error("Attach listener error: " + e, e);
             }
-        }).start();
-        bootLatch.await(3, TimeUnit.SECONDS);
-        return port.get();
+        });
+        thread.setDaemon(false);
+        thread.start();
+        latch.await(3, TimeUnit.SECONDS);
+        return PairKey.of(port.get(), thread);
     }
 
     private static void printHelp() {

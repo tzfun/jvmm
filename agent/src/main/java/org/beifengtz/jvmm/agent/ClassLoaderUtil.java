@@ -26,4 +26,8 @@ public class ClassLoaderUtil {
         addURL.setAccessible(true);
         addURL.invoke(classLoader, url);
     }
+
+    public static void classLoaderAddURL(JvmmAgentClassLoader classLoader, URL url) {
+        classLoader.addURL(url);
+    }
 }
