@@ -106,7 +106,7 @@ public class ServerContext {
     public static void stop(ServerType type) {
         JvmmService service = serviceContainer.get(type);
         if (service != null) {
-            service.stop();
+            service.shutdown();
             serviceContainer.remove(type);
         }
     }
@@ -117,5 +117,9 @@ public class ServerContext {
 
     public static void registerService(ServerType type, JvmmService service) {
         serviceContainer.put(type, service);
+    }
+
+    public static void unregisterService(ServerType type) {
+        serviceContainer.remove(type);
     }
 }

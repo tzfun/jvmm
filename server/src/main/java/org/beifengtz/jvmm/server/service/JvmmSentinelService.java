@@ -18,7 +18,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -48,6 +50,7 @@ public class JvmmSentinelService implements JvmmService {
      */
     protected final Map<String, AtomicInteger> failTimes = new ConcurrentHashMap<>();
     protected final Map<String, AtomicInteger> failStepCounter = new ConcurrentHashMap<>();
+    protected Set<ShutdownListener> shutdownListeners = new HashSet<>();
 
     public JvmmSentinelService() {
         this(ExecutorFactory.getScheduleThreadPool());
@@ -87,6 +90,14 @@ public class JvmmSentinelService implements JvmmService {
                     } finally {
                         if (flag.get()) {
                             executor.schedule(this, conf.getInterval(), TimeUnit.SECONDS);
+                        } else {
+                            for (ShutdownListener listener : shutdownListeners) {
+                                try {
+                                    listener.onShutdown();
+                                } catch (Exception e) {
+                                    logger.error("An exception occurred while executing the shutdown listener: " + e.getMessage(), e);
+                                }
+                            }
                         }
                     }
                 }
@@ -100,9 +111,16 @@ public class JvmmSentinelService implements JvmmService {
     }
 
     @Override
-    public void stop() {
+    public void shutdown() {
         logger.info("Trigger to shutdown jvmm sentinel service...");
         flag.set(false);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T extends JvmmService> T addShutdownListener(ShutdownListener listener) {
+        shutdownListeners.add(listener);
+        return (T)this;
     }
 
     protected void publish(SubscriberConf subscriber, String body) {

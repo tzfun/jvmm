@@ -17,11 +17,17 @@ import org.beifengtz.jvmm.server.entity.dto.JvmmDataDTO;
  */
 public interface JvmmService {
 
+    interface ShutdownListener {
+        void onShutdown();
+    }
+
     int BIND_LIMIT_TIMES = 5;
 
     void start(Promise<Integer> promise);
 
-    void stop();
+    void shutdown();
+
+    <T extends JvmmService> T addShutdownListener(ShutdownListener listener);
 
     default int getPort() {
         return -1;

@@ -1,5 +1,6 @@
 package org.beifengtz.jvmm.server.service;
 
+import ch.qos.logback.core.joran.conditional.ThenAction;
 import io.netty.util.concurrent.Promise;
 import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.slf4j.Logger;
@@ -32,7 +33,7 @@ public class ServiceManager {
             int hash = service.hashCode();
             JvmmService s1 = uniqueServices.get(hash);
             if (s1 != null) {
-                s1.stop();
+                s1.shutdown();
                 Thread thread = threadPool.get(hash);
                 if (thread != null) {
                     thread.join(15000);
@@ -43,6 +44,15 @@ public class ServiceManager {
 
         } catch (Exception e) {
             promise.tryFailure(e);
+        }
+    }
+
+    public void remove(JvmmService service) {
+        int hash  = service.hashCode();
+        uniqueServices.remove(hash);
+        Thread thread = threadPool.remove(hash);
+        if (thread != null && thread.isAlive()) {
+            thread.interrupt();
         }
     }
 
