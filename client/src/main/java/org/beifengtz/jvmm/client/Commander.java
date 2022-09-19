@@ -84,7 +84,7 @@ public class Commander {
                 .required(false)
                 .hasArg()
                 .argName("config")
-                .desc("The path of the config file, support relative path, absolute path and network address. Required in attach mode.")
+                .desc("The path of the config file, support relative path, absolute path and http(s) address. Required in attach mode.")
                 .build();
         options.addOption(c);
         attachOptions.addOption(c);
