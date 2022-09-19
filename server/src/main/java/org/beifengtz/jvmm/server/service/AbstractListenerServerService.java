@@ -10,6 +10,8 @@ import org.beifengtz.jvmm.server.entity.conf.JvmmServerConf;
 import org.slf4j.Logger;
 
 import java.net.BindException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -23,6 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public abstract class AbstractListenerServerService implements JvmmService {
 
+    protected Set<ShutdownListener> shutdownListeners = new HashSet<>();
     protected AtomicInteger runningPort = new AtomicInteger();
     protected final AtomicInteger retry = new AtomicInteger(0);
     private static EventLoopGroup globalWorkerGroup;
@@ -36,6 +39,12 @@ public abstract class AbstractListenerServerService implements JvmmService {
             }
         }
         return globalWorkerGroup;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends JvmmService> T addShutdownListener(ShutdownListener listener) {
+        shutdownListeners.add(listener);
+        return (T) this;
     }
 
     @Override
@@ -66,12 +75,12 @@ public abstract class AbstractListenerServerService implements JvmmService {
                 } else {
                     logger().error("Jvmm service start up failed." + e.getMessage(), e);
                     promise.tryFailure(e);
-                    stop();
+                    this.shutdown();
                 }
             } catch (Throwable e) {
                 logger().error("Jvmm service start up failed. " + e.getMessage(), e);
                 promise.tryFailure(e);
-                stop();
+                this.shutdown();
             }
         } else {
             if (conf.isAdaptivePort()) {
@@ -80,14 +89,21 @@ public abstract class AbstractListenerServerService implements JvmmService {
                 execute(conf, promise);
             } else {
                 promise.tryFailure(new RuntimeException("Port " + runningPort.get() + " is not available and the auto increase switch is closed."));
-                stop();
+                this.shutdown();
             }
         }
     }
 
     @Override
-    public void stop() {
-        shutdown();
+    public void shutdown() {
+        onShutdown();
+        for (ShutdownListener listener : shutdownListeners) {
+            try {
+                listener.onShutdown();
+            } catch (Exception e) {
+                logger().error("An exception occurred while executing the shutdown listener: " + e.getMessage(), e);
+            }
+        }
         if (globalWorkerGroup != null) {
             globalWorkerGroup.shutdownGracefully();
         }
@@ -104,5 +120,5 @@ public abstract class AbstractListenerServerService implements JvmmService {
 
     protected abstract void startUp(Promise<Integer> promise) throws Exception;
 
-    protected abstract void shutdown();
+    protected abstract void onShutdown();
 }

@@ -61,7 +61,6 @@ public class ServerBootstrap {
     }
 
     public synchronized static ServerBootstrap getInstance(Instrumentation inst, String args) {
-        System.out.println(args);
         String[] argKv = args.split(";");
         String configFileUrl = null;
         for (String s : argKv) {
@@ -201,8 +200,15 @@ public class ServerBootstrap {
                     }
                     assert service != null;
 
+
                     Promise<Integer> promise = new DefaultPromise<>(ServerContext.getBoosGroup().next());
                     JvmmService finalService = service;
+
+                    service.addShutdownListener(() -> {
+                        serviceManager.remove(finalService);
+                        ServerContext.unregisterService(server);
+                    });
+
                     promise.addListener((GenericFutureListener<Future<Integer>>) future -> {
                         latch.countDown();
                         if (future.isSuccess()) {

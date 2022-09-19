@@ -46,7 +46,7 @@ public class JvmmServerService extends AbstractListenerServerService {
     }
 
     @Override
-    protected void shutdown() {
+    protected void onShutdown() {
         logger.info("Trigger to shutdown jvmm server");
     }
 
