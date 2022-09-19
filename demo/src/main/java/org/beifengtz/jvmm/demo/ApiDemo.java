@@ -1,5 +1,6 @@
 package org.beifengtz.jvmm.demo;
 
+import org.beifengtz.jvmm.common.logger.LoggerLevel;
 import org.beifengtz.jvmm.core.JvmmCollector;
 import org.beifengtz.jvmm.core.JvmmExecutor;
 import org.beifengtz.jvmm.core.JvmmFactory;
@@ -26,13 +27,15 @@ import java.util.concurrent.TimeoutException;
 
 /**
  * Description: TODO
- *
+ * <p>
  * Created in 16:32 2021/12/15
  *
  * @author beifengtz
  */
-public class ApiCallDemo {
+public class ApiDemo {
     public static void main(String[] args) {
+        LoggerInitializer.init(LoggerLevel.INFO);
+
         //  jvmm收集器，可以获取以下信息：
         //  操作系统：基础信息、Memory、CPU、Process信息
         //  Java虚拟机：Memory、GC、Class、Thread、Compilation信息

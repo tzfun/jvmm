@@ -208,8 +208,8 @@ class DefaultJvmmCollector implements JvmmCollector {
 
             if (PlatformUtil.isLinux()) {
                 LinuxMemoryResult linuxMemoryResult = getLinuxMemoryResult();
-                info.setBufferCacheSize(linuxMemoryResult.getBuffCache());
-                info.setSharedSize(linuxMemoryResult.getShared());
+                info.setBufferCacheMemorySize(linuxMemoryResult.getBuffCache());
+                info.setSharedMemorySize(linuxMemoryResult.getShared());
             }
 
             File[] files = File.listRoots();

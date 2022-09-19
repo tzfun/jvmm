@@ -49,8 +49,8 @@ public class SystemDynamicInfo implements JsonParsable {
     /**
      * 缓冲区内存大小，仅限linux系统下
      */
-    private long bufferCacheSize;
-    private long sharedSize;
+    private long bufferCacheMemorySize;
+    private long sharedMemorySize;
     private final List<DiskInfo> disks = new ArrayList<>();
 
     private SystemDynamicInfo() {
@@ -132,20 +132,20 @@ public class SystemDynamicInfo implements JsonParsable {
         this.loadAverage = loadAverage;
     }
 
-    public long getBufferCacheSize() {
-        return bufferCacheSize;
+    public long getBufferCacheMemorySize() {
+        return bufferCacheMemorySize;
     }
 
-    public void setBufferCacheSize(long bufferCacheSize) {
-        this.bufferCacheSize = bufferCacheSize;
+    public void setBufferCacheMemorySize(long bufferCacheMemorySize) {
+        this.bufferCacheMemorySize = bufferCacheMemorySize;
     }
 
-    public long getSharedSize() {
-        return sharedSize;
+    public long getSharedMemorySize() {
+        return sharedMemorySize;
     }
 
-    public void setSharedSize(long sharedSize) {
-        this.sharedSize = sharedSize;
+    public void setSharedMemorySize(long sharedMemorySize) {
+        this.sharedMemorySize = sharedMemorySize;
     }
 
     public List<DiskInfo> getDisks() {

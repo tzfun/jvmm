@@ -39,7 +39,6 @@ import java.util.function.Function;
  */
 public class ServerBootstrap {
 
-    private static final int BIND_LIMIT_TIMES = 20;
     public static final String AGENT_BOOT_CLASS = "org.beifengtz.jvmm.agent.AgentBootStrap";
     private static volatile ServerBootstrap bootstrap;
     private static boolean fromAgent;
