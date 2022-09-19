@@ -151,7 +151,7 @@ public class ServerBootstrap {
                     if (!serverSet.contains(server)) {
                         startServers.add(server);
                     } else {
-                        callback.apply("ok:" + server + ":" + ServerContext.getService(server).getPort());
+                        callback.apply("ok:ready:" + server + ":" + ServerContext.getService(server).getPort());
                     }
                 }
 
@@ -161,16 +161,10 @@ public class ServerBootstrap {
                     }
                 }
 
-                System.err.println("serverSet:" + serverSet);
-                System.err.println("arg:" + argServers);
-                System.err.println("start" + startServers);
-                System.err.println("stop:" + stopServers);
-
                 for (ServerType server : stopServers) {
                     try {
-                        callback.apply("info:Try to stop running service: " + server);
+                        ServerContext.getService(server).addShutdownListener(() -> callback.apply("info: Service stopped: [" + server + "]"));
                         ServerContext.stop(server);
-                        callback.apply("info:" + server + " service stopped ");
                     } catch (Exception e) {
                         logger().error("An exception occurred while shutting down the jvmm service: " + e.getMessage(), e);
                     }
@@ -182,12 +176,10 @@ public class ServerBootstrap {
                     return;
                 }
 
-                CountDownLatch latch = new CountDownLatch(startServers.size());
-
                 if (serviceManager == null) {
                     serviceManager = new ServiceManager();
                 }
-
+                CountDownLatch latch = new CountDownLatch(startServers.size());
                 for (ServerType server : startServers) {
                     JvmmService service = null;
 
@@ -200,7 +192,6 @@ public class ServerBootstrap {
                     }
                     assert service != null;
 
-
                     Promise<Integer> promise = new DefaultPromise<>(ServerContext.getBoosGroup().next());
                     JvmmService finalService = service;
 
@@ -210,12 +201,15 @@ public class ServerBootstrap {
                     });
 
                     promise.addListener((GenericFutureListener<Future<Integer>>) future -> {
-                        latch.countDown();
-                        if (future.isSuccess()) {
-                            ServerContext.registerService(server, finalService);
-                            callback.apply("ok:" + server + ":" + future.get());
-                        } else {
-                            callback.apply(server + ":" + future.cause().getMessage());
+                        try {
+                            if (future.isSuccess()) {
+                                ServerContext.registerService(server, finalService);
+                                callback.apply("ok:new:" + server + ":" + future.get());
+                            } else {
+                                callback.apply(server + ":" + future.cause().getMessage());
+                            }
+                        } finally {
+                            latch.countDown();
                         }
                     });
                     serviceManager.startIfAbsent(service, promise);

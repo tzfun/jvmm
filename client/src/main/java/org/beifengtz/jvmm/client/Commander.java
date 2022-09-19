@@ -337,7 +337,22 @@ public class Commander {
                             } else if (content.startsWith("warn:")) {
                                 logger.warn(content.substring(content.indexOf(":") + 1));
                             } else if (content.startsWith("ok:")) {
-                                logger.info("==> {}", content);
+                                String[] split = content.split(":");
+                                if ("new".equals(split[1])) {
+                                    if ("sentinel".equals(split[2])) {
+                                        logger.info("New service started: [sentinel]");
+                                    } else {
+                                        logger.info("New service started on {}: [{}]", split[3], split[2]);
+                                    }
+                                } else if ("ready".equals(split[1])) {
+                                    if ("sentinel".equals(split[2])) {
+                                        logger.info("Service already started: [sentinel]");
+                                    } else {
+                                        logger.info("Service already started on {}: [{}]", split[3], split[2]);
+                                    }
+                                } else {
+                                    logger.info("==> {}", content);
+                                }
                             } else if ("end".equals(content)) {
                                 logger.info("Attach finished");
                                 break;
