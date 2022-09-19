@@ -96,7 +96,7 @@ public class ServerContext {
         if (boosGroup == null || boosGroup.isShutdown()) {
             synchronized (ServerContext.class) {
                 if (boosGroup == null || boosGroup.isShutdown()) {
-                    boosGroup = ChannelInitializers.newEventLoopGroup(1);
+                    boosGroup = ChannelInitializers.newEventLoopGroup(2);
                 }
             }
         }

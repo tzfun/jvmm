@@ -1,6 +1,7 @@
 package org.beifengtz.jvmm.server.service;
 
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
 import io.netty.util.concurrent.Promise;
@@ -24,6 +25,8 @@ public class JvmmServerService extends AbstractListenerServerService {
 
     private static final Logger logger = LoggerFactory.logger(JvmmServerService.class);
 
+    protected Channel channel;
+
     @Override
     protected Logger logger() {
         return logger;
@@ -41,13 +44,16 @@ public class JvmmServerService extends AbstractListenerServerService {
 
         promise.trySuccess(runningPort.get());
         logger().info("Jvmm server service started on {}, node name: {}", runningPort.get(), ServerContext.getConfiguration().getName());
-
-        future.channel().closeFuture().syncUninterruptibly();
+        channel = future.channel();
+        channel.closeFuture().syncUninterruptibly();
     }
 
     @Override
     protected void onShutdown() {
         logger.info("Trigger to shutdown jvmm server");
+        if (channel != null) {
+            channel.close();
+        }
     }
 
     @Override
