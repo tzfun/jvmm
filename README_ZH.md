@@ -53,6 +53,16 @@ tag页下载后解压，执行
 [Jvmm] [Info ] bye bye...
 ```
 
+在 linux、unix 操作系统下生成火焰图
+```shell
+> profiler -f profiler.html
+Write profiler to file successful, path is /home/jvmm/profiler.html
+```
+
+你会得到这样的火焰图
+
+![profiler.png](./doc/profiler.png)
+
 # 详细使用
 
 本项目提供了 `java agent`、`API`、`Server service` 三种方式可供选择，并且制作了`client命令行工具`与server进行通信，*在未来的版本将支持 web client*。
@@ -66,31 +76,6 @@ client命令行工具有两个模式：Attach 和 Client，使用它必须先选
 java -jar jvmm-client.jar -help
 ```
 
-你将会看到：
-```
-Command usage-
-Below will list all of parameters. You need choose running mode firstly.
-
- -help       Help information.
- -m <mode>   Choose action mode: 'client' or 'attach', default value is client
-
-Attach mode-
-Attach jvmm server to another java program in this computer.
-
- -a <agentJarFile>    The path of the 'jvmm-agent.jar' file. Support relative path, absolute path and network address.
- -c <config>          Agent startup configuration parameters, if not filled in, the default configuration will be used.
- -p <port>            Target java program listening port. If pid is not filled in, this parameter is required.
- -pid <pid>           The pid of target java program. If port is not filled in, this parameter is required.
- -s <serverJarFile>   The path of the 'jvmm-server.jar' file. Support relative path, absolute path and network address.
-
-Client mode-
-Connect to jvmm server and execute some commands.
-
- -h <address>       The address that will connect to the Jvmm server, like '127.0.0.1:5010'.
- -pass <password>   Jvmm server authentication password. If the target jvmm server is auth enable.
- -user <username>   Jvmm server authentication account. If the target jvmm server is auth enable.
-```
-
 **Client模式命令**
 
 进入Client模式且与jvmm server连接成功后，你将可以使用以下命令（键入help查看）：
@@ -101,7 +86,7 @@ profiler: -
 Get server sampling report. Only supported on MacOS and Linux.
  -c <counter>    Sample counter type, optional values: samples, total. Default value: samples.
  -e <event>      Sample event, optional values: cpu, alloc, lock, wall, itimer. Default value: cpu.
- -f <file>       Output file path (required *), file type indicates format type.
+ -f <file>       Output file path (required *), supported file type: csv, html, jfr.
  -i <interval>   The time interval of the unit to collect samples, the unit is nanosecond. Default value: 10000000 ns.
  -t <time>       Sampling interval time, the unit is second. Default value: 10 s.
 
@@ -343,7 +328,7 @@ implementation "io.github.tzfun.jvmm:jvmm-server:${jvmmVersion}"
 启动 server 样例代码：
 
 ```java
-import org.beifengtz.jvmm.core.conf.Configuration;
+import org.beifengtz.jvmm.server.entity.conf.Configuration;
 import org.beifengtz.jvmm.server.ServerBootstrap;
 
 public class ServerBootDemo {
@@ -376,8 +361,8 @@ package org.beifengtz.jvmm.demo;
 
 import io.netty.channel.EventLoopGroup;
 import io.netty.util.concurrent.Future;
-import org.beifengtz.jvmm.convey.GlobalType;
-import org.beifengtz.jvmm.convey.channel.JvmmChannelInitializer;
+import org.beifengtz.jvmm.convey.enums.GlobalType;
+import org.beifengtz.jvmm.convey.channel.JvmmServerChannelInitializer;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 
@@ -413,6 +398,22 @@ public class ServerConveyDemo {
         }
     }
 }
+```
+
+# QAS
+
+## 1.kernel.perf_event_paranoid权限开关
+如果你在生成火焰图时提示`No access to perf events. Try --fdtransfer or --all-user option or 'sysctl kernel.perf_event_paranoid=1'`，原因是系统内核默认禁止了检测系统性能，你需要开启这个选项。
+
+```shell
+sudo systcl -w kernel.perf_event_paranoid=1
+```
+
+或者修改sysctl文件
+
+```shell
+sudo sh -c 'echo "kernel.perf_event_paranoid=1" >> /etc/sysctl.conf'
+sudo sysctl -p
 ```
 
 # 感谢

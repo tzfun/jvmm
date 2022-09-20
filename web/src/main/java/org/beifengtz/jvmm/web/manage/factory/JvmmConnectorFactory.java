@@ -4,7 +4,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.util.concurrent.Future;
 import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
 import org.beifengtz.jvmm.common.factory.ExecutorFactory;
-import org.beifengtz.jvmm.convey.channel.JvmmChannelInitializer;
+import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 import org.beifengtz.jvmm.web.entity.po.NodePO;
 import org.springframework.stereotype.Component;
@@ -26,7 +26,7 @@ import static com.google.gson.internal.$Gson$Preconditions.checkArgument;
  */
 @Component
 public class JvmmConnectorFactory {
-    private static final EventLoopGroup GLOBAL_GROUP = JvmmChannelInitializer.newEventLoopGroup(ExecutorFactory.getNThreads(), ExecutorFactory.getScheduleThreadPool());
+    private static final EventLoopGroup GLOBAL_GROUP = ChannelInitializers.newEventLoopGroup(ExecutorFactory.getNThreads(), ExecutorFactory.getScheduleThreadPool());
 
     private final Map<String, JvmmConnector> connectorPool = new ConcurrentHashMap<>(2);
     private final Map<String, Object> addressLock = new ConcurrentHashMap<>(2);

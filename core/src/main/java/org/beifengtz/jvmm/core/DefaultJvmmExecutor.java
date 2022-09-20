@@ -39,7 +39,7 @@ class DefaultJvmmExecutor implements JvmmExecutor {
 
     private static final Logger log = LoggerFactory.logger(DefaultJvmmExecutor.class);
 
-    private static final Set<String> ENABLED_PROGRAM_NAME = CommonUtil.hashSetOf("jps");
+    private static final Set<String> ENABLED_PROGRAM_NAME = CommonUtil.hashSetOf("jps", "jstat", "jmap", "jcmd", "jstack", "jinfo");
 
     DefaultJvmmExecutor() {
     }

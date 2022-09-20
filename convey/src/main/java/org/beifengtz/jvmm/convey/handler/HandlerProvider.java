@@ -1,6 +1,7 @@
 package org.beifengtz.jvmm.convey.handler;
 
 import io.netty.channel.ChannelHandler;
+import io.netty.handler.ssl.SslContext;
 import io.netty.util.concurrent.EventExecutorGroup;
 
 /**
@@ -26,5 +27,13 @@ public interface HandlerProvider {
 
     default EventExecutorGroup getGroup() {
         return null;
+    }
+
+    default SslContext getSslContext() {
+        return null;
+    }
+
+    default long getChunkedSize() {
+        return 0xFFFFF;
     }
 }

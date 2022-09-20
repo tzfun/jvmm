@@ -1,25 +1,30 @@
 package org.beifengtz.jvmm.server;
 
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.EventLoopGroup;
+import io.netty.util.concurrent.DefaultPromise;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
+import io.netty.util.concurrent.Promise;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.logger.LoggerLevel;
-import org.beifengtz.jvmm.common.util.PlatformUtil;
 import org.beifengtz.jvmm.convey.DefaultInternalLoggerFactory;
-import org.beifengtz.jvmm.convey.channel.JvmmChannelInitializer;
-import org.beifengtz.jvmm.core.conf.ConfigParser;
-import org.beifengtz.jvmm.core.conf.Configuration;
-import org.beifengtz.jvmm.server.handler.ServerHandlerProvider;
+import org.beifengtz.jvmm.server.entity.conf.Configuration;
+import org.beifengtz.jvmm.server.entity.conf.ServerConf;
+import org.beifengtz.jvmm.server.enums.ServerType;
 import org.beifengtz.jvmm.server.logger.DefaultILoggerFactory;
 import org.beifengtz.jvmm.server.logger.DefaultJvmmILoggerFactory;
+import org.beifengtz.jvmm.server.service.JvmmHttpServerService;
+import org.beifengtz.jvmm.server.service.JvmmSentinelService;
+import org.beifengtz.jvmm.server.service.JvmmServerService;
+import org.beifengtz.jvmm.server.service.JvmmService;
+import org.beifengtz.jvmm.server.service.ServiceManager;
 import org.slf4j.Logger;
 
 import java.lang.instrument.Instrumentation;
-import java.net.BindException;
+import java.util.HashSet;
 import java.util.Locale;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
@@ -34,28 +39,20 @@ import java.util.function.Function;
  */
 public class ServerBootstrap {
 
-    private static final int BIND_LIMIT_TIMES = 20;
     public static final String AGENT_BOOT_CLASS = "org.beifengtz.jvmm.agent.AgentBootStrap";
     private static volatile ServerBootstrap bootstrap;
+    private static boolean fromAgent;
 
     private Instrumentation instrumentation;
-    private int rebindTimes = 0;
-
-    private EventLoopGroup bossGroup;
-    private EventLoopGroup workerGroup;
-
     private Thread shutdownHook;
+    private volatile ServiceManager serviceManager;
 
     private ServerBootstrap(Instrumentation inst) {
         this.instrumentation = inst;
     }
 
     public static ServerBootstrap getInstance() {
-        return getInstance(null, Configuration.defaultInstance());
-    }
-
-    public synchronized static ServerBootstrap getInstance(String args) {
-        return getInstance(null, args);
+        return getInstance(null, (Configuration) null);
     }
 
     public synchronized static ServerBootstrap getInstance(Configuration config) {
@@ -63,30 +60,48 @@ public class ServerBootstrap {
     }
 
     public synchronized static ServerBootstrap getInstance(Instrumentation inst, String args) {
-        if (bootstrap != null) {
-            return bootstrap;
+        String[] argKv = args.split(";");
+        String configFileUrl = null;
+        for (String s : argKv) {
+            String[] split = s.split("=");
+            if (split.length > 1) {
+                if ("config".equalsIgnoreCase(split[0])) {
+                    configFileUrl = split[1];
+                } else if ("fromAgent".equalsIgnoreCase(split[0])) {
+                    fromAgent = Boolean.parseBoolean(split[1]);
+                }
+            }
         }
-        System.out.println(args);
-        return getInstance(inst, ConfigParser.parseFromArgs(args));
+        if (configFileUrl == null) {
+            System.err.println("No config file, about to use default configuration");
+        }
+        return getInstance(inst, configFileUrl == null ? null : Configuration.parseFromUrl(configFileUrl));
     }
 
     public synchronized static ServerBootstrap getInstance(Instrumentation inst, Configuration config) {
         if (bootstrap != null) {
+            if (config != null) {
+                ServerContext.setConfiguration(config);
+            }
             return bootstrap;
         }
 
-        if (config.isLogUseJvmm()) {
-            initJvmmLogger(config.getLogLevel());
+        if (config == null) {
+            config = new Configuration();
+        }
+
+        if (config.getLog().isUseJvmm()) {
+            initJvmmLogger(config.getLog().getLevel());
         } else {
-            if (config.isFromAgent()) {
-                initAgentLogger(config.getLogLevel());
+            if (fromAgent) {
+                initAgentLogger(config.getLog().getLevel());
             } else {
                 initBaseLogger();
             }
         }
 
         bootstrap = new ServerBootstrap(inst);
-        ServerConfig.setConfiguration(config);
+        ServerContext.setConfiguration(config);
 
         return bootstrap;
     }
@@ -114,88 +129,134 @@ public class ServerBootstrap {
         return LoggerFactory.logger(ServerBootstrap.class);
     }
 
-    @SuppressWarnings("unchecked")
-    public void start(Function callback) {
-        if (ServerConfig.isInited()) {
-            int realBindPort = ServerConfig.getRealBindPort();
-            if (realBindPort < 0) {
-                start(ServerConfig.getConfiguration().getPort(), callback);
-            } else {
-                callback.apply(realBindPort);
-                logger().info("Jvmm server already started on {}", realBindPort);
-            }
-        } else {
-            String msg = "Jvmm Server start failed, configuration not inited.";
-            callback.apply(msg);
-            logger().error(msg);
-        }
-    }
+    public void start(Function<Object, Object> callback) {
+        callback.apply("start");
+        try {
+            if (ServerContext.isInited()) {
 
-    @SuppressWarnings("unchecked")
-    private void start(int bindPort, Function callback) {
-        if (PlatformUtil.portAvailable(bindPort)) {
-            logger().info("Try to start jvmm server service. target port: {}", bindPort);
-            rebindTimes++;
-            final io.netty.bootstrap.ServerBootstrap b = new io.netty.bootstrap.ServerBootstrap();
+                //  如果服务类型不同，先关闭现有服务
+                Set<ServerType> serverSet = ServerContext.getServerSet();
+                ServerConf serverConf = ServerContext.getConfiguration().getServer();
+                String[] split = serverConf.getType().split(",");
 
-            if (bossGroup == null) {
-                bossGroup = JvmmChannelInitializer.newEventLoopGroup(1);
-            }
-            if (workerGroup == null) {
-                workerGroup = JvmmChannelInitializer.newEventLoopGroup(ServerConfig.getWorkThread());
-            }
-            try {
-                if (rebindTimes > BIND_LIMIT_TIMES) {
-                    throw new BindException("The number of port monitoring retries exceeds the limit: " + BIND_LIMIT_TIMES);
+                Set<ServerType> argServers = new HashSet<>(split.length);
+                Set<ServerType> startServers = new HashSet<>();
+                Set<ServerType> stopServers = new HashSet<>();
+
+                for (String t : split) {
+                    ServerType server = ServerType.of(t);
+                    if (server == ServerType.none) {
+                        continue;
+                    }
+                    argServers.add(server);
+                    if (!serverSet.contains(server)) {
+                        startServers.add(server);
+                    } else {
+                        callback.apply("ok:ready:" + server + ":" + ServerContext.getService(server).getPort());
+                    }
                 }
 
-                ChannelFuture f = b.group(bossGroup, workerGroup)
-                        .channel(JvmmChannelInitializer.serverChannelClass(bossGroup))
-                        .childHandler(new JvmmChannelInitializer(new ServerHandlerProvider(10, workerGroup)))
-                        .bind(bindPort).syncUninterruptibly();
+                for (ServerType server : serverSet) {
+                    if (!argServers.contains(server)) {
+                        stopServers.add(server);
+                    }
+                }
 
-                logger().info("Jvmm server service started on {}, node name: {}", bindPort, ServerConfig.getConfiguration().getName());
-                ServerConfig.setRealBindPort(bindPort);
-                callback.apply(bindPort);
+                for (ServerType server : stopServers) {
+                    try {
+                        ServerContext.getService(server).addShutdownListener(() -> callback.apply("info:Service stopped: [" + server + "]"));
+                        ServerContext.stop(server);
+                    } catch (Exception e) {
+                        logger().error("An exception occurred while shutting down the jvmm service: " + e.getMessage(), e);
+                    }
+                }
+
+                if (startServers.size() == 0) {
+                    callback.apply("warn:No new jvmm service need start");
+                    callback.apply("end");
+                    return;
+                }
+
+                if (serviceManager == null) {
+                    serviceManager = new ServiceManager();
+                }
+                CountDownLatch latch = new CountDownLatch(startServers.size());
+                for (ServerType server : startServers) {
+                    JvmmService service = null;
+
+                    if (server == ServerType.jvmm) {
+                        service = new JvmmServerService();
+                    } else if (server == ServerType.http) {
+                        service = new JvmmHttpServerService();
+                    } else if (server == ServerType.sentinel) {
+                        service = new JvmmSentinelService();
+                    }
+                    assert service != null;
+
+                    Promise<Integer> promise = new DefaultPromise<>(ServerContext.getBoosGroup().next());
+                    JvmmService finalService = service;
+
+                    service.addShutdownListener(() -> {
+                        serviceManager.remove(finalService);
+                        ServerContext.unregisterService(server);
+                    });
+
+                    promise.addListener((GenericFutureListener<Future<Integer>>) future -> {
+                        try {
+                            if (future.isSuccess()) {
+                                ServerContext.registerService(server, finalService);
+                                callback.apply("ok:new:" + server + ":" + future.get());
+                            } else {
+                                callback.apply(server + ":" + future.cause().getMessage());
+                            }
+                        } finally {
+                            latch.countDown();
+                        }
+                    });
+                    serviceManager.startIfAbsent(service, promise);
+                }
 
                 if (shutdownHook == null) {
                     shutdownHook = new Thread(this::stop);
-                    shutdownHook.setName("jvmm-shutdown-hook");
+                    shutdownHook.setName("jvmm-shutdown");
+                    Runtime.getRuntime().addShutdownHook(shutdownHook);
                 }
-                Runtime.getRuntime().addShutdownHook(shutdownHook);
-                f.channel().closeFuture().syncUninterruptibly();
-            } catch (BindException e) {
-                if (rebindTimes < BIND_LIMIT_TIMES && ServerConfig.getConfiguration().isAutoIncrease()) {
-                    start(bindPort + 1, callback);
-                } else {
-                    logger().error("Jvmm server start up failed. " + e.getMessage(), e);
-                    stop();
+
+                try {
+                    if (!latch.await(15, TimeUnit.SECONDS)) {
+                        String msg = "A service timed out for unknown reasons";
+                        logger().error(msg);
+                        callback.apply(msg);
+                    }
+                } catch (InterruptedException e) {
+                    String msg = "Failed to wait for service to start: " + e.getMessage();
+                    logger().error(msg, e);
+                    callback.apply(msg);
+                } finally {
+                    callback.apply("end");
                 }
-            } catch (Throwable e) {
-                logger().error("Jvmm server start up failed. " + e.getMessage(), e);
-                callback.apply(e.getMessage());
-                stop();
-            }
-        } else {
-            logger().info("Port {} is not available, auto increase:{}", bindPort, ServerConfig.getConfiguration().isAutoIncrease());
-            if (ServerConfig.getConfiguration().isAutoIncrease()) {
-                start(bindPort + 1, callback);
             } else {
-                callback.apply("Port " + bindPort + " is not available and the auto increase switch is closed.");
+                String msg = "Jvmm Server start failed, configuration not inited.";
+                callback.apply(msg);
+                callback.apply("end");
+                logger().error(msg);
             }
+        } catch (Throwable e) {
+            logger().error("Jvmm service start failed " + e.getMessage(), e);
+            callback.apply(e.getMessage());
+            callback.apply("end");
         }
     }
 
     public void stop() {
-        if (bossGroup != null) {
-            bossGroup.shutdownGracefully(0, 2, TimeUnit.SECONDS);
-            bossGroup = null;
+        for (ServerType server : ServerType.values()) {
+            try {
+                ServerContext.stop(server);
+            } catch (Exception e) {
+                logger().error("An exception occurred while shutting down the jvmm service: " + e.getMessage(), e);
+            }
         }
-        if (workerGroup != null) {
-            workerGroup.shutdownGracefully(1, 2, TimeUnit.SECONDS);
-            workerGroup = null;
-        }
-        ServerConfig.setRealBindPort(-1);
+        ServerContext.getBoosGroup().shutdownGracefully();
         if (shutdownHook != null) {
             try {
                 Runtime.getRuntime().removeShutdownHook(shutdownHook);
@@ -205,19 +266,13 @@ public class ServerBootstrap {
         }
         logger().info("Jvmm server service stopped.");
 
-        try {
-            Class<?> bootClazz = Thread.currentThread().getContextClassLoader().loadClass(AGENT_BOOT_CLASS);
-            bootClazz.getMethod("serverStop").invoke(null);
-        } catch (Throwable e) {
-            logger().error("Invoke agent boot method(#serverStop) failed", e);
+        if (fromAgent) {
+            try {
+                Class<?> bootClazz = Thread.currentThread().getContextClassLoader().loadClass(AGENT_BOOT_CLASS);
+                bootClazz.getMethod("serverStop").invoke(null);
+            } catch (Throwable e) {
+                logger().error("Invoke agent boot method(#serverStop) failed", e);
+            }
         }
-    }
-
-    public boolean serverAvailable() {
-        return ServerConfig.getRealBindPort() >= 0;
-    }
-
-    public int bindPort() {
-        return ServerConfig.getRealBindPort();
     }
 }

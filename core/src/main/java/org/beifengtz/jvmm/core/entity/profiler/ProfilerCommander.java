@@ -30,9 +30,9 @@ public class ProfilerCommander {
      */
     private String frameBuf;
     private boolean threads;
-    private boolean allUser;
+    private boolean allUser = true;
     private boolean allKernel;
-    private boolean fdtransfer;
+    private boolean fdtransfer = true;
     /**
      * 采样包含类，例如：org/beifengtz/*
      */

@@ -6,7 +6,6 @@ import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.util.ClassLoaderUtil;
 import org.beifengtz.jvmm.common.util.JavaEnvUtil;
 import org.beifengtz.jvmm.common.util.JavaVersionUtils;
-import org.beifengtz.jvmm.core.conf.Configuration;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -66,7 +65,7 @@ public class AttachProvider {
         }
     }
 
-    public void attachAgent(long targetPid, String agentJarPath, String serverJarPath, Configuration config) throws Exception {
+    public void attachAgent(long targetPid, String agentJarPath, String serverJarPath, String args) throws Exception {
         if (targetPid <= 0) {
             throw new IllegalArgumentException("Can not attach to virtual machine with illegal pid " + targetPid);
         }
@@ -99,7 +98,7 @@ public class AttachProvider {
             }
 
             virtualMachine.loadAgent(agentJarPath.replaceAll("\\\\", "/"),
-                    serverJarPath.replaceAll("\\\\", "/") + ";" + config.argFormat());
+                    serverJarPath.replaceAll("\\\\", "/") + ";" +args);
         } finally {
             if (null != virtualMachine) {
                 virtualMachine.detach();

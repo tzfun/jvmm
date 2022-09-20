@@ -4,14 +4,16 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.ParseException;
 import org.beifengtz.jvmm.client.annotation.JvmmCmdDesc;
 import org.beifengtz.jvmm.client.annotation.JvmmOption;
 import org.beifengtz.jvmm.client.annotation.JvmmOptions;
 import org.beifengtz.jvmm.common.util.CodingUtil;
 import org.beifengtz.jvmm.common.util.FileUtil;
 import org.beifengtz.jvmm.common.util.StringUtil;
-import org.beifengtz.jvmm.convey.GlobalType;
+import org.beifengtz.jvmm.convey.enums.GlobalType;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
@@ -130,9 +132,21 @@ public class ServerServiceImpl extends ServerService {
         System.out.println("ok");
     }
 
-    @JvmmCmdDesc(desc = "Shutdown jvmm server, no arguments.")
+    @JvmmOption(
+            name = "t",
+            hasArg = true,
+            argName = "type",
+            desc = "The type of service to be closed, allowed values: jvmm, http, sentinel"
+    )
+    @JvmmCmdDesc(desc = "Shutdown service.")
     public static void shutdown(JvmmConnector connector, CommandLine cmd) {
-        JvmmRequest request = JvmmRequest.create().setType(GlobalType.JVMM_TYPE_SERVER_SHUTDOWN);
+        if (!cmd.hasOption("t")) {
+            printErr("Missing required param: type");
+            return;
+        }
+        JvmmRequest request = JvmmRequest.create()
+                .setType(GlobalType.JVMM_TYPE_SERVER_SHUTDOWN)
+                .setData(new JsonPrimitive(cmd.getOptionValue("t")));
         JvmmResponse response = request(connector, request);
         if (response == null) {
             return;
@@ -185,7 +199,7 @@ public class ServerServiceImpl extends ServerService {
                     required = true,
                     hasArg = true,
                     argName = "file",
-                    desc = "Output file path (required *), file type indicates format type."
+                    desc = "Output file path (required *), supported file type: csv, html, jfr."
             )
     })
     @JvmmCmdDesc(desc = "Get server sampling report. Only supported on MacOS and Linux.")

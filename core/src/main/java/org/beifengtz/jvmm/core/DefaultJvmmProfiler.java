@@ -104,7 +104,7 @@ class DefaultJvmmProfiler implements JvmmProfiler {
         execute(ProfilerCommander.newInstance()
                 .setAction(ProfilerAction.start)
                 .setEvent(event)
-                .setInterval(interval)
+                .setInterval(interval <= 1000 ? DEFAULT_INTERVAL : interval)
                 .setCounter(counter)
                 .setAllKernel(true)
                 .setAllUser(true)
@@ -112,7 +112,7 @@ class DefaultJvmmProfiler implements JvmmProfiler {
 
         return executor.schedule(() -> execute(
                 ProfilerCommander.newInstance().setAction(ProfilerAction.stop).setFile(to.getAbsolutePath())
-        ), time, timeUnit);
+        ), time <= 0 ? 10 : time, timeUnit);
     }
 
     @Override

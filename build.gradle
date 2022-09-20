@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'io.github.tzfun.jvmm'
-version = '1.2.4'
+version = '2.0.0'
 
 ext {
     nettyVersion = "4.1.65.Final"
@@ -13,7 +13,7 @@ ext {
     slf4jVersion = "1.7.30"
     logbackVersion = "1.2.3"
     gsonVersoion = "2.8.6"
-    commonsCli="1.5.0"
+    commonsCli = "1.5.0"
 }
 
 subprojects {

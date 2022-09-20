@@ -17,11 +17,12 @@ import org.beifengtz.jvmm.common.exception.ErrorStatusException;
 import org.beifengtz.jvmm.common.exception.SocketExecuteException;
 import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.util.SignatureUtil;
-import org.beifengtz.jvmm.convey.GlobalStatus;
-import org.beifengtz.jvmm.convey.GlobalType;
+import org.beifengtz.jvmm.convey.enums.GlobalStatus;
+import org.beifengtz.jvmm.convey.enums.GlobalType;
 import org.beifengtz.jvmm.convey.auth.JvmmBubbleDecrypt;
 import org.beifengtz.jvmm.convey.auth.JvmmBubbleEncrypt;
-import org.beifengtz.jvmm.convey.channel.JvmmChannelInitializer;
+import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
+import org.beifengtz.jvmm.convey.channel.JvmmServerChannelInitializer;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.handler.HandlerProvider;
@@ -142,10 +143,10 @@ public class JvmmConnector implements Closeable {
                 int seed = data.get("seed").getAsInt();
 
                 ctx.pipeline()
-                        .addAfter(ctx.executor(), JvmmChannelInitializer.STRING_DECODER_HANDLER,
-                                JvmmChannelInitializer.JVMM_BUBBLE_ENCODER, new JvmmBubbleEncrypt(seed, key))
-                        .addAfter(ctx.executor(), JvmmChannelInitializer.STRING_DECODER_HANDLER,
-                                JvmmChannelInitializer.JVMM_BUBBLE_DECODER, new JvmmBubbleDecrypt(seed, key));
+                        .addAfter(ctx.executor(), ChannelInitializers.STRING_DECODER_HANDLER,
+                                JvmmServerChannelInitializer.JVMM_BUBBLE_ENCODER, new JvmmBubbleEncrypt(seed, key))
+                        .addAfter(ctx.executor(), ChannelInitializers.STRING_DECODER_HANDLER,
+                                JvmmServerChannelInitializer.JVMM_BUBBLE_DECODER, new JvmmBubbleDecrypt(seed, key));
 
                 JvmmRequest authReq = JvmmRequest.create().setType(GlobalType.JVMM_TYPE_AUTHENTICATION);
 
@@ -188,7 +189,7 @@ public class JvmmConnector implements Closeable {
      *                     false - 不自动发送心跳包，连接闲置后会自动断开连接。
      * @param authAccount  安全认证账号
      * @param authPassword 安全认证密码
-     * @param workerGroup  连接工作线程组，建议使用{@link JvmmChannelInitializer#newEventLoopGroup(int)}方法获得
+     * @param workerGroup  连接工作线程组，建议使用{@link ChannelInitializers#newEventLoopGroup(int)}方法获得
      * @return {@link JvmmConnector} 实例
      */
     public static JvmmConnector newInstance(String host, int port, EventLoopGroup workerGroup, boolean keepAlive, String authAccount, String authPassword) {
@@ -228,7 +229,7 @@ public class JvmmConnector implements Closeable {
         if (state != State.CONNECTED) {
             openPromise = new DefaultPromise<>(workGroup.next());
             Bootstrap b = new Bootstrap();
-            b.group(workGroup).channel(JvmmChannelInitializer.channelClass(workGroup)).handler(new JvmmChannelInitializer(new SocketResponseHandler()));
+            b.group(workGroup).channel(ChannelInitializers.channelClass(workGroup)).handler(new JvmmServerChannelInitializer(new SocketResponseHandler()));
             channel = b.connect(host, port).channel();
             channel.closeFuture().addListener(future -> {
                 state = State.CLOSED;
