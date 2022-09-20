@@ -8,11 +8,31 @@ dependencies {
     compile("commons-cli:commons-cli:${commonsCli}")
 }
 
+tasks.clean.configure {
+    doFirst {
+        delete fileTree("src/main/resources").matching {
+            include "jvmm-*.jar"
+        }
+    }
+}
+
+tasks.compileJava.configure {
+    dependsOn project(':agent').tasks.jar,project(':server').tasks.jar
+
+    doLast {
+        println("copy agent & server jar file to resources")
+        copy {
+            from '../agent/build/libs/jvmm-agent.jar', '../server/build/libs/jvmm-server.jar'
+            into 'src/main/resources'
+        }
+    }
+}
+
 jar {
     manifestContentCharset 'utf-8'
     metadataCharset 'utf-8'
 
-    def jarName = "jvmm-client.jar"
+    def jarName = "jvmm.jar"
     archiveName(jarName)
     manifest {
         attributes 'Main-Class': 'org.beifengtz.jvmm.client.ClientApplication'

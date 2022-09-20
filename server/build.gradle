@@ -29,9 +29,9 @@ jar {
         def targetDir = "${rootProject.rootDir}/bin/jvmm-${rootProject.version}"
 
         copy {
-            println("copy ${jarName} to ${targetDir}")
+            println("copy config.yml to ${targetDir}")
 
-            from "${project.buildDir}/libs/${jarName}","${project.buildDir}/resources/main/config.yml"
+            from "${project.buildDir}/resources/main/config.yml"
             into targetDir
         }
     }

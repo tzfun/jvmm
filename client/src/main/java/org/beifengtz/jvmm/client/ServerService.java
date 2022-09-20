@@ -16,6 +16,7 @@ import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -116,6 +117,8 @@ public class ServerService {
             CommandLine cmd = commandParser.parse(optionsMap.get(key), args);
             methodMap.get(key).invoke(null, connector, cmd);
             Thread.sleep(50);
+        } catch (InvocationTargetException e) {
+            throw e.getTargetException();
         } catch (ParseException e) {
             printErr("Invalid command arguments, case: " + e.getMessage());
         }

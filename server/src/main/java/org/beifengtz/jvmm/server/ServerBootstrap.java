@@ -72,7 +72,9 @@ public class ServerBootstrap {
                 }
             }
         }
-
+        if (configFileUrl == null) {
+            System.err.println("No config file, about to use default configuration");
+        }
         return getInstance(inst, configFileUrl == null ? null : Configuration.parseFromUrl(configFileUrl));
     }
 
@@ -162,7 +164,7 @@ public class ServerBootstrap {
 
                 for (ServerType server : stopServers) {
                     try {
-                        ServerContext.getService(server).addShutdownListener(() -> callback.apply("info: Service stopped: [" + server + "]"));
+                        ServerContext.getService(server).addShutdownListener(() -> callback.apply("info:Service stopped: [" + server + "]"));
                         ServerContext.stop(server);
                     } catch (Exception e) {
                         logger().error("An exception occurred while shutting down the jvmm service: " + e.getMessage(), e);

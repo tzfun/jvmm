@@ -11,6 +11,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.util.FileUtil;
+import org.beifengtz.jvmm.common.util.IOUtil;
 import org.beifengtz.jvmm.common.util.PidUtil;
 import org.beifengtz.jvmm.common.util.meta.PairKey;
 import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
@@ -19,8 +20,11 @@ import org.beifengtz.jvmm.core.AttachProvider;
 import org.slf4j.Logger;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -35,11 +39,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author beifengtz
  */
-public class Commander {
+public class CommandRunner {
 
-    private static final Logger logger = LoggerFactory.logger(Commander.class);
+    private static final Logger logger = LoggerFactory.logger(CommandRunner.class);
 
-    private static final String TEMP_DIR = "lib";
+    private static final String TEMP_DIR = ".jvmm";
     private static final Options options;
     private static final Options rootOptions;
     private static final Options attachOptions;
@@ -57,7 +61,7 @@ public class Commander {
                 .required(false)
                 .hasArg()
                 .argName("mode")
-                .desc("Choose action mode: 'client' or 'attach', default value is client")
+                .desc("* Choose action mode: 'client' or 'attach'")
                 .build();
         options.addOption(mode);
         rootOptions.addOption(mode);
@@ -137,7 +141,7 @@ public class Commander {
         clientOptions.addOption(password);
     }
 
-    public static void parse(String[] args) throws Throwable {
+    public static void run(String[] args) throws Throwable {
         //parser
         CommandLineParser parser = DefaultParser.builder().build();
         try {
@@ -146,25 +150,39 @@ public class Commander {
                 printHelp();
                 return;
             }
-            String mode = cmd.getOptionValue("m");
-            if ("attach".equals(mode)) {
-                handleAttach(cmd);
+
+            String mode = null;
+            if (cmd.hasOption("m")) {
+                mode = cmd.getOptionValue("m");
             } else {
+                mode = GuidedRunner.askMode();
+            }
+
+            if ("attach".equalsIgnoreCase(mode)) {
+                handleAttach(cmd);
+            } else if ("client".equalsIgnoreCase(mode)) {
                 handleClient(cmd);
+            } else {
+                logger.error("Only allow model types: client, attach");
             }
         } catch (ParseException e) {
             printHelp();
         }
+        System.exit(0);
     }
 
     private static void handleClient(CommandLine cmd) throws Throwable {
-        String address;
-        if (!cmd.hasOption("h")) {
-            logger.error("Missing required address");
-            printHelp();
-            return;
-        } else {
+        String address = null, username = null, password = null;
+        if (cmd.hasOption("h")) {
             address = cmd.getOptionValue("h");
+            username = cmd.getOptionValue("user");
+            password = cmd.getOptionValue("pass");
+        } else {
+            address = GuidedRunner.askServerAddress();
+            if (GuidedRunner.askServerAuthEnable()) {
+                username = GuidedRunner.askServerAuthUsername();
+                password = GuidedRunner.askServerAuthPassword();
+            }
         }
 
         String[] split = address.split(":");
@@ -174,8 +192,6 @@ public class Commander {
         }
         String host = split[0];
         int port = Integer.parseInt(split[1]);
-        String username = cmd.getOptionValue("user");
-        String password = cmd.getOptionValue("pass");
 
         EventLoopGroup group = ChannelInitializers.newEventLoopGroup(1);
 
@@ -224,81 +240,99 @@ public class Commander {
             System.out.print("> ");
         }
         sc.close();
-        System.exit(0);
     }
 
     private static void handleAttach(CommandLine cmd) throws Throwable {
-        if (!cmd.hasOption("a")) {
-            logger.error("Missing required parameter: jvmm-agent.jar path");
-            printHelp();
+        //  先删除临时文件
+        FileUtil.delFile(new File(TEMP_DIR));
+
+        InputStream agentIs = CommandRunner.class.getResourceAsStream("/jvmm-agent.jar");
+        InputStream serverIs = CommandRunner.class.getResourceAsStream("/jvmm-server.jar");
+
+        String agentFilePath = null, serverFilePath = null, configFilePath = null;
+        int pid = -1;
+
+        if (cmd.hasOption("a")) {
+            agentFilePath = cmd.getOptionValue("a");
+        } else if (agentIs == null) {
+            agentFilePath = GuidedRunner.askAgentFilePath();
+        } else {
+            File tempFile = new File(TEMP_DIR, "jvmm-agent.jar");
+            FileUtil.writeByteArrayToFile(tempFile, IOUtil.toByteArray(agentIs));
+            agentFilePath = tempFile.getAbsolutePath();
+        }
+
+        if (cmd.hasOption("s")) {
+            serverFilePath = cmd.getOptionValue("s");
+        } else if (serverIs == null) {
+            serverFilePath = GuidedRunner.askServerFilePath();
+        } else {
+            File tempFile = new File(TEMP_DIR, "jvmm-server.jar");
+            FileUtil.writeByteArrayToFile(tempFile, IOUtil.toByteArray(serverIs));
+            serverFilePath = tempFile.getAbsolutePath();
+        }
+
+        if (cmd.hasOption("c")) {
+            configFilePath = cmd.getOptionValue("c");
+            File file = new File(configFilePath);
+            if (file.exists()) {
+                configFilePath = file.getAbsolutePath();
+            } else {
+                logger.error("Can not find config file from '" + configFilePath + "'");
+                configFilePath = GuidedRunner.askConfigFilePath();
+            }
+        } else {
+            configFilePath = GuidedRunner.askConfigFilePath();
+        }
+
+        if (cmd.hasOption("p")) {
+            pid = (int) PidUtil.findProcessByPort(Integer.parseInt(cmd.getOptionValue("p")));
+        } else if (cmd.hasOption("pid")) {
+            pid = Integer.parseInt(cmd.getOptionValue("pid"));
+        } else {
+            pid = GuidedRunner.askAttachPid();
+        }
+
+        if (pid <= 0) {
+            logger.error("Target java program not running.");
             return;
         }
 
-        if (!cmd.hasOption("s")) {
-            logger.error("Missing required parameter: jvmm-server.jar path");
-            printHelp();
-            return;
-        }
-
-        if (!cmd.hasOption("c")) {
-            logger.error("Missing config file, you need to configure the file path via the '-c' parameter.");
-            printHelp();
-            return;
-        }
-
-        if (!cmd.hasOption("p") && !cmd.hasOption("pid")) {
-            logger.error("Missing required parameter: port or pid");
-            printHelp();
-            return;
-        }
-
-        String agentPath = cmd.getOptionValue("a");
         File agentFile;
         //  支持从网络下载jar包
-        if (agentPath.startsWith("http://") || agentPath.startsWith("https://")) {
-            boolean loaded = FileUtil.readFileFromNet(agentPath, TEMP_DIR, "jvmm-agent.jar");
+        if (agentFilePath.startsWith("http://") || agentFilePath.startsWith("https://")) {
+            logger.info("Start downloading jar file from " + agentFilePath);
+            boolean loaded = FileUtil.readFileFromNet(agentFilePath, TEMP_DIR, "jvmm-agent.jar");
             if (loaded) {
                 agentFile = new File(TEMP_DIR, "jvmm-agent.jar");
             } else {
-                logger.error("Can not load 'jvmm-agent.jar' from " + agentPath);
+                logger.error("Can not download 'jvmm-agent.jar'");
                 return;
             }
         } else {
-            agentFile = new File(agentPath);
+            agentFile = new File(agentFilePath);
             if (!agentFile.exists()) {
-                logger.error("File not exists! " + agentFile.getAbsolutePath());
+                logger.error("Agent jar file not exists! " + agentFile.getAbsolutePath());
                 return;
             }
         }
 
-        String serverPath = cmd.getOptionValue("s");
         File serverFile;
-        if (serverPath.startsWith("http://") || serverPath.startsWith("https://")) {
-            boolean loaded = FileUtil.readFileFromNet(agentPath, TEMP_DIR, "jvmm-server.jar");
+        if (serverFilePath.startsWith("http://") || serverFilePath.startsWith("https://")) {
+            logger.info("Start downloading jar file from " + serverFilePath);
+            boolean loaded = FileUtil.readFileFromNet(serverFilePath, TEMP_DIR, "jvmm-server.jar");
             if (loaded) {
                 serverFile = new File(TEMP_DIR, "jvmm-server.jar");
             } else {
-                logger.error("Can not load 'jvmm-server.jar' from " + agentPath);
+                logger.error("Can not download 'jvmm-server.jar'");
                 return;
             }
         } else {
-            serverFile = new File(serverPath);
+            serverFile = new File(serverFilePath);
             if (!serverFile.exists()) {
-                logger.error("File not exists! " + serverFile.getAbsolutePath());
+                logger.error("Server jar file not exists! " + serverFile.getAbsolutePath());
                 return;
             }
-        }
-
-        long pid = -1;
-        if (cmd.hasOption("pid")) {
-            pid = Integer.parseInt(cmd.getOptionValue("pid"));
-        } else if (cmd.hasOption("p")) {
-            pid = PidUtil.findProcessByPort(Integer.parseInt(cmd.getOptionValue("p")));
-        }
-
-        if (pid < 0) {
-            logger.error("Target java program not running.");
-            return;
         }
 
         //  开启目标服务启动状态监听
@@ -307,7 +341,7 @@ public class Commander {
             logger.error("Start attach listener holder failed.");
             return;
         }
-        String args = String.format("config=%s;listenerPort=%d", new File(cmd.getOptionValue("c")).getAbsoluteFile(), pair.getLeft());
+        String args = String.format("config=%s;listenerPort=%d", configFilePath, pair.getLeft());
 
         logger.info("Start to attach program {} ...", pid);
         try {
@@ -357,7 +391,7 @@ public class Commander {
                                 logger.info("Attach finished");
                                 break;
                             } else {
-                                System.out.println(content);
+                                logger.error(content);
                             }
                         }
                     }

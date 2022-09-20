@@ -39,7 +39,13 @@ public final class Configuration {
                     throw new RuntimeException("Can not load 'config.yml' from " + url);
                 }
             } else {
-                return new Gson().fromJson(FileUtil.readYml2Json(new File(url)), Configuration.class);
+                File file = new File(url);
+                if (file.exists()) {
+                    return new Gson().fromJson(FileUtil.readYml2Json(file), Configuration.class);
+                } else {
+                    System.err.println("Can not load config from not exist file: " + url);
+                    return null;
+                }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
