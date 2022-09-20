@@ -18,13 +18,4 @@ jar {
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     }
-
-    doLast {
-        def targetDir = "${rootProject.rootDir}/bin/jvmm-${rootProject.version}"
-        copy {
-            println("copy ${jarName} to ${targetDir}")
-            from "${project.buildDir}/libs/${jarName}"
-            into targetDir
-        }
-    }
 }

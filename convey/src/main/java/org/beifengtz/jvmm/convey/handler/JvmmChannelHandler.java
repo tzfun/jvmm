@@ -18,8 +18,6 @@ import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
 import org.beifengtz.jvmm.common.exception.InvalidJvmmMappingException;
 import org.beifengtz.jvmm.common.exception.InvalidMsgException;
 import org.beifengtz.jvmm.common.util.ReflexUtil;
-import org.beifengtz.jvmm.convey.enums.GlobalStatus;
-import org.beifengtz.jvmm.convey.enums.GlobalType;
 import org.beifengtz.jvmm.convey.annotation.JvmmController;
 import org.beifengtz.jvmm.convey.annotation.JvmmMapping;
 import org.beifengtz.jvmm.convey.auth.JvmmBubble;
@@ -29,6 +27,8 @@ import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
 import org.beifengtz.jvmm.convey.channel.JvmmServerChannelInitializer;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
+import org.beifengtz.jvmm.convey.enums.GlobalStatus;
+import org.beifengtz.jvmm.convey.enums.GlobalType;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 import org.slf4j.Logger;
 
@@ -227,7 +227,7 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
                 } else if (JsonElement.class.isAssignableFrom(parameterType)) {
                     parameter[i] = reqMsg.getData();
                 } else if (String.class.isAssignableFrom(parameterType)) {
-                    parameter[i] = reqMsg.getData().getAsString();
+                    parameter[i] = reqMsg.getData() == null ? null : reqMsg.getData().getAsString();
                 } else if (EventExecutor.class.isAssignableFrom(parameterType)) {
                     parameter[i] = ctx.executor();
                 } else if (ChannelHandlerContext.class.isAssignableFrom(parameterType)) {
@@ -290,7 +290,6 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
     }
 
     /**
-     *
      * @return true-继续处理消息 false-消息已被拦截，无需继续处理
      */
     protected abstract boolean handleBefore(ChannelHandlerContext ctx, JvmmRequest reqMsg) throws Exception;

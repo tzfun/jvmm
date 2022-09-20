@@ -76,31 +76,6 @@ client命令行工具有两个模式：Attach 和 Client，使用它必须先选
 java -jar jvmm-client.jar -help
 ```
 
-你将会看到：
-```
-Command usage-
-Below will list all of parameters. You need choose running mode firstly.
-
- -help       Help information.
- -m <mode>   Choose action mode: 'client' or 'attach', default value is client
-
-Attach mode-
-Attach jvmm server to another java program in this computer.
-
- -a <agentJarFile>    The path of the 'jvmm-agent.jar' file. Support relative path, absolute path and network address.
- -c <config>          Agent startup configuration parameters, if not filled in, the default configuration will be used.
- -p <port>            Target java program listening port. If pid is not filled in, this parameter is required.
- -pid <pid>           The pid of target java program. If port is not filled in, this parameter is required.
- -s <serverJarFile>   The path of the 'jvmm-server.jar' file. Support relative path, absolute path and network address.
-
-Client mode-
-Connect to jvmm server and execute some commands.
-
- -h <address>       The address that will connect to the Jvmm server, like '127.0.0.1:5010'.
- -pass <password>   Jvmm server authentication password. If the target jvmm server is auth enable.
- -user <username>   Jvmm server authentication account. If the target jvmm server is auth enable.
-```
-
 **Client模式命令**
 
 进入Client模式且与jvmm server连接成功后，你将可以使用以下命令（键入help查看）：
