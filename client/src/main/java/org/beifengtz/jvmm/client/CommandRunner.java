@@ -23,8 +23,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -61,7 +59,7 @@ public class CommandRunner {
                 .required(false)
                 .hasArg()
                 .argName("mode")
-                .desc("* Choose action mode: 'client' or 'attach'")
+                .desc("* Choose action mode: client, attach, jar")
                 .build();
         options.addOption(mode);
         rootOptions.addOption(mode);
@@ -162,6 +160,8 @@ public class CommandRunner {
                 handleAttach(cmd);
             } else if ("client".equalsIgnoreCase(mode)) {
                 handleClient(cmd);
+            } else if ("jar".equalsIgnoreCase(mode)) {
+                handleGenerateJar(cmd);
             } else {
                 logger.error("Only allow model types: client, attach");
             }
@@ -169,6 +169,26 @@ public class CommandRunner {
             printHelp();
         }
         System.exit(0);
+    }
+
+    private static void handleGenerateJar(CommandLine cmd) throws Throwable {
+        InputStream agentIs = CommandRunner.class.getResourceAsStream("/jvmm-agent.jar");
+        InputStream serverIs = CommandRunner.class.getResourceAsStream("/jvmm-server.jar");
+        if (agentIs == null) {
+            logger.error("The jvmm-agent.jar cannot be generated, please select the appropriate jvmm version.");
+            return;
+        }
+        if (serverIs == null) {
+            logger.error("The jvmm-server.jar cannot be generated, please select the appropriate jvmm version.");
+            return;
+        }
+        File agentJarFile = new File("jvmm-agent.jar");
+        FileUtil.writeByteArrayToFile(agentJarFile, IOUtil.toByteArray(agentIs));
+        logger.info("Generated agent jar to " + agentJarFile.getAbsolutePath());
+
+        File serverJarFile = new File("jvmm-server.jar");
+        FileUtil.writeByteArrayToFile(serverJarFile, IOUtil.toByteArray(serverIs));
+        logger.info("Generated server jar to " + serverJarFile.getAbsolutePath());
     }
 
     private static void handleClient(CommandLine cmd) throws Throwable {
