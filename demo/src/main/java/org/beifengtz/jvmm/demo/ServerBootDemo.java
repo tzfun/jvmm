@@ -3,7 +3,15 @@ package org.beifengtz.jvmm.demo;
 import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.logger.LoggerLevel;
 import org.beifengtz.jvmm.server.ServerBootstrap;
+import org.beifengtz.jvmm.server.entity.conf.AuthOptionConf;
 import org.beifengtz.jvmm.server.entity.conf.Configuration;
+import org.beifengtz.jvmm.server.entity.conf.HttpServerConf;
+import org.beifengtz.jvmm.server.entity.conf.JvmmServerConf;
+import org.beifengtz.jvmm.server.entity.conf.LogConf;
+import org.beifengtz.jvmm.server.entity.conf.SentinelConf;
+import org.beifengtz.jvmm.server.entity.conf.ServerConf;
+import org.beifengtz.jvmm.server.entity.conf.SslConf;
+import org.beifengtz.jvmm.server.entity.conf.SubscriberConf;
 import org.slf4j.Logger;
 
 import java.io.InputStream;
@@ -20,6 +28,9 @@ public class ServerBootDemo {
         LoggerInitializer.init(LoggerLevel.INFO);
         Logger logger = LoggerFactory.logger(ServerBootDemo.class);
 
+
+
+
         InputStream is = ServerBootDemo.class.getResourceAsStream("/config.yml");
         if (is != null) {
             //  从resource中读取配置文件，除此之外你也可以自己通过代码构造Configuration
@@ -29,6 +40,41 @@ public class ServerBootDemo {
         } else {
             logger.error("Can not found config.yml in resources");
         }
+    }
+
+    private static Configuration constructConfig() {
+        AuthOptionConf globalAuth = new AuthOptionConf()
+                .setEnable(true)
+                .setUsername("jvmm-acc")
+                .setPassword("jvmm-pass");
+
+        JvmmServerConf jvmmServer = new JvmmServerConf()
+                .setPort(5010)
+                .setAdaptivePort(true)
+                .setAuth(globalAuth);
+
+        HttpServerConf httpServer = new HttpServerConf()
+                .setPort(8080)
+                .setAdaptivePort(true)
+                .setAuth(globalAuth);
+
+        SentinelConf sentinel = new SentinelConf()
+                .addSubscribers(new SubscriberConf().setUrl("http://exaple.jvmm.com/subscriber"))
+                .addSubscribers(new SubscriberConf().setUrl("http://127.0.0.1:8080/subscriber")
+                        .setAuth(new AuthOptionConf().setEnable(true)
+                                .setUsername("auth-account")
+                                .setPassword("auth-password")))
+                .setInterval(10)
+                .setSendStaticInfoTimes(5);
+
+        return new Configuration()
+                .setName("jvmm-server")
+                .setWorkThread(2)
+                .setLog(new LogConf().setLevel("info").setUseJvmm(true))
+                .setServer(new ServerConf().setType("jvmm,sentinel")
+                        .setJvmm(jvmmServer)
+                        .setHttp(httpServer)
+                        .setSentinel(sentinel));
     }
 
     private static Object transformServerCallback(String content) {

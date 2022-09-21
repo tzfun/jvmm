@@ -5,6 +5,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.ssl.SslContext;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.beifengtz.jvmm.convey.handler.HandlerProvider;
 
@@ -33,8 +34,9 @@ public class HttpServerChannelInitializer extends ChannelInitializer<Channel> {
         ChannelPipeline p = ch.pipeline();
         p.addLast(ChannelInitializers.IDLE_STATE_HANDLER, new IdleStateHandler(provider.getReaderIdle(), 0, 0));
 
-        if (provider.getSslContext() != null) {
-            p.addLast(provider.getSslContext().newHandler(ch.alloc()));
+        SslContext sslContext = provider.getSslContext();
+        if (sslContext != null) {
+            p.addLast(sslContext.newHandler(ch.alloc()));
         }
 
         p.addLast(ChannelInitializers.HTTP_CODEC_HANDLER, new HttpServerCodec());
