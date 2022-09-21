@@ -1,20 +1,20 @@
 ## 一、关于Jvmm客户端
 
-使用客户端之前请先下载好，下载方法见[获取Jvmm客户端](../README_ZH.md#获取Jvmm客户端)
+使用客户端之前请先下载好程序包，下载方法见[获取Jvmm客户端](../README.md#获取Jvmm客户端)
 
 ### 功能介绍
 
-* 支持向本地任意一个Java进程装载Jvmm，并启动或关闭多个jvmm service
-* 支持连接远程jvmm server，并向其发起查询、gc、生成火焰图、关闭等指令
-* 支持生成Java Agent所需的jar包，使用Java Agent时需使用客户端生成依赖jar，详情见[Agent使用文档](../agent/README.md)
+* 支持向本地任意一个Java进程装载Jvmm，并启动或关闭多个Jvmm服务
+* 支持连接远程jvmm服务，并向其发起采集数据、gc、生成火焰图、关闭等指令
+* 生成Java Agent所需的jar包，使用Java Agent时需使用客户端生成依赖jar，详情见[Agent使用文档](../agent/README.md)
 
 ## 二、使用
 
-使用客户端工具有两种方式
+客户端工具提供有两种方式供你使用
 
 ### 引导式执行
 
-一是引导式填充参数，非常简单，你只需要根据引导提示进行即可，第一步是模式选择，进入不同的模式填写的参数也会不一样。
+引导式填写参数，你只需要不带任何参数执行jar包然后根据引导提示进行，第一步是模式选择，进入不同的模式填写的参数也会不一样。
 
 ```shell
 java -jar jvmm.jar
@@ -24,15 +24,15 @@ java -jar jvmm.jar
 
 ### 命令式执行
 
-另一种方法是在命令行后预填好参数，一次执行
+命令式执行是在命令行后预填好参数，一次执行。
 
 ```shell
 java -jar jvmm.jar -m attach -c ./config.yml -pid 12345
 ```
 
-## 三、三种模式使用
+## 三、3种模式使用
 
-### 3.1 Attach 装载
+### 装载
 
 装载模式可以向本地任意一个正在运行的Java进程装载Jvmm，并根据配置文件配置启动或关闭服务
 
@@ -60,7 +60,7 @@ java -jar jvmm.jar -m attach -c ./config.yml -pid 12345 -a ./jvmm-agent.jar -s .
 
 详细配置见[config.yml](../server/src/main/resources/config.yml)
 
-允许重复向同一个进程装载jvmm，其中的service服务会以差量启停的方式进行，差量处理的标准是以配置文件中的`server.type`为标准的，以下流程作为示例解释：
+允许重复向同一个进程装载jvmm，其中的service服务会以**差量启停**的方式进行，差量处理的标准是以配置文件中的`server.type`为标准的，以下流程作为示例解释：
 
 > **step 1**：server.type配置为 *jvmm,http,sentinel*，执行后将启动 **jvmm**、**http**、**sentinel** 3 个服务
 > 
@@ -70,9 +70,9 @@ java -jar jvmm.jar -m attach -c ./config.yml -pid 12345 -a ./jvmm-agent.jar -s .
 > 
 > **step 4**：server.type配置为 *jvmm,http*，执行后将启动**jvmm**和**http** 2 个服务
 
-### 3.2 client 客户端连接模式
+### 连接
 
-假设你已经在一个Java进程中启动了jvmm server（配置的`server.type`为jvmm），无论这个进程在本地机器上还是远程机器上，接下来你可以使用客户端连接模式与其建立联系，并执行一些指令
+假设你已经在一个Java进程中启动了jvmm server（配置的`server.type`为**jvmm**），无论这个进程在本地机器上还是远程机器上，你都可以使用客户端连接模式与其建立联系，并执行一些指令
 
 引导式执行时请选择client，命令式执行通过`-m client`参数指定进入，其余参数说明如下：
 
@@ -85,7 +85,7 @@ java -jar jvmm.jar -m attach -c ./config.yml -pid 12345 -a ./jvmm-agent.jar -s .
 java -jar jvmm.jar -m client -h 127.0.0.1:5010
 ```
 
-如果连接成功你将看到如下提示，接下来你将进入连接模式与jvmm server进行指令交互
+如果连接成功你将看到如下提示，接下来将进入连接模式与jvmm server进行指令交互
 ```
 [Jvmm] [Info ] Start to connect jvmm agent server...
 [Jvmm] [Info ] Connect successful! You can use the 'help' command to learn how to use. Enter 'exit' to safely exit the connection.
@@ -130,7 +130,7 @@ jtool jstat -gc 15243
 6. **shutdown** 关闭正在运行的目标服务
    * `-t`：必填，服务类型，可选值：jvmm、http、sentinel
 
-### 3.3 Jar模式生成Agent Jar
+### 生成Agent依赖Jar
 
 如果你需要在启动时装载jvmm，而不是运行时装载，需要在进程启动参数中添加`-javaagent`参数来指定agent jar包，本工具的jar模式则是生成jvmm agent所需要的jar包
 

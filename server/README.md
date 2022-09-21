@@ -1,5 +1,4 @@
-server模块是基于[core模块](../core/README.md)
-开发的对外提供API服务的程序，如果你不想通过[Java Agent方式](../agent/README.md)启动Jvmm服务，你可以直接在你的项目中使用它。
+server模块是基于[core模块](../core/README.md)开发的对外提供API服务的程序，如果你不想通过[Java Agent方式](../agent/README.md)启动Jvmm服务，可以直接在你的项目中使用它。
 
 ## 依赖引入
 
@@ -33,11 +32,11 @@ public class ServerBootDemo {
 }
 ```
 
-带有msg回调解析的示例代码请见[ServerBootDemo.java](../demo/src/main/java/org/beifengtz/jvmm/demo/ServerBootDemo.java)
+带有msg回调解析的示例代码请见[ServerBootDemo.java#transformServerCallback()](../demo/src/main/java/org/beifengtz/jvmm/demo/ServerBootDemo.java)
 
 ## 配置
 
-你可以使用示例代码中那样通过配置文件的方式进行配置，全部配置文件内容如下：
+你可以像示例代码中那样通过配置文件的方式进行配置，全部配置文件内容如下：
 
 ```yaml
 # Node name, used to identify the current host machine, will be used in sentry mode
@@ -140,7 +139,7 @@ log:
 workThread: 2
 ```
 
-如果你不方便使用文件的方式配置，也可以在自己的代码中构造Configuration
+如果你不使用文件的方式配置，也可以在代码中构造Configuration
 
 ```java
 public class ServerBootDemo {
@@ -204,7 +203,11 @@ public class ServerStopDemo {
 
 jvmm service启动后会在程序中启动一个jvmm rpc服务，与之通信需要使用`JvmmConnector`，相关配置段在config.yml中的`server.jvmm`。
 
-请求为JvmmRequest，响应为JvmmResponse，调用代码示例如下：
+> jvmm rpc与http不同的是jvmm服务支持tcp长连接，可长期保持双向通信，并且每个消息包都会进行身份校验，客户端工具只能用这种方式连接。
+>
+> 请求为JvmmRequest，响应为JvmmResponse
+
+调用代码示例如下：
 
 ```java
 public class ServerConveyDemo {
@@ -336,7 +339,7 @@ http service启动之后会在程序中启动一个http服务，你可以在浏�
 
 ### 3. sentinel service
 
-哨兵模式的运作逻辑是**定期采集指定数据项并向订阅者推送**，一般可以用于节点探活、健康监控等场景。
+哨兵模式的运作逻辑是**定期采集指定数据项然后向订阅者推送**，一般可以用于节点探活、健康监控等场景。
 
 你需要提前搭建好订阅者服务并对外公开一个http接口，如果接口访问需要进行身份认证，哨兵模式支持 Basic 方式认证，将订阅者信息配置后哨兵将定时向此接口推送监控数据，相关配置段在config.yml中的`server.sentinel`。
 

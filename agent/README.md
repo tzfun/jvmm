@@ -1,4 +1,4 @@
-Jvmm载入宿主程序是以Java Agent方式载入的，Java语言提供的`premain`和`agentmain`两种agent方式都可以使用
+Jvmm载入宿主程序是以Java Agent方式载入的，提供有`premain`和`agentmain`两种agent方式载入
 
 ## premain方式
 
@@ -8,7 +8,7 @@ Jvmm载入宿主程序是以Java Agent方式载入的，Java语言提供的`prem
 * jvmm-server.jar
 * config.yml
 
-前两个文件可以使用Jvmm客户端工具生成，具体操作请移步[Jvmm客户端Jar模式生成Agent Jar](../client/README.md#3.3 Jar模式生成Agent Jar)
+前两个文件可以使用Jvmm客户端工具生成，具体操作请移步[Jvmm客户端Jar模式生成Agent Jar](../client/README.md#生成Agent依赖Jar)
 
 配置文件见[config.yml](../server/src/main/resources/config.yml)
 
@@ -25,4 +25,4 @@ java -javaagent:/jvmm-dev/jvmm-agent.jar=/jvmm-dev/jvmm-server.jar;config=http:/
 
 ## agentmain方式
 
-如果你需要以agentmain动态载入进程，建议使用本项目提供的客户端工具，具体使用方法见[Jvmm客户端attach模式](../client/README.md#3.1 Attach 装载)
+如果你需要以agentmain动态载入进程，建议使用本项目提供的客户端工具，具体使用方法见[Jvmm客户端attach模式](../client/README.md#装载)
