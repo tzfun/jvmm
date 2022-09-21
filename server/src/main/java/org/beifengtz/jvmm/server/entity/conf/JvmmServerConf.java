@@ -9,6 +9,7 @@ package org.beifengtz.jvmm.server.entity.conf;
  *
  * @author beifengtz
  */
+@SuppressWarnings("unchecked")
 public class JvmmServerConf {
     private int port = 5010;
     private boolean adaptivePort = true;
@@ -19,35 +20,35 @@ public class JvmmServerConf {
         return port;
     }
 
-    public JvmmServerConf setPort(int port) {
+    public <T extends JvmmServerConf> T setPort(int port) {
         this.port = port;
-        return this;
+        return (T)this;
     }
 
     public boolean isAdaptivePort() {
         return adaptivePort;
     }
 
-    public JvmmServerConf setAdaptivePort(boolean adaptivePort) {
+    public <T extends JvmmServerConf> T setAdaptivePort(boolean adaptivePort) {
         this.adaptivePort = adaptivePort;
-        return this;
+        return (T)this;
     }
 
     public AuthOptionConf getAuth() {
         return auth;
     }
 
-    public JvmmServerConf setAuth(AuthOptionConf auth) {
+    public <T extends JvmmServerConf> T setAuth(AuthOptionConf auth) {
         this.auth = auth;
-        return this;
+        return (T)this;
     }
 
     public int getMaxChunkSize() {
         return maxChunkSize;
     }
 
-    public JvmmServerConf setMaxChunkSize(int maxChunkSize) {
+    public <T extends JvmmServerConf> T setMaxChunkSize(int maxChunkSize) {
         this.maxChunkSize = maxChunkSize;
-        return this;
+        return (T)this;
     }
 }

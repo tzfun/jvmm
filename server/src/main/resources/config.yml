@@ -21,8 +21,6 @@ server:
       enable: false
       username: 123456
       password: 123456
-    # The number of worker threads of the jvmm server
-    thread: 2
     maxChunkSize: 52428800
 
   # Http server config options.
@@ -39,8 +37,6 @@ server:
       enable: true
       username: 123456
       password: 123456
-    # The number of worker threads of the http server
-    thread: 2
     maxChunkSize: 52428800
     # Https related configuration
     ssl:
@@ -97,3 +93,6 @@ log:
   #  Whether to use jvmm log, if it is false, it will try to use the log of the host program according to the host program environment.
   #  But this does not guarantee that the log provider of the host program can be successfully searched
   useJvmm: true
+
+# The number of worker threads for the service
+workThread: 2

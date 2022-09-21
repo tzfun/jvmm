@@ -15,4 +15,9 @@ public class HttpServerConf extends JvmmServerConf {
     public SslConf getSsl() {
         return ssl;
     }
+
+    public HttpServerConf setSsl(SslConf ssl) {
+        this.ssl = ssl;
+        return this;
+    }
 }

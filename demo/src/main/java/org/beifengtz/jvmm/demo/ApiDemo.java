@@ -1,6 +1,7 @@
 package org.beifengtz.jvmm.demo;
 
 import org.beifengtz.jvmm.common.logger.LoggerLevel;
+import org.beifengtz.jvmm.common.tuple.Pair;
 import org.beifengtz.jvmm.core.JvmmCollector;
 import org.beifengtz.jvmm.core.JvmmExecutor;
 import org.beifengtz.jvmm.core.JvmmFactory;
@@ -33,7 +34,7 @@ import java.util.concurrent.TimeoutException;
  * @author beifengtz
  */
 public class ApiDemo {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         LoggerInitializer.init(LoggerLevel.INFO);
 
         //  jvmm收集器，可以获取以下信息：
@@ -62,6 +63,7 @@ public class ApiDemo {
         executor.setThreadContentionMonitoringEnabled(true);
         executor.setThreadCpuTimeEnabled(true);
         executor.resetPeakThreadCount();
+        Pair<List<String>, Boolean> result = executor.executeJvmTools("jstat -gc 1102");
 
         //  jvmm采样器，仅支持 MacOS 和 Linux环境
         JvmmProfiler profiler = JvmmFactory.getProfiler();

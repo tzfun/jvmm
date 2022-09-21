@@ -1,5 +1,6 @@
 package org.beifengtz.jvmm.server.entity.conf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,7 +13,7 @@ import java.util.List;
  * @author beifengtz
  */
 public class SentinelConf {
-    private List<SubscriberConf> subscribers;
+    private List<SubscriberConf> subscribers = new ArrayList<>();
     private int interval;
     private int sendStaticInfoTimes;
     private CollectOptions options;
@@ -23,6 +24,11 @@ public class SentinelConf {
 
     public SentinelConf setSubscribers(List<SubscriberConf> subscribers) {
         this.subscribers = subscribers;
+        return this;
+    }
+
+    public SentinelConf addSubscribers(SubscriberConf subscriber) {
+        this.subscribers.add(subscriber);
         return this;
     }
 
