@@ -171,7 +171,11 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                     parameter[i] = null;
                 } else if (parameterType.isAnnotationPresent(RequestBody.class)) {
                     byte[] body = getBody(msg);
-                    parameter[i] = body == null ? null : new Gson().fromJson(new String(body, StandardCharsets.UTF_8), parameterType);
+                    if (String.class.isAssignableFrom(parameterType)) {
+                        parameter[i] = body == null ? null : new String(body, StandardCharsets.UTF_8);
+                    } else {
+                        parameter[i] = body == null ? null : new Gson().fromJson(new String(body, StandardCharsets.UTF_8), parameterType);
+                    }
                 } else if (parameterType.isAnnotationPresent(RequestParam.class)) {
                     RequestParam rp = parameterType.getAnnotation(RequestParam.class);
                     String key = "".equals(rp.value()) ? method.getParameters()[i].getName() : rp.value();

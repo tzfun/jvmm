@@ -17,6 +17,7 @@ import org.beifengtz.jvmm.common.util.meta.PairKey;
 import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 import org.beifengtz.jvmm.core.AttachProvider;
+import org.beifengtz.jvmm.core.JvmmFactory;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -41,7 +42,6 @@ public class CommandRunner {
 
     private static final Logger logger = LoggerFactory.logger(CommandRunner.class);
 
-    private static final String TEMP_DIR = ".jvmm";
     private static final Options options;
     private static final Options rootOptions;
     private static final Options attachOptions;
@@ -264,7 +264,7 @@ public class CommandRunner {
 
     private static void handleAttach(CommandLine cmd) throws Throwable {
         //  先删除临时文件
-        FileUtil.delFile(new File(TEMP_DIR));
+        FileUtil.delFile(new File(JvmmFactory.getTempPath()));
 
         InputStream agentIs = CommandRunner.class.getResourceAsStream("/jvmm-agent.jar");
         InputStream serverIs = CommandRunner.class.getResourceAsStream("/jvmm-server.jar");
@@ -277,7 +277,7 @@ public class CommandRunner {
         } else if (agentIs == null) {
             agentFilePath = GuidedRunner.askAgentFilePath();
         } else {
-            File tempFile = new File(TEMP_DIR, "jvmm-agent.jar");
+            File tempFile = new File(JvmmFactory.getTempPath(), "jvmm-agent.jar");
             FileUtil.writeByteArrayToFile(tempFile, IOUtil.toByteArray(agentIs));
             agentFilePath = tempFile.getAbsolutePath();
         }
@@ -287,7 +287,7 @@ public class CommandRunner {
         } else if (serverIs == null) {
             serverFilePath = GuidedRunner.askServerFilePath();
         } else {
-            File tempFile = new File(TEMP_DIR, "jvmm-server.jar");
+            File tempFile = new File(JvmmFactory.getTempPath(), "jvmm-server.jar");
             FileUtil.writeByteArrayToFile(tempFile, IOUtil.toByteArray(serverIs));
             serverFilePath = tempFile.getAbsolutePath();
         }
@@ -322,9 +322,9 @@ public class CommandRunner {
         //  支持从网络下载jar包
         if (agentFilePath.startsWith("http://") || agentFilePath.startsWith("https://")) {
             logger.info("Start downloading jar file from " + agentFilePath);
-            boolean loaded = FileUtil.readFileFromNet(agentFilePath, TEMP_DIR, "jvmm-agent.jar");
+            boolean loaded = FileUtil.readFileFromNet(agentFilePath, JvmmFactory.getTempPath(), "jvmm-agent.jar");
             if (loaded) {
-                agentFile = new File(TEMP_DIR, "jvmm-agent.jar");
+                agentFile = new File(JvmmFactory.getTempPath(), "jvmm-agent.jar");
             } else {
                 logger.error("Can not download 'jvmm-agent.jar'");
                 return;
@@ -340,9 +340,9 @@ public class CommandRunner {
         File serverFile;
         if (serverFilePath.startsWith("http://") || serverFilePath.startsWith("https://")) {
             logger.info("Start downloading jar file from " + serverFilePath);
-            boolean loaded = FileUtil.readFileFromNet(serverFilePath, TEMP_DIR, "jvmm-server.jar");
+            boolean loaded = FileUtil.readFileFromNet(serverFilePath, JvmmFactory.getTempPath(), "jvmm-server.jar");
             if (loaded) {
-                serverFile = new File(TEMP_DIR, "jvmm-server.jar");
+                serverFile = new File(JvmmFactory.getTempPath(), "jvmm-server.jar");
             } else {
                 logger.error("Can not download 'jvmm-server.jar'");
                 return;

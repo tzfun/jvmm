@@ -6,16 +6,17 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.ParseException;
+import org.beifengtz.jvmm.client.annotation.IgnoreCmdParse;
 import org.beifengtz.jvmm.client.annotation.JvmmCmdDesc;
 import org.beifengtz.jvmm.client.annotation.JvmmOption;
 import org.beifengtz.jvmm.client.annotation.JvmmOptions;
 import org.beifengtz.jvmm.common.util.CodingUtil;
+import org.beifengtz.jvmm.common.util.CommonUtil;
 import org.beifengtz.jvmm.common.util.FileUtil;
 import org.beifengtz.jvmm.common.util.StringUtil;
-import org.beifengtz.jvmm.convey.enums.GlobalType;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
+import org.beifengtz.jvmm.convey.enums.GlobalType;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 import org.beifengtz.jvmm.core.entity.result.JpsResult;
 
@@ -247,6 +248,29 @@ public class ServerServiceImpl extends ServerService {
             System.out.println("Write profiler to file successful, path is " + file.getAbsolutePath());
         } catch (IOException e) {
             printErr("Write failed, " + e.getMessage());
+        }
+    }
+
+    @IgnoreCmdParse
+    @JvmmCmdDesc(desc = "Execute java tools(if these commands are supported on your machine). jtool <jps|jstat|jstack|jamp|jcmd> [params...]")
+    public static void jtool(JvmmConnector connector, String command) {
+        if (command.trim().length() == 0) {
+            printErr("Can not execute empty command");
+            return;
+        }
+        JvmmRequest request = JvmmRequest.create().setType(GlobalType.JVMM_TYPE_EXECUTE_JVM_TOOL)
+                .setData(new JsonPrimitive(command));
+        JvmmResponse response = request(connector, request);
+        if (response == null) {
+            return;
+        }
+        JsonElement data = response.getData();
+        if (data.isJsonArray()) {
+            for (JsonElement ele : data.getAsJsonArray()) {
+                System.out.println(ele.getAsString());
+            }
+        } else {
+            System.out.println(response.getData().getAsString());
         }
     }
 }
