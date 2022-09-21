@@ -38,8 +38,8 @@ import java.util.concurrent.TimeUnit;
 public class ProfilerController {
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_PROFILER_EXECUTE)
-    @HttpRequest("/profiler/execute")
-    public String execute(@RequestParam String command) throws IOException {
+    @HttpRequest(value = "/profiler/execute",method = Method.POST)
+    public String execute(@RequestBody String command) throws IOException {
         return JvmmFactory.getProfiler().execute(command);
     }
 

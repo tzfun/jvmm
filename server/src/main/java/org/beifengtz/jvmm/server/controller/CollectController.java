@@ -1,15 +1,14 @@
 package org.beifengtz.jvmm.server.controller;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import org.beifengtz.jvmm.convey.annotation.HttpController;
 import org.beifengtz.jvmm.convey.annotation.HttpRequest;
 import org.beifengtz.jvmm.convey.annotation.JvmmController;
 import org.beifengtz.jvmm.convey.annotation.JvmmMapping;
 import org.beifengtz.jvmm.convey.annotation.RequestBody;
 import org.beifengtz.jvmm.convey.enums.GlobalType;
+import org.beifengtz.jvmm.convey.enums.Method;
 import org.beifengtz.jvmm.core.JvmmFactory;
-import org.beifengtz.jvmm.server.entity.conf.CollectOptions;
 import org.beifengtz.jvmm.core.entity.mx.ClassLoadingInfo;
 import org.beifengtz.jvmm.core.entity.mx.CompilationInfo;
 import org.beifengtz.jvmm.core.entity.mx.GarbageCollectorInfo;
@@ -20,7 +19,9 @@ import org.beifengtz.jvmm.core.entity.mx.ProcessInfo;
 import org.beifengtz.jvmm.core.entity.mx.SystemDynamicInfo;
 import org.beifengtz.jvmm.core.entity.mx.SystemStaticInfo;
 import org.beifengtz.jvmm.core.entity.mx.ThreadDynamicInfo;
+import org.beifengtz.jvmm.server.entity.conf.CollectOptions;
 import org.beifengtz.jvmm.server.entity.dto.JvmmDataDTO;
+import org.beifengtz.jvmm.server.entity.dto.ThreadInfoDTO;
 import org.beifengtz.jvmm.server.service.JvmmService;
 
 import java.util.ArrayList;
@@ -101,25 +102,17 @@ public class CollectController {
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_THREAD_INFO)
-    @HttpRequest("/collect/thread")
-    public List<String> getThreadInfo(JsonObject data) {
+    @HttpRequest(value = "/collect/thread",method = Method.POST)
+    public List<String> getThreadInfo(@RequestBody ThreadInfoDTO data) {
         if (data == null) {
             throw new IllegalArgumentException("Missing data");
         }
 
-        if (!data.has("id") || data.get("id").getAsJsonArray().size() == 0) {
+        if (data.getIdArr() == null || data.getIdArr().length == 0) {
             throw new IllegalArgumentException("Missing a parameter 'id' of type list");
         }
-        JsonArray idList = data.get("id").getAsJsonArray();
-        long[] ids = new long[idList.size()];
-        for (int i = 0; i < idList.size(); i++) {
-            ids[i] = idList.get(i).getAsLong();
-        }
-        int depth = 0;
-        if (data.has("depth")) {
-            depth = data.get("depth").getAsInt();
-        }
-        String[] infos = JvmmFactory.getCollector().getThreadInfo(ids, depth);
+
+        String[] infos = JvmmFactory.getCollector().getThreadInfo(data.getIdArr(), data.getDepth());
         return new ArrayList<>(Arrays.asList(infos));
     }
 
@@ -135,7 +128,7 @@ public class CollectController {
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_BATCH)
-    @HttpRequest("/collect/by_options")
+    @HttpRequest(value = "/collect/by_options",method = Method.POST)
     public JvmmDataDTO collectBatch(@RequestBody CollectOptions options) {
         return JvmmService.collectByOptions(options);
     }
