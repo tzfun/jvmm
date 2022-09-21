@@ -33,7 +33,7 @@ import java.util.jar.JarFile;
  * @author beifengtz
  */
 public class AgentBootStrap {
-    private static final Logger log = LoggerFactory.getLogger(AgentBootStrap.class);
+    private static volatile Logger log = null;
     private static final String STATIC_LOGGER_BINDER_CLASS = "org/slf4j/impl/StaticLoggerBinder.class";
     private static final String STATIC_LOGGER_BINDER_PATH = "org.slf4j.impl.StaticLoggerBinder";
     private static final String JVMM_SERVER_JAR = "jvmm-server.jar";
@@ -53,113 +53,6 @@ public class AgentBootStrap {
 
     static {
 //        tryFindSpringClassLoader();
-    }
-
-    private static ClassLoader loadWithSpringClassLoader() {
-        try {
-            ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
-
-            //  为了兼容Spring项目，需寻找Spring自定义的ClassLoader。
-            //  Spring项目在打成Jar包或者War包时会由特定的Launcher启动，启动时创建一个叫LaunchedURLClassLoader来加载jar包
-            Class<?> springLauncher = null;
-            try {
-                springLauncher = Class.forName("org.springframework.boot.loader.JarLauncher", false, systemClassLoader);
-                log.debug("The target program is a spring application and is started as a jar.");
-            } catch (NoClassDefFoundError | ClassNotFoundException ignored1) {
-                try {
-                    springLauncher = Class.forName("org.springframework.boot.loader.WarLauncher", false, systemClassLoader);
-                    log.debug("The target program is a spring application and is started as a war.");
-                } catch (NoClassDefFoundError | ClassNotFoundException ignored2) {
-                }
-            }
-
-            if (springLauncher != null) {
-                //  spring的ClassLoader存在启动线程的上下文中，扫描线程对象下的ClassLoader来获取
-                ClassLoader springLaunchClassLoader = null;
-                Set<Thread> allThread = Thread.getAllStackTraces().keySet();
-                for (Thread thread : allThread) {
-                    ClassLoader contextClassLoader = thread.getContextClassLoader();
-                    if (contextClassLoader != null && contextClassLoader.getClass().getName().startsWith("org.springframework.boot.loader.LaunchedURLClassLoader")) {
-                        springLaunchClassLoader = contextClassLoader;
-                        break;
-                    }
-                }
-
-                if (springLaunchClassLoader != null) {
-                    ClassLoader cl = AgentBootStrap.class.getClassLoader();
-                    if (cl instanceof URLClassLoader) {
-                        loadLogClassFromAnotherClassLoader((URLClassLoader) cl, springLaunchClassLoader);
-                        FileUtil.delFile(new File(AppUtil.getTempPath()));
-                    } else {
-                        System.err.println("WARNING: Can not load log jar by classloader: " + cl.getClass().getName());
-                        System.err.println("WARNING: " + cl.getClass().getName() + " is not java.net.URLClassLoader or its subclasses ");
-                    }
-                }
-                return springLaunchClassLoader;
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private static void loadLogClassFromAnotherClassLoader(URLClassLoader loader, ClassLoader another) throws Throwable {
-        String logMsg = String.format("Class loader [%s] load logger class from [%s]", loader.getClass().getName(), another.getClass().getName());
-        log.info(logMsg);
-
-        loadResourceFromAnother(loader, another, STATIC_LOGGER_BINDER_CLASS);
-        while (true) {
-            try {
-                Class.forName(STATIC_LOGGER_BINDER_PATH);
-                logMsg = "Agent logger initialization is ok.";
-                log.info(logMsg);
-                break;
-            } catch (NoClassDefFoundError e) {
-                if (!loadResourceFromAnother(loader, another, e.getMessage() + ".class")) {
-                    break;
-                }
-            } catch (ClassNotFoundException ignored) {
-                break;
-            }
-        }
-    }
-
-    private static boolean loadResourceFromAnother(URLClassLoader loader, ClassLoader another, String classPath) throws Throwable {
-        Enumeration<URL> loggerResources = another.getResources(classPath);
-        while (loggerResources.hasMoreElements()) {
-            String urlPath = loggerResources.nextElement().getFile();
-            urlPath = urlPath.substring(5);
-            String jarFilePath = urlPath.substring(0, urlPath.lastIndexOf("!"));
-            String[] jars = jarFilePath.split("!/");
-            if (jars.length > 0) {
-                String baseJarPath = jars[0];
-                String tmpPath = AppUtil.getTempPath();
-                String tmpJar = null;
-                //  递归的解析jar包
-                for (int i = 1; i < jars.length; ++i) {
-                    String relativePath = jars[i];
-                    if (relativePath.endsWith(".jar")) {
-                        if (FileUtil.findAndUnzipJar(tmpPath, baseJarPath, relativePath)) {
-                            int idx = relativePath.lastIndexOf("/");
-                            tmpPath += relativePath.substring(0, idx + 1);
-                            tmpJar = relativePath.substring(idx + 1);
-                        }
-                    } else {
-                        break;
-                    }
-                }
-                if (tmpJar == null) {
-                    return false;
-                }
-                String finalJarPath = tmpPath + tmpJar;
-
-                URL jarFile = new File(finalJarPath).toURI().toURL();
-                ClassLoaderUtil.classLoaderAddURL(loader, jarFile);
-                log.info("Load jar file from " + finalJarPath);
-                return true;
-            }
-        }
-        return false;
     }
 
     public static void premain(String agentArgs, Instrumentation inst) {
@@ -185,6 +78,7 @@ public class AgentBootStrap {
      *             premain - 启动时载入
      */
     private static synchronized void main(String args, final Instrumentation inst, String type) {
+        initLogger(type);
         log.info("Jvm monitor Agent attached by {}.", type);
 
         if (Objects.isNull(args)) {
@@ -299,6 +193,126 @@ public class AgentBootStrap {
         }
     }
 
+    /**
+     * 为了不破坏宿主程序内的logger初始化流程，如果这里使用premain方式执行就默认使用jvmm logger
+     */
+    private static synchronized void initLogger(String agentType) {
+        if (log == null) {
+            if ("premain".equals(agentType)) {
+                log = new DefaultImplLogger();
+            } else {
+                log = LoggerFactory.getLogger(AgentBootStrap.class);
+            }
+        }
+    }
+
+    private static ClassLoader loadWithSpringClassLoader() {
+        try {
+            ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
+
+            //  为了兼容Spring项目，需寻找Spring自定义的ClassLoader。
+            //  Spring项目在打成Jar包或者War包时会由特定的Launcher启动，启动时创建一个叫LaunchedURLClassLoader来加载jar包
+            Class<?> springLauncher = null;
+            try {
+                springLauncher = Class.forName("org.springframework.boot.loader.JarLauncher", false, systemClassLoader);
+                log.debug("The target program is a spring application and is started as a jar.");
+            } catch (NoClassDefFoundError | ClassNotFoundException ignored1) {
+                try {
+                    springLauncher = Class.forName("org.springframework.boot.loader.WarLauncher", false, systemClassLoader);
+                    log.debug("The target program is a spring application and is started as a war.");
+                } catch (NoClassDefFoundError | ClassNotFoundException ignored2) {
+                }
+            }
+
+            if (springLauncher != null) {
+                //  spring的ClassLoader存在启动线程的上下文中，扫描线程对象下的ClassLoader来获取
+                ClassLoader springLaunchClassLoader = null;
+                Set<Thread> allThread = Thread.getAllStackTraces().keySet();
+                for (Thread thread : allThread) {
+                    ClassLoader contextClassLoader = thread.getContextClassLoader();
+                    if (contextClassLoader != null && contextClassLoader.getClass().getName().startsWith("org.springframework.boot.loader.LaunchedURLClassLoader")) {
+                        springLaunchClassLoader = contextClassLoader;
+                        break;
+                    }
+                }
+
+                if (springLaunchClassLoader != null) {
+                    ClassLoader cl = AgentBootStrap.class.getClassLoader();
+                    if (cl instanceof URLClassLoader) {
+                        loadLogClassFromAnotherClassLoader((URLClassLoader) cl, springLaunchClassLoader);
+                        FileUtil.delFile(new File(AppUtil.getTempPath()));
+                    } else {
+                        System.err.println("WARNING: Can not load log jar by classloader: " + cl.getClass().getName());
+                        System.err.println("WARNING: " + cl.getClass().getName() + " is not java.net.URLClassLoader or its subclasses ");
+                    }
+                }
+                return springLaunchClassLoader;
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private static void loadLogClassFromAnotherClassLoader(URLClassLoader loader, ClassLoader another) throws Throwable {
+        String logMsg = String.format("Class loader [%s] load logger class from [%s]", loader.getClass().getName(), another.getClass().getName());
+        log.info(logMsg);
+
+        loadResourceFromAnother(loader, another, STATIC_LOGGER_BINDER_CLASS);
+        while (true) {
+            try {
+                Class.forName(STATIC_LOGGER_BINDER_PATH);
+                logMsg = "Agent logger initialization is ok.";
+                log.info(logMsg);
+                break;
+            } catch (NoClassDefFoundError e) {
+                if (!loadResourceFromAnother(loader, another, e.getMessage() + ".class")) {
+                    break;
+                }
+            } catch (ClassNotFoundException ignored) {
+                break;
+            }
+        }
+    }
+
+    private static boolean loadResourceFromAnother(URLClassLoader loader, ClassLoader another, String classPath) throws Throwable {
+        Enumeration<URL> loggerResources = another.getResources(classPath);
+        while (loggerResources.hasMoreElements()) {
+            String urlPath = loggerResources.nextElement().getFile();
+            urlPath = urlPath.substring(5);
+            String jarFilePath = urlPath.substring(0, urlPath.lastIndexOf("!"));
+            String[] jars = jarFilePath.split("!/");
+            if (jars.length > 0) {
+                String baseJarPath = jars[0];
+                String tmpPath = AppUtil.getTempPath();
+                String tmpJar = null;
+                //  递归的解析jar包
+                for (int i = 1; i < jars.length; ++i) {
+                    String relativePath = jars[i];
+                    if (relativePath.endsWith(".jar")) {
+                        if (FileUtil.findAndUnzipJar(tmpPath, baseJarPath, relativePath)) {
+                            int idx = relativePath.lastIndexOf("/");
+                            tmpPath += relativePath.substring(0, idx + 1);
+                            tmpJar = relativePath.substring(idx + 1);
+                        }
+                    } else {
+                        break;
+                    }
+                }
+                if (tmpJar == null) {
+                    return false;
+                }
+                String finalJarPath = tmpPath + tmpJar;
+
+                URL jarFile = new File(finalJarPath).toURI().toURL();
+                ClassLoaderUtil.classLoaderAddURL(loader, jarFile);
+                log.info("Load jar file from " + finalJarPath);
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static int findListenerPortArg(String args) {
         String[] argKv = args.split(";");
         for (String s : argKv) {
@@ -314,6 +328,9 @@ public class AgentBootStrap {
      * 通知client端启动进程
      */
     private static void notifyListener(int listenerPort, String message) {
+        if (listenerPort <= 0) {
+            return;
+        }
         try {
             try (Socket socket = new Socket("127.0.0.1", listenerPort);
                  PrintWriter writer = new PrintWriter(socket.getOutputStream())) {

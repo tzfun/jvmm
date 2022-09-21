@@ -252,7 +252,7 @@ public class ServerServiceImpl extends ServerService {
     }
 
     @IgnoreCmdParse
-    @JvmmCmdDesc(desc = "Execute java tools(if these commands are supported on your machine). jtool <jps|jstat|jstack|jamp|jcmd> [params...]")
+    @JvmmCmdDesc(desc = "Execute java tools(if these commands are supported on your machine). jtool <jps|jinfo|jstat|jstack|jamp|jcmd> [params...]")
     public static void jtool(JvmmConnector connector, String command) {
         if (command.trim().length() == 0) {
             printErr("Can not execute empty command");
