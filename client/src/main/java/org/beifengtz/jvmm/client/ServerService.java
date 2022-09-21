@@ -1,16 +1,17 @@
 package org.beifengtz.jvmm.client;
 
-import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.beifengtz.jvmm.client.annotation.IgnoreCmdParse;
 import org.beifengtz.jvmm.client.annotation.JvmmCmdDesc;
 import org.beifengtz.jvmm.client.annotation.JvmmOption;
 import org.beifengtz.jvmm.client.annotation.JvmmOptions;
 import org.beifengtz.jvmm.common.exception.ErrorStatusException;
+import org.beifengtz.jvmm.common.util.CommonUtil;
 import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
@@ -20,10 +21,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -37,6 +42,7 @@ import java.util.concurrent.TimeoutException;
 public class ServerService {
 
     protected static final Map<String, Method> methodMap = new HashMap<>();
+    protected static final Set<String> ignoreParseMap = new HashSet<>();
     protected static final Map<String, Options> optionsMap = new HashMap<>();
     protected static final Map<String, String> descMap = new HashMap<>();
     protected static final CommandLineParser commandParser = DefaultParser.builder().build();
@@ -66,6 +72,9 @@ public class ServerService {
             methodMap.put(name, method);
             if (method.isAnnotationPresent(JvmmCmdDesc.class)) {
                 descMap.put(name, method.getAnnotation(JvmmCmdDesc.class).desc());
+            }
+            if (method.isAnnotationPresent(IgnoreCmdParse.class)) {
+                ignoreParseMap.add(name);
             }
 
             Options options = new Options();
@@ -114,8 +123,13 @@ public class ServerService {
         }
 
         try {
-            CommandLine cmd = commandParser.parse(optionsMap.get(key), args);
-            methodMap.get(key).invoke(null, connector, cmd);
+            Object arg;
+            if (ignoreParseMap.contains(key)) {
+                arg = CommonUtil.join(" ", Arrays.stream(args).collect(Collectors.toList()));
+            } else {
+                arg = commandParser.parse(optionsMap.get(key), args);
+            }
+            methodMap.get(key).invoke(null, connector, arg);
             Thread.sleep(50);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();

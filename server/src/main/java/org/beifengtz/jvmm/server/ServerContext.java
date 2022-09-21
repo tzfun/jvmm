@@ -81,7 +81,7 @@ public class ServerContext {
     }
 
     public static String getTempPath() {
-        return System.getProperty("jvmm.tempPath", "tmp");
+        return System.getProperty("jvmm.tempPath", ".jvmm");
     }
 
     public static String getHomePath() {
@@ -103,12 +103,14 @@ public class ServerContext {
         return boosGroup;
     }
 
-    public static void stop(ServerType type) {
+    public static boolean stop(ServerType type) {
         JvmmService service = serviceContainer.get(type);
         if (service != null) {
             service.shutdown();
             serviceContainer.remove(type);
+            return true;
         }
+        return false;
     }
 
     public static JvmmService getService(ServerType type) {

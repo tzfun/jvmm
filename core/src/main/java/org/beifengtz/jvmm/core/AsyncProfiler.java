@@ -5,7 +5,6 @@ import org.beifengtz.jvmm.common.util.PlatformUtil;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerEvent;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -15,19 +14,18 @@ import java.util.concurrent.TimeUnit;
 /**
  * <p>
  * Description: async profiler实现
- *
+ * <p>
  * 在linux中如果内核权限访问被限制，执行命令： sudo sysctl -w kernel.perf_event_paranoid=1
  * </p>
  *
  * @author beifengtz
  * <a href="https://github.com/jvm-profiling-tools/async-profiler">https://github.com/jvm-profiling-tools/async-profiler</a>
- *
+ * <p>
  * Created in 6:28 下午 2021/6/23
  */
 public class AsyncProfiler {
 
     private static AsyncProfiler instance = null;
-    private static final File tmpdir = new File(System.getProperty("java.io.tmpdir"));
 
     private static String libPath;
 
@@ -54,7 +52,7 @@ public class AsyncProfiler {
         if (soPath != null) {
             InputStream stream = AsyncProfiler.class.getResourceAsStream(soPath);
             if (stream != null) {
-                File file = new File(tmpdir, "libasyncProfiler.so");
+                File file = new File(JvmmFactory.getTempPath(), "libasyncProfiler.so");
                 if (!file.getParentFile().exists()) {
                     file.getParentFile().mkdirs();
                 }
@@ -153,7 +151,7 @@ public class AsyncProfiler {
      * @param command 命令行参数错误
      * @return 响应结果
      * @throws IllegalArgumentException 命令行参数错误
-     * @throws IOException IO异常
+     * @throws IOException              IO异常
      */
     private native String execute0(String command) throws IllegalArgumentException, IOException;
 

@@ -2,12 +2,15 @@ package org.beifengtz.jvmm.server.controller;
 
 import com.google.gson.JsonArray;
 import org.beifengtz.jvmm.common.tuple.Pair;
+import org.beifengtz.jvmm.common.util.CommonUtil;
 import org.beifengtz.jvmm.convey.annotation.HttpController;
 import org.beifengtz.jvmm.convey.annotation.HttpRequest;
 import org.beifengtz.jvmm.convey.annotation.JvmmController;
 import org.beifengtz.jvmm.convey.annotation.JvmmMapping;
+import org.beifengtz.jvmm.convey.annotation.RequestBody;
 import org.beifengtz.jvmm.convey.annotation.RequestParam;
 import org.beifengtz.jvmm.convey.enums.GlobalType;
+import org.beifengtz.jvmm.convey.enums.Method;
 import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.entity.result.JpsResult;
 import org.beifengtz.jvmm.server.ServerContext;
@@ -79,6 +82,17 @@ public class ExecuteController {
             return result;
         } else {
             throw new Exception(pair.getRight());
+        }
+    }
+
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_EXECUTE_JVM_TOOL)
+    @HttpRequest(value = "/execute/jvm_tool", method = Method.POST)
+    public Object jvmTool(@RequestBody String command) throws Exception {
+        Pair<List<String>, Boolean> pair = JvmmFactory.getExecutor().executeJvmTools(command);
+        if (pair.getRight()) {
+            return pair.getLeft();
+        } else {
+            return CommonUtil.join("\n", pair.getLeft());
         }
     }
 }

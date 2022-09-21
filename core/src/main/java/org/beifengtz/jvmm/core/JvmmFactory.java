@@ -11,6 +11,7 @@ package org.beifengtz.jvmm.core;
  */
 public class JvmmFactory {
 
+    private static final String TEMP_PATH = ".jvmm";
     private static volatile JvmmCollector jvmmCollector = null;
     private static volatile JvmmExecutor jvmmExecutor = null;
     private static volatile JvmmProfiler jvmmProfiler = null;
@@ -49,5 +50,9 @@ public class JvmmFactory {
             }
         }
         return jvmmProfiler;
+    }
+
+    public static String getTempPath() {
+        return TEMP_PATH;
     }
 }

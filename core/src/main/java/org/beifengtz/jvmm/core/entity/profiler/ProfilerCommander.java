@@ -32,7 +32,7 @@ public class ProfilerCommander {
     private boolean threads;
     private boolean allUser = true;
     private boolean allKernel;
-    private boolean fdtransfer = true;
+    private boolean fdtransfer;
     /**
      * 采样包含类，例如：org/beifengtz/*
      */

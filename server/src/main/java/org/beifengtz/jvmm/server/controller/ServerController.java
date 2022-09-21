@@ -30,9 +30,13 @@ public class ServerController {
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_SERVER_SHUTDOWN)
     @HttpRequest("/server/shutdown")
-    public void shutdown(@RequestParam String target) {
+    public String shutdown(@RequestParam String target) {
         checkArgument(target != null);
         ServerType type = ServerType.of(target);
-        ServerContext.stop(type);
+        if (ServerContext.stop(type)) {
+            return "ok";
+        } else {
+            return "Service not running";
+        }
     }
 }
