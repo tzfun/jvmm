@@ -69,7 +69,7 @@ public class ApiDemo {
         JvmmProfiler profiler = JvmmFactory.getProfiler();
         File file = new File("jvmm_test.html");
         //  采集cpu信息，持续时间10秒，输出html报告
-        Future<String> future = JvmmFactory.getProfiler().sample(file, ProfilerEvent.cpu, ProfilerCounter.samples, 10, TimeUnit.SECONDS);
+        Future<String> future = JvmmFactory.getProfiler().sample(file, ProfilerEvent.cpu.name(), ProfilerCounter.samples, 10, TimeUnit.SECONDS);
 
         try {
             //  等待时间建议长于采样时间

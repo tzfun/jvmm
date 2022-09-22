@@ -373,7 +373,7 @@ public class AgentBootStrap {
                 }
                 running = false;
                 log.error(throwable.getMessage(), throwable);
-                notifyListener(listenerPort, throwable.getMessage());
+                notifyListener(listenerPort, e.getClass().getName() + ":" + throwable.getMessage());
             }
         });
 

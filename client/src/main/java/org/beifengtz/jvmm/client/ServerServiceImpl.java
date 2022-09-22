@@ -11,7 +11,6 @@ import org.beifengtz.jvmm.client.annotation.JvmmCmdDesc;
 import org.beifengtz.jvmm.client.annotation.JvmmOption;
 import org.beifengtz.jvmm.client.annotation.JvmmOptions;
 import org.beifengtz.jvmm.common.util.CodingUtil;
-import org.beifengtz.jvmm.common.util.CommonUtil;
 import org.beifengtz.jvmm.common.util.FileUtil;
 import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
@@ -197,10 +196,9 @@ public class ServerServiceImpl extends ServerService {
             ),
             @JvmmOption(
                     name = "f",
-                    required = true,
                     hasArg = true,
                     argName = "file",
-                    desc = "Output file path (required *), supported file type: csv, html, jfr."
+                    desc = "Output file path, supported file type: html, txt, jfr. If not filled, will output text content"
             )
     })
     @JvmmCmdDesc(desc = "Get server sampling report. Only supported on MacOS and Linux.")
@@ -226,10 +224,15 @@ public class ServerServiceImpl extends ServerService {
             data.addProperty("interval", Long.parseLong(cmd.getOptionValue("i")));
         }
 
-        String filePath = cmd.getOptionValue("f");
-        int dotIdx = filePath.lastIndexOf(".");
-        if (dotIdx >= 0 && dotIdx < filePath.length() - 1) {
-            data.addProperty("format", filePath.substring(dotIdx + 1));
+        String filePath = null;
+        if (cmd.hasOption("f")) {
+            filePath = cmd.getOptionValue("f");
+            int dotIdx = filePath.lastIndexOf(".");
+            if (dotIdx >= 0 && dotIdx < filePath.length() - 1) {
+                data.addProperty("format", filePath.substring(dotIdx + 1));
+            }
+        } else {
+            data.addProperty("format", "txt");
         }
 
         request.setData(data);
@@ -243,9 +246,13 @@ public class ServerServiceImpl extends ServerService {
         String hexStr = response.getData().getAsString();
         byte[] bytes = CodingUtil.hexStr2Bytes(hexStr);
         try {
-            File file = new File(filePath);
-            FileUtil.writeByteArrayToFile(file, bytes);
-            System.out.println("Write profiler to file successful, path is " + file.getAbsolutePath());
+            if (filePath == null) {
+                System.out.println(new String(bytes, StandardCharsets.UTF_8));
+            } else {
+                File file = new File(filePath);
+                FileUtil.writeByteArrayToFile(file, bytes);
+                System.out.println("Write profiler to file successful, path is " + file.getAbsolutePath());
+            }
         } catch (IOException e) {
             printErr("Write failed, " + e.getMessage());
         }

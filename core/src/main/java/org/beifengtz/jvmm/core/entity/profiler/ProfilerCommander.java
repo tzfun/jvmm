@@ -14,11 +14,11 @@ import java.util.List;
 public class ProfilerCommander {
 
     private ProfilerAction action;
-    private ProfilerEvent event;
+    private String event;
     private ProfilerCounter counter;
     /**
      * 生成文件，文件名后缀指定了类型，例如：test、test.html、test.csv、test.jfr
-     *
+     * <p>
      * 只有 *.jfr 是在 action 为{@link ProfilerAction#start}时生效，在stop时传入无效，其余的类型都是在 action 为{@link ProfilerAction#stop}时传入
      */
     private String file;
@@ -55,8 +55,10 @@ public class ProfilerCommander {
         }
         StringBuilder sb = new StringBuilder();
         sb.append(this.action.name()).append(",");
+        boolean forJavaMethod = false;
         if (this.event != null) {
-            sb.append(this.event.name()).append(",");
+            forJavaMethod = event.indexOf(".") > 0;
+            sb.append("event=").append(this.event).append(",");
         }
         if (this.counter != null) {
             sb.append("counter=").append(this.counter.name()).append(",");
@@ -64,7 +66,7 @@ public class ProfilerCommander {
         if (this.file != null) {
             sb.append("file=").append(this.file).append(',');
         }
-        if (this.interval != null) {
+        if (!forJavaMethod && this.interval != null) {
             sb.append("interval=").append(this.interval).append(',');
         }
         if (this.traces != null) {
@@ -111,7 +113,7 @@ public class ProfilerCommander {
         return this;
     }
 
-    public ProfilerCommander setEvent(ProfilerEvent event) {
+    public ProfilerCommander setEvent(String event) {
         this.event = event;
         return this;
     }
@@ -174,5 +176,76 @@ public class ProfilerCommander {
     public ProfilerCommander setExcludes(List<String> excludes) {
         this.excludes = excludes;
         return this;
+    }
+
+    public ProfilerCommander setInterval(Long interval) {
+        this.interval = interval;
+        return this;
+    }
+
+    public ProfilerCommander setTraces(Integer traces) {
+        this.traces = traces;
+        return this;
+    }
+
+    public ProfilerCommander setFlat(Integer flat) {
+        this.flat = flat;
+        return this;
+    }
+
+    public ProfilerAction getAction() {
+        return action;
+    }
+
+    public String getEvent() {
+        return event;
+    }
+
+    public ProfilerCounter getCounter() {
+        return counter;
+    }
+
+    public String getFile() {
+        return file;
+    }
+
+    public Long getInterval() {
+        return interval;
+    }
+
+    public Integer getTraces() {
+        return traces;
+    }
+
+    public Integer getFlat() {
+        return flat;
+    }
+
+    public String getFrameBuf() {
+        return frameBuf;
+    }
+
+    public boolean isThreads() {
+        return threads;
+    }
+
+    public boolean isAllUser() {
+        return allUser;
+    }
+
+    public boolean isAllKernel() {
+        return allKernel;
+    }
+
+    public boolean isFdtransfer() {
+        return fdtransfer;
+    }
+
+    public List<String> getIncludes() {
+        return includes;
+    }
+
+    public List<String> getExcludes() {
+        return excludes;
     }
 }

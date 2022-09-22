@@ -14,7 +14,7 @@ import org.beifengtz.jvmm.core.entity.profiler.ProfilerEvent;
  */
 public class ProfilerSampleDTO{
     private String format = "html";
-    private ProfilerEvent event = ProfilerEvent.cpu;
+    private String event = ProfilerEvent.cpu.name();
     private ProfilerCounter counter = ProfilerCounter.samples;
     private int time =  10; //  单位秒
     private Long interval;
@@ -23,7 +23,7 @@ public class ProfilerSampleDTO{
         return format;
     }
 
-    public ProfilerEvent getEvent() {
+    public String getEvent() {
         return event;
     }
 
@@ -40,7 +40,7 @@ public class ProfilerSampleDTO{
         return this;
     }
 
-    public ProfilerSampleDTO setEvent(ProfilerEvent event) {
+    public ProfilerSampleDTO setEvent(String event) {
         this.event = event;
         return this;
     }

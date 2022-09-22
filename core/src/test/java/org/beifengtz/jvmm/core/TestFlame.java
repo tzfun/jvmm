@@ -27,7 +27,7 @@ public class TestFlame {
     @Test
     public void testProfiler() throws Exception {
         JvmmProfiler profiler = JvmmFactory.getProfiler();
-        Future<String> future = profiler.sample(new File("test_sample.html"), ProfilerEvent.cpu, 5, TimeUnit.SECONDS);
+        Future<String> future = profiler.sample(new File("test_sample.html"), ProfilerEvent.cpu.name(), 5, TimeUnit.SECONDS);
         String s = future.get(10, TimeUnit.SECONDS);
         System.out.println(s);
     }
