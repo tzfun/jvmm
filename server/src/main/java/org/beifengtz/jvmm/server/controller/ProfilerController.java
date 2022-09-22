@@ -7,19 +7,17 @@ import org.beifengtz.jvmm.convey.annotation.HttpRequest;
 import org.beifengtz.jvmm.convey.annotation.JvmmController;
 import org.beifengtz.jvmm.convey.annotation.JvmmMapping;
 import org.beifengtz.jvmm.convey.annotation.RequestBody;
-import org.beifengtz.jvmm.convey.annotation.RequestParam;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.enums.GlobalStatus;
 import org.beifengtz.jvmm.convey.enums.GlobalType;
 import org.beifengtz.jvmm.convey.enums.Method;
 import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerCounter;
-import org.beifengtz.jvmm.core.entity.profiler.ProfilerEvent;
-import org.beifengtz.jvmm.server.ServerContext;
 import org.beifengtz.jvmm.server.entity.dto.ProfilerSampleDTO;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -38,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 public class ProfilerController {
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_PROFILER_EXECUTE)
-    @HttpRequest(value = "/profiler/execute",method = Method.POST)
+    @HttpRequest(value = "/profiler/execute", method = Method.POST)
     public String execute(@RequestBody String command) throws IOException {
         return JvmmFactory.getProfiler().execute(command);
     }
@@ -52,7 +50,7 @@ public class ProfilerController {
             to.getParentFile().mkdirs();
         }
 
-        ProfilerEvent event = data.getEvent();
+        String event = data.getEvent();
         ProfilerCounter counter = data.getCounter();
         int time = data.getTime();
 
@@ -65,8 +63,7 @@ public class ProfilerController {
         JvmmResponse response = JvmmResponse.create().setType(GlobalType.JVMM_TYPE_PROFILER_SAMPLE.name());
         String result = future.get();
         if (to.exists()) {
-            String hexStr = FileUtil.readToHexStr(to);
-            response.setStatus(GlobalStatus.JVMM_STATUS_OK).setData(new JsonPrimitive(hexStr));
+            response.setStatus(GlobalStatus.JVMM_STATUS_OK).setData(new JsonPrimitive(FileUtil.readToHexStr(to)));
             to.delete();
         } else {
             response.setStatus(GlobalStatus.JVMM_STATUS_PROFILER_FAILED);

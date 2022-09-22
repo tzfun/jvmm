@@ -1,12 +1,12 @@
 package org.beifengtz.jvmm.core;
 
 import org.beifengtz.jvmm.common.exception.ProfilerNotSupportedException;
+import org.beifengtz.jvmm.common.factory.ExecutorFactory;
+import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerAction;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerCommander;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerCounter;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerEvent;
-import org.beifengtz.jvmm.common.factory.ExecutorFactory;
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -96,9 +96,15 @@ class DefaultJvmmProfiler implements JvmmProfiler {
     }
 
     @Override
-    public Future<String> sample(ScheduledExecutorService executor, File to, ProfilerEvent event, ProfilerCounter counter, long interval, long time, TimeUnit timeUnit) {
-        if (to.getParentFile() != null && !to.getParentFile().exists()) {
-            to.getParentFile().mkdirs();
+    public Future<String> sample(ScheduledExecutorService executor, File to, String event, ProfilerCounter counter, long interval, long time, TimeUnit timeUnit) {
+        int dotIdx = to.getName().lastIndexOf(".");
+        if (dotIdx >= 0) {
+            String format = to.getName().substring(dotIdx + 1);
+            if ("csv".equalsIgnoreCase(format)) {
+                throw new IllegalArgumentException("SVG format is obsolete, use .html for FlameGraph");
+            } else if (!format.toLowerCase().matches("(txt|html|jfr)")) {
+                throw new IllegalArgumentException("Invalid flame graph format: " + format);
+            }
         }
 
         execute(ProfilerCommander.newInstance()
@@ -116,32 +122,32 @@ class DefaultJvmmProfiler implements JvmmProfiler {
     }
 
     @Override
-    public Future<String> sample(File to, ProfilerEvent event, ProfilerCounter counter, long interval, long time, TimeUnit timeUnit) {
+    public Future<String> sample(File to, String event, ProfilerCounter counter, long interval, long time, TimeUnit timeUnit) {
         return this.sample(getDefaultExecutor(), to, event, counter, interval, time, timeUnit);
     }
 
     @Override
-    public Future<String> sample(ScheduledExecutorService executor, File to, ProfilerEvent event, ProfilerCounter counter, long time, TimeUnit timeUnit) {
+    public Future<String> sample(ScheduledExecutorService executor, File to, String event, ProfilerCounter counter, long time, TimeUnit timeUnit) {
         return this.sample(executor, to, event, counter, DEFAULT_INTERVAL, time, timeUnit);
     }
 
     @Override
-    public Future<String> sample(File to, ProfilerEvent event, ProfilerCounter counter, long time, TimeUnit timeUnit) {
+    public Future<String> sample(File to, String event, ProfilerCounter counter, long time, TimeUnit timeUnit) {
         return sample(to, event, counter, DEFAULT_INTERVAL, time, timeUnit);
     }
 
     @Override
-    public Future<String> sample(ScheduledExecutorService executor, File to, ProfilerEvent event, long time, TimeUnit timeUnit) {
+    public Future<String> sample(ScheduledExecutorService executor, File to, String event, long time, TimeUnit timeUnit) {
         return sample(executor, to, event, ProfilerCounter.samples, time, timeUnit);
     }
 
     @Override
-    public Future<String> sample(File to, ProfilerEvent event, long time, TimeUnit timeUnit) {
+    public Future<String> sample(File to, String event, long time, TimeUnit timeUnit) {
         return sample(to, event, ProfilerCounter.samples, time, timeUnit);
     }
 
     @Override
-    public Future<String> dumpCollapsed(ScheduledExecutorService executor, ProfilerCounter counter, ProfilerEvent event, long interval, long time, TimeUnit timeUnit) {
+    public Future<String> dumpCollapsed(ScheduledExecutorService executor, ProfilerCounter counter, String event, long interval, long time, TimeUnit timeUnit) {
         execute(ProfilerCommander.newInstance()
                 .setAction(ProfilerAction.start)
                 .setEvent(event)
@@ -154,22 +160,22 @@ class DefaultJvmmProfiler implements JvmmProfiler {
     }
 
     @Override
-    public Future<String> dumpCollapsed(ScheduledExecutorService executor, ProfilerCounter counter, ProfilerEvent event, long time, TimeUnit timeUnit) {
+    public Future<String> dumpCollapsed(ScheduledExecutorService executor, ProfilerCounter counter, String event, long time, TimeUnit timeUnit) {
         return dumpCollapsed(executor, counter, event, DEFAULT_INTERVAL, time, timeUnit);
     }
 
     @Override
-    public Future<String> dumpCollapsed(ProfilerCounter counter, ProfilerEvent event, long interval, long time, TimeUnit timeUnit) {
+    public Future<String> dumpCollapsed(ProfilerCounter counter, String event, long interval, long time, TimeUnit timeUnit) {
         return dumpCollapsed(getDefaultExecutor(), counter, event, interval, time, timeUnit);
     }
 
     @Override
-    public Future<String> dumpCollapsed(ProfilerCounter counter, ProfilerEvent event, long time, TimeUnit timeUnit) {
+    public Future<String> dumpCollapsed(ProfilerCounter counter, String event, long time, TimeUnit timeUnit) {
         return dumpCollapsed(counter, event, DEFAULT_INTERVAL, time, timeUnit);
     }
 
     @Override
-    public Future<String> dumpTraces(ScheduledExecutorService executor, int maxTraces, ProfilerEvent event, long interval, long time, TimeUnit timeUnit) {
+    public Future<String> dumpTraces(ScheduledExecutorService executor, int maxTraces, String event, long interval, long time, TimeUnit timeUnit) {
         execute(ProfilerCommander.newInstance()
                 .setAction(ProfilerAction.start)
                 .setEvent(event)
@@ -181,22 +187,22 @@ class DefaultJvmmProfiler implements JvmmProfiler {
     }
 
     @Override
-    public Future<String> dumpTraces(ScheduledExecutorService executor, int maxTraces, ProfilerEvent event, long time, TimeUnit timeUnit) {
+    public Future<String> dumpTraces(ScheduledExecutorService executor, int maxTraces, String event, long time, TimeUnit timeUnit) {
         return dumpTraces(executor, maxTraces, event, DEFAULT_INTERVAL, time, timeUnit);
     }
 
     @Override
-    public Future<String> dumpTraces(int maxTraces, ProfilerEvent event, long interval, long time, TimeUnit timeUnit) {
+    public Future<String> dumpTraces(int maxTraces, String event, long interval, long time, TimeUnit timeUnit) {
         return dumpTraces(getDefaultExecutor(), maxTraces, event, interval, time, timeUnit);
     }
 
     @Override
-    public Future<String> dumpTraces(int maxTraces, ProfilerEvent event, long time, TimeUnit timeUnit) {
+    public Future<String> dumpTraces(int maxTraces, String event, long time, TimeUnit timeUnit) {
         return dumpTraces(maxTraces, event, DEFAULT_INTERVAL, time, timeUnit);
     }
 
     @Override
-    public Future<String> dumpFlat(ScheduledExecutorService executor, int maxMethods, ProfilerEvent event, long interval, long time, TimeUnit timeUnit) {
+    public Future<String> dumpFlat(ScheduledExecutorService executor, int maxMethods, String event, long interval, long time, TimeUnit timeUnit) {
         execute(ProfilerCommander.newInstance()
                 .setAction(ProfilerAction.start)
                 .setEvent(event)
@@ -208,17 +214,17 @@ class DefaultJvmmProfiler implements JvmmProfiler {
     }
 
     @Override
-    public Future<String> dumpFlat(ScheduledExecutorService executor, int maxMethods, ProfilerEvent event, long time, TimeUnit timeUnit) {
+    public Future<String> dumpFlat(ScheduledExecutorService executor, int maxMethods, String event, long time, TimeUnit timeUnit) {
         return dumpFlat(executor, maxMethods, event, DEFAULT_INTERVAL, time, timeUnit);
     }
 
     @Override
-    public Future<String> dumpFlat(int maxMethods, ProfilerEvent event, long interval, long time, TimeUnit timeUnit) {
+    public Future<String> dumpFlat(int maxMethods, String event, long interval, long time, TimeUnit timeUnit) {
         return dumpFlat(getDefaultExecutor(), maxMethods, event, interval, time, timeUnit);
     }
 
     @Override
-    public Future<String> dumpFlat(int maxMethods, ProfilerEvent event, long time, TimeUnit timeUnit) {
+    public Future<String> dumpFlat(int maxMethods, String event, long time, TimeUnit timeUnit) {
         return dumpFlat(getDefaultExecutor(), maxMethods, event, DEFAULT_INTERVAL, time, timeUnit);
     }
 }

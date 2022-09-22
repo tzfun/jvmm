@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'io.github.tzfun.jvmm'
-version = '2.0.0'
+version = '2.0.1'
 
 ext {
     nettyVersion = "4.1.65.Final"
