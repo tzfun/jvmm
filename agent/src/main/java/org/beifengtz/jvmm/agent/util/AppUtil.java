@@ -1,4 +1,4 @@
-package org.beifengtz.jvmm.agent;
+package org.beifengtz.jvmm.agent.util;
 
 /**
  * Created in 11:45 2021/5/22
@@ -39,6 +39,6 @@ public class AppUtil {
     }
 
     public static String getTempPath() {
-        return DATA_PATH + "/temp/";
+        return ".jvmm";
     }
 }

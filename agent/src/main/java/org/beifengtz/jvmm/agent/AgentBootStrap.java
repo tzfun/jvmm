@@ -1,5 +1,9 @@
 package org.beifengtz.jvmm.agent;
 
+import org.beifengtz.jvmm.agent.util.AppUtil;
+import org.beifengtz.jvmm.agent.util.ClassLoaderUtil;
+import org.beifengtz.jvmm.agent.util.FileUtil;
+import org.beifengtz.jvmm.agent.util.JadUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +42,7 @@ public class AgentBootStrap {
     private static final String STATIC_LOGGER_BINDER_PATH = "org.slf4j.impl.StaticLoggerBinder";
     private static final String JVMM_SERVER_JAR = "jvmm-server.jar";
     private static final String SERVER_MAIN_CLASS = "org.beifengtz.jvmm.server.ServerBootstrap";
-    private static final String SERVER_CONFIG_CLASS = "org.beifengtz.jvmm.server.ServerConfig";
+    private static volatile Instrumentation instrumentation;
 
     private static volatile boolean running;
     private static volatile Thread bindThread;
@@ -78,6 +82,7 @@ public class AgentBootStrap {
      *             premain - 启动时载入
      */
     private static synchronized void main(String args, final Instrumentation inst, String type) {
+        instrumentation = inst;
         initLogger(type);
         log.info("Jvm monitor Agent attached by {}.", type);
 
@@ -486,5 +491,23 @@ public class AgentBootStrap {
         if (bindThread != null) {
             bindThread.interrupt();
         }
+    }
+
+    /**
+     * 反编译，调用位置：org.beifengtz.jvmm.server.controller.ExecuteController#jad(java.lang.String, java.lang.String)
+     *
+     * @param className  类路径
+     * @param methodName 方法名，如果为null则默认全文件
+     * @return 源码
+     * @throws Exception error
+     */
+    public static String jad(String className, String methodName) throws Exception {
+        if (instrumentation == null) {
+            throw new IllegalStateException("No instrumentation");
+        }
+        byte[] bytes = JadUtil.toBytes(instrumentation, className);
+        File file = new File(AppUtil.getTempPath(), className + ".class");
+        FileUtil.writeByteArrayToFile(file, bytes);
+        return JadUtil.decompile(file, methodName);
     }
 }

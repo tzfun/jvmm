@@ -1,7 +1,7 @@
 package org.beifengtz.agent.test;
 
 import org.beifengtz.jvmm.agent.AgentBootStrap;
-import org.beifengtz.jvmm.agent.AppUtil;
+import org.beifengtz.jvmm.agent.util.AppUtil;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
