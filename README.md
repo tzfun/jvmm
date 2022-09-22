@@ -1,7 +1,7 @@
 ## Jvmm
 
 ![license](https://img.shields.io/badge/license-Apache--2.0-yellow)
-[![maven](https://img.shields.io/badge/maven-2.0.0-blue)](https://search.maven.org/search?q=g:io.github.tzfun.jvmm)
+[![maven](https://img.shields.io/badge/maven-2.0.1-blue)](https://search.maven.org/search?q=g:io.github.tzfun.jvmm)
 
 Jvmm是一个轻量的JVM监控工具，提供有丰富的监控功能：可查看Java虚拟机信息（Runtime、内存、CPU、线程、GC等）以及OS信息（内存、磁盘等），可生成火焰图，提供http、哨兵等三种service模式。适合用于服务健康监控、线上调优、排查问题、性能测试等场景。
 
@@ -12,6 +12,7 @@ Jvmm是一个轻量的JVM监控工具，提供有丰富的监控功能：可查�
 * 支持获取Java运行时启动参数、虚拟机参数、properties参数
 * 支持远程执行JDK自带工具，jps、jstat、jstack、jinfo、jmap、jcmd等
 * 支持生成火焰图（采样事件包括CPU、内存分配、线程栈、Java方法调用栈等）
+* 支持反编译类生成源码
 * 支持远程执行GC
 * 提供客户端交互工具，支持跨进程attach和远程连接功能
 * 支持三种服务模式，足以应对大部分监控场景，可同时开启多个服务
@@ -25,7 +26,7 @@ Jvmm是一个轻量的JVM监控工具，提供有丰富的监控功能：可查�
 
 ## 获取Jvmm
 
-请前往[release](https://github.com/tzfun/jvmm/releases)下载[最新版的jvmm](https://github.com/tzfun/jvmm/releases/download/2.0.0/jvmm-2.0.0.zip)
+请前往[release](https://github.com/tzfun/jvmm/releases)下载[最新版的jvmm](https://github.com/tzfun/jvmm/releases/download/2.0.1/jvmm-2.0.1.zip)
 
 ## 快速使用
 

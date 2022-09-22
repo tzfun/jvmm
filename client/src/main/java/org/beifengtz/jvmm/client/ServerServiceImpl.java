@@ -134,16 +134,13 @@ public class ServerServiceImpl extends ServerService {
 
     @JvmmOption(
             name = "t",
+            required = true,
             hasArg = true,
             argName = "type",
             desc = "The type of service to be closed, allowed values: jvmm, http, sentinel"
     )
     @JvmmCmdDesc(desc = "Shutdown service.")
     public static void shutdown(JvmmConnector connector, CommandLine cmd) {
-        if (!cmd.hasOption("t")) {
-            printErr("Missing required param: type");
-            return;
-        }
         JvmmRequest request = JvmmRequest.create()
                 .setType(GlobalType.JVMM_TYPE_SERVER_SHUTDOWN)
                 .setData(new JsonPrimitive(cmd.getOptionValue("t")));
@@ -278,6 +275,55 @@ public class ServerServiceImpl extends ServerService {
             }
         } else {
             System.out.println(response.getData().getAsString());
+        }
+    }
+
+    @JvmmOptions({
+            @JvmmOption(
+                    name = "c",
+                    required = true,
+                    hasArg = true,
+                    argName = "class",
+                    desc = "Required, the java class to be decompiled"
+            ),
+            @JvmmOption(
+                    name = "m",
+                    hasArg = true,
+                    argName = "method",
+                    desc = "Specify the method name in the decompiled class"
+            ),
+            @JvmmOption(
+                    name = "f",
+                    hasArg = true,
+                    argName = "file",
+                    desc = "Output file path"
+            ),
+    })
+
+    @JvmmCmdDesc(desc = "Shutdown service.")
+    public static void jad(JvmmConnector connector, CommandLine cmd) throws IOException {
+        JsonObject json = new JsonObject();
+        json.addProperty("className", cmd.getOptionValue("c"));
+        if (cmd.hasOption("m")) {
+            json.addProperty("methodName", cmd.getOptionValue("m"));
+        }
+        JvmmRequest request = JvmmRequest.create()
+                .setType(GlobalType.JVMM_TYPE_EXECUTE_JAD)
+                .setData(json);
+        JvmmResponse response = request(connector, request);
+        if (response == null) {
+            return;
+        }
+        String result = response.getData().getAsString();
+        if (cmd.hasOption("f")) {
+            File file = new File(cmd.getOptionValue("f"));
+            if (file.getParentFile() != null && !file.getParentFile().exists()) {
+                file.getParentFile().mkdirs();
+            }
+            FileUtil.writeByteArrayToFile(file, result.getBytes(StandardCharsets.UTF_8));
+            System.out.println("The decompilation result of the '" + cmd.getOptionValue("c") + "' class has been output to the file " + file.getAbsolutePath());
+        } else {
+            System.out.println(result);
         }
     }
 }
