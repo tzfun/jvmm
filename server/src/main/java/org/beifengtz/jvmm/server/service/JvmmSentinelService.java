@@ -158,6 +158,8 @@ public class JvmmSentinelService implements JvmmService {
 
     /**
      * 判断一个数是否是 2的n次方
+     * @param n value
+     * @return true-判定通过
      */
     protected boolean judge(int n) {
         return (n & (n - 1)) == 0;

@@ -28,6 +28,9 @@ public final class Configuration {
     /**
      * 从一个地址中载入配置，这个地址需要指定到一个yml文件，配置格式需满足与 Configuration 类一一对应，
      * 这个地址的格式，可以是一个http或https的网络地址，也可以是一个文件路径
+     *
+     * @param url 文件地址，可以是https(s)地址也可以是本地文件地址
+     * @return {@link Configuration}对象
      */
     public static Configuration parseFromUrl(String url) {
         try {
