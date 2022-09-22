@@ -141,3 +141,16 @@ jar模式的作用仅仅是生成两个jar包：jvmm-agent.jar 和 jvmm-server.j
 ```shell
 java -jar jvmm.jar -m jar
 ```
+
+7. **jad** 代码反编译（仅支持以agent方式载入jvmm的时候使用）
+    * `-c`：必填，需要反编译的类路径，例如java.lang.Object
+    * `-m`：指定只获取类中的方法，如果不填默认输出整个类源码
+    * `-f`：将源码输出到文件，如果不填默认输出在控制台
+
+```shell
+jad -c java.lang.Object
+
+jad -c java.lang.Object -m toString
+
+jad -c java.lang.Object -f Object.java
+```
