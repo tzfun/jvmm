@@ -290,7 +290,12 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
     }
 
     /**
+     * 消息处理之前调用
+     *
+     * @param ctx channel 上下文
+     * @param reqMsg 请求消息{@link JvmmRequest}
      * @return true-继续处理消息 false-消息已被拦截，无需继续处理
+     * @throws Exception 处理失败异常
      */
     protected abstract boolean handleBefore(ChannelHandlerContext ctx, JvmmRequest reqMsg) throws Exception;
 }
