@@ -11,9 +11,9 @@ Jvmm是一个轻量的JVM监控工具，提供有丰富的监控功能：可查�
 * 支持监控物理机基础信息、内存使用情况、磁盘使用情况、cpu负载
 * 支持获取Java运行时启动参数、虚拟机参数、properties参数
 * 支持远程执行JDK自带工具，jps、jstat、jstack、jinfo、jmap、jcmd等
-* 支持生成火焰图
+* 支持生成火焰图（采样事件包括CPU、内存分配、线程栈、Java方法调用栈等）
 * 支持远程执行GC
-* 提供客户端交互工具，支持跨进程attach和远程连接功能，上手简单
+* 提供客户端交互工具，支持跨进程attach和远程连接功能
 * 支持三种服务模式，足以应对大部分监控场景，可同时开启多个服务
   * jvmm服务：独有通信协议，需使用jvmm客户端远程连接调用
   * http服务：提供Http接口，不限语言远程调用
@@ -33,6 +33,25 @@ Jvmm是一个轻量的JVM监控工具，提供有丰富的监控功能：可查�
 
 ```shell
 java -jar jvmm.jar
+```
+
+或直接在你的项目中使用
+
+```xml
+<dependency>
+    <groupId>io.github.tzfun.jvmm</groupId>
+    <artifactId>jvmm-server</artifactId>
+    <version>${jvmm-version}</version>
+</dependency>
+```
+
+```java
+public class JvmmServerBootDemo {
+    public static void main(String[] args) {
+        ServerBootstrap server = ServerBootstrap.getInstance();
+        server.start(msg -> System.out.println(msg));
+    }
+}
 ```
 
 ## 使用文档
@@ -64,7 +83,7 @@ Dashboard应用示例
 
 联系邮箱：[beifengtz@qq.com](mailto://beifengtz@qq.com)
 
-## QAS
+## 问题解决
 
 ### 1.kernel.perf_event_paranoid权限开关
 如果你在生成火焰图时提示`No access to perf events. Try --fdtransfer or --all-user option or 'sysctl kernel.perf_event_paranoid=1'`，原因是系统内核默认禁止了检测系统性能，你需要开启这个选项。
