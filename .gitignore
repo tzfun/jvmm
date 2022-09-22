@@ -45,3 +45,4 @@ gradle.properties
 web/src/main/resources/application*.yml
 /logs/*
 /client/src/main/resources/
+/.jvmm/

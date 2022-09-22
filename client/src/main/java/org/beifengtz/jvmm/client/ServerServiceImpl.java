@@ -11,7 +11,6 @@ import org.beifengtz.jvmm.client.annotation.JvmmCmdDesc;
 import org.beifengtz.jvmm.client.annotation.JvmmOption;
 import org.beifengtz.jvmm.client.annotation.JvmmOptions;
 import org.beifengtz.jvmm.common.util.CodingUtil;
-import org.beifengtz.jvmm.common.util.CommonUtil;
 import org.beifengtz.jvmm.common.util.FileUtil;
 import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
@@ -135,16 +134,13 @@ public class ServerServiceImpl extends ServerService {
 
     @JvmmOption(
             name = "t",
+            required = true,
             hasArg = true,
             argName = "type",
             desc = "The type of service to be closed, allowed values: jvmm, http, sentinel"
     )
     @JvmmCmdDesc(desc = "Shutdown service.")
     public static void shutdown(JvmmConnector connector, CommandLine cmd) {
-        if (!cmd.hasOption("t")) {
-            printErr("Missing required param: type");
-            return;
-        }
         JvmmRequest request = JvmmRequest.create()
                 .setType(GlobalType.JVMM_TYPE_SERVER_SHUTDOWN)
                 .setData(new JsonPrimitive(cmd.getOptionValue("t")));
@@ -197,10 +193,9 @@ public class ServerServiceImpl extends ServerService {
             ),
             @JvmmOption(
                     name = "f",
-                    required = true,
                     hasArg = true,
                     argName = "file",
-                    desc = "Output file path (required *), supported file type: csv, html, jfr."
+                    desc = "Output file path, supported file type: html, txt, jfr. If not filled, will output text content"
             )
     })
     @JvmmCmdDesc(desc = "Get server sampling report. Only supported on MacOS and Linux.")
@@ -226,10 +221,15 @@ public class ServerServiceImpl extends ServerService {
             data.addProperty("interval", Long.parseLong(cmd.getOptionValue("i")));
         }
 
-        String filePath = cmd.getOptionValue("f");
-        int dotIdx = filePath.lastIndexOf(".");
-        if (dotIdx >= 0 && dotIdx < filePath.length() - 1) {
-            data.addProperty("format", filePath.substring(dotIdx + 1));
+        String filePath = null;
+        if (cmd.hasOption("f")) {
+            filePath = cmd.getOptionValue("f");
+            int dotIdx = filePath.lastIndexOf(".");
+            if (dotIdx >= 0 && dotIdx < filePath.length() - 1) {
+                data.addProperty("format", filePath.substring(dotIdx + 1));
+            }
+        } else {
+            data.addProperty("format", "txt");
         }
 
         request.setData(data);
@@ -243,9 +243,13 @@ public class ServerServiceImpl extends ServerService {
         String hexStr = response.getData().getAsString();
         byte[] bytes = CodingUtil.hexStr2Bytes(hexStr);
         try {
-            File file = new File(filePath);
-            FileUtil.writeByteArrayToFile(file, bytes);
-            System.out.println("Write profiler to file successful, path is " + file.getAbsolutePath());
+            if (filePath == null) {
+                System.out.println(new String(bytes, StandardCharsets.UTF_8));
+            } else {
+                File file = new File(filePath);
+                FileUtil.writeByteArrayToFile(file, bytes);
+                System.out.println("Write profiler to file successful, path is " + file.getAbsolutePath());
+            }
         } catch (IOException e) {
             printErr("Write failed, " + e.getMessage());
         }
@@ -271,6 +275,55 @@ public class ServerServiceImpl extends ServerService {
             }
         } else {
             System.out.println(response.getData().getAsString());
+        }
+    }
+
+    @JvmmOptions({
+            @JvmmOption(
+                    name = "c",
+                    required = true,
+                    hasArg = true,
+                    argName = "class",
+                    desc = "Required, the java class to be decompiled"
+            ),
+            @JvmmOption(
+                    name = "m",
+                    hasArg = true,
+                    argName = "method",
+                    desc = "Specify the method name in the decompiled class"
+            ),
+            @JvmmOption(
+                    name = "f",
+                    hasArg = true,
+                    argName = "file",
+                    desc = "Output file path"
+            ),
+    })
+
+    @JvmmCmdDesc(desc = "Shutdown service.")
+    public static void jad(JvmmConnector connector, CommandLine cmd) throws IOException {
+        JsonObject json = new JsonObject();
+        json.addProperty("className", cmd.getOptionValue("c"));
+        if (cmd.hasOption("m")) {
+            json.addProperty("methodName", cmd.getOptionValue("m"));
+        }
+        JvmmRequest request = JvmmRequest.create()
+                .setType(GlobalType.JVMM_TYPE_EXECUTE_JAD)
+                .setData(json);
+        JvmmResponse response = request(connector, request);
+        if (response == null) {
+            return;
+        }
+        String result = response.getData().getAsString();
+        if (cmd.hasOption("f")) {
+            File file = new File(cmd.getOptionValue("f"));
+            if (file.getParentFile() != null && !file.getParentFile().exists()) {
+                file.getParentFile().mkdirs();
+            }
+            FileUtil.writeByteArrayToFile(file, result.getBytes(StandardCharsets.UTF_8));
+            System.out.println("The decompilation result of the '" + cmd.getOptionValue("c") + "' class has been output to the file " + file.getAbsolutePath());
+        } else {
+            System.out.println(result);
         }
     }
 }

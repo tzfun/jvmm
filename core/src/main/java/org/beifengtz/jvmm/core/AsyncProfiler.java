@@ -1,13 +1,16 @@
 package org.beifengtz.jvmm.core;
 
 import org.beifengtz.jvmm.common.factory.ExecutorFactory;
+import org.beifengtz.jvmm.common.util.CommonUtil;
 import org.beifengtz.jvmm.common.util.PlatformUtil;
+import org.beifengtz.jvmm.core.entity.profiler.ProfilerCounter;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerEvent;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.Random;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -146,7 +149,7 @@ public class AsyncProfiler {
     private native void stop0() throws IllegalStateException;
 
     /**
-     * 命令格式：https://github.com/jvm-profiling-tools/async-profiler/blob/v1.8.1/src/arguments.cpp#L50
+     * 命令格式：<a href="https://github.com/jvm-profiling-tools/async-profiler/blob/v1.8.1/src/arguments.cpp#L50">async-profiler</a>
      *
      * @param command 命令行参数错误
      * @return 响应结果
@@ -164,10 +167,25 @@ public class AsyncProfiler {
         System.out.println(profiler.version());
         System.out.println("status: " + profiler.status());
         System.out.println("start to dump file...");
-        Future<?> future = profiler.sample(new File("test.svg"),
-                ProfilerEvent.cpu, 10, TimeUnit.SECONDS);
+        Future<?> future = profiler.sample(new File("test.html"), ProfilerEvent.wall.name(), 10, TimeUnit.SECONDS);
         System.out.println("status: " + profiler.status());
         System.out.println(future.get(12, TimeUnit.SECONDS));
+
+        new Thread(() -> {
+            Random random = new Random();
+            for (int i = 0; i < 10; i++) {
+                CommonUtil.print(random.nextInt(100));
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+        future = profiler.sample(new File("test-method.html"), "java.util.Random.nextInt", ProfilerCounter.total, 10, TimeUnit.SECONDS);
+        System.out.println(future.get(12, TimeUnit.SECONDS));
+
         ExecutorFactory.shutdown();
     }
 }

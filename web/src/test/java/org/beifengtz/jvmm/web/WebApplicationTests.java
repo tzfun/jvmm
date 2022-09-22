@@ -22,7 +22,7 @@ class WebApplicationTests {
         CountDownLatch latch = new CountDownLatch(5);
         client.registerListener((response) -> {
             System.out.println("==> " + response.toJsonStr());
-            if (response.getType().equals(GlobalType.JVMM_TYPE_TIMER_COLLECT_MEMORY_INFO.name())) {
+            if (response.getType().equals(GlobalType.JVMM_TYPE_COLLECT_MEMORY_INFO.name())) {
                 latch.countDown();
             }
         });
@@ -33,11 +33,11 @@ class WebApplicationTests {
             client.send(JvmmRequest.create().setType(GlobalType.JVMM_TYPE_COLLECT_THREAD_DYNAMIC_INFO));
             client.send(JvmmRequest.create().setType(GlobalType.JVMM_TYPE_COLLECT_MEMORY_INFO));
 
-            client.send(JvmmRequest.create().setType(GlobalType.JVMM_TYPE_TIMER_COLLECT_MEMORY_INFO));
+            client.send(JvmmRequest.create().setType(GlobalType.JVMM_TYPE_COLLECT_MEMORY_INFO));
 
             latch.await();
 
-            client.send(JvmmRequest.create().setType(GlobalType.JVMM_TYPE_STOP_TIMER_COLLECT_MEMORY_INFO));
+            client.send(JvmmRequest.create().setType(GlobalType.JVMM_TYPE_COLLECT_MEMORY_INFO));
             client.close();
             group.shutdownGracefully();
         } else {

@@ -15,7 +15,10 @@ import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.entity.result.JpsResult;
 import org.beifengtz.jvmm.server.ServerContext;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+
+import static org.beifengtz.jvmm.server.ServerBootstrap.AGENT_BOOT_CLASS;
 
 /**
  * <p>
@@ -93,6 +96,17 @@ public class ExecuteController {
             return pair.getLeft();
         } else {
             return CommonUtil.join("\n", pair.getLeft());
+        }
+    }
+
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_EXECUTE_JAD)
+    @HttpRequest("/execute/jad")
+    public String jad(@RequestParam String className, @RequestParam String methodName) throws Throwable {
+        try {
+            Class<?> bootClazz = Thread.currentThread().getContextClassLoader().loadClass(AGENT_BOOT_CLASS);
+            return (String) bootClazz.getMethod("jad", String.class, String.class).invoke(null, className, methodName);
+        } catch (InvocationTargetException e) {
+            throw e.getTargetException();
         }
     }
 }

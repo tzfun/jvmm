@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'io.github.tzfun.jvmm'
-version = '2.0.0'
+version = '2.0.1'
 
 ext {
     nettyVersion = "4.1.65.Final"
@@ -14,6 +14,7 @@ ext {
     logbackVersion = "1.2.3"
     gsonVersoion = "2.8.6"
     commonsCli = "1.5.0"
+    cfrVersion = "0.152"
 }
 
 subprojects {
@@ -22,6 +23,10 @@ subprojects {
     apply plugin: 'signing'
 
     [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
+
+    compileJava {
+        options.compilerArgs << "-parameters" << "-Xlint:unchecked" << "-Xlint:deprecation"
+    }
 
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8

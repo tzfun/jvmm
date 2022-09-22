@@ -1,4 +1,6 @@
-package org.beifengtz.jvmm.agent;
+package org.beifengtz.jvmm.agent.util;
+
+import org.beifengtz.jvmm.agent.JvmmAgentClassLoader;
 
 import java.lang.reflect.Method;
 import java.net.URL;

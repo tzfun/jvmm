@@ -106,15 +106,17 @@ info -t threadStack -f thread_dump.txt
 
 2. **profiler** 生成火焰图指令
     * `-c`，采样类型，允许值：samples、total，默认值为samples
-    * `-e`，采样事件，允许值：cpu、alloc、lock、wall、itimer，默认值为cpu
-    * `-f`，采样输出文件，必填，文件后缀名为格式化类型，允许后缀类型：csv、html、jfr
+    * `-e`，采样事件，允许值：cpu、alloc、lock、wall、itimer，或者是Java方法，格式为ClassName.MethodName，例如：java.lang.Object.toString，默认值为cpu
+    * `-f`，采样输出文件，文件后缀名为格式化类型，允许后缀类型：html、txt、jfr，如果不填此参数将默认输出文本内容
     * `-i`，采样单位间隔，单位纳秒，默认值 10000000ns
     * `-t`，采样时间，单位秒，默认值 10s
 
 ```shell
+profiler
+
 profiler -f profiler.html
 
-profiler -e alloc -f profiler.html -t 120
+profiler -e wall -f profiler.html -t 120
 ```
 
 ![profiler](../doc/profiler.png)
@@ -138,4 +140,17 @@ jar模式的作用仅仅是生成两个jar包：jvmm-agent.jar 和 jvmm-server.j
 
 ```shell
 java -jar jvmm.jar -m jar
+```
+
+7. **jad** 代码反编译（仅支持以agent方式载入jvmm的时候使用）
+    * `-c`：必填，需要反编译的类路径，例如java.lang.Object
+    * `-m`：指定只获取类中的方法，如果不填默认输出整个类源码
+    * `-f`：将源码输出到文件，如果不填默认输出在控制台
+
+```shell
+jad -c java.lang.Object
+
+jad -c java.lang.Object -m toString
+
+jad -c java.lang.Object -f Object.java
 ```

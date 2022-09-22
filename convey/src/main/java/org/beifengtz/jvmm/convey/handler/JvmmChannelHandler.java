@@ -227,7 +227,24 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
                 } else if (JsonElement.class.isAssignableFrom(parameterType)) {
                     parameter[i] = reqMsg.getData();
                 } else if (String.class.isAssignableFrom(parameterType)) {
-                    parameter[i] = reqMsg.getData() == null ? null : reqMsg.getData().getAsString();
+                    JsonElement data = reqMsg.getData();
+                    if (data == null) {
+                        parameter[i] = null;
+                    } else {
+                        if (data.isJsonObject()) {
+                            String paramName = method.getParameters()[i].getName();
+                            JsonElement value = data.getAsJsonObject().get(paramName);
+                            if (value == null) {
+                                parameter[i] = null;
+                            } else {
+                                parameter[i] = value.getAsString();
+                            }
+                        } else if (data.isJsonPrimitive()) {
+                            parameter[i] = data.getAsString();
+                        } else {
+                            parameter[i] = data.toString();
+                        }
+                    }
                 } else if (EventExecutor.class.isAssignableFrom(parameterType)) {
                     parameter[i] = ctx.executor();
                 } else if (ChannelHandlerContext.class.isAssignableFrom(parameterType)) {
@@ -292,7 +309,7 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
     /**
      * 消息处理之前调用
      *
-     * @param ctx channel 上下文
+     * @param ctx    channel 上下文
      * @param reqMsg 请求消息{@link JvmmRequest}
      * @return true-继续处理消息 false-消息已被拦截，无需继续处理
      * @throws Exception 处理失败异常
