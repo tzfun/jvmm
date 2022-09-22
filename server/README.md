@@ -24,9 +24,7 @@ implementation "io.github.tzfun.jvmm:jvmm-server:${jvmm-version}"
 ```java
 public class ServerBootDemo {
     public static void main(String[] args) {
-        String configPath = "config/config.yml";
-        Configuration config = Configuration.parseFromUrl(configPath);
-        ServerBootstrap server = ServerBootstrap.getInstance(config);
+        ServerBootstrap server = ServerBootstrap.getInstance(Configuration.parseFromUrl("config/config.yml"));
         server.start(msg -> System.out.println(msg));
     }
 }
