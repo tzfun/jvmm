@@ -29,24 +29,27 @@ public class JpsResult implements JsonParsable {
         return pid;
     }
 
-    public void setPid(long pid) {
-        this.pid = pid;
-    }
-
     public String getMainClass() {
         return mainClass;
-    }
-
-    public void setMainClass(String mainClass) {
-        this.mainClass = mainClass;
     }
 
     public List<String> getArguments() {
         return arguments;
     }
 
-    public void setArguments(List<String> arguments) {
+    public JpsResult setPid(long pid) {
+        this.pid = pid;
+        return this;
+    }
+
+    public JpsResult setMainClass(String mainClass) {
+        this.mainClass = mainClass;
+        return this;
+    }
+
+    public JpsResult setArguments(List<String> arguments) {
         this.arguments = arguments;
+        return this;
     }
 
     @Override

@@ -4,12 +4,20 @@ import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
 import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.util.ClassLoaderUtil;
+import org.beifengtz.jvmm.common.util.IOUtil;
 import org.beifengtz.jvmm.common.util.JavaEnvUtil;
 import org.beifengtz.jvmm.common.util.JavaVersionUtils;
+import org.beifengtz.jvmm.common.util.PidUtil;
 import org.slf4j.Logger;
+import sun.tools.attach.HotSpotVirtualMachine;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.util.Properties;
 
@@ -22,21 +30,21 @@ import java.util.Properties;
  *
  * @author beifengtz
  */
-public class AttachProvider {
+public class VMProvider {
 
-    private static final Logger log = LoggerFactory.logger(AttachProvider.class);
+    private static final Logger log = LoggerFactory.logger(VMProvider.class);
 
-    private static volatile AttachProvider INSTANCE;
+    private static volatile VMProvider INSTANCE;
 
     private volatile ClassLoader toolsClassLoader;
 
-    private AttachProvider() throws Throwable {
+    private VMProvider() throws Throwable {
         initToolsClassLoader();
     }
 
-    public static synchronized AttachProvider getInstance() throws Throwable {
+    public static synchronized VMProvider getInstance() throws Throwable {
         if (INSTANCE == null) {
-            INSTANCE = new AttachProvider();
+            INSTANCE = new VMProvider();
         }
         return INSTANCE;
     }
@@ -96,13 +104,26 @@ public class AttachProvider {
                             targetSystemProperties.getProperty("java.home"), System.getProperty("java.home"));
                 }
             }
-
             virtualMachine.loadAgent(agentJarPath.replaceAll("\\\\", "/"),
-                    serverJarPath.replaceAll("\\\\", "/") + ";" +args);
+                    serverJarPath.replaceAll("\\\\", "/") + ";" + args);
+        } catch (IOException e) {
+            if (e.getMessage() != null && e.getMessage().startsWith("Non-numeric value found")) {
+                log.warn("An exception occurred when attaching: {}", e.getMessage());
+            }
         } finally {
-            if (null != virtualMachine) {
+            if (virtualMachine != null) {
                 virtualMachine.detach();
             }
+        }
+    }
+
+    public String heapHisto() throws Exception {
+        HotSpotVirtualMachine vm = (HotSpotVirtualMachine) VirtualMachine.attach(Long.toString(PidUtil.currentPid()));
+        try {
+            InputStream is = vm.heapHisto("-live");
+            return IOUtil.toString(is);
+        } finally {
+            vm.detach();
         }
     }
 }

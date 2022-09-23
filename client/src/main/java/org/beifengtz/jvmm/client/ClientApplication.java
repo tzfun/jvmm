@@ -4,6 +4,8 @@ import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.logger.LoggerLevel;
 import org.beifengtz.jvmm.convey.DefaultInternalLoggerFactory;
+import org.beifengtz.jvmm.core.JvmmCollector;
+import org.beifengtz.jvmm.core.JvmmFactory;
 
 /**
  * <p>
@@ -21,6 +23,8 @@ public class ClientApplication {
     }
 
     public static void main(String[] args) throws Throwable {
-        CommandRunner.run(args);
+//        CommandRunner.run(args);
+        JvmmCollector collector = JvmmFactory.getCollector();
+        collector.getThreadDynamic();
     }
 }

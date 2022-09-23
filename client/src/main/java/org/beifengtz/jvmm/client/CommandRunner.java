@@ -16,7 +16,7 @@ import org.beifengtz.jvmm.common.util.PidUtil;
 import org.beifengtz.jvmm.common.util.meta.PairKey;
 import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
-import org.beifengtz.jvmm.core.AttachProvider;
+import org.beifengtz.jvmm.core.VMProvider;
 import org.beifengtz.jvmm.core.JvmmFactory;
 import org.slf4j.Logger;
 
@@ -365,7 +365,7 @@ public class CommandRunner {
 
         logger.info("Start to attach program {} ...", pid);
         try {
-            AttachProvider.getInstance().attachAgent(pid, agentFile.getAbsolutePath(), serverFile.getAbsolutePath(), args);
+            VMProvider.getInstance().attachAgent(pid, agentFile.getAbsolutePath(), serverFile.getAbsolutePath(), args);
             pair.getRight().join(30000);
         } catch (Exception e) {
             logger.warn("An error was encountered while attaching: " + e.getMessage(), e);
