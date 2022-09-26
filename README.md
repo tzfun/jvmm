@@ -1,7 +1,15 @@
-## Jvmm
+
+<div align=center>
+<img src=doc/jvmm.png height=200/>
+</div>
+
+<div align="center">
 
 ![license](https://img.shields.io/badge/license-Apache--2.0-yellow)
-[![maven](https://img.shields.io/badge/maven-2.0.1-blue)](https://search.maven.org/search?q=g:io.github.tzfun.jvmm)
+![JDK](https://img.shields.io/badge/JDK-1.8+-green)
+[![maven](https://img.shields.io/badge/maven--central-2.0.1-blue)](https://search.maven.org/search?q=g:io.github.tzfun.jvmm)
+
+</div>
 
 Jvmm是一个轻量的JVM监控工具，提供有丰富的监控功能：可查看Java虚拟机信息（Runtime、内存、CPU、线程、GC等）以及OS信息（内存、磁盘等），可生成火焰图，提供http、哨兵等三种service模式。适合用于服务健康监控、线上调优、排查问题、性能测试等场景。
 
