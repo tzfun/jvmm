@@ -9,6 +9,7 @@ version = rootProject.version
 dependencies {
     compile(project(':common'))
     compileOnly(files(((URLClassLoader) ToolProvider.getSystemToolClassLoader()).getURLs()))
+    compile "org.benf:cfr:${cfrVersion}"
 //    compile "org.ow2.asm:asm:9.2"
 }
 

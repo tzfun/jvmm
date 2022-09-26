@@ -4,7 +4,6 @@ import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.core.entity.mx.ClassLoaderInfo;
 import org.slf4j.Logger;
 
-import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -18,7 +17,7 @@ import java.util.Set;
  *
  * @author beifengtz
  */
-final class Unsafe {
+public final class Unsafe {
 
     private static final Logger logger = LoggerFactory.logger(Unsafe.class);
 
@@ -28,7 +27,7 @@ final class Unsafe {
     static {
         try {
             //  sun.management.ThreadImpl#getThreads()
-            Method method = ManagementFactory.getThreadMXBean().getClass().getDeclaredMethod("getThreads");
+            Method method = Class.forName("sun.management.ThreadImpl").getDeclaredMethod("getThreads");
             method.setAccessible(true);
             threadsMethod = method;
 
@@ -92,6 +91,55 @@ final class Unsafe {
     }
 
     /**
+     * 查找一个已经被加载过的Class对象
+     *
+     * @param className 类路径
+     * @return Class对象列表
+     * @throws Exception 调用异常
+     */
+    public static List<Class<?>> findLoadedClasses(String className) throws Exception {
+        List<Class<?>> classes = new ArrayList<>();
+        Set<ClassLoader> scannedClassLoader = new HashSet<>();
+        for (Thread thread : getThreads()) {
+            ClassLoader classLoader = thread.getContextClassLoader();
+            if (classLoader == null) {
+                continue;
+            }
+            if (scannedClassLoader.add(classLoader)) {
+                Class<?> clazz = (Class<?>) findLoadedClassMethod.invoke(classLoader, className);
+                if (clazz != null) {
+                    classes.add(clazz);
+                }
+            }
+        }
+        return classes;
+    }
+
+    /**
+     * 判断一个ClassLoader是否已经加载了类
+     *
+     * @param classLoaderHash   ClassLoader的hashCode
+     * @param className         类路径
+     * @return Class实例
+     * @throws Exception 调用异常
+     */
+    public static Class<?> findLoadedClass(int classLoaderHash, String className) throws Exception {
+        for (Thread thread : getThreads()) {
+            ClassLoader classLoader = thread.getContextClassLoader();
+            if (classLoader == null) {
+                continue;
+            }
+            if (classLoader.hashCode() == classLoaderHash) {
+                Class<?> clazz = (Class<?>) findLoadedClassMethod.invoke(classLoader, className);
+                if (clazz != null) {
+                    return clazz;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * 判断一个ClassLoader是否已经加载了类
      *
      * @param classLoader  ClassLoader实例
@@ -129,10 +177,6 @@ final class Unsafe {
             }
         }
         return list;
-    }
-
-    public static void main(String[] args) throws Exception {
-        System.out.println(getClassLoaders());
     }
 
 }

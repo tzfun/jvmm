@@ -318,7 +318,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
             response401(ctx);
         } else {
             logger().error(e.getMessage(), e);
-            response500(ctx, e.getMessage());
+            response500(ctx, e.getClass().getName() + ": " + e.getMessage());
         }
     }
 }

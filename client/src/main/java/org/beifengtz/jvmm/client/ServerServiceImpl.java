@@ -42,7 +42,7 @@ public class ServerServiceImpl extends ServerService {
                     hasArg = true,
                     required = true,
                     argName = "type",
-                    desc = "Info type (required *), optional values: system, systemDynamic, classloading, compilation, gc, process, " +
+                    desc = "Info type (required *), optional values: system, systemDynamic, classloading, classloader, compilation, gc, process, " +
                             "memory, memoryManager, memoryPool, thread, threadStack."
             ),
             @JvmmOption(
@@ -66,6 +66,9 @@ public class ServerServiceImpl extends ServerService {
                 break;
             case "classloading":
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_CLASSLOADING_INFO);
+                break;
+            case "classloader":
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_CLASSLOADER_INFO);
                 break;
             case "compilation":
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_COMPILATION_INFO);
