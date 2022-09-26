@@ -2,6 +2,7 @@ package org.beifengtz.jvmm.server.controller;
 
 import com.google.gson.JsonArray;
 import org.beifengtz.jvmm.common.tuple.Pair;
+import org.beifengtz.jvmm.common.util.CodingUtil;
 import org.beifengtz.jvmm.common.util.CommonUtil;
 import org.beifengtz.jvmm.convey.annotation.HttpController;
 import org.beifengtz.jvmm.convey.annotation.HttpRequest;
@@ -12,10 +13,16 @@ import org.beifengtz.jvmm.convey.annotation.RequestParam;
 import org.beifengtz.jvmm.convey.enums.GlobalType;
 import org.beifengtz.jvmm.convey.enums.Method;
 import org.beifengtz.jvmm.core.JvmmFactory;
+import org.beifengtz.jvmm.core.Unsafe;
 import org.beifengtz.jvmm.core.entity.result.JpsResult;
+import org.beifengtz.jvmm.server.ServerBootstrap;
 import org.beifengtz.jvmm.server.ServerContext;
+import org.beifengtz.jvmm.server.entity.dto.PatchDTO;
+import org.beifengtz.jvmm.server.entity.vo.PatchVO;
 
+import java.lang.instrument.ClassDefinition;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.beifengtz.jvmm.server.ServerBootstrap.AGENT_BOOT_CLASS;
@@ -102,11 +109,33 @@ public class ExecuteController {
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_EXECUTE_JAD)
     @HttpRequest("/execute/jad")
     public String jad(@RequestParam String className, @RequestParam String methodName) throws Throwable {
-        try {
-            Class<?> bootClazz = Thread.currentThread().getContextClassLoader().loadClass(AGENT_BOOT_CLASS);
-            return (String) bootClazz.getMethod("jad", String.class, String.class).invoke(null, className, methodName);
-        } catch (InvocationTargetException e) {
-            throw e.getTargetException();
+        return JvmmFactory.getExecutor().jad(ServerBootstrap.getInstance().getInstrumentation(), className, methodName);
+    }
+
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_EXECUTE_LOAD_PATCH)
+    @HttpRequest(value = "/execute/load_patch",method = Method.POST)
+    public List<PatchVO> loadPatch(@RequestBody List<PatchDTO> patchList) throws Throwable {
+        List<ClassDefinition> definitions = new ArrayList<>(patchList.size());
+        List<PatchVO> resp = new ArrayList<>(patchList.size());
+        for (PatchDTO patch : patchList) {
+            byte[] classBytes = CodingUtil.hexStr2Bytes(patch.getHex());
+            if (patch.getClassLoaderHash() == null) {
+                List<Class<?>> loadedClass = Unsafe.findLoadedClasses(patch.getClassName());
+                for (Class<?> clazz : loadedClass) {
+                    definitions.add(new ClassDefinition(clazz, classBytes));
+                    resp.add(new PatchVO().setClassName(patch.getClassName()).setClassLoaderHash(clazz.getClassLoader().hashCode()));
+                }
+            } else {
+                Class<?> clazz = Unsafe.findLoadedClass(patch.getClassLoaderHash(), patch.getClassName());
+                if (clazz != null) {
+                    definitions.add(new ClassDefinition(clazz, classBytes));
+                    resp.add(new PatchVO().setClassName(patch.getClassName()).setClassLoaderHash(clazz.getClassLoader().hashCode()));
+                }
+            }
         }
+        if (ServerBootstrap.getInstance().redefineClass(definitions.toArray(new ClassDefinition[0]))) {
+            return resp;
+        }
+        return new ArrayList<>();
     }
 }

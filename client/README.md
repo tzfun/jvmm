@@ -95,7 +95,7 @@ java -jar jvmm.jar -m client -h 127.0.0.1:5010
 #### 连接模式指令
 
 1. **info** 采集信息指令
-   * `-t`: 必填，采集信息类型，允许值：system, systemDynamic, classloading, compilation, gc, process, memory, memoryManager, memoryPool, thread, threadStack
+   * `-t`: 必填，采集信息类型，允许值：system, systemDynamic, classloading, classloader, compilation, gc, process, memory, memoryManager, memoryPool, thread, threadStack
    * `-f`: 选填，将采集信息结果输出到文件，不填此值将输出到终端
 
 ```shell

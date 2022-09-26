@@ -5,15 +5,18 @@ import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.tuple.Pair;
 import org.beifengtz.jvmm.common.util.CommonUtil;
 import org.beifengtz.jvmm.common.util.ExecuteNativeUtil;
+import org.beifengtz.jvmm.common.util.FileUtil;
 import org.beifengtz.jvmm.common.util.JavaEnvUtil;
 import org.beifengtz.jvmm.common.util.PlatformUtil;
 import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
 import org.beifengtz.jvmm.core.entity.result.JpsResult;
+import org.beifengtz.jvmm.core.jad.JadUtil;
 import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.instrument.Instrumentation;
 import java.lang.management.ManagementFactory;
 import java.net.URL;
 import java.util.ArrayList;
@@ -195,5 +198,16 @@ class DefaultJvmmExecutor implements JvmmExecutor {
         } else {
             throw new IOException("Script file not found: profiler.sh");
         }
+    }
+
+    @Override
+    public String jad(Instrumentation instrumentation, String className, String methodName) throws Exception {
+        if (instrumentation == null) {
+            throw new IllegalStateException("No instrumentation");
+        }
+        byte[] bytes = JadUtil.toBytes(instrumentation, className);
+        File file = new File(JvmmFactory.getTempPath(), className + ".class");
+        FileUtil.writeByteArrayToFile(file, bytes);
+        return JadUtil.decompile(file, methodName);
     }
 }

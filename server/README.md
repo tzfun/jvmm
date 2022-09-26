@@ -307,7 +307,7 @@ public class ServerConveyDemo {
 | JVMM_TYPE_PROFILER_EXECUTE               | String                                                                                          | 执行profiler命令，见[async-profiler](https://github.com/jvm-profiling-tools/async-profiler) |
 | JVMM_TYPE_SERVER_SHUTDOWN                | String                                                                                          | 关闭服务，data为服务类型                                                                        |
 | JVMM_TYPE_EXECUTE_JAD                    | JsonObject，其属性为：className(String), methodName(String)                                           | 代码反编译（仅支持agent）                                                                       |
-
+| JVMM_TYPE_EXECUTE_LOAD_PATCH             | JsonArray，其元素为[PatchDTO](src/main/java/org/beifengtz/jvmm/server/entity/dto/PatchDTO.java)      | 代码热更，当指定ClassLoader的hash时只针对于改ClassLoader加载的类进行热更                                     |
 ### 2. http service
 
 http service启动之后会在程序中启动一个http服务，你可以在浏览器或者以http协议调用相关接口，相关配置段在config.yml中的`server.http`。
@@ -336,6 +336,7 @@ http service启动之后会在程序中启动一个http服务，你可以在浏�
 | /profiler/execute       | POST | /                                     | command(String)                                                                                 | 执行profiler命令，见[async-profiler](https://github.com/jvm-profiling-tools/async-profiler) |
 | /server/shutdown        | GET  | target(String)                        | /                                                                                               | 关闭服务，data为服务类型                                                                        |
 | /execute/jad            | GET  | className(String), methodName(String) | /                                                                                               | 代码反编译（仅支持agent）                                                                       |
+| /execute/load_patch     | POST | /                                     | JsonArray，其元素为[PatchDTO](src/main/java/org/beifengtz/jvmm/server/entity/dto/PatchDTO.java)      | 代码热更，当指定ClassLoader的hash时只针对于改ClassLoader加载的类进行热更                                     |
 
 ### 3. sentinel service
 

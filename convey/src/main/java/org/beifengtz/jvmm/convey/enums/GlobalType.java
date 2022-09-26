@@ -46,6 +46,7 @@ public enum GlobalType {
     JVMM_TYPE_EXECUTE_JAVA_PROCESS,
     JVMM_TYPE_EXECUTE_JVM_TOOL,
     JVMM_TYPE_EXECUTE_JAD,
+    JVMM_TYPE_EXECUTE_LOAD_PATCH,
 
     /**
      * 信息采集类协议

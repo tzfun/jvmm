@@ -3,7 +3,6 @@ package org.beifengtz.jvmm.agent;
 import org.beifengtz.jvmm.agent.util.AppUtil;
 import org.beifengtz.jvmm.agent.util.ClassLoaderUtil;
 import org.beifengtz.jvmm.agent.util.FileUtil;
-import org.beifengtz.jvmm.agent.util.JadUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -491,23 +490,5 @@ public class AgentBootStrap {
         if (bindThread != null) {
             bindThread.interrupt();
         }
-    }
-
-    /**
-     * 反编译，调用位置：org.beifengtz.jvmm.server.controller.ExecuteController#jad(java.lang.String, java.lang.String)
-     *
-     * @param className  类路径
-     * @param methodName 方法名，如果为null则默认全文件
-     * @return 源码
-     * @throws Exception error
-     */
-    public static String jad(String className, String methodName) throws Exception {
-        if (instrumentation == null) {
-            throw new IllegalStateException("No instrumentation");
-        }
-        byte[] bytes = JadUtil.toBytes(instrumentation, className);
-        File file = new File(AppUtil.getTempPath(), className + ".class");
-        FileUtil.writeByteArrayToFile(file, bytes);
-        return JadUtil.decompile(file, methodName);
     }
 }

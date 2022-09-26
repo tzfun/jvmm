@@ -20,7 +20,9 @@ import org.beifengtz.jvmm.server.service.JvmmService;
 import org.beifengtz.jvmm.server.service.ServiceManager;
 import org.slf4j.Logger;
 
+import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.Instrumentation;
+import java.lang.instrument.UnmodifiableClassException;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -127,6 +129,10 @@ public class ServerBootstrap {
 
     private static Logger logger() {
         return LoggerFactory.logger(ServerBootstrap.class);
+    }
+
+    public Instrumentation getInstrumentation() {
+        return instrumentation;
     }
 
     public void start(Function<Object, Object> callback) {
@@ -274,5 +280,13 @@ public class ServerBootstrap {
                 logger().error("Invoke agent boot method(#serverStop) failed", e);
             }
         }
+    }
+
+    public boolean redefineClass(ClassDefinition... definitions) throws ClassNotFoundException, UnmodifiableClassException {
+        if (instrumentation == null) {
+            return false;
+        }
+        instrumentation.redefineClasses(definitions);
+        return true;
     }
 }

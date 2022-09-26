@@ -4,7 +4,9 @@ repositories {
 
 dependencies {
     compile(project(':convey'))
-    compile(project(':core'))
+    compile(project(':core')) {
+        exclude group: 'org.benf:cfr'
+    }
     compile("commons-cli:commons-cli:${commonsCli}")
 }
 
@@ -17,7 +19,7 @@ tasks.clean.configure {
 }
 
 tasks.compileJava.configure {
-    dependsOn project(':agent').tasks.jar,project(':server').tasks.jar
+    dependsOn project(':agent').tasks.jar, project(':server').tasks.jar
 
     doLast {
         println("copy agent & server jar file to resources")
