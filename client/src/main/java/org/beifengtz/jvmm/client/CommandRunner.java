@@ -13,6 +13,7 @@ import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.util.FileUtil;
 import org.beifengtz.jvmm.common.util.IOUtil;
 import org.beifengtz.jvmm.common.util.PidUtil;
+import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.common.util.meta.PairKey;
 import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
@@ -179,8 +180,9 @@ public class CommandRunner {
 
     private static void handleGenerateJar(CommandLine cmd) throws IOException {
         if (canGenerateAgentJar() && canGenerateServerJar()) {
-            generateServerJar("");
-            generateAgentJar("");
+            generateServerJar(null);
+            generateAgentJar(null);
+            logger.info("Generate jar finished.");
         } else {
             logger.error("Can not generate jar file. You can try the following: 1. select the appropriate jvmm version, 2. run in jar mode");
         }
@@ -254,6 +256,9 @@ public class CommandRunner {
     }
 
     private static File getVersionFile(String dir) {
+        if (StringUtil.isEmpty(dir)) {
+            return new File(JvmmFactory.getTempPath(), ".version");
+        }
         dir = dir.replaceAll("\\\\", "/");
         if (dir.endsWith("/")) {
             dir = dir.substring(0, dir.length() - 1);
