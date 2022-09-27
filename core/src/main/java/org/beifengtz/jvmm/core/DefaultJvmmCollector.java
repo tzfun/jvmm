@@ -1,34 +1,16 @@
 package org.beifengtz.jvmm.core;
 
+import org.beifengtz.jvmm.common.exception.ExecutionException;
 import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.util.ExecuteNativeUtil;
 import org.beifengtz.jvmm.common.util.PidUtil;
 import org.beifengtz.jvmm.common.util.PlatformUtil;
-import org.beifengtz.jvmm.core.entity.mx.ClassLoadingInfo;
-import org.beifengtz.jvmm.core.entity.mx.CompilationInfo;
-import org.beifengtz.jvmm.core.entity.mx.GarbageCollectorInfo;
-import org.beifengtz.jvmm.core.entity.mx.MemoryInfo;
-import org.beifengtz.jvmm.core.entity.mx.MemoryManagerInfo;
-import org.beifengtz.jvmm.core.entity.mx.MemoryPoolInfo;
-import org.beifengtz.jvmm.core.entity.mx.ProcessInfo;
-import org.beifengtz.jvmm.core.entity.mx.SystemDynamicInfo;
-import org.beifengtz.jvmm.core.entity.mx.SystemStaticInfo;
-import org.beifengtz.jvmm.core.entity.mx.ThreadDynamicInfo;
+import org.beifengtz.jvmm.core.entity.mx.*;
 import org.beifengtz.jvmm.core.entity.result.LinuxMemoryResult;
 import org.slf4j.Logger;
 
 import java.io.File;
-import java.lang.management.ClassLoadingMXBean;
-import java.lang.management.CompilationMXBean;
-import java.lang.management.GarbageCollectorMXBean;
-import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryMXBean;
-import java.lang.management.MemoryManagerMXBean;
-import java.lang.management.MemoryPoolMXBean;
-import java.lang.management.OperatingSystemMXBean;
-import java.lang.management.RuntimeMXBean;
-import java.lang.management.ThreadInfo;
-import java.lang.management.ThreadMXBean;
+import java.lang.management.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -99,6 +81,15 @@ class DefaultJvmmCollector implements JvmmCollector {
         info.setTotalLoadedClassCount(classLoadingMXBean.getTotalLoadedClassCount());
         info.setUnLoadedClassCount(classLoadingMXBean.getUnloadedClassCount());
         return info;
+    }
+
+    @Override
+    public List<ClassLoaderInfo> getClassLoaders() {
+        try {
+            return Unsafe.getClassLoaders();
+        } catch (Exception e) {
+            throw new ExecutionException("Can not load classloaders: " + e.getMessage(), e);
+        }
     }
 
     @Override

@@ -9,16 +9,7 @@ import org.beifengtz.jvmm.convey.annotation.RequestBody;
 import org.beifengtz.jvmm.convey.enums.GlobalType;
 import org.beifengtz.jvmm.convey.enums.Method;
 import org.beifengtz.jvmm.core.JvmmFactory;
-import org.beifengtz.jvmm.core.entity.mx.ClassLoadingInfo;
-import org.beifengtz.jvmm.core.entity.mx.CompilationInfo;
-import org.beifengtz.jvmm.core.entity.mx.GarbageCollectorInfo;
-import org.beifengtz.jvmm.core.entity.mx.MemoryInfo;
-import org.beifengtz.jvmm.core.entity.mx.MemoryManagerInfo;
-import org.beifengtz.jvmm.core.entity.mx.MemoryPoolInfo;
-import org.beifengtz.jvmm.core.entity.mx.ProcessInfo;
-import org.beifengtz.jvmm.core.entity.mx.SystemDynamicInfo;
-import org.beifengtz.jvmm.core.entity.mx.SystemStaticInfo;
-import org.beifengtz.jvmm.core.entity.mx.ThreadDynamicInfo;
+import org.beifengtz.jvmm.core.entity.mx.*;
 import org.beifengtz.jvmm.server.entity.conf.CollectOptions;
 import org.beifengtz.jvmm.server.entity.dto.JvmmDataDTO;
 import org.beifengtz.jvmm.server.entity.dto.ThreadInfoDTO;
@@ -51,6 +42,12 @@ public class CollectController {
     @HttpRequest("/collect/classloading")
     public ClassLoadingInfo getClassLoadingInfo() {
         return JvmmFactory.getCollector().getClassLoading();
+    }
+
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_CLASSLOADER_INFO)
+    @HttpRequest("/collect/classloader")
+    public List<ClassLoaderInfo> getClassLoaders() {
+        return JvmmFactory.getCollector().getClassLoaders();
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_COMPILATION_INFO)
@@ -102,7 +99,7 @@ public class CollectController {
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_THREAD_INFO)
-    @HttpRequest(value = "/collect/thread",method = Method.POST)
+    @HttpRequest(value = "/collect/thread", method = Method.POST)
     public List<String> getThreadInfo(@RequestBody ThreadInfoDTO data) {
         if (data == null) {
             throw new IllegalArgumentException("Missing data");
@@ -128,7 +125,7 @@ public class CollectController {
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_BATCH)
-    @HttpRequest(value = "/collect/by_options",method = Method.POST)
+    @HttpRequest(value = "/collect/by_options", method = Method.POST)
     public JvmmDataDTO collectBatch(@RequestBody CollectOptions options) {
         return JvmmService.collectByOptions(options);
     }

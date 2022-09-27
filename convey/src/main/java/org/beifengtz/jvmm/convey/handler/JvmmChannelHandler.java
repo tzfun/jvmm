@@ -301,7 +301,7 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
             response.setStatus(GlobalStatus.JVMM_STATUS_SERVER_ERROR);
         }
         if (e.getMessage() != null) {
-            response.setMessage(e.getMessage());
+            response.setMessage(e.getClass().getName() + ": " + e.getMessage());
         }
         ctx.writeAndFlush(response.serialize());
     }

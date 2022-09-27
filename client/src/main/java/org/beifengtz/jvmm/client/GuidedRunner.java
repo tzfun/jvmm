@@ -1,7 +1,7 @@
 package org.beifengtz.jvmm.client;
 
-import org.beifengtz.jvmm.common.tuple.Pair;
 import org.beifengtz.jvmm.common.util.PidUtil;
+import org.beifengtz.jvmm.common.util.meta.PairKey;
 import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.entity.result.JpsResult;
 
@@ -116,9 +116,9 @@ public class GuidedRunner {
 
     public static int askAttachPid() {
         System.out.println();
-        Pair<List<JpsResult>, String> pair = JvmmFactory.getExecutor().listJavaProcess();
-        if (pair.getRight() == null) {
-            List<JpsResult> jpsList = pair.getLeft();
+        PairKey<List<JpsResult>, String> PairKey = JvmmFactory.getExecutor().listJavaProcess();
+        if (PairKey.getRight() == null) {
+            List<JpsResult> jpsList = PairKey.getLeft();
 
             long currentPid = PidUtil.currentPid();
             jpsList.removeIf(o -> o.getPid() == currentPid);
@@ -145,7 +145,7 @@ public class GuidedRunner {
             assert jps != null;
             return (int) jps.getPid();
         } else {
-            System.out.println("Can not get local java processes, case: " + pair.getRight());
+            System.out.println("Can not get local java processes, case: " + PairKey.getRight());
             System.exit(-1);
         }
         return -1;

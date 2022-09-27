@@ -1,4 +1,4 @@
-package org.beifengtz.jvmm.agent.util;
+package org.beifengtz.jvmm.core.jad;
 
 import org.benf.cfr.reader.api.CfrDriver;
 import org.benf.cfr.reader.api.OutputSinkFactory;
@@ -58,7 +58,11 @@ public class JadUtil {
     }
 
     public static byte[] toBytes(Instrumentation inst, String className) throws Exception {
-        Class<?> clazz = Class.forName(className);
+        return toBytes(inst, className, Thread.currentThread().getContextClassLoader());
+    }
+
+    public static byte[] toBytes(Instrumentation inst, String className, ClassLoader classloader) throws Exception {
+        Class<?> clazz = Class.forName(className, false, classloader);
         ByteTransformer transformer = new ByteTransformer(clazz);
         reTransformClass(inst, transformer, clazz);
         return transformer.getData();

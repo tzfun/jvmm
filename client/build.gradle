@@ -8,23 +8,46 @@ dependencies {
     compile("commons-cli:commons-cli:${commonsCli}")
 }
 
-tasks.clean.configure {
-    doFirst {
-        delete fileTree("src/main/resources").matching {
-            include "jvmm-*.jar"
-        }
+def resourcesPath = 'src/main/resources'
+
+task clearResourcesPath(type: Delete) {
+    delete {
+        file(resourcesPath).list().each { delete "${resourcesPath}/${it}" }
     }
 }
 
+tasks.clean.configure {
+    dependsOn clearResourcesPath
+}
+
 tasks.compileJava.configure {
-    dependsOn project(':agent').tasks.jar,project(':server').tasks.jar
+    dependsOn project(':agent').tasks.jar, project(':server').tasks.jar, clearResourcesPath
 
     doLast {
+
         println("copy agent & server jar file to resources")
         copy {
-            from '../agent/build/libs/jvmm-agent.jar', '../server/build/libs/jvmm-server.jar'
-            into 'src/main/resources'
+            from '../agent/build/libs/jvmm-agent.jar'
+            into resourcesPath
         }
+
+        println("unzip jvmm-server.jar and copy files")
+        copy {
+            def zipFile = file('../server/build/libs/jvmm-server.jar')
+            def targetDir = file(resourcesPath + '/server-source')
+            FileTree fileTree = zipTree(zipFile).matching {
+                include 'config.yml'
+                include 'module-info.class'
+                include 'org/beifengtz/jvmm/server/**'
+                include 'META-INF/INDEX.LIST'
+                include 'META-INF/MANIFEST.MF'
+            }
+            from fileTree
+            into targetDir
+        }
+
+        println("write jvmm version file")
+        file(resourcesPath + '/version.txt').withWriter("UTF-8") { it.write(rootProject.version) }
     }
 }
 

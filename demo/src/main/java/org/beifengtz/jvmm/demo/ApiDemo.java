@@ -1,21 +1,12 @@
 package org.beifengtz.jvmm.demo;
 
 import org.beifengtz.jvmm.common.logger.LoggerLevel;
-import org.beifengtz.jvmm.common.tuple.Pair;
+import org.beifengtz.jvmm.common.util.meta.PairKey;
 import org.beifengtz.jvmm.core.JvmmCollector;
 import org.beifengtz.jvmm.core.JvmmExecutor;
 import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.JvmmProfiler;
-import org.beifengtz.jvmm.core.entity.mx.ClassLoadingInfo;
-import org.beifengtz.jvmm.core.entity.mx.CompilationInfo;
-import org.beifengtz.jvmm.core.entity.mx.GarbageCollectorInfo;
-import org.beifengtz.jvmm.core.entity.mx.MemoryInfo;
-import org.beifengtz.jvmm.core.entity.mx.MemoryManagerInfo;
-import org.beifengtz.jvmm.core.entity.mx.MemoryPoolInfo;
-import org.beifengtz.jvmm.core.entity.mx.ProcessInfo;
-import org.beifengtz.jvmm.core.entity.mx.SystemDynamicInfo;
-import org.beifengtz.jvmm.core.entity.mx.SystemStaticInfo;
-import org.beifengtz.jvmm.core.entity.mx.ThreadDynamicInfo;
+import org.beifengtz.jvmm.core.entity.mx.*;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerCounter;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerEvent;
 
@@ -63,7 +54,7 @@ public class ApiDemo {
         executor.setThreadContentionMonitoringEnabled(true);
         executor.setThreadCpuTimeEnabled(true);
         executor.resetPeakThreadCount();
-        Pair<List<String>, Boolean> result = executor.executeJvmTools("jstat -gc 1102");
+        PairKey<List<String>, Boolean> result = executor.executeJvmTools("jstat -gc 1102");
 
         //  jvmm采样器，仅支持 MacOS 和 Linux环境
         JvmmProfiler profiler = JvmmFactory.getProfiler();

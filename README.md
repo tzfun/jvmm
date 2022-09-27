@@ -1,9 +1,17 @@
-## Jvmm
+
+<div align=center>
+<img src=doc/jvmm.png height=200/>
+</div>
+
+<div align="center">
 
 ![license](https://img.shields.io/badge/license-Apache--2.0-yellow)
-[![maven](https://img.shields.io/badge/maven-2.0.1-blue)](https://search.maven.org/search?q=g:io.github.tzfun.jvmm)
+![JDK](https://img.shields.io/badge/JDK-1.8+-green)
+[![maven](https://img.shields.io/badge/maven--central-2.0.2-blue)](https://search.maven.org/search?q=g:io.github.tzfun.jvmm)
 
-Jvmm是一个轻量的JVM监控工具，提供有丰富的监控功能：可查看Java虚拟机信息（Runtime、内存、CPU、线程、GC等）以及OS信息（内存、磁盘等），可生成火焰图，提供http、哨兵等三种service模式。适合用于服务健康监控、线上调优、排查问题、性能测试等场景。
+</div>
+
+Jvmm是一个轻量的JVM监控工具，提供有丰富的监控功能：查看JVM信息（Runtime、内存、CPU、线程、GC、ClassLoader等）以及OS信息（内存、磁盘等），可生成火焰图，代码热更，反编译，提供多种服务模式（http、哨兵等）。适合用于服务健康监控、线上调优、排查问题、性能测试等场景。
 
 ## 功能支持
 
@@ -13,6 +21,7 @@ Jvmm是一个轻量的JVM监控工具，提供有丰富的监控功能：可查�
 * 支持远程执行JDK自带工具，jps、jstat、jstack、jinfo、jmap、jcmd等
 * 支持生成火焰图（采样事件包括CPU、内存分配、线程栈、Java方法调用栈等）
 * 支持代码反编译生成
+* 支持代码热更新（可指定ClassLoader）
 * 支持远程执行GC
 * 提供客户端交互工具，支持跨进程attach和远程连接功能
 * 支持三种服务模式，足以应对大部分监控场景，可同时开启多个服务
@@ -26,7 +35,7 @@ Jvmm是一个轻量的JVM监控工具，提供有丰富的监控功能：可查�
 
 ## 获取Jvmm
 
-请前往[release](https://github.com/tzfun/jvmm/releases)下载[最新版的jvmm](https://github.com/tzfun/jvmm/releases/download/2.0.1/jvmm-2.0.1.zip)
+请前往[release](https://github.com/tzfun/jvmm/releases)下载[最新版的jvmm](https://github.com/tzfun/jvmm/releases/download/2.0.2/jvmm-2.0.2.zip)
 
 ## 快速使用
 

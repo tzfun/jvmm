@@ -13,21 +13,28 @@ import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.util.FileUtil;
 import org.beifengtz.jvmm.common.util.IOUtil;
 import org.beifengtz.jvmm.common.util.PidUtil;
+import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.common.util.meta.PairKey;
 import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
-import org.beifengtz.jvmm.core.AttachProvider;
 import org.beifengtz.jvmm.core.JvmmFactory;
+import org.beifengtz.jvmm.core.VMProvider;
 import org.slf4j.Logger;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URLDecoder;
+import java.nio.file.Files;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.jar.JarFile;
 
 /**
  * <p>
@@ -171,24 +178,111 @@ public class CommandRunner {
         System.exit(0);
     }
 
-    private static void handleGenerateJar(CommandLine cmd) throws Throwable {
-        InputStream agentIs = CommandRunner.class.getResourceAsStream("/jvmm-agent.jar");
-        InputStream serverIs = CommandRunner.class.getResourceAsStream("/jvmm-server.jar");
-        if (agentIs == null) {
-            logger.error("The jvmm-agent.jar cannot be generated, please select the appropriate jvmm version.");
-            return;
+    private static void handleGenerateJar(CommandLine cmd) throws IOException {
+        if (canGenerateAgentJar() && canGenerateServerJar()) {
+            generateServerJar(null);
+            generateAgentJar(null);
+            logger.info("Generate jar finished.");
+        } else {
+            logger.error("Can not generate jar file. You can try the following: 1. select the appropriate jvmm version, 2. run in jar mode");
         }
-        if (serverIs == null) {
-            logger.error("The jvmm-server.jar cannot be generated, please select the appropriate jvmm version.");
-            return;
-        }
-        File agentJarFile = new File("jvmm-agent.jar");
-        FileUtil.writeByteArrayToFile(agentJarFile, IOUtil.toByteArray(agentIs));
-        logger.info("Generated agent jar to " + agentJarFile.getAbsolutePath());
+    }
 
-        File serverJarFile = new File("jvmm-server.jar");
-        FileUtil.writeByteArrayToFile(serverJarFile, IOUtil.toByteArray(serverIs));
-        logger.info("Generated server jar to " + serverJarFile.getAbsolutePath());
+    private static boolean canGenerateServerJar() {
+        String path = CommandRunner.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        return CommandRunner.class.getResourceAsStream("/server-source") != null && path.endsWith(".jar");
+    }
+
+    private static void generateServerJar(String dir) throws IOException {
+        if (canGenerateServerJar()) {
+            File serverJarFile = new File(dir, "jvmm-server.jar");
+            if (checkJarVersion(dir) && serverJarFile.exists()) {
+                return;
+            }
+            String path = CommandRunner.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+            try {
+                path = URLDecoder.decode(path, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                logger.warn("Decode path failed. " + e.getClass().getName() + ": " + e.getMessage());
+            }
+
+            File tempDir = new File(JvmmFactory.getTempPath(), "jar/server");
+            try {
+                if (tempDir.exists()) {
+                    FileUtil.delFile(tempDir);
+                }
+                String regex = "async-profiler/.*|com/.*|io/.*|org/benf.*|org/slf4j.*|META-INF/maven/.*" +
+                        "|META-INF/native/.*|META-INF/native-image/.*|io.netty.versions.propeties|server-source/.*|" +
+                        ".*jvmm/common/.*|.*jvmm/convey/.*|.*jvmm/core/.*";
+                FileUtil.copyFromJar(new JarFile(path), tempDir, regex, fileName -> {
+                    if (fileName.startsWith("server-source")) {
+                        return fileName.replace("server-source/", "");
+                    } else {
+                        return fileName;
+                    }
+                });
+
+                FileUtil.zip(tempDir, serverJarFile, false);
+                logger.info("Generated server jar to " + serverJarFile.getAbsolutePath());
+
+                try {
+                    File versionFile = getVersionFile(dir);
+                    FileUtil.writeByteArrayToFile(versionFile, IOUtil.toByteArray(CommandRunner.class.getResourceAsStream("/version.txt")));
+                } catch (IOException e) {
+                    logger.warn("Write version file failed: " + e.getMessage());
+                }
+            } finally {
+                if (tempDir.exists()) {
+                    FileUtil.delFile(tempDir);
+                }
+            }
+        } else {
+            logger.error("The jvmm-server.jar cannot be generated. You can try the following: 1. select the appropriate jvmm version, 2. run in jar mode");
+        }
+    }
+
+    private static boolean checkJarVersion(String dir) throws IOException {
+        //  已生成的文件存在并且版本相同则不再生成
+        File versionFile = getVersionFile(dir);
+        if (versionFile.exists()) {
+            String existV = Files.readAllLines(versionFile.toPath()).get(0).trim();
+            InputStream vis = CommandRunner.class.getResourceAsStream("/version.txt");
+            if (vis != null) {
+                String newV = IOUtil.toString(vis).trim();
+                return Objects.equals(existV, newV);
+            }
+        }
+        return false;
+    }
+
+    private static File getVersionFile(String dir) {
+        if (StringUtil.isEmpty(dir)) {
+            return new File(JvmmFactory.getTempPath(), ".version");
+        }
+        dir = dir.replaceAll("\\\\", "/");
+        if (dir.endsWith("/")) {
+            dir = dir.substring(0, dir.length() - 1);
+        }
+
+        return new File(dir.endsWith(JvmmFactory.getTempPath()) ? dir : (dir + "/" + JvmmFactory.getTempPath()), ".version");
+    }
+
+    private static boolean canGenerateAgentJar() {
+        return CommandRunner.class.getResourceAsStream("/jvmm-agent.jar") != null;
+    }
+
+    private static void generateAgentJar(String dir) throws IOException {
+        if (canGenerateAgentJar()) {
+            File agentJarFile = new File(dir, "jvmm-agent.jar");
+            if (checkJarVersion(dir) && agentJarFile.exists()) {
+                return;
+            }
+
+            FileUtil.writeByteArrayToFile(agentJarFile, IOUtil.toByteArray(CommandRunner.class.getResourceAsStream("/jvmm-agent.jar")));
+            logger.info("Generated agent jar to " + agentJarFile.getAbsolutePath());
+        } else {
+            logger.error("The jvmm-agent.jar cannot be generated, please select the appropriate jvmm version.");
+        }
     }
 
     private static void handleClient(CommandLine cmd) throws Throwable {
@@ -263,33 +357,25 @@ public class CommandRunner {
     }
 
     private static void handleAttach(CommandLine cmd) throws Throwable {
-        //  先删除临时文件
-        FileUtil.delFile(new File(JvmmFactory.getTempPath()));
-
-        InputStream agentIs = CommandRunner.class.getResourceAsStream("/jvmm-agent.jar");
-        InputStream serverIs = CommandRunner.class.getResourceAsStream("/jvmm-server.jar");
-
         String agentFilePath = null, serverFilePath = null, configFilePath = null;
         int pid = -1;
 
         if (cmd.hasOption("a")) {
             agentFilePath = cmd.getOptionValue("a");
-        } else if (agentIs == null) {
-            agentFilePath = GuidedRunner.askAgentFilePath();
+        } else if (canGenerateAgentJar()) {
+            generateAgentJar(JvmmFactory.getTempPath());
+            agentFilePath = new File(JvmmFactory.getTempPath(), "jvmm-agent.jar").getAbsolutePath();
         } else {
-            File tempFile = new File(JvmmFactory.getTempPath(), "jvmm-agent.jar");
-            FileUtil.writeByteArrayToFile(tempFile, IOUtil.toByteArray(agentIs));
-            agentFilePath = tempFile.getAbsolutePath();
+            agentFilePath = GuidedRunner.askAgentFilePath();
         }
 
         if (cmd.hasOption("s")) {
             serverFilePath = cmd.getOptionValue("s");
-        } else if (serverIs == null) {
-            serverFilePath = GuidedRunner.askServerFilePath();
+        } else if (canGenerateServerJar()) {
+            generateServerJar(JvmmFactory.getTempPath());
+            serverFilePath = new File(JvmmFactory.getTempPath(), "jvmm-server.jar").getAbsolutePath();
         } else {
-            File tempFile = new File(JvmmFactory.getTempPath(), "jvmm-server.jar");
-            FileUtil.writeByteArrayToFile(tempFile, IOUtil.toByteArray(serverIs));
-            serverFilePath = tempFile.getAbsolutePath();
+            serverFilePath = GuidedRunner.askServerFilePath();
         }
 
         if (cmd.hasOption("c")) {
@@ -365,7 +451,7 @@ public class CommandRunner {
 
         logger.info("Start to attach program {} ...", pid);
         try {
-            AttachProvider.getInstance().attachAgent(pid, agentFile.getAbsolutePath(), serverFile.getAbsolutePath(), args);
+            VMProvider.getInstance().attachAgent(pid, agentFile.getAbsolutePath(), serverFile.getAbsolutePath(), args);
             pair.getRight().join(30000);
         } catch (Exception e) {
             logger.warn("An error was encountered while attaching: " + e.getMessage(), e);

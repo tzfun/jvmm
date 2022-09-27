@@ -1,15 +1,6 @@
 package org.beifengtz.jvmm.core;
 
-import org.beifengtz.jvmm.core.entity.mx.ClassLoadingInfo;
-import org.beifengtz.jvmm.core.entity.mx.CompilationInfo;
-import org.beifengtz.jvmm.core.entity.mx.GarbageCollectorInfo;
-import org.beifengtz.jvmm.core.entity.mx.MemoryInfo;
-import org.beifengtz.jvmm.core.entity.mx.MemoryManagerInfo;
-import org.beifengtz.jvmm.core.entity.mx.MemoryPoolInfo;
-import org.beifengtz.jvmm.core.entity.mx.ProcessInfo;
-import org.beifengtz.jvmm.core.entity.mx.SystemDynamicInfo;
-import org.beifengtz.jvmm.core.entity.mx.SystemStaticInfo;
-import org.beifengtz.jvmm.core.entity.mx.ThreadDynamicInfo;
+import org.beifengtz.jvmm.core.entity.mx.*;
 
 import java.util.List;
 
@@ -29,6 +20,8 @@ public interface JvmmCollector {
     ProcessInfo getProcess();
 
     ClassLoadingInfo getClassLoading();
+
+    List<ClassLoaderInfo> getClassLoaders();
 
     CompilationInfo getCompilation();
 
