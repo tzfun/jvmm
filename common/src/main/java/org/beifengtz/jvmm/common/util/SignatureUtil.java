@@ -1,6 +1,6 @@
 package org.beifengtz.jvmm.common.util;
 
-import org.beifengtz.jvmm.common.tuple.Pair;
+import org.beifengtz.jvmm.common.util.meta.PairKey;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -83,7 +83,7 @@ public class SignatureUtil {
      * @return left: public key, right: private key
      * @throws NoSuchAlgorithmException if no Provider supports a KeyPairGeneratorSpi implementation for the specified algorithm.
      */
-    public static Pair<String, String> genRSAKeyPair() throws NoSuchAlgorithmException {
+    public static PairKey<String, String> genRSAKeyPair() throws NoSuchAlgorithmException {
         // KeyPairGenerator类用于生成公钥和私钥对，基于RSA算法生成对象
         KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA");
         // 初始化密钥对生成器，密钥大小为96-1024位
@@ -95,7 +95,7 @@ public class SignatureUtil {
 
         String publicKeyString = new String(Base64.getEncoder().encode(publicKey.getEncoded()));
         String privateKeyString = new String(Base64.getEncoder().encode((privateKey.getEncoded())));
-        return Pair.of(publicKeyString, privateKeyString);
+        return PairKey.of(publicKeyString, privateKeyString);
     }
 
     /**

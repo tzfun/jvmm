@@ -2,7 +2,6 @@ package org.beifengtz.jvmm.core;
 
 
 import org.beifengtz.jvmm.common.factory.LoggerFactory;
-import org.beifengtz.jvmm.common.tuple.Pair;
 import org.beifengtz.jvmm.common.util.CommonUtil;
 import org.beifengtz.jvmm.common.util.ExecuteNativeUtil;
 import org.beifengtz.jvmm.common.util.FileUtil;
@@ -10,6 +9,7 @@ import org.beifengtz.jvmm.common.util.JavaEnvUtil;
 import org.beifengtz.jvmm.common.util.PlatformUtil;
 import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
+import org.beifengtz.jvmm.common.util.meta.PairKey;
 import org.beifengtz.jvmm.core.entity.result.JpsResult;
 import org.beifengtz.jvmm.core.jad.JadUtil;
 import org.slf4j.Logger;
@@ -85,7 +85,7 @@ class DefaultJvmmExecutor implements JvmmExecutor {
     }
 
     @Override
-    public Pair<List<String>, Boolean> executeJvmTools(String command) throws IOException, TimeoutException, InterruptedException {
+    public PairKey<List<String>, Boolean> executeJvmTools(String command) throws IOException, TimeoutException, InterruptedException {
         if (StringUtil.isEmpty(command)) {
             throw new IllegalArgumentException("Can not execute empty command.");
         }
@@ -121,21 +121,21 @@ class DefaultJvmmExecutor implements JvmmExecutor {
             err.addAll(output);
             String errOutput = CommonUtil.join("\n", err);
             log.error("Execute command with exit value '{}'. {}. [{}]", process.exitValue(), errOutput, newCmd);
-            return Pair.of(err, false);
+            return PairKey.of(err, false);
         } else {
-            return Pair.of(output, true);
+            return PairKey.of(output, true);
         }
     }
 
     @Override
-    public Pair<List<JpsResult>, String> listJavaProcess() {
+    public PairKey<List<JpsResult>, String> listJavaProcess() {
         List<JpsResult> resList = new LinkedList<>();
         String error = null;
         try {
-            Pair<List<String>, Boolean> pair = executeJvmTools("jps -lmv");
+            PairKey<List<String>, Boolean> PairKey = executeJvmTools("jps -lmv");
 
-            if (pair.getRight()) {
-                for (String line : pair.getLeft()) {
+            if (PairKey.getRight()) {
+                for (String line : PairKey.getLeft()) {
                     if (line.trim().isEmpty()) {
                         continue;
                     }
@@ -153,13 +153,13 @@ class DefaultJvmmExecutor implements JvmmExecutor {
                     resList.add(res);
                 }
             } else {
-                error = CommonUtil.join("\n", pair.getLeft());
+                error = CommonUtil.join("\n", PairKey.getLeft());
             }
         } catch (IOException | TimeoutException | InterruptedException e) {
             error = "List java process on localhost failed. " + e.getMessage();
             log.error(error, e);
         }
-        return Pair.of(resList, error);
+        return PairKey.of(resList, error);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package org.beifengtz.jvmm.core;
 
-import org.beifengtz.jvmm.common.tuple.Pair;
+import org.beifengtz.jvmm.common.util.meta.PairKey;
 import org.beifengtz.jvmm.core.entity.result.JpsResult;
 
 import java.io.File;
@@ -32,9 +32,9 @@ public interface JvmmExecutor {
 
     void resetPeakThreadCount();
 
-    Pair<List<String>, Boolean> executeJvmTools(String command) throws IOException, TimeoutException, InterruptedException;
+    PairKey<List<String>, Boolean> executeJvmTools(String command) throws IOException, TimeoutException, InterruptedException;
 
-    Pair<List<JpsResult>, String> listJavaProcess();
+    PairKey<List<JpsResult>, String> listJavaProcess();
 
     File flameProfile(int pid, int sampleSeconds) throws IOException;
 

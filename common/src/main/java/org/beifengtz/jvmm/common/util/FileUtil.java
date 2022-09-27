@@ -26,8 +26,11 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.function.Function;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * <p>
@@ -211,7 +214,7 @@ public class FileUtil {
                     tmp = sub;
                 } else {
                     JsonPrimitive value;
-                    String valueStr = line.substring(line.indexOf(":")+1).trim();
+                    String valueStr = line.substring(line.indexOf(":") + 1).trim();
                     if (valueStr.matches("\\d+")) {
                         value = new JsonPrimitive(Integer.parseInt(valueStr));
                     } else if (valueStr.matches("(true|false)")) {
@@ -334,7 +337,7 @@ public class FileUtil {
         Enumeration<JarEntry> entries = jar.entries();
         while (entries.hasMoreElements()) {
             JarEntry entry = entries.nextElement();
-            if (entry.getName().equals(relativePath)) {
+            if (!entry.isDirectory() && entry.getName().equals(relativePath)) {
                 String fileName = destinationDir + File.separator + entry.getName();
                 File f = new File(fileName);
                 File dir = f.getParentFile();
@@ -356,6 +359,98 @@ public class FileUtil {
             }
         }
         return false;
+    }
+
+    public static void copyFromJar(JarFile jarFile, File targetDir, String regex) throws IOException {
+        copyFromJar(jarFile, targetDir, regex, null);
+    }
+
+    /**
+     * 从jar包中复制指定文件
+     *
+     * @param jarFile           jar文件对象
+     * @param targetDir         复制目标目录
+     * @param regex             文件正则匹配
+     * @param subDirFunction    生成目标文件子目录function
+     * @throws IOException  复制失败时抛出
+     */
+    public static void copyFromJar(JarFile jarFile, File targetDir, String regex, Function<String, String> subDirFunction) throws IOException {
+        Enumeration<JarEntry> entries = jarFile.entries();
+        while (entries.hasMoreElements()) {
+            JarEntry entry = entries.nextElement();
+            if (!entry.isDirectory() && entry.getName().matches(regex)) {
+                File f = new File(targetDir, subDirFunction == null ? entry.getName() : subDirFunction.apply(entry.getName()));
+                if (f.getParentFile() != null && !f.getParentFile().exists()) {
+                    f.getParentFile().mkdirs();
+                }
+                if (f.exists()) {
+                    f.delete();
+                }
+                try (InputStream is = jarFile.getInputStream(entry);
+                     FileOutputStream fos = new FileOutputStream(f)) {
+                    byte[] bytes = new byte[2048];
+                    int read = 0;
+                    while ((read = is.read(bytes, 0, bytes.length)) > 0) {
+                        fos.write(bytes, 0, read);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * zip文件压缩
+     *
+     * @param inputFile     待压缩文件夹/文件名
+     * @param outputFile    生成的压缩包
+     * @param containsRoot  是否包含根目录
+     * @throws IOException  压缩异常
+     */
+    public static void zip(File inputFile, File outputFile, boolean containsRoot) throws IOException {
+        if (outputFile.getParentFile() != null && !outputFile.getParentFile().exists()) {
+            outputFile.getParentFile().mkdirs();
+        }
+        try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(outputFile.toPath()))) {
+            zip(inputFile, containsRoot ? inputFile.getName() : "", out);
+        }
+    }
+
+    /**
+     * 将fileToZip文件夹及其子目录文件递归压缩到zip文件中
+     *
+     * @param sourceFile    递归当前处理对象，可能是文件夹，也可能是文件
+     * @param fileName      fileToZip文件或文件夹名称
+     * @param zipOut        压缩文件输出流
+     * @throws IOException  压缩异常
+     */
+    private static void zip(File sourceFile, String fileName, ZipOutputStream zipOut) throws IOException {
+        //不压缩隐藏文件夹
+        if (sourceFile.isHidden()) {
+            return;
+        }
+        if (sourceFile.isDirectory()) {
+            if (fileName.endsWith("/")) {
+                zipOut.putNextEntry(new ZipEntry(fileName));
+            } else if (!fileName.isEmpty()) {
+                zipOut.putNextEntry(new ZipEntry(fileName + "/"));
+            }
+            zipOut.closeEntry();
+            //遍历文件夹子目录，进行递归的zipFile
+            File[] children = sourceFile.listFiles();
+            for (File childFile : children) {
+                zip(childFile, fileName.isEmpty() ? childFile.getName() : (fileName + "/" + childFile.getName()), zipOut);
+            }
+            return;
+        }
+        FileInputStream fis = new FileInputStream(sourceFile);
+        ZipEntry zipEntry = new ZipEntry(fileName);
+        zipOut.putNextEntry(zipEntry);
+        byte[] bytes = new byte[1024];
+        int length;
+        while ((length = fis.read(bytes)) >= 0) {
+            zipOut.write(bytes, 0, length);
+        }
+        fis.close();
     }
 
     /**
