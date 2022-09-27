@@ -1,9 +1,9 @@
 package org.beifengtz.jvmm.server.controller;
 
 import com.google.gson.JsonArray;
-import org.beifengtz.jvmm.common.tuple.Pair;
 import org.beifengtz.jvmm.common.util.CodingUtil;
 import org.beifengtz.jvmm.common.util.CommonUtil;
+import org.beifengtz.jvmm.common.util.meta.PairKey;
 import org.beifengtz.jvmm.convey.annotation.HttpController;
 import org.beifengtz.jvmm.convey.annotation.HttpRequest;
 import org.beifengtz.jvmm.convey.annotation.JvmmController;
@@ -21,11 +21,8 @@ import org.beifengtz.jvmm.server.entity.dto.PatchDTO;
 import org.beifengtz.jvmm.server.entity.vo.PatchVO;
 
 import java.lang.instrument.ClassDefinition;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.beifengtz.jvmm.server.ServerBootstrap.AGENT_BOOT_CLASS;
 
 /**
  * <p>
@@ -85,7 +82,7 @@ public class ExecuteController {
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_EXECUTE_JAVA_PROCESS)
     @HttpRequest("/execute/jps")
     public JsonArray listJavaProcess() throws Exception {
-        Pair<List<JpsResult>, String> pair = JvmmFactory.getExecutor().listJavaProcess();
+        PairKey<List<JpsResult>, String> pair = JvmmFactory.getExecutor().listJavaProcess();
         if (pair.getRight() == null) {
             JsonArray result = new JsonArray();
             pair.getLeft().forEach(o -> result.add(o.toJson()));
@@ -98,7 +95,7 @@ public class ExecuteController {
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_EXECUTE_JVM_TOOL)
     @HttpRequest(value = "/execute/jvm_tool", method = Method.POST)
     public Object jvmTool(@RequestBody String command) throws Exception {
-        Pair<List<String>, Boolean> pair = JvmmFactory.getExecutor().executeJvmTools(command);
+        PairKey<List<String>, Boolean> pair = JvmmFactory.getExecutor().executeJvmTools(command);
         if (pair.getRight()) {
             return pair.getLeft();
         } else {
@@ -113,7 +110,7 @@ public class ExecuteController {
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_EXECUTE_LOAD_PATCH)
-    @HttpRequest(value = "/execute/load_patch",method = Method.POST)
+    @HttpRequest(value = "/execute/load_patch", method = Method.POST)
     public List<PatchVO> loadPatch(@RequestBody List<PatchDTO> patchList) throws Throwable {
         List<ClassDefinition> definitions = new ArrayList<>(patchList.size());
         List<PatchVO> resp = new ArrayList<>(patchList.size());
