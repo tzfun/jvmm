@@ -145,6 +145,7 @@ public final class Unsafe {
      * @param classLoader  ClassLoader实例
      * @param className    类路径
      * @return 如果已加载返回Class对象，否则返回null
+     * @throws Exception 调用失败
      */
     public static Class<?> findLoadedClass(ClassLoader classLoader, String className) throws Exception {
         return (Class<?>) findLoadedClassMethod.invoke(classLoader, className);
