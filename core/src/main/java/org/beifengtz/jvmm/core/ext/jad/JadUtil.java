@@ -1,4 +1,4 @@
-package org.beifengtz.jvmm.core.jad;
+package org.beifengtz.jvmm.core.ext.jad;
 
 import org.benf.cfr.reader.api.CfrDriver;
 import org.benf.cfr.reader.api.OutputSinkFactory;

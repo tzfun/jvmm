@@ -11,7 +11,7 @@ import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
 import org.beifengtz.jvmm.common.util.meta.PairKey;
 import org.beifengtz.jvmm.core.entity.result.JpsResult;
-import org.beifengtz.jvmm.core.jad.JadUtil;
+import org.beifengtz.jvmm.core.ext.jad.JadUtil;
 import org.slf4j.Logger;
 
 import java.io.File;

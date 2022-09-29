@@ -47,7 +47,7 @@ public class ExecutorFactory {
     }
 
     public static void shutdown() {
-        if (SCHEDULE_THREAD_POOL != null) {
+        if (SCHEDULE_THREAD_POOL != null && !SCHEDULE_THREAD_POOL.isShutdown()) {
             SCHEDULE_THREAD_POOL.shutdown();
             if (SCHEDULE_THREAD_POOL.isShutdown()) {
                 LoggerFactory.logger(ExecutorFactory.class).info("jvmm schedule thread pool shutdown.");

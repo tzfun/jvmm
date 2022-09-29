@@ -23,8 +23,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -42,7 +42,7 @@ public class JvmmSentinelService implements JvmmService {
     protected static final Map<String, String> globalHeaders = CommonUtil.hasMapOf("Content-Type", "application/json;charset=UTF-8");
 
     protected ScheduledExecutorService executor;
-    protected AtomicBoolean flag = new AtomicBoolean(true);
+    protected ScheduledFuture<?> scheduledFuture;
     protected AtomicInteger counter = new AtomicInteger(0);
 
     /**
@@ -63,47 +63,28 @@ public class JvmmSentinelService implements JvmmService {
     @Override
     public void start(Promise<Integer> promise) {
         if (ServerContext.getConfiguration().getServer().getSentinel().isValid()) {
-            executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    SentinelConf conf = ServerContext.getConfiguration().getServer().getSentinel();
-                    try {
-                        int count = counter.incrementAndGet();
-                        JvmmDataDTO data = JvmmService.collectByOptions(conf.getOptions());
-                        data.setNode(ServerContext.getConfiguration().getName());
+            SentinelConf conf = ServerContext.getConfiguration().getServer().getSentinel();
+            scheduledFuture = executor.scheduleWithFixedDelay(() -> {
+                int count = counter.incrementAndGet();
+                JvmmDataDTO data = JvmmService.collectByOptions(conf.getOptions());
+                data.setNode(ServerContext.getConfiguration().getName());
 
-                        if (count <= conf.getSendStaticInfoTimes()) {
-                            JvmmCollector collector = JvmmFactory.getCollector();
-                            if (data.getProcess() == null) {
-                                data.setProcess(collector.getProcess());
-                            }
-                            if (data.getSystem() == null) {
-                                data.setSystem(collector.getSystemStatic());
-                            }
-                        }
-                        String body = data.toJsonStr();
-                        for (SubscriberConf subscriber : conf.getSubscribers()) {
-                            publish(subscriber, body);
-                        }
-                    } catch (Exception e) {
-                        logger.error("Jvmm sentinel error: " + e.getMessage(), e);
-                    } finally {
-                        if (flag.get()) {
-                            executor.schedule(this, conf.getInterval(), TimeUnit.SECONDS);
-                        } else {
-                            for (ShutdownListener listener : shutdownListeners) {
-                                try {
-                                    listener.onShutdown();
-                                } catch (Exception e) {
-                                    logger.error("An exception occurred while executing the shutdown listener: " + e.getMessage(), e);
-                                }
-                            }
-                        }
+                if (count <= conf.getSendStaticInfoTimes()) {
+                    JvmmCollector collector = JvmmFactory.getCollector();
+                    if (data.getProcess() == null) {
+                        data.setProcess(collector.getProcess());
+                    }
+                    if (data.getSystem() == null) {
+                        data.setSystem(collector.getSystemStatic());
                     }
                 }
-            });
+                String body = data.toJsonStr();
+                for (SubscriberConf subscriber : conf.getSubscribers()) {
+                    publish(subscriber, body);
+                }
+            }, 0, conf.getInterval(), TimeUnit.SECONDS);
+
             promise.trySuccess(0);
-            SentinelConf conf = ServerContext.getConfiguration().getServer().getSentinel();
             logger.info("Jvmm sentinel service started, subscriber num:{}, interval: {}s", conf.getSubscribers().size(), conf.getInterval());
         } else {
             promise.tryFailure(new RuntimeException("Jvmm sentinel is invalid, no subscribers."));
@@ -113,14 +94,23 @@ public class JvmmSentinelService implements JvmmService {
     @Override
     public void shutdown() {
         logger.info("Trigger to shutdown jvmm sentinel service...");
-        flag.set(false);
+        if (scheduledFuture != null) {
+            scheduledFuture.cancel(false);
+        }
+        for (ShutdownListener listener : shutdownListeners) {
+            try {
+                listener.onShutdown();
+            } catch (Exception e) {
+                logger.error("An exception occurred while executing the shutdown listener: " + e.getMessage(), e);
+            }
+        }
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T extends JvmmService> T addShutdownListener(ShutdownListener listener) {
         shutdownListeners.add(listener);
-        return (T)this;
+        return (T) this;
     }
 
     protected void publish(SubscriberConf subscriber, String body) {
