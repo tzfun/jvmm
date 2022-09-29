@@ -1,9 +1,9 @@
 package org.beifengtz.jvmm.core.ext.os;
 
-import org.beifengtz.jvmm.common.factory.ExecutorFactory;
 import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.slf4j.Logger;
 
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -19,6 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public abstract class OsScheduledService implements Runnable {
 
     protected static final Logger logger = LoggerFactory.logger(OsScheduledService.class);
+    protected volatile ScheduledExecutorService executor = null;
     protected static final int DEFAULT_SCHEDULE_SECS = 3;
     protected static final int MIN_SCHEDULE_SECS = 1;
     protected final AtomicBoolean runnable = new AtomicBoolean(false);
@@ -29,24 +30,16 @@ public abstract class OsScheduledService implements Runnable {
     }
 
     /**
-     * 获取循环执行器
-     *
-     * @return {@link ScheduledExecutorService}
-     */
-    protected ScheduledExecutorService executor() {
-        return ExecutorFactory.getScheduleThreadPool();
-    }
-
-    /**
      * 启动service
      */
-    @SuppressWarnings("unchecked")
-    public <T extends OsScheduledService> T start() {
+    public void start() {
+        if (executor == null || executor.isShutdown() || executor.isTerminated()) {
+            executor = Executors.newScheduledThreadPool(1);
+        }
         runnable.set(true);
         OsScheduledService that = this;
         int s = scheduleSecs();
-        scheduledFuture = executor().scheduleWithFixedDelay(that, 0, s < MIN_SCHEDULE_SECS ? DEFAULT_SCHEDULE_SECS : s, TimeUnit.SECONDS);
-        return (T) this;
+        scheduledFuture = executor.scheduleWithFixedDelay(that, 0, s < MIN_SCHEDULE_SECS ? DEFAULT_SCHEDULE_SECS : s, TimeUnit.SECONDS);
     }
 
     /**
@@ -56,6 +49,9 @@ public abstract class OsScheduledService implements Runnable {
         if (scheduledFuture != null) {
             scheduledFuture.cancel(false);
             logger.info("Os schedule service stopped, target: {}", getClass().getSimpleName());
+        }
+        if (executor != null) {
+            executor.shutdown();
         }
     }
 

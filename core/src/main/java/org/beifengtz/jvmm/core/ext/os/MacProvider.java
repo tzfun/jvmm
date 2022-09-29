@@ -11,9 +11,17 @@ import org.beifengtz.jvmm.core.entity.result.OsNetStateResult;
  * @author beifengtz
  */
 class MacProvider extends OsScheduledService implements OsProvider {
-    static final MacProvider INSTANCE = new MacProvider().start();
+    private static MacProvider INSTANCE;
 
     private MacProvider() {
+    }
+
+    public synchronized static MacProvider getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new MacProvider();
+            INSTANCE.start();
+        }
+        return INSTANCE;
     }
 
     @Override

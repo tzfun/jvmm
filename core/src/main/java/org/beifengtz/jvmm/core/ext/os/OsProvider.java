@@ -17,11 +17,11 @@ public interface OsProvider {
 
     static OsProvider get() {
         if (PlatformUtil.isLinux()) {
-            return LinuxProvider.INSTANCE;
+            return LinuxProvider.getInstance();
         } else if (PlatformUtil.isWindows()) {
-            return WindowsProvider.INSTANCE;
+            return WindowsProvider.getInstance();
         } else if (PlatformUtil.isMac()) {
-            return MacProvider.INSTANCE;
+            return MacProvider.getInstance();
         } else {
             throw new OsNotSupportedException(PlatformUtil.getOS().name());
         }

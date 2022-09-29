@@ -18,12 +18,20 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author beifengtz
  */
 class WindowsProvider extends OsScheduledService implements OsProvider {
-    static final WindowsProvider INSTANCE = new WindowsProvider().start();
+    private static WindowsProvider INSTANCE;
 
     private final AtomicReference<OsNetIOResult> osNetIOResult = new AtomicReference<>(new OsNetIOResult());
     private final AtomicReference<OsNetStateResult> osTcpStateResult = new AtomicReference<>(new OsNetStateResult());
 
     private WindowsProvider() {
+    }
+
+    public synchronized static WindowsProvider getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new WindowsProvider();
+            INSTANCE.start();
+        }
+        return INSTANCE;
     }
 
 
@@ -45,7 +53,7 @@ class WindowsProvider extends OsScheduledService implements OsProvider {
 
     private void getNetIO0() {
         long[] s1 = getNetStatistics();
-        executor().schedule(() -> {
+        executor.schedule(() -> {
             long[] s2 = getNetStatistics();
             OsNetIOResult nsr = osNetIOResult.get();
 
