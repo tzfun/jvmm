@@ -1,6 +1,7 @@
 package org.beifengtz.jvmm.client;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -50,6 +51,18 @@ public class ServerServiceImpl extends ServerService {
                     hasArg = true,
                     argName = "output",
                     desc = "File path (optional), output info to file."
+            ),
+            @JvmmOption(
+                    name = "tid",
+                    hasArg = true,
+                    argName = "threadId",
+                    desc = "When querying info 'threadStack', you can specify a thread id, multiple ids use ',' separate them"
+            ),
+            @JvmmOption(
+                    name = "tdeep",
+                    hasArg = true,
+                    argName = "threadDepp",
+                    desc = "When querying info 'threadStack', this option is used to specify the stack depth, default 5"
             )
     })
     @JvmmCmdDesc(desc = "Get information about the target server")
@@ -91,9 +104,25 @@ public class ServerServiceImpl extends ServerService {
             case "thread":
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_THREAD_DYNAMIC_INFO);
                 break;
-            case "threadStack":
-                request.setType(GlobalType.JVMM_TYPE_DUMP_THREAD_INFO);
-                break;
+            case "threadStack": {
+                if (cmd.hasOption("tid")) {
+                    request.setType(GlobalType.JVMM_TYPE_COLLECT_THREAD_INFO);
+                    JsonObject data = new JsonObject();
+                    if (cmd.hasOption("tdeep")) {
+                        data.addProperty("depth", Integer.parseInt(cmd.getOptionValue("tdeep")));
+                    }
+                    JsonArray idArr = new JsonArray();
+                    String[] ids = cmd.getOptionValue("tid").split(",");
+                    for (String id : ids) {
+                        idArr.add(Long.parseLong(id));
+                    }
+                    data.add("idArr", idArr);
+                    request.setData(data);
+                } else {
+                    request.setType(GlobalType.JVMM_TYPE_DUMP_THREAD_INFO);
+                }
+            }
+            break;
             default:
                 printErr("Invalid info type: " + type);
                 return;
@@ -106,7 +135,23 @@ public class ServerServiceImpl extends ServerService {
         if (cmd.hasOption("f")) {
             try {
                 File file = new File(cmd.getOptionValue("f"));
-                FileUtil.writeByteArrayToFile(file, response.getData().toString().getBytes(StandardCharsets.UTF_8));
+                String str;
+                if (response.getData().isJsonArray()) {
+                    StringBuilder sb = new StringBuilder();
+                    for (JsonElement ele : response.getData().getAsJsonArray()) {
+                        sb.append(ele.getAsString());
+                    }
+                    str = sb.toString();
+                } else if (response.getData().isJsonObject()) {
+                    Gson gson = new GsonBuilder()
+                            .setPrettyPrinting()
+                            .serializeNulls()
+                            .create();
+                    str = gson.toJson(response.getData());
+                } else {
+                    str = response.getData().toString();
+                }
+                FileUtil.writeByteArrayToFile(file, str.getBytes(StandardCharsets.UTF_8));
                 System.out.println("Write server info to file successful, path is " + file.getAbsolutePath());
             } catch (IOException e) {
                 printErr("Write failed, " + e.getMessage());
