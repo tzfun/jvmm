@@ -7,6 +7,8 @@ import org.beifengtz.jvmm.core.entity.result.OsNetStateResult;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -17,8 +19,8 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @author beifengtz
  */
-class LinuxProvider extends OsScheduledService implements OsProvider {
-    private static LinuxProvider INSTANCE;
+class LinuxProvider extends OsScheduledService {
+    static LinuxProvider INSTANCE = new LinuxProvider();
 
     private final AtomicReference<OsNetIOResult> osNetIOResult = new AtomicReference<>(new OsNetIOResult());
     private final AtomicReference<OsNetStateResult> osTcpStateResult = new AtomicReference<>(new OsNetStateResult());
@@ -26,21 +28,23 @@ class LinuxProvider extends OsScheduledService implements OsProvider {
     private LinuxProvider() {
     }
 
-    public synchronized static LinuxProvider getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new LinuxProvider();
-            INSTANCE.start();
-        }
-        return INSTANCE;
-    }
-
     @Override
     public OsNetIOResult getNetIO() {
+        if (!isRunning()) {
+            try {
+                getNetIO0().get();
+            } catch (InterruptedException | ExecutionException e) {
+                logger.error("Os provider getNetIO error: " + e.getMessage(), e);
+            }
+        }
         return osNetIOResult.get();
     }
 
     @Override
     public OsNetStateResult getTcpState() {
+        if (!isRunning()) {
+            getTcpState0();
+        }
         return osTcpStateResult.get();
     }
 
@@ -50,9 +54,9 @@ class LinuxProvider extends OsScheduledService implements OsProvider {
         getNetIO0();
     }
 
-    private void getNetIO0() {
+    private ScheduledFuture<?> getNetIO0() {
         long[] s1 = getNetStatistics();
-        executor.schedule(() -> {
+        return executor.schedule(() -> {
             long[] s2 = getNetStatistics();
             OsNetIOResult nsr = osNetIOResult.get();
 

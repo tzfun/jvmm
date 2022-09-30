@@ -16,43 +16,55 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author beifengtz
  */
-public abstract class OsScheduledService implements Runnable {
+public abstract class OsScheduledService implements OsProvider, Runnable {
 
     protected static final Logger logger = LoggerFactory.logger(OsScheduledService.class);
-    protected volatile ScheduledExecutorService executor = null;
-    protected static final int DEFAULT_SCHEDULE_SECS = 3;
+    protected static final int DEFAULT_INTERVAL_SECS = 3;
     protected static final int MIN_SCHEDULE_SECS = 1;
-    protected final AtomicBoolean runnable = new AtomicBoolean(false);
+    protected static final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+    protected final AtomicBoolean running = new AtomicBoolean(false);
     protected ScheduledFuture<?> scheduledFuture;
+    private int interval;
 
-    protected int scheduleSecs() {
-        return DEFAULT_SCHEDULE_SECS;
+    static {
+        Runtime.getRuntime().addShutdownHook(new Thread(executor::shutdown));
+    }
+
+    public int getIntervalSecs() {
+        return interval < MIN_SCHEDULE_SECS ? DEFAULT_INTERVAL_SECS : interval;
+    }
+
+    /**
+     * 设置定期执行间隔，单位秒
+     */
+    public void setIntervalSecs(int secs) {
+        interval = secs;
     }
 
     /**
      * 启动service
      */
+    @Override
     public void start() {
-        if (executor == null || executor.isShutdown() || executor.isTerminated()) {
-            executor = Executors.newScheduledThreadPool(1);
-        }
-        runnable.set(true);
-        OsScheduledService that = this;
-        int s = scheduleSecs();
-        scheduledFuture = executor.scheduleWithFixedDelay(that, 0, s < MIN_SCHEDULE_SECS ? DEFAULT_SCHEDULE_SECS : s, TimeUnit.SECONDS);
+        running.set(true);
+        scheduledFuture = executor.scheduleWithFixedDelay(this, 0, getIntervalSecs(), TimeUnit.SECONDS);
     }
 
     /**
      * 停止运行
      */
-    public void stop() {
+    @Override
+    public void shutdown() {
         if (scheduledFuture != null) {
             scheduledFuture.cancel(false);
+            running.set(false);
             logger.info("Os schedule service stopped, target: {}", getClass().getSimpleName());
         }
-        if (executor != null) {
-            executor.shutdown();
-        }
+    }
+
+    @Override
+    public boolean isRunning() {
+        return running.get();
     }
 
 }
