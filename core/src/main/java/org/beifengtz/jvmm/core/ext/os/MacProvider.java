@@ -1,8 +1,8 @@
 package org.beifengtz.jvmm.core.ext.os;
 
 import org.beifengtz.jvmm.common.util.ExecuteNativeUtil;
-import org.beifengtz.jvmm.core.entity.result.OsNetIOResult;
-import org.beifengtz.jvmm.core.entity.result.OsNetStateResult;
+import org.beifengtz.jvmm.core.entity.result.OsNetIO;
+import org.beifengtz.jvmm.core.entity.result.OsNetState;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,19 +21,19 @@ import java.util.concurrent.atomic.AtomicReference;
 class MacProvider extends OsScheduledService {
     static MacProvider INSTANCE = new MacProvider();
 
-    private final AtomicReference<OsNetIOResult> osNetIOResult = new AtomicReference<>(new OsNetIOResult());
-    private final AtomicReference<OsNetStateResult> osTcpStateResult = new AtomicReference<>(new OsNetStateResult());
+    private final AtomicReference<OsNetIO> osNetIOResult = new AtomicReference<>(new OsNetIO());
+    private final AtomicReference<OsNetState> osTcpStateResult = new AtomicReference<>(new OsNetState());
 
     private MacProvider() {
     }
 
     @Override
-    public OsNetIOResult getNetIO() {
+    public OsNetIO getNetIO() {
         return osNetIOResult.get();
     }
 
     @Override
-    public OsNetStateResult getTcpState() {
+    public OsNetState getTcpState() {
         if (!isRunning()) {
             getTcpState0();
         }

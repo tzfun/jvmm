@@ -6,7 +6,7 @@ import org.beifengtz.jvmm.common.util.ExecuteNativeUtil;
 import org.beifengtz.jvmm.common.util.PidUtil;
 import org.beifengtz.jvmm.common.util.PlatformUtil;
 import org.beifengtz.jvmm.core.entity.mx.*;
-import org.beifengtz.jvmm.core.entity.result.LinuxMemoryResult;
+import org.beifengtz.jvmm.core.entity.result.LinuxMem;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -198,7 +198,7 @@ class DefaultJvmmCollector implements JvmmCollector {
             info.setTotalSwapSpaceSize(sunSystemMXBean.getTotalSwapSpaceSize());
 
             if (PlatformUtil.isLinux()) {
-                LinuxMemoryResult linuxMemoryResult = getLinuxMemoryResult();
+                LinuxMem linuxMemoryResult = getLinuxMemoryResult();
                 info.setBufferCacheMemorySize(linuxMemoryResult.getBuffCache());
                 info.setSharedMemorySize(linuxMemoryResult.getShared());
             }
@@ -282,9 +282,9 @@ class DefaultJvmmCollector implements JvmmCollector {
         return result;
     }
 
-    private LinuxMemoryResult getLinuxMemoryResult() {
+    private LinuxMem getLinuxMemoryResult() {
         List<String> results = ExecuteNativeUtil.execute("free -b");
-        LinuxMemoryResult result = new LinuxMemoryResult();
+        LinuxMem result = new LinuxMem();
         if (results.size() > 1) {
             String[] split = results.get(1).split("\\s+");
             if (split.length > 6) {

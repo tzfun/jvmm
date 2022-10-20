@@ -1,9 +1,12 @@
 package org.beifengtz.jvmm.core.ext.os;
 
 import org.beifengtz.jvmm.common.util.ExecuteNativeUtil;
-import org.beifengtz.jvmm.core.entity.result.OsNetIOResult;
-import org.beifengtz.jvmm.core.entity.result.OsNetStateResult;
+import org.beifengtz.jvmm.core.entity.result.OsDiskIO;
+import org.beifengtz.jvmm.core.entity.result.OsNetIO;
+import org.beifengtz.jvmm.core.entity.result.OsNetState;
 
+import java.io.File;
+import java.nio.file.FileSystem;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,14 +25,15 @@ import java.util.concurrent.atomic.AtomicReference;
 class WindowsProvider extends OsScheduledService {
     static WindowsProvider INSTANCE = new WindowsProvider();
 
-    private final AtomicReference<OsNetIOResult> osNetIOResult = new AtomicReference<>(new OsNetIOResult());
-    private final AtomicReference<OsNetStateResult> osTcpStateResult = new AtomicReference<>(new OsNetStateResult());
+    private final AtomicReference<OsNetIO> osNetIOResult = new AtomicReference<>(new OsNetIO());
+    private final AtomicReference<OsNetState> osTcpStateResult = new AtomicReference<>(new OsNetState());
+    private final AtomicReference<OsDiskIO> osDiskIOResult = new AtomicReference<>(new OsDiskIO());
 
     private WindowsProvider() {
     }
 
     @Override
-    public OsNetIOResult getNetIO() {
+    public OsNetIO getNetIO() {
         if (!isRunning()) {
             try {
                 getNetIO0().get();
@@ -41,11 +45,16 @@ class WindowsProvider extends OsScheduledService {
     }
 
     @Override
-    public OsNetStateResult getTcpState() {
+    public OsNetState getTcpState() {
         if (!isRunning()) {
             getTcpState0();
         }
         return osTcpStateResult.get();
+    }
+
+    @Override
+    public OsDiskIO getDiskIO() {
+        return osDiskIOResult.get();
     }
 
     @Override
@@ -58,7 +67,7 @@ class WindowsProvider extends OsScheduledService {
         long[] s1 = getNetStatistics();
         return executor.schedule(() -> {
             long[] s2 = getNetStatistics();
-            OsNetIOResult nsr = osNetIOResult.get();
+            OsNetIO nsr = osNetIOResult.get();
 
             long receivedB = s2[0] - s1[0];
             long transmittedB = s2[1] - s1[1];

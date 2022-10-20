@@ -12,7 +12,7 @@ import java.util.Map;
  *
  * @author beifengtz
  */
-public class OsNetStateResult implements JsonParsable {
+public class OsNetState implements JsonParsable {
     private int total;
     private Map<String, Integer> statusCount = new HashMap<>();
 
@@ -20,7 +20,7 @@ public class OsNetStateResult implements JsonParsable {
         return total;
     }
 
-    public OsNetStateResult setTotal(int total) {
+    public OsNetState setTotal(int total) {
         this.total = total;
         return this;
     }
@@ -33,12 +33,12 @@ public class OsNetStateResult implements JsonParsable {
         return statusCount.getOrDefault(status, 0);
     }
 
-    public OsNetStateResult setStatusCount(String status, int count) {
+    public OsNetState setStatusCount(String status, int count) {
         this.statusCount.put(status, count);
         return this;
     }
 
-    public OsNetStateResult setStatusCount(Map<String, Integer> statusCount) {
+    public OsNetState setStatusCount(Map<String, Integer> statusCount) {
         this.statusCount = statusCount;
         return this;
     }

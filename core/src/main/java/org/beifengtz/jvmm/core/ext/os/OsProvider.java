@@ -3,11 +3,12 @@ package org.beifengtz.jvmm.core.ext.os;
 import org.beifengtz.jvmm.common.PlatformEnum;
 import org.beifengtz.jvmm.common.exception.OsNotSupportedException;
 import org.beifengtz.jvmm.common.util.PlatformUtil;
-import org.beifengtz.jvmm.core.entity.result.OsNetIOResult;
-import org.beifengtz.jvmm.core.entity.result.OsNetStateResult;
+import org.beifengtz.jvmm.core.entity.result.OsDiskIO;
+import org.beifengtz.jvmm.core.entity.result.OsNetIO;
+import org.beifengtz.jvmm.core.entity.result.OsNetState;
 
 /**
- * Description: TODO
+ * Description: 获取一些与系统相关的数据，不同系统环境下有不同的实现
  *
  * Created in 11:27 2022/9/28
  *
@@ -68,14 +69,21 @@ public interface OsProvider {
     /**
      * 获取网络IO统计
      *
-     * @return {@link OsNetIOResult}
+     * @return {@link OsNetIO}
      */
-    OsNetIOResult getNetIO();
+    OsNetIO getNetIO();
 
     /**
      * 获取Tcp连接状态
      *
-     * @return {@link OsNetStateResult}
+     * @return {@link OsNetState}
      */
-    OsNetStateResult getTcpState();
+    OsNetState getTcpState();
+
+    /**
+     * 获取磁盘IO统计
+     *
+     * @return {@link OsDiskIO}
+     */
+    OsDiskIO getDiskIO();
 }

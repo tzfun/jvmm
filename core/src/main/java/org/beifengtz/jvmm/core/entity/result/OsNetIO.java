@@ -9,7 +9,7 @@ import org.beifengtz.jvmm.common.JsonParsable;
  *
  * @author beifengtz
  */
-public class OsNetIOResult implements JsonParsable {
+public class OsNetIO implements JsonParsable {
     /**
      * 收包数量
      */
@@ -31,7 +31,7 @@ public class OsNetIOResult implements JsonParsable {
         return receivePackageCount;
     }
 
-    public OsNetIOResult setReceivePackageCount(long receivePackageCount) {
+    public OsNetIO setReceivePackageCount(long receivePackageCount) {
         this.receivePackageCount = receivePackageCount;
         return this;
     }
@@ -40,7 +40,7 @@ public class OsNetIOResult implements JsonParsable {
         return transmitPackageCount;
     }
 
-    public OsNetIOResult setTransmitPackageCount(long transmitPackageCount) {
+    public OsNetIO setTransmitPackageCount(long transmitPackageCount) {
         this.transmitPackageCount = transmitPackageCount;
         return this;
     }
@@ -49,7 +49,7 @@ public class OsNetIOResult implements JsonParsable {
         return receiveSpeed;
     }
 
-    public OsNetIOResult setReceiveSpeed(float receiveSpeed) {
+    public OsNetIO setReceiveSpeed(float receiveSpeed) {
         this.receiveSpeed = receiveSpeed;
         return this;
     }
@@ -58,7 +58,7 @@ public class OsNetIOResult implements JsonParsable {
         return transmitSpeed;
     }
 
-    public OsNetIOResult setTransmitSpeed(float transmitSpeed) {
+    public OsNetIO setTransmitSpeed(float transmitSpeed) {
         this.transmitSpeed = transmitSpeed;
         return this;
     }

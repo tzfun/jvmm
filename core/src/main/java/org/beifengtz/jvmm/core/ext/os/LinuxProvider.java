@@ -1,8 +1,9 @@
 package org.beifengtz.jvmm.core.ext.os;
 
 import org.beifengtz.jvmm.common.util.ExecuteNativeUtil;
-import org.beifengtz.jvmm.core.entity.result.OsNetIOResult;
-import org.beifengtz.jvmm.core.entity.result.OsNetStateResult;
+import org.beifengtz.jvmm.core.entity.result.OsDiskIO;
+import org.beifengtz.jvmm.core.entity.result.OsNetIO;
+import org.beifengtz.jvmm.core.entity.result.OsNetState;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Description: TODO
- *
+ * <p>
  * Created in 11:12 2022/9/29
  *
  * @author beifengtz
@@ -22,14 +23,15 @@ import java.util.concurrent.atomic.AtomicReference;
 class LinuxProvider extends OsScheduledService {
     static LinuxProvider INSTANCE = new LinuxProvider();
 
-    private final AtomicReference<OsNetIOResult> osNetIOResult = new AtomicReference<>(new OsNetIOResult());
-    private final AtomicReference<OsNetStateResult> osTcpStateResult = new AtomicReference<>(new OsNetStateResult());
+    private final AtomicReference<OsNetIO> osNetIOResult = new AtomicReference<>(new OsNetIO());
+    private final AtomicReference<OsNetState> osTcpStateResult = new AtomicReference<>(new OsNetState());
+    private final AtomicReference<OsDiskIO> osDiskIOResult = new AtomicReference<>(new OsDiskIO());
 
     private LinuxProvider() {
     }
 
     @Override
-    public OsNetIOResult getNetIO() {
+    public OsNetIO getNetIO() {
         if (!isRunning()) {
             try {
                 getNetIO0().get();
@@ -41,7 +43,7 @@ class LinuxProvider extends OsScheduledService {
     }
 
     @Override
-    public OsNetStateResult getTcpState() {
+    public OsNetState getTcpState() {
         if (!isRunning()) {
             getTcpState0();
         }
@@ -49,16 +51,25 @@ class LinuxProvider extends OsScheduledService {
     }
 
     @Override
+    public OsDiskIO getDiskIO() {
+        if (!isRunning()) {
+            getDiskIO0();
+        }
+        return osDiskIOResult.get();
+    }
+
+    @Override
     public void run() {
         getTcpState0();
         getNetIO0();
+        getDiskIO0();
     }
 
     private ScheduledFuture<?> getNetIO0() {
         long[] s1 = getNetStatistics();
         return executor.schedule(() -> {
             long[] s2 = getNetStatistics();
-            OsNetIOResult nsr = osNetIOResult.get();
+            OsNetIO nsr = osNetIOResult.get();
 
             long receivedB = s2[0] - s1[0];
             long transmittedB = s2[1] - s1[1];
@@ -103,5 +114,17 @@ class LinuxProvider extends OsScheduledService {
             }
         }
         osTcpStateResult.get().setStatusCount(statusMap).setTotal(count);
+    }
+
+    private void getDiskIO0() {
+        List<String> result = ExecuteNativeUtil.execute("iostat -d -x");
+        if (result.size() > 4) {
+            String line = result.get(3);
+            String[] split = line.split("\\s+");
+            OsDiskIO osDiskIO = osDiskIOResult.get();
+            osDiskIO.setReadPerSecond(Float.parseFloat(split[3]))
+                    .setWritePerSecond(Float.parseFloat(split[4]))
+                    .setUsage(Float.parseFloat(split[split.length - 1]));
+        }
     }
 }
