@@ -43,8 +43,8 @@ public class ServerServiceImpl extends ServerService {
                     hasArg = true,
                     required = true,
                     argName = "type",
-                    desc = "Info type (required *), optional values: system, systemDynamic, classloading, classloader, compilation, gc, process, " +
-                            "memory, memoryManager, memoryPool, thread, threadStack."
+                    desc = "Required *. Info type, optional values: \n<system|systemDynamic|classloading|classloader|" +
+                            "compilation|gc|process|memory|memoryManager|memoryPool|thread|threadStack>"
             ),
             @JvmmOption(
                     name = "f",
@@ -185,7 +185,7 @@ public class ServerServiceImpl extends ServerService {
             required = true,
             hasArg = true,
             argName = "type",
-            desc = "The type of service to be closed, allowed values: jvmm, http, sentinel"
+            desc = "Required *. The type of service to be closed, allowed values: jvmm, http, sentinel"
     )
     @JvmmCmdDesc(desc = "Shutdown service.")
     public static void shutdown(JvmmConnector connector, CommandLine cmd) {
@@ -332,7 +332,7 @@ public class ServerServiceImpl extends ServerService {
                     required = true,
                     hasArg = true,
                     argName = "class",
-                    desc = "Required, the java class to be decompiled"
+                    desc = "Required *. The java class to be decompiled"
             ),
             @JvmmOption(
                     name = "m",
@@ -348,7 +348,7 @@ public class ServerServiceImpl extends ServerService {
             ),
     })
 
-    @JvmmCmdDesc(desc = "Shutdown service.")
+    @JvmmCmdDesc(desc = "Decompile class files at runtime.")
     public static void jad(JvmmConnector connector, CommandLine cmd) throws IOException {
         JsonObject json = new JsonObject();
         json.addProperty("className", cmd.getOptionValue("c"));

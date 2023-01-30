@@ -15,6 +15,7 @@ ext {
     gsonVersoion = "2.8.6"
     commonsCli = "1.5.0"
     cfrVersion = "0.152"
+    oshiVersion = "6.4.0"
 }
 
 subprojects {

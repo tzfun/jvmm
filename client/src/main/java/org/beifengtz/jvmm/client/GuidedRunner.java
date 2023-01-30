@@ -115,26 +115,16 @@ public class GuidedRunner {
     }
 
     public static int askAttachPid() {
-        System.out.println();
-        PairKey<List<JpsResult>, String> PairKey = JvmmFactory.getExecutor().listJavaProcess();
-        if (PairKey.getRight() == null) {
-            List<JpsResult> jpsList = PairKey.getLeft();
-
-            long currentPid = PidUtil.currentPid();
-            jpsList.removeIf(o -> o.getPid() == currentPid);
-
-            for (int i = 1; i <= jpsList.size(); i++) {
-                JpsResult jps = jpsList.get(i - 1);
-                System.out.printf("[%d] %d %s%n", i, jps.getPid(), jps.getMainClass());
-            }
-
-            System.out.print("\nSelect the program number you will attach: ");
+        List<JpsResult> jpsList = printJps();
+        if (jpsList != null) {
             JpsResult jps = null;
             while (scanner.hasNextLine()) {
                 String str = scanner.nextLine();
-                int result = str.matches("\\d+") ? Integer.parseInt(str) : 0;
+                int result = str.matches("\\d+") ? Integer.parseInt(str) : -1;
 
-                if (result <= 0 || result > jpsList.size()) {
+                if (result == 0) {
+                    jpsList = printJps();
+                } else if (result < 0 || result > jpsList.size()) {
                     System.out.println("Wrong serial number.");
                     System.out.print("Select the program number you will attach: ");
                 } else {
@@ -144,15 +134,36 @@ public class GuidedRunner {
             }
             assert jps != null;
             return (int) jps.getPid();
-        } else {
-            System.out.println("Can not get local java processes, case: " + PairKey.getRight());
-            System.exit(-1);
         }
         return -1;
     }
 
+    private static List<JpsResult> printJps() {
+        System.out.println();
+        PairKey<List<JpsResult>, String> pairKey = JvmmFactory.getExecutor().listJavaProcess();
+        if (pairKey.getRight() == null) {
+            List<JpsResult> jpsList = pairKey.getLeft();
+
+            jpsList.removeIf(o -> o.getPid() == PidUtil.currentPid());
+
+            for (int i = 1; i <= jpsList.size(); i++) {
+                JpsResult jps = jpsList.get(i - 1);
+                System.out.printf("[%d] %d %s%n", i, jps.getPid(), jps.getMainClass());
+            }
+
+            System.out.print("\nType 0 to reload processes list.\n");
+            System.out.print("\nSelect the program number you will attach: ");
+
+            return jpsList;
+        } else {
+            System.out.println("Can not get local java processes, case: " + pairKey.getRight());
+            System.exit(-1);
+        }
+        return null;
+    }
+
     public static String askServerAddress() {
-        System.out.print("Enter the Jvmm server address: ");
+        System.out.print("Enter the Jvmm server address (eg. 127.0.0.1:5010): ");
         return scanner.nextLine();
     }
 

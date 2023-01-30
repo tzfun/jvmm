@@ -54,6 +54,9 @@ class WindowsProvider extends OsScheduledService {
 
     @Override
     public OsDiskIO getDiskIO() {
+        if (!isRunning()) {
+            getDiskIO0();
+        }
         return osDiskIOResult.get();
     }
 
@@ -112,5 +115,15 @@ class WindowsProvider extends OsScheduledService {
             }
         }
         osTcpStateResult.get().setStatusCount(statusMap).setTotal(count);
+    }
+
+    /**
+     * 需要以管理员方式运行，否则会抛出异常
+     * <p/>
+     * 此方法比较耗时
+     */
+    private void getDiskIO0() {
+        List<String> result = ExecuteNativeUtil.execute("winsat disk");
+
     }
 }

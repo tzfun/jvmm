@@ -1,6 +1,7 @@
 package org.beifengtz.jvmm.core.ext.os;
 
 import org.beifengtz.jvmm.common.util.ExecuteNativeUtil;
+import org.beifengtz.jvmm.core.entity.result.OsDiskIO;
 import org.beifengtz.jvmm.core.entity.result.OsNetIO;
 import org.beifengtz.jvmm.core.entity.result.OsNetState;
 
@@ -38,6 +39,11 @@ class MacProvider extends OsScheduledService {
             getTcpState0();
         }
         return osTcpStateResult.get();
+    }
+
+    @Override
+    public OsDiskIO getDiskIO() {
+        return null;
     }
 
     @Override
