@@ -1,6 +1,8 @@
 package org.beifengtz.jvmm.server.controller;
 
 import com.google.gson.JsonArray;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import org.beifengtz.jvmm.convey.annotation.HttpController;
 import org.beifengtz.jvmm.convey.annotation.HttpRequest;
 import org.beifengtz.jvmm.convey.annotation.JvmmController;
@@ -8,6 +10,7 @@ import org.beifengtz.jvmm.convey.annotation.JvmmMapping;
 import org.beifengtz.jvmm.convey.annotation.RequestBody;
 import org.beifengtz.jvmm.convey.enums.GlobalType;
 import org.beifengtz.jvmm.convey.enums.Method;
+import org.beifengtz.jvmm.convey.handler.HttpChannelHandler;
 import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.entity.info.*;
 import org.beifengtz.jvmm.server.entity.conf.CollectOptions;
@@ -32,75 +35,99 @@ import java.util.List;
 @HttpController
 public class CollectController {
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_SYSTEM_STATIC_INFO)
-    @HttpRequest("/collect/system_static")
-    public SysInfo getSystemStaticInfo() {
-        return JvmmFactory.getCollector().getSys();
-    }
-
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_CLASSLOADING_INFO)
-    @HttpRequest("/collect/classloading")
-    public JvmClassLoadingInfo getClassLoadingInfo() {
-        return JvmmFactory.getCollector().getClassLoading();
-    }
-
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_CLASSLOADER_INFO)
-    @HttpRequest("/collect/classloader")
-    public List<JvmClassLoaderInfo> getClassLoaders() {
-        return JvmmFactory.getCollector().getClassLoaders();
-    }
-
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_COMPILATION_INFO)
-    @HttpRequest("/collect/compilation")
-    public JvmCompilationInfo getCompilationInfo() {
-        return JvmmFactory.getCollector().getCompilation();
-    }
-
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_PROCESS_INFO)
     @HttpRequest("/collect/process")
     public ProcessInfo getProcessInfo() {
         return JvmmFactory.getCollector().getProcess();
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_GARBAGE_COLLECTOR_INFO)
-    @HttpRequest("/collect/gc")
-    public List<JvmGCInfo> getGarbageCollectorInfo() {
-        return JvmmFactory.getCollector().getGarbageCollector();
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_DISK_INFO)
+    @HttpRequest("/collect/disk")
+    public List<DiskInfo> getDiskInfo() {
+        return JvmmFactory.getCollector().getDisk();
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_MEMORY_MANAGER_INFO)
-    @HttpRequest("/collect/memory_manager")
-    public List<JvmMemoryManagerInfo> getMemoryManagerInfo() {
-        return JvmmFactory.getCollector().getMemoryManager();
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_CPU_INFO)
+    @HttpRequest("/collect/cpu")
+    public void getCPUInfo(ChannelHandlerContext ctx, HttpChannelHandler handler) {
+        JvmmFactory.getCollector().getCPU(info -> handler.response(ctx, HttpResponseStatus.OK, info.toString()));
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_MEMORY_POOL_INFO)
-    @HttpRequest("/collect/memory_pool")
-    public List<JvmMemoryPoolInfo> getMemoryPoolInfo() {
-        return JvmmFactory.getCollector().getMemoryPool();
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_NETWORK_INFO)
+    @HttpRequest("/collect/network")
+    public void getNetInfo(ChannelHandlerContext ctx, HttpChannelHandler handler) {
+        JvmmFactory.getCollector().getNetwork(info -> handler.response(ctx, HttpResponseStatus.OK, info.toString()));
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_MEMORY_INFO)
-    @HttpRequest("/collect/memory")
-    public JvmMemoryInfo getMemoryInfo() {
-        return JvmmFactory.getCollector().getMemory();
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_SYS_INFO)
+    @HttpRequest("/collect/sys")
+    public SysInfo getSysInfo() {
+        return JvmmFactory.getCollector().getSys();
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_SYSTEM_DYNAMIC_INFO)
-    @HttpRequest("/collect/system_dynamic")
-    public SystemDynamicInfo getSystemDynamicInfo() {
-        return JvmmFactory.getCollector().getSystemDynamic();
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_SYS_MEMORY_INFO)
+    @HttpRequest("/collect/sys/memory")
+    public SysMemInfo getSysMemoryInfo() {
+        return JvmmFactory.getCollector().getSysMem();
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_THREAD_DYNAMIC_INFO)
-    @HttpRequest("/collect/thread_dynamic")
-    public JvmThreadInfo getThreadDynamicInfo() {
-        return JvmmFactory.getCollector().getThreadDynamic();
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_SYS_FILE_INFO)
+    @HttpRequest("/collect/sys/file")
+    public List<SysFileInfo> getSysFileInfo() {
+        return JvmmFactory.getCollector().getSysFile();
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_THREAD_INFO)
-    @HttpRequest(value = "/collect/thread", method = Method.POST)
-    public List<String> getThreadInfo(@RequestBody ThreadInfoDTO data) {
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_CLASSLOADING_INFO)
+    @HttpRequest("/collect/jvm/classloading")
+    public JvmClassLoadingInfo getJvmClassLoadingInfo() {
+        return JvmmFactory.getCollector().getJvmClassLoading();
+    }
+
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_CLASSLOADER_INFO)
+    @HttpRequest("/collect/jvm/classloader")
+    public List<JvmClassLoaderInfo> getJvmClassLoaders() {
+        return JvmmFactory.getCollector().getJvmClassLoaders();
+    }
+
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_COMPILATION_INFO)
+    @HttpRequest("/collect/jvm/compilation")
+    public JvmCompilationInfo getJvmCompilationInfo() {
+        return JvmmFactory.getCollector().getJvmCompilation();
+    }
+
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_GC_INFO)
+    @HttpRequest("/collect/jvm/gc")
+    public List<JvmGCInfo> getJvmGCInfo() {
+        return JvmmFactory.getCollector().getJvmGC();
+    }
+
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_MEMORY_MANAGER_INFO)
+    @HttpRequest("/collect/jvm/memory_manager")
+    public List<JvmMemoryManagerInfo> getJvmMemoryManagerInfo() {
+        return JvmmFactory.getCollector().getJvmMemoryManager();
+    }
+
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_MEMORY_POOL_INFO)
+    @HttpRequest("/collect/jvm/memory_pool")
+    public List<JvmMemoryPoolInfo> getJvmMemoryPoolInfo() {
+        return JvmmFactory.getCollector().getJvmMemoryPool();
+    }
+
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_MEMORY_INFO)
+    @HttpRequest("/collect/jvm/memory")
+    public JvmMemoryInfo getJvmMemoryInfo() {
+        return JvmmFactory.getCollector().getJvmMemory();
+    }
+
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_INFO)
+    @HttpRequest("/collect/jvm/thread")
+    public JvmThreadInfo getJvmThreadInfo() {
+        return JvmmFactory.getCollector().getJvmThread();
+    }
+
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_STACK)
+    @HttpRequest(value = "/collect/jvm/thread_stack", method = Method.POST)
+    public List<String> getJvmThreadStack(@RequestBody ThreadInfoDTO data) {
         if (data == null) {
             throw new IllegalArgumentException("Missing data");
         }
@@ -109,13 +136,13 @@ public class CollectController {
             throw new IllegalArgumentException("Missing a parameter 'id' of type list");
         }
 
-        String[] infos = JvmmFactory.getCollector().getThreadInfo(data.getIdArr(), data.getDepth());
+        String[] infos = JvmmFactory.getCollector().getJvmThreadStack(data.getIdArr(), data.getDepth());
         return new ArrayList<>(Arrays.asList(infos));
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_DUMP_THREAD_INFO)
-    @HttpRequest("/collect/dump_thread")
-    public JsonArray dumpThreadInfo() {
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_DUMP_THREAD)
+    @HttpRequest("/collect/jvm/dump_thread")
+    public JsonArray jvmDumpThread() {
         String[] dump = JvmmFactory.getCollector().dumpAllThreads();
         JsonArray result = new JsonArray(dump.length);
         for (String info : dump) {

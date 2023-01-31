@@ -3,7 +3,6 @@ package org.beifengtz.jvmm.core;
 import org.beifengtz.jvmm.core.entity.info.*;
 
 import java.util.List;
-import java.util.concurrent.ScheduledFuture;
 import java.util.function.Consumer;
 
 /**
@@ -27,33 +26,33 @@ public interface JvmmCollector {
 
     List<DiskInfo> getDisk();
 
-    List<OSFileInfo> getOSFile();
+    List<SysFileInfo> getSysFile();
 
     ProcessInfo getProcess();
 
-    JvmClassLoadingInfo getClassLoading();
+    JvmClassLoadingInfo getJvmClassLoading();
 
-    List<JvmClassLoaderInfo> getClassLoaders();
+    List<JvmClassLoaderInfo> getJvmClassLoaders();
 
-    JvmCompilationInfo getCompilation();
+    JvmCompilationInfo getJvmCompilation();
 
-    List<JvmGCInfo> getGarbageCollector();
+    List<JvmGCInfo> getJvmGC();
 
-    List<JvmMemoryManagerInfo> getMemoryManager();
+    List<JvmMemoryManagerInfo> getJvmMemoryManager();
 
-    List<JvmMemoryPoolInfo> getMemoryPool();
+    List<JvmMemoryPoolInfo> getJvmMemoryPool();
 
-    JvmMemoryInfo getMemory();
+    JvmMemoryInfo getJvmMemory();
 
-    JvmThreadInfo getThreadDynamic();
+    JvmThreadInfo getJvmThread();
 
-    String getThreadInfo(long id);
+    String getJvmThreadStack(long id);
 
-    String[] getThreadInfo(long... ids);
+    String[] getJvmThreadStack(long... ids);
 
-    String getThreadInfo(long id, int maxDepth);
+    String getJvmThreadStack(long id, int maxDepth);
 
-    String[] getThreadInfo(long[] ids, int maxDepth);
+    String[] getJvmThreadStack(long[] ids, int maxDepth);
 
     String[] dumpAllThreads();
 }

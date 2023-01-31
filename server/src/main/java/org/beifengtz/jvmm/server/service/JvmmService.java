@@ -38,35 +38,31 @@ public interface JvmmService {
         JvmmCollector collector = JvmmFactory.getCollector();
 
         if (options.isClassloading()) {
-            res.setClassloading(collector.getClassLoading());
+            res.setClassloading(collector.getJvmClassLoading());
         }
 
         if (options.isCompilation()) {
-            res.setCompilation(collector.getCompilation());
+            res.setCompilation(collector.getJvmCompilation());
         }
 
         if (options.isGc()) {
-            res.setGarbageCollector(collector.getGarbageCollector());
+            res.setGarbageCollector(collector.getJvmGC());
         }
 
         if (options.isMemory()) {
-            res.setMemory(collector.getMemory());
+            res.setMemory(collector.getJvmMemory());
         }
 
         if (options.isMemoryManager()) {
-            res.setMemoryManager(collector.getMemoryManager());
+            res.setMemoryManager(collector.getJvmMemoryManager());
         }
 
         if (options.isMemoryPool()) {
-            res.setMemoryPool(collector.getMemoryPool());
-        }
-
-        if (options.isSystemDynamic()) {
-            res.setSystemDynamic(collector.getSystemDynamic());
+            res.setMemoryPool(collector.getJvmMemoryPool());
         }
 
         if (options.isThreadDynamic()) {
-            res.setThread(collector.getThreadDynamic());
+            res.setThread(collector.getJvmThread());
         }
 
         //  下面是静态信息

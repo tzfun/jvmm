@@ -6,7 +6,7 @@ import org.beifengtz.jvmm.core.entity.info.DiskInfo;
 import org.beifengtz.jvmm.core.entity.info.DiskInfo.DiskPartition;
 import org.beifengtz.jvmm.core.entity.info.NetInfo;
 import org.beifengtz.jvmm.core.entity.info.NetInfo.NetworkIFInfo;
-import org.beifengtz.jvmm.core.entity.info.OSFileInfo;
+import org.beifengtz.jvmm.core.entity.info.SysFileInfo;
 import org.beifengtz.jvmm.core.entity.result.LinuxMem;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
@@ -92,16 +92,16 @@ public final class OSDriver {
     /**
      * 获取各个磁盘分区的使用情况，包含名字、分区类型、标签、总大小、总空闲、可用大小等
      *
-     * @return {@link OSFileInfo}列表
+     * @return {@link SysFileInfo}列表
      */
-    public List<OSFileInfo> getOsFileInfo() {
+    public List<SysFileInfo> getOsFileInfo() {
         FileSystem fs = si.getOperatingSystem().getFileSystem();
         List<OSFileStore> fileStores = fs.getFileStores();
 
-        List<OSFileInfo> infos = new ArrayList<>(fileStores.size());
+        List<SysFileInfo> infos = new ArrayList<>(fileStores.size());
 
         for (OSFileStore store : fileStores) {
-            infos.add(OSFileInfo.create()
+            infos.add(SysFileInfo.create()
                     .setName(store.getName())
                     .setMount(store.getMount())
                     .setType(store.getType())

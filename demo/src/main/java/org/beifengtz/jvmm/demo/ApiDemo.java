@@ -33,15 +33,15 @@ public class ApiDemo {
         //  Java虚拟机：Memory、GC、Class、Thread、Compilation信息
         JvmmCollector collector = JvmmFactory.getCollector();
 
-        JvmMemoryInfo memory = collector.getMemory();
-        List<JvmMemoryManagerInfo> memoryManager = collector.getMemoryManager();
-        List<JvmMemoryPoolInfo> memoryPool = collector.getMemoryPool();
+        JvmMemoryInfo memory = collector.getJvmMemory();
+        List<JvmMemoryManagerInfo> memoryManager = collector.getJvmMemoryManager();
+        List<JvmMemoryPoolInfo> memoryPool = collector.getJvmMemoryPool();
         SysInfo systemStatic = collector.getSys();
-        JvmClassLoadingInfo classLoading = collector.getClassLoading();
-        List<JvmGCInfo> garbageCollector = collector.getGarbageCollector();
-        JvmCompilationInfo compilation = collector.getCompilation();
+        JvmClassLoadingInfo classLoading = collector.getJvmClassLoading();
+        List<JvmGCInfo> garbageCollector = collector.getJvmGC();
+        JvmCompilationInfo compilation = collector.getJvmCompilation();
         ProcessInfo process = collector.getProcess();
-        JvmThreadInfo threadDynamic = collector.getThreadDynamic();
+        JvmThreadInfo threadDynamic = collector.getJvmThread();
         String[] threadsInfo = collector.dumpAllThreads();
 
         //  jvmm执行器

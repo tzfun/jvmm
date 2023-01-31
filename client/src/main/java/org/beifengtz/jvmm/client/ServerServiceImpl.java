@@ -72,41 +72,41 @@ public class ServerServiceImpl extends ServerService {
         JvmmRequest request = JvmmRequest.create();
         switch (type) {
             case "system":
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_SYSTEM_STATIC_INFO);
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_SYS_INFO);
                 break;
             case "systemDynamic":
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_SYSTEM_DYNAMIC_INFO);
                 break;
             case "classloading":
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_CLASSLOADING_INFO);
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_CLASSLOADING_INFO);
                 break;
             case "classloader":
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_CLASSLOADER_INFO);
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_CLASSLOADER_INFO);
                 break;
             case "compilation":
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_COMPILATION_INFO);
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_COMPILATION_INFO);
                 break;
             case "gc":
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_GARBAGE_COLLECTOR_INFO);
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_GC_INFO);
                 break;
             case "process":
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_PROCESS_INFO);
                 break;
             case "memory":
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_MEMORY_INFO);
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_MEMORY_INFO);
                 break;
             case "memoryManager":
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_MEMORY_MANAGER_INFO);
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_MEMORY_MANAGER_INFO);
                 break;
             case "memoryPool":
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_MEMORY_POOL_INFO);
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_MEMORY_POOL_INFO);
                 break;
             case "thread":
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_THREAD_DYNAMIC_INFO);
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_INFO);
                 break;
             case "threadStack": {
                 if (cmd.hasOption("tid")) {
-                    request.setType(GlobalType.JVMM_TYPE_COLLECT_THREAD_INFO);
+                    request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_STACK);
                     JsonObject data = new JsonObject();
                     if (cmd.hasOption("tdeep")) {
                         data.addProperty("depth", Integer.parseInt(cmd.getOptionValue("tdeep")));
@@ -119,7 +119,7 @@ public class ServerServiceImpl extends ServerService {
                     data.add("idArr", idArr);
                     request.setData(data);
                 } else {
-                    request.setType(GlobalType.JVMM_TYPE_DUMP_THREAD_INFO);
+                    request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_DUMP_THREAD);
                 }
             }
             break;

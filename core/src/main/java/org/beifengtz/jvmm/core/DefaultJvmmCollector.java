@@ -84,7 +84,7 @@ class DefaultJvmmCollector implements JvmmCollector {
     }
 
     @Override
-    public List<OSFileInfo> getOSFile() {
+    public List<SysFileInfo> getSysFile() {
         return OSDriver.get().getOsFileInfo();
     }
 
@@ -114,7 +114,7 @@ class DefaultJvmmCollector implements JvmmCollector {
     }
 
     @Override
-    public JvmClassLoadingInfo getClassLoading() {
+    public JvmClassLoadingInfo getJvmClassLoading() {
         JvmClassLoadingInfo info = JvmClassLoadingInfo.create();
         ClassLoadingMXBean classLoadingMXBean = ManagementFactory.getClassLoadingMXBean();
         info.setVerbose(classLoadingMXBean.isVerbose());
@@ -125,7 +125,7 @@ class DefaultJvmmCollector implements JvmmCollector {
     }
 
     @Override
-    public List<JvmClassLoaderInfo> getClassLoaders() {
+    public List<JvmClassLoaderInfo> getJvmClassLoaders() {
         try {
             return Unsafe.getClassLoaders();
         } catch (Exception e) {
@@ -134,7 +134,7 @@ class DefaultJvmmCollector implements JvmmCollector {
     }
 
     @Override
-    public JvmCompilationInfo getCompilation() {
+    public JvmCompilationInfo getJvmCompilation() {
         JvmCompilationInfo info = JvmCompilationInfo.create();
         CompilationMXBean compilationMXBean = ManagementFactory.getCompilationMXBean();
         info.setName(compilationMXBean.getName());
@@ -147,7 +147,7 @@ class DefaultJvmmCollector implements JvmmCollector {
     }
 
     @Override
-    public List<JvmGCInfo> getGarbageCollector() {
+    public List<JvmGCInfo> getJvmGC() {
         List<GarbageCollectorMXBean> garbageCollectorMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
         List<JvmGCInfo> infos = new ArrayList<>(garbageCollectorMXBeans.size());
         for (GarbageCollectorMXBean b : garbageCollectorMXBeans) {
@@ -163,7 +163,7 @@ class DefaultJvmmCollector implements JvmmCollector {
     }
 
     @Override
-    public List<JvmMemoryManagerInfo> getMemoryManager() {
+    public List<JvmMemoryManagerInfo> getJvmMemoryManager() {
         List<MemoryManagerMXBean> memoryManagerMXBeans = ManagementFactory.getMemoryManagerMXBeans();
         List<JvmMemoryManagerInfo> infos = new ArrayList<>(memoryManagerMXBeans.size());
         for (MemoryManagerMXBean b : memoryManagerMXBeans) {
@@ -177,7 +177,7 @@ class DefaultJvmmCollector implements JvmmCollector {
     }
 
     @Override
-    public List<JvmMemoryPoolInfo> getMemoryPool() {
+    public List<JvmMemoryPoolInfo> getJvmMemoryPool() {
         List<MemoryPoolMXBean> memoryPoolMXBeans = ManagementFactory.getMemoryPoolMXBeans();
         List<JvmMemoryPoolInfo> infos = new ArrayList<>(memoryPoolMXBeans.size());
         for (MemoryPoolMXBean b : memoryPoolMXBeans) {
@@ -212,7 +212,7 @@ class DefaultJvmmCollector implements JvmmCollector {
     }
 
     @Override
-    public JvmMemoryInfo getMemory() {
+    public JvmMemoryInfo getJvmMemory() {
         MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
         JvmMemoryInfo info = JvmMemoryInfo.create();
         info.setVerbose(memoryMXBean.isVerbose());
@@ -223,7 +223,7 @@ class DefaultJvmmCollector implements JvmmCollector {
     }
 
     @Override
-    public JvmThreadInfo getThreadDynamic() {
+    public JvmThreadInfo getJvmThread() {
         ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
         JvmThreadInfo info = JvmThreadInfo.create();
         info.setThreadCount(threadMXBean.getThreadCount());
@@ -235,17 +235,17 @@ class DefaultJvmmCollector implements JvmmCollector {
     }
 
     @Override
-    public String getThreadInfo(long id) {
-        return getThreadInfo(id, 0);
+    public String getJvmThreadStack(long id) {
+        return getJvmThreadStack(id, 0);
     }
 
     @Override
-    public String[] getThreadInfo(long... ids) {
-        return getThreadInfo(ids, 0);
+    public String[] getJvmThreadStack(long... ids) {
+        return getJvmThreadStack(ids, 0);
     }
 
     @Override
-    public String getThreadInfo(long id, int maxDepth) {
+    public String getJvmThreadStack(long id, int maxDepth) {
         ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
         ThreadInfo info = threadMXBean.getThreadInfo(id, maxDepth);
         if (Objects.nonNull(info)) {
@@ -255,7 +255,7 @@ class DefaultJvmmCollector implements JvmmCollector {
     }
 
     @Override
-    public String[] getThreadInfo(long[] ids, int maxDepth) {
+    public String[] getJvmThreadStack(long[] ids, int maxDepth) {
         ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
         ThreadInfo[] threadInfo = threadMXBean.getThreadInfo(ids, maxDepth);
         return threadInfo2Str(threadInfo);

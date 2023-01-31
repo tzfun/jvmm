@@ -20,7 +20,7 @@ public class TestCollector {
     @Test
     public void testJsonParser() {
         JvmmCollector collector = JvmmFactory.getCollector();
-        JvmMemoryInfo info = collector.getMemory();
+        JvmMemoryInfo info = collector.getJvmMemory();
         System.err.println(info.toJsonStr());
         System.err.println(info);
     }

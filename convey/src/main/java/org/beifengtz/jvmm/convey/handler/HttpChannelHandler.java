@@ -94,15 +94,15 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
         return "org.beifengtz.jvmm";
     }
 
-    protected void response(ChannelHandlerContext ctx, HttpResponseStatus status) {
+    public void response(ChannelHandlerContext ctx, HttpResponseStatus status) {
         response(ctx, status, null, null);
     }
 
-    protected void response(ChannelHandlerContext ctx, HttpResponseStatus status, String data) {
+    public void response(ChannelHandlerContext ctx, HttpResponseStatus status, String data) {
         response(ctx, status, data == null ? null : data.getBytes(StandardCharsets.UTF_8), null);
     }
 
-    protected void response(ChannelHandlerContext ctx, HttpResponseStatus status, byte[] data, Map<String, Object> headers) {
+    public void response(ChannelHandlerContext ctx, HttpResponseStatus status, byte[] data, Map<String, Object> headers) {
         HttpResponse resp;
         if (data == null) {
             resp = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, status);
@@ -117,23 +117,23 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
         ctx.writeAndFlush(resp).addListener(ChannelFutureListener.CLOSE);
     }
 
-    protected void response401(ChannelHandlerContext ctx) {
+    public void response401(ChannelHandlerContext ctx) {
         response(ctx, HttpResponseStatus.UNAUTHORIZED, null, CommonUtil.hasMapOf("WWW-Authenticate", "Basic realm=\"Restricted Access\""));
     }
 
-    protected void response400(ChannelHandlerContext ctx, String msg) {
+    public void response400(ChannelHandlerContext ctx, String msg) {
         response(ctx, HttpResponseStatus.BAD_REQUEST, msg);
     }
 
-    protected void response404(ChannelHandlerContext ctx) {
+    public void response404(ChannelHandlerContext ctx) {
         response(ctx, HttpResponseStatus.NOT_FOUND);
     }
 
-    protected void response405(ChannelHandlerContext ctx) {
+    public void response405(ChannelHandlerContext ctx) {
         response(ctx, HttpResponseStatus.METHOD_NOT_ALLOWED, "Method not allowed");
     }
 
-    protected void response500(ChannelHandlerContext ctx, String msg) {
+    public void response500(ChannelHandlerContext ctx, String msg) {
         response(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR, msg);
     }
 

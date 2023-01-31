@@ -7,7 +7,7 @@ import org.beifengtz.jvmm.common.JsonParsable;
  * @description: 文件系统信息，包含各个磁盘分区的使用情况，磁盘类型
  * @date 14:21 2023/1/31
  */
-public class OSFileInfo implements JsonParsable {
+public class SysFileInfo implements JsonParsable {
 
     private String name;
     private String mount;
@@ -29,18 +29,18 @@ public class OSFileInfo implements JsonParsable {
      */
     private long usable;
 
-    private OSFileInfo() {
+    private SysFileInfo() {
     }
 
-    public static OSFileInfo create() {
-        return new OSFileInfo();
+    public static SysFileInfo create() {
+        return new SysFileInfo();
     }
 
     public String getName() {
         return name;
     }
 
-    public OSFileInfo setName(String name) {
+    public SysFileInfo setName(String name) {
         this.name = name;
         return this;
     }
@@ -49,7 +49,7 @@ public class OSFileInfo implements JsonParsable {
         return mount;
     }
 
-    public OSFileInfo setMount(String mount) {
+    public SysFileInfo setMount(String mount) {
         this.mount = mount;
         return this;
     }
@@ -58,7 +58,7 @@ public class OSFileInfo implements JsonParsable {
         return label;
     }
 
-    public OSFileInfo setLabel(String label) {
+    public SysFileInfo setLabel(String label) {
         this.label = label;
         return this;
     }
@@ -67,7 +67,7 @@ public class OSFileInfo implements JsonParsable {
         return type;
     }
 
-    public OSFileInfo setType(String type) {
+    public SysFileInfo setType(String type) {
         this.type = type;
         return this;
     }
@@ -76,7 +76,7 @@ public class OSFileInfo implements JsonParsable {
         return size;
     }
 
-    public OSFileInfo setSize(long size) {
+    public SysFileInfo setSize(long size) {
         this.size = size;
         return this;
     }
@@ -85,7 +85,7 @@ public class OSFileInfo implements JsonParsable {
         return free;
     }
 
-    public OSFileInfo setFree(long free) {
+    public SysFileInfo setFree(long free) {
         this.free = free;
         return this;
     }
@@ -94,7 +94,7 @@ public class OSFileInfo implements JsonParsable {
         return usable;
     }
 
-    public OSFileInfo setUsable(long usable) {
+    public SysFileInfo setUsable(long usable) {
         this.usable = usable;
         return this;
     }

@@ -22,22 +22,22 @@ class WebApplicationTests {
         CountDownLatch latch = new CountDownLatch(5);
         client.registerListener((response) -> {
             System.out.println("==> " + response.toJsonStr());
-            if (response.getType().equals(GlobalType.JVMM_TYPE_COLLECT_MEMORY_INFO.name())) {
+            if (response.getType().equals(GlobalType.JVMM_TYPE_COLLECT_JVM_MEMORY_INFO.name())) {
                 latch.countDown();
             }
         });
         if (client.connect().await(3, TimeUnit.SECONDS)) {
             System.out.println(client.ping());
-            client.send(JvmmRequest.create().setType(GlobalType.JVMM_TYPE_COLLECT_SYSTEM_STATIC_INFO));
+            client.send(JvmmRequest.create().setType(GlobalType.JVMM_TYPE_COLLECT_SYS_INFO));
             client.send(JvmmRequest.create().setType(GlobalType.JVMM_TYPE_COLLECT_PROCESS_INFO));
-            client.send(JvmmRequest.create().setType(GlobalType.JVMM_TYPE_COLLECT_THREAD_DYNAMIC_INFO));
-            client.send(JvmmRequest.create().setType(GlobalType.JVMM_TYPE_COLLECT_MEMORY_INFO));
+            client.send(JvmmRequest.create().setType(GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_INFO));
+            client.send(JvmmRequest.create().setType(GlobalType.JVMM_TYPE_COLLECT_JVM_MEMORY_INFO));
 
-            client.send(JvmmRequest.create().setType(GlobalType.JVMM_TYPE_COLLECT_MEMORY_INFO));
+            client.send(JvmmRequest.create().setType(GlobalType.JVMM_TYPE_COLLECT_JVM_MEMORY_INFO));
 
             latch.await();
 
-            client.send(JvmmRequest.create().setType(GlobalType.JVMM_TYPE_COLLECT_MEMORY_INFO));
+            client.send(JvmmRequest.create().setType(GlobalType.JVMM_TYPE_COLLECT_JVM_MEMORY_INFO));
             client.close();
             group.shutdownGracefully();
         } else {
