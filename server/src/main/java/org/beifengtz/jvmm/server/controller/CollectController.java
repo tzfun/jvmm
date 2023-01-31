@@ -1,16 +1,14 @@
 package org.beifengtz.jvmm.server.controller;
 
 import com.google.gson.JsonArray;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.HttpResponseStatus;
 import org.beifengtz.jvmm.convey.annotation.HttpController;
 import org.beifengtz.jvmm.convey.annotation.HttpRequest;
 import org.beifengtz.jvmm.convey.annotation.JvmmController;
 import org.beifengtz.jvmm.convey.annotation.JvmmMapping;
 import org.beifengtz.jvmm.convey.annotation.RequestBody;
+import org.beifengtz.jvmm.convey.entity.ResponseFuture;
 import org.beifengtz.jvmm.convey.enums.GlobalType;
 import org.beifengtz.jvmm.convey.enums.Method;
-import org.beifengtz.jvmm.convey.handler.HttpChannelHandler;
 import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.entity.info.*;
 import org.beifengtz.jvmm.server.entity.conf.CollectOptions;
@@ -49,14 +47,14 @@ public class CollectController {
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_CPU_INFO)
     @HttpRequest("/collect/cpu")
-    public void getCPUInfo(ChannelHandlerContext ctx, HttpChannelHandler handler) {
-        JvmmFactory.getCollector().getCPU(info -> handler.response(ctx, HttpResponseStatus.OK, info.toString()));
+    public void getCPUInfo(ResponseFuture future) {
+        JvmmFactory.getCollector().getCPU(future::apply);
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_NETWORK_INFO)
     @HttpRequest("/collect/network")
-    public void getNetInfo(ChannelHandlerContext ctx, HttpChannelHandler handler) {
-        JvmmFactory.getCollector().getNetwork(info -> handler.response(ctx, HttpResponseStatus.OK, info.toString()));
+    public void getNetInfo(ResponseFuture future) {
+        JvmmFactory.getCollector().getNetwork(future::apply);
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_SYS_INFO)

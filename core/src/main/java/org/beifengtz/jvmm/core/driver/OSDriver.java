@@ -40,7 +40,7 @@ public final class OSDriver {
 
     private static final long OSHI_CPU_TICK_WAIT_SECOND = 1;
     private static final long OSHI_NETWORK_WAIT_SECOND = 1;
-    private static final OSDriver INSTANCE = new OSDriver();
+    private static volatile OSDriver INSTANCE;
     private static final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
     private final SystemInfo si;
 
@@ -54,6 +54,13 @@ public final class OSDriver {
     }
 
     public static OSDriver get() {
+        if (INSTANCE == null) {
+            synchronized (OSDriver.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = new OSDriver();
+                }
+            }
+        }
         return INSTANCE;
     }
 
@@ -179,6 +186,7 @@ public final class OSDriver {
 
     /**
      * 获取网卡信息，包含连接数、TCP和UDP在IPv4和IPv6连接信息、各个网卡信息（mac地址、状态、上下行速度）
+     *
      * @param consumer {@link NetInfo}
      */
     public void getNetInfo(Consumer<NetInfo> consumer) {

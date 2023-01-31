@@ -1,8 +1,6 @@
 package org.beifengtz.jvmm.convey.handler;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonPrimitive;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
@@ -16,7 +14,6 @@ import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.util.concurrent.EventExecutor;
-import org.beifengtz.jvmm.common.JsonParsable;
 import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
 import org.beifengtz.jvmm.common.exception.InvalidJvmmMappingException;
 import org.beifengtz.jvmm.common.factory.LoggerFactory;
@@ -28,6 +25,7 @@ import org.beifengtz.jvmm.convey.annotation.HttpController;
 import org.beifengtz.jvmm.convey.annotation.HttpRequest;
 import org.beifengtz.jvmm.convey.annotation.RequestBody;
 import org.beifengtz.jvmm.convey.annotation.RequestParam;
+import org.beifengtz.jvmm.convey.entity.ResponseFuture;
 import org.slf4j.Logger;
 
 import java.io.UnsupportedEncodingException;
@@ -94,15 +92,15 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
         return "org.beifengtz.jvmm";
     }
 
-    public void response(ChannelHandlerContext ctx, HttpResponseStatus status) {
+    protected void response(ChannelHandlerContext ctx, HttpResponseStatus status) {
         response(ctx, status, null, null);
     }
 
-    public void response(ChannelHandlerContext ctx, HttpResponseStatus status, String data) {
+    protected void response(ChannelHandlerContext ctx, HttpResponseStatus status, String data) {
         response(ctx, status, data == null ? null : data.getBytes(StandardCharsets.UTF_8), null);
     }
 
-    public void response(ChannelHandlerContext ctx, HttpResponseStatus status, byte[] data, Map<String, Object> headers) {
+    protected void response(ChannelHandlerContext ctx, HttpResponseStatus status, byte[] data, Map<String, Object> headers) {
         HttpResponse resp;
         if (data == null) {
             resp = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, status);
@@ -117,23 +115,23 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
         ctx.writeAndFlush(resp).addListener(ChannelFutureListener.CLOSE);
     }
 
-    public void response401(ChannelHandlerContext ctx) {
+    protected void response401(ChannelHandlerContext ctx) {
         response(ctx, HttpResponseStatus.UNAUTHORIZED, null, CommonUtil.hasMapOf("WWW-Authenticate", "Basic realm=\"Restricted Access\""));
     }
 
-    public void response400(ChannelHandlerContext ctx, String msg) {
+    protected void response400(ChannelHandlerContext ctx, String msg) {
         response(ctx, HttpResponseStatus.BAD_REQUEST, msg);
     }
 
-    public void response404(ChannelHandlerContext ctx) {
+    protected void response404(ChannelHandlerContext ctx) {
         response(ctx, HttpResponseStatus.NOT_FOUND);
     }
 
-    public void response405(ChannelHandlerContext ctx) {
+    protected void response405(ChannelHandlerContext ctx) {
         response(ctx, HttpResponseStatus.METHOD_NOT_ALLOWED, "Method not allowed");
     }
 
-    public void response500(ChannelHandlerContext ctx, String msg) {
+    protected void response500(ChannelHandlerContext ctx, String msg) {
         response(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR, msg);
     }
 
@@ -199,6 +197,8 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                     parameter[i] = ctx;
                 } else if (getClass().isAssignableFrom(parameterType)) {
                     parameter[i] = this;
+                } else if (ResponseFuture.class.isAssignableFrom(parameterType)) {
+                    parameter[i] = new ResponseFuture(data -> response(ctx, HttpResponseStatus.OK, HandlerProvider.parseResult2Json(data).toString()));
                 } else {
                     parameter[i] = null;
                 }
@@ -209,23 +209,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
             if (result instanceof HttpResponse) {
                 ctx.writeAndFlush(result).addListener(ChannelFutureListener.CLOSE);
             } else if (result != null) {
-                JsonElement data = null;
-                if (result instanceof Boolean) {
-                    data = new JsonPrimitive((Boolean) result);
-                } else if (result instanceof Number) {
-                    data = new JsonPrimitive((Number) result);
-                } else if (result instanceof String) {
-                    data = new JsonPrimitive((String) result);
-                } else if (result instanceof Character) {
-                    data = new JsonPrimitive((Character) result);
-                } else if (result instanceof JsonElement) {
-                    data = (JsonElement) result;
-                } else if (result instanceof JsonParsable) {
-                    data = ((JsonParsable) result).toJson();
-                } else {
-                    data = new Gson().toJsonTree(result);
-                }
-                response(ctx, HttpResponseStatus.OK, data.toString());
+                response(ctx, HttpResponseStatus.OK, HandlerProvider.parseResult2Json(result).toString());
             }
 
         } catch (Exception e) {

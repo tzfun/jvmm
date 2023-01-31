@@ -23,9 +23,9 @@ public class GuidedRunner {
     private static final Scanner scanner = new Scanner(System.in);
 
     public static String askMode() {
-        System.out.println("\n[1] client, Connect to remote jvmm server.");
-        System.out.println("[2] attach, Attach Jvmm to the local java process.");
-        System.out.println("[3] jar, Generate the jar files required by the java agent.");
+        System.out.println("\n[1] client,\tConnect to remote jvmm server.");
+        System.out.println("[2] attach,\tAttach Jvmm to the local java process.");
+        System.out.println("[3] jar,\tGenerate the jar files required by the java agent.");
         System.out.print("\nSelect an execution mode(serial number): ");
 
         String mode = null;
@@ -148,7 +148,7 @@ public class GuidedRunner {
 
             for (int i = 1; i <= jpsList.size(); i++) {
                 JpsResult jps = jpsList.get(i - 1);
-                System.out.printf("[%d] %d %s%n", i, jps.getPid(), jps.getMainClass());
+                System.out.printf("[%d]\t%d\t%s%n", i, jps.getPid(), jps.getMainClass());
             }
 
             System.out.print("\nType 0 to reload processes list.\n");

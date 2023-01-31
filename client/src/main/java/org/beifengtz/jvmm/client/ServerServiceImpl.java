@@ -43,8 +43,8 @@ public class ServerServiceImpl extends ServerService {
                     hasArg = true,
                     required = true,
                     argName = "type",
-                    desc = "Required *. Info type, optional values: \n<system|systemDynamic|classloading|classloader|" +
-                            "compilation|gc|process|memory|memoryManager|memoryPool|thread|threadStack>"
+                    desc = "Required *. Info type, optional values: \n<process|disk|cpu|net|sys|sysMem|sysFile|cLoading|cLoader|" +
+                            "comp|gc|jvmMem|memManager|memPool|thread|threadStack>"
             ),
             @JvmmOption(
                     name = "f",
@@ -71,34 +71,46 @@ public class ServerServiceImpl extends ServerService {
 
         JvmmRequest request = JvmmRequest.create();
         switch (type) {
-            case "system":
+            case "process":
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_PROCESS_INFO);
+                break;
+            case "disk":
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_DISK_INFO);
+                break;
+            case "cpu":
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_CPU_INFO);
+                break;
+            case "net":
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_NETWORK_INFO);
+                break;
+            case "sys":
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_SYS_INFO);
                 break;
-            case "systemDynamic":
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_SYSTEM_DYNAMIC_INFO);
+            case "sysMem":
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_SYS_MEMORY_INFO);
                 break;
-            case "classloading":
+            case "sysFile":
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_SYS_FILE_INFO);
+                break;
+            case "cLoading":
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_CLASSLOADING_INFO);
                 break;
-            case "classloader":
+            case "cLoader":
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_CLASSLOADER_INFO);
                 break;
-            case "compilation":
+            case "comp":
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_COMPILATION_INFO);
                 break;
             case "gc":
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_GC_INFO);
                 break;
-            case "process":
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_PROCESS_INFO);
-                break;
-            case "memory":
+            case "jvmMem":
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_MEMORY_INFO);
                 break;
-            case "memoryManager":
+            case "memManager":
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_MEMORY_MANAGER_INFO);
                 break;
-            case "memoryPool":
+            case "memPool":
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_MEMORY_POOL_INFO);
                 break;
             case "thread":

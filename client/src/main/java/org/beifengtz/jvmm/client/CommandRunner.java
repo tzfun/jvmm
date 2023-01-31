@@ -199,6 +199,7 @@ public class CommandRunner {
             if (checkJarVersion(dir) && serverJarFile.exists()) {
                 return;
             }
+            logger.info("Starting to generate server jar...");
             String path = CommandRunner.class.getProtectionDomain().getCodeSource().getLocation().getPath();
             try {
                 path = URLDecoder.decode(path, "UTF-8");
@@ -213,7 +214,7 @@ public class CommandRunner {
                 }
                 String regex = "async-profiler/.*|com/.*|io/.*|org/benf.*|org/slf4j.*|META-INF/maven/.*" +
                         "|META-INF/native/.*|META-INF/native-image/.*|io.netty.versions.propeties|server-source/.*|" +
-                        ".*jvmm/common/.*|.*jvmm/convey/.*|.*jvmm/core/.*";
+                        ".*jvmm/common/.*|.*jvmm/convey/.*|.*jvmm/core/.*|oshi/.*|oshi.*";
                 FileUtil.copyFromJar(new JarFile(path), tempDir, regex, fileName -> {
                     if (fileName.startsWith("server-source")) {
                         return fileName.replace("server-source/", "");
@@ -277,7 +278,7 @@ public class CommandRunner {
             if (checkJarVersion(dir) && agentJarFile.exists()) {
                 return;
             }
-
+            logger.info("Starting to generate agent jar...");
             FileUtil.writeByteArrayToFile(agentJarFile, IOUtil.toByteArray(CommandRunner.class.getResourceAsStream("/jvmm-agent.jar")));
             logger.info("Generated agent jar to " + agentJarFile.getAbsolutePath());
         } else {
