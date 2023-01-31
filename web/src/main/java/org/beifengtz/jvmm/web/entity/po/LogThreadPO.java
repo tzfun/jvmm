@@ -2,7 +2,7 @@ package org.beifengtz.jvmm.web.entity.po;
 
 import com.baomidou.mybatisplus.annotations.TableName;
 import lombok.Data;
-import org.beifengtz.jvmm.core.entity.mx.ThreadDynamicInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmThreadInfo;
 
 /**
  * Description: TODO
@@ -22,7 +22,7 @@ public class LogThreadPO {
     private long totalStarted;
     private long createTime;
 
-    public void merge(ThreadDynamicInfo info) {
+    public void merge(JvmThreadInfo info) {
         this.peak = info.getPeakThreadCount();
         this.daemon = info.getDaemonThreadCount();
         this.current = info.getThreadCount();

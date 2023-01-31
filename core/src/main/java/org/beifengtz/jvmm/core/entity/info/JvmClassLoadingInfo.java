@@ -1,4 +1,4 @@
-package org.beifengtz.jvmm.core.entity.mx;
+package org.beifengtz.jvmm.core.entity.info;
 
 import org.beifengtz.jvmm.common.JsonParsable;
 
@@ -11,7 +11,7 @@ import org.beifengtz.jvmm.common.JsonParsable;
  *
  * @author beifengtz
  */
-public class ClassLoadingInfo implements JsonParsable {
+public class JvmClassLoadingInfo implements JsonParsable {
     /**
      * 是否开启打印输出
      */
@@ -20,11 +20,11 @@ public class ClassLoadingInfo implements JsonParsable {
     private long unLoadedClassCount;
     private long totalLoadedClassCount;
 
-    private ClassLoadingInfo() {
+    private JvmClassLoadingInfo() {
     }
 
-    public static ClassLoadingInfo create() {
-        return new ClassLoadingInfo();
+    public static JvmClassLoadingInfo create() {
+        return new JvmClassLoadingInfo();
     }
 
     public boolean isVerbose() {

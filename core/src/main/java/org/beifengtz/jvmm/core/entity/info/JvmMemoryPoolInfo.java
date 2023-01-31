@@ -1,4 +1,4 @@
-package org.beifengtz.jvmm.core.entity.mx;
+package org.beifengtz.jvmm.core.entity.info;
 
 import org.beifengtz.jvmm.common.JsonParsable;
 
@@ -14,7 +14,7 @@ import java.lang.management.MemoryUsage;
  *
  * @author beifengtz
  */
-public class MemoryPoolInfo implements JsonParsable {
+public class JvmMemoryPoolInfo implements JsonParsable {
     private String name;
     private boolean valid;
     private String[] managerNames;
@@ -57,11 +57,11 @@ public class MemoryPoolInfo implements JsonParsable {
      */
     private long collectionUsageThresholdCount;
 
-    private MemoryPoolInfo() {
+    private JvmMemoryPoolInfo() {
     }
 
-    public static MemoryPoolInfo create() {
-        return new MemoryPoolInfo();
+    public static JvmMemoryPoolInfo create() {
+        return new JvmMemoryPoolInfo();
     }
 
     public String getName() {

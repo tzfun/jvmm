@@ -1,4 +1,4 @@
-package org.beifengtz.jvmm.core.entity.mx;
+package org.beifengtz.jvmm.core.entity.info;
 
 import org.beifengtz.jvmm.common.JsonParsable;
 
@@ -11,16 +11,16 @@ import org.beifengtz.jvmm.common.JsonParsable;
  *
  * @author beifengtz
  */
-public class CompilationInfo implements JsonParsable {
+public class JvmCompilationInfo implements JsonParsable {
     private String name;
     private boolean timeMonitoringSupported;
     private long totalCompilationTime;
 
-    private CompilationInfo() {
+    private JvmCompilationInfo() {
     }
 
-    public static CompilationInfo create() {
-        return new CompilationInfo();
+    public static JvmCompilationInfo create() {
+        return new JvmCompilationInfo();
     }
 
     public String getName() {

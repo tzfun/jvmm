@@ -75,7 +75,7 @@ public class JvmmSentinelService implements JvmmService {
                         data.setProcess(collector.getProcess());
                     }
                     if (data.getSystem() == null) {
-                        data.setSystem(collector.getSystemStatic());
+                        data.setSystem(collector.getSys());
                     }
                 }
                 String body = data.toJsonStr();

@@ -1,4 +1,4 @@
-package org.beifengtz.jvmm.core.entity.mx;
+package org.beifengtz.jvmm.core.entity.info;
 
 import org.beifengtz.jvmm.common.JsonParsable;
 
@@ -13,7 +13,7 @@ import java.lang.management.MemoryUsage;
  *
  * @author beifengtz
  */
-public class MemoryInfo implements JsonParsable {
+public class JvmMemoryInfo implements JsonParsable {
     /**
      * 堆内存使用情况
      */
@@ -31,11 +31,11 @@ public class MemoryInfo implements JsonParsable {
      */
     private boolean verbose;
 
-    private MemoryInfo() {
+    private JvmMemoryInfo() {
     }
 
-    public static MemoryInfo create(){
-        return new MemoryInfo();
+    public static JvmMemoryInfo create(){
+        return new JvmMemoryInfo();
     }
 
     public MemoryUsage getHeapUsage() {

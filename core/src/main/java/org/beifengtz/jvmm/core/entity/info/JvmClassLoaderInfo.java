@@ -1,4 +1,4 @@
-package org.beifengtz.jvmm.core.entity.mx;
+package org.beifengtz.jvmm.core.entity.info;
 
 import org.beifengtz.jvmm.common.JsonParsable;
 
@@ -8,25 +8,24 @@ import java.util.Objects;
 
 /**
  * Description: TODO
- *
  * Created in 17:59 2022/9/23
  *
  * @author beifengtz
  */
-public class ClassLoaderInfo implements JsonParsable {
+public class JvmClassLoaderInfo implements JsonParsable {
     private String name;
     private int hash;
-    private List<String> parents = new ArrayList<>();
+    private final List<String> parents = new ArrayList<>();
 
-    public static ClassLoaderInfo create(int hash) {
-        return new ClassLoaderInfo().setHash(hash);
+    public static JvmClassLoaderInfo create(int hash) {
+        return new JvmClassLoaderInfo().setHash(hash);
     }
 
     public String getName() {
         return name;
     }
 
-    public ClassLoaderInfo setName(String name) {
+    public JvmClassLoaderInfo setName(String name) {
         this.name = name;
         return this;
     }
@@ -35,7 +34,7 @@ public class ClassLoaderInfo implements JsonParsable {
         return hash;
     }
 
-    private ClassLoaderInfo setHash(int hash) {
+    private JvmClassLoaderInfo setHash(int hash) {
         this.hash = hash;
         return this;
     }
@@ -44,7 +43,7 @@ public class ClassLoaderInfo implements JsonParsable {
         return parents;
     }
 
-    public ClassLoaderInfo addParents(String parent) {
+    public JvmClassLoaderInfo addParents(String parent) {
         this.parents.add(parent);
         return this;
     }
@@ -53,7 +52,7 @@ public class ClassLoaderInfo implements JsonParsable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ClassLoaderInfo that = (ClassLoaderInfo) o;
+        JvmClassLoaderInfo that = (JvmClassLoaderInfo) o;
         return Objects.equals(hash, that.hash);
     }
 

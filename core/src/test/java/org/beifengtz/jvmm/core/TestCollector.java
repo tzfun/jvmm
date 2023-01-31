@@ -1,10 +1,10 @@
 package org.beifengtz.jvmm.core;
 
-import org.beifengtz.jvmm.core.entity.mx.MemoryInfo;
-import org.beifengtz.jvmm.core.entity.mx.SystemDynamicInfo;
+import org.beifengtz.jvmm.common.util.IPUtil;
+import org.beifengtz.jvmm.core.driver.OSDriver;
+import org.beifengtz.jvmm.core.entity.info.JvmMemoryInfo;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 
 /**
@@ -20,15 +20,9 @@ public class TestCollector {
     @Test
     public void testJsonParser() {
         JvmmCollector collector = JvmmFactory.getCollector();
-        MemoryInfo info = collector.getMemory();
+        JvmMemoryInfo info = collector.getMemory();
         System.err.println(info.toJsonStr());
         System.err.println(info);
-    }
-
-    @Test
-    public void testSystemDynamic() {
-        SystemDynamicInfo systemDynamic = JvmmFactory.getCollector().getSystemDynamic();
-        System.out.println(systemDynamic);
     }
 
     @Test
@@ -36,5 +30,23 @@ public class TestCollector {
         String output = "Mem:        8170260     5654384      598400       12160     1917476     2198144";
         String[] split = output.split("\\s+");
         System.out.println(Arrays.toString(split));
+    }
+
+    @Test
+    public void testIp() {
+        System.out.println(IPUtil.getLocalIP());
+        System.out.println(System.getProperties().getProperty("user.name"));
+    }
+
+    @Test
+    public void testOshi() throws Exception {
+        OSDriver osDriver = OSDriver.get();
+        System.out.println(osDriver.getDiskInfo());
+        System.out.println(osDriver.getOsFileInfo());
+        osDriver.getCPUInfo(System.out::println);
+        System.out.println(osDriver.getCPULoadAverage());
+        osDriver.getNetInfo(System.out::println);
+
+        Thread.sleep(2000);
     }
 }

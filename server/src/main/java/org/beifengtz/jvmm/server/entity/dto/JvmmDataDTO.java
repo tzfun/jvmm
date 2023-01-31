@@ -1,16 +1,15 @@
 package org.beifengtz.jvmm.server.entity.dto;
 
 import org.beifengtz.jvmm.common.JsonParsable;
-import org.beifengtz.jvmm.core.entity.mx.ClassLoadingInfo;
-import org.beifengtz.jvmm.core.entity.mx.CompilationInfo;
-import org.beifengtz.jvmm.core.entity.mx.GarbageCollectorInfo;
-import org.beifengtz.jvmm.core.entity.mx.MemoryInfo;
-import org.beifengtz.jvmm.core.entity.mx.MemoryManagerInfo;
-import org.beifengtz.jvmm.core.entity.mx.MemoryPoolInfo;
-import org.beifengtz.jvmm.core.entity.mx.ProcessInfo;
-import org.beifengtz.jvmm.core.entity.mx.SystemDynamicInfo;
-import org.beifengtz.jvmm.core.entity.mx.SystemStaticInfo;
-import org.beifengtz.jvmm.core.entity.mx.ThreadDynamicInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmClassLoadingInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmCompilationInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmGCInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmMemoryInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmMemoryManagerInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmMemoryPoolInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmThreadInfo;
+import org.beifengtz.jvmm.core.entity.info.ProcessInfo;
+import org.beifengtz.jvmm.core.entity.info.SysInfo;
 
 import java.util.List;
 
@@ -24,53 +23,48 @@ import java.util.List;
 public class JvmmDataDTO implements JsonParsable {
     private String node;
 
-    private ClassLoadingInfo classloading;
-    private CompilationInfo compilation;
-    private List<GarbageCollectorInfo> garbageCollector;
-    private MemoryInfo memory;
-    private List<MemoryManagerInfo> memoryManager;
-    private List<MemoryPoolInfo> memoryPool;
-    private SystemDynamicInfo systemDynamic;
-    private ThreadDynamicInfo thread;
+    private JvmClassLoadingInfo classloading;
+    private JvmCompilationInfo compilation;
+    private List<JvmGCInfo> garbageCollector;
+    private JvmMemoryInfo memory;
+    private List<JvmMemoryManagerInfo> memoryManager;
+    private List<JvmMemoryPoolInfo> memoryPool;
+    private JvmThreadInfo thread;
     /**
      * 以下是静态数据
      */
     private ProcessInfo process;
-    private SystemStaticInfo system;
+    private SysInfo system;
 
     public void setNode(String node) {
         this.node = node;
     }
 
-    public void setClassloading(ClassLoadingInfo classloading) {
+    public void setClassloading(JvmClassLoadingInfo classloading) {
         this.classloading = classloading;
     }
 
-    public void setCompilation(CompilationInfo compilation) {
+    public void setCompilation(JvmCompilationInfo compilation) {
         this.compilation = compilation;
     }
 
-    public void setGarbageCollector(List<GarbageCollectorInfo> garbageCollector) {
+    public void setGarbageCollector(List<JvmGCInfo> garbageCollector) {
         this.garbageCollector = garbageCollector;
     }
 
-    public void setMemory(MemoryInfo memory) {
+    public void setMemory(JvmMemoryInfo memory) {
         this.memory = memory;
     }
 
-    public void setMemoryManager(List<MemoryManagerInfo> memoryManager) {
+    public void setMemoryManager(List<JvmMemoryManagerInfo> memoryManager) {
         this.memoryManager = memoryManager;
     }
 
-    public void setMemoryPool(List<MemoryPoolInfo> memoryPool) {
+    public void setMemoryPool(List<JvmMemoryPoolInfo> memoryPool) {
         this.memoryPool = memoryPool;
     }
 
-    public void setSystemDynamic(SystemDynamicInfo systemDynamic) {
-        this.systemDynamic = systemDynamic;
-    }
-
-    public void setThread(ThreadDynamicInfo thread) {
+    public void setThread(JvmThreadInfo thread) {
         this.thread = thread;
     }
 
@@ -78,7 +72,7 @@ public class JvmmDataDTO implements JsonParsable {
         this.process = process;
     }
 
-    public void setSystem(SystemStaticInfo system) {
+    public void setSystem(SysInfo system) {
         this.system = system;
     }
 
@@ -86,35 +80,31 @@ public class JvmmDataDTO implements JsonParsable {
         return node;
     }
 
-    public ClassLoadingInfo getClassloading() {
+    public JvmClassLoadingInfo getClassloading() {
         return classloading;
     }
 
-    public CompilationInfo getCompilation() {
+    public JvmCompilationInfo getCompilation() {
         return compilation;
     }
 
-    public List<GarbageCollectorInfo> getGarbageCollector() {
+    public List<JvmGCInfo> getGarbageCollector() {
         return garbageCollector;
     }
 
-    public MemoryInfo getMemory() {
+    public JvmMemoryInfo getMemory() {
         return memory;
     }
 
-    public List<MemoryManagerInfo> getMemoryManager() {
+    public List<JvmMemoryManagerInfo> getMemoryManager() {
         return memoryManager;
     }
 
-    public List<MemoryPoolInfo> getMemoryPool() {
+    public List<JvmMemoryPoolInfo> getMemoryPool() {
         return memoryPool;
     }
 
-    public SystemDynamicInfo getSystemDynamic() {
-        return systemDynamic;
-    }
-
-    public ThreadDynamicInfo getThread() {
+    public JvmThreadInfo getThread() {
         return thread;
     }
 
@@ -122,7 +112,7 @@ public class JvmmDataDTO implements JsonParsable {
         return process;
     }
 
-    public SystemStaticInfo getSystem() {
+    public SysInfo getSystem() {
         return system;
     }
 }

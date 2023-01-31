@@ -1,4 +1,4 @@
-package org.beifengtz.jvmm.core.entity.mx;
+package org.beifengtz.jvmm.core.entity.info;
 
 import org.beifengtz.jvmm.common.JsonParsable;
 
@@ -11,7 +11,7 @@ import org.beifengtz.jvmm.common.JsonParsable;
  *
  * @author beifengtz
  */
-public class ThreadDynamicInfo implements JsonParsable {
+public class JvmThreadInfo implements JsonParsable {
     private long[] deadlockedThreads;
     /**
      * 启动Java虚拟机或重置峰值以来的活动线程峰值
@@ -30,11 +30,11 @@ public class ThreadDynamicInfo implements JsonParsable {
      */
     private long totalStartedThreadCount;
 
-    private ThreadDynamicInfo(){
+    private JvmThreadInfo() {
     }
 
-    public static ThreadDynamicInfo create(){
-        return new ThreadDynamicInfo();
+    public static JvmThreadInfo create() {
+        return new JvmThreadInfo();
     }
 
     public long[] getDeadlockedThreads() {

@@ -1,4 +1,4 @@
-package org.beifengtz.jvmm.core.entity.mx;
+package org.beifengtz.jvmm.core.entity.info;
 
 
 import org.beifengtz.jvmm.common.JsonParsable;
@@ -12,7 +12,7 @@ import org.beifengtz.jvmm.common.JsonParsable;
  *
  * @author beifengtz
  */
-public class GarbageCollectorInfo implements JsonParsable {
+public class JvmGCInfo implements JsonParsable {
     private String name;
     private boolean valid;
     /**
@@ -25,11 +25,11 @@ public class GarbageCollectorInfo implements JsonParsable {
     private long collectionTime;
     private String[] memoryPoolNames;
 
-    private GarbageCollectorInfo(){
+    private JvmGCInfo(){
     }
 
-    public static GarbageCollectorInfo create(){
-        return new GarbageCollectorInfo();
+    public static JvmGCInfo create(){
+        return new JvmGCInfo();
     }
 
     public String getName() {

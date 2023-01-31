@@ -2,19 +2,20 @@ package org.beifengtz.jvmm.core;
 
 import org.beifengtz.jvmm.common.exception.ExecutionException;
 import org.beifengtz.jvmm.common.factory.LoggerFactory;
-import org.beifengtz.jvmm.common.util.ExecuteNativeUtil;
+import org.beifengtz.jvmm.common.util.IPUtil;
 import org.beifengtz.jvmm.common.util.PidUtil;
 import org.beifengtz.jvmm.common.util.PlatformUtil;
-import org.beifengtz.jvmm.core.entity.mx.*;
+import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
+import org.beifengtz.jvmm.core.driver.OSDriver;
+import org.beifengtz.jvmm.core.entity.info.*;
 import org.beifengtz.jvmm.core.entity.result.LinuxMem;
 import org.slf4j.Logger;
 
-import java.io.File;
 import java.lang.management.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.TimeZone;
+import java.util.function.Consumer;
 
 /**
  * <p>
@@ -33,48 +34,88 @@ class DefaultJvmmCollector implements JvmmCollector {
     }
 
     @Override
-    public SystemStaticInfo getSystemStatic() {
-        SystemStaticInfo info = SystemStaticInfo.create();
+    public SysInfo getSys() {
         OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
-        info.setName(operatingSystemMXBean.getName());
-        info.setArch(operatingSystemMXBean.getArch());
-        info.setVersion(operatingSystemMXBean.getVersion());
-        info.setAvailableProcessors(operatingSystemMXBean.getAvailableProcessors());
-        info.setTimeZone(TimeZone.getDefault().toZoneId().toString());
+        return SysInfo.create().setName(operatingSystemMXBean.getName())
+                .setArch(operatingSystemMXBean.getArch())
+                .setVersion(operatingSystemMXBean.getVersion())
+                .setCpuNum(operatingSystemMXBean.getAvailableProcessors())
+                .setTimeZone(SystemPropertyUtil.get("user.timezone"))
+                .setIp(IPUtil.getLocalIP())
+                .setUser(SystemPropertyUtil.get("user.name"));
+    }
+
+    @Override
+    public SysMemInfo getSysMem() {
+        OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
+        SysMemInfo info = SysMemInfo.create();
+        try {
+            com.sun.management.OperatingSystemMXBean sunSystemMXBean = (com.sun.management.OperatingSystemMXBean) operatingSystemMXBean;
+            info.setCommittedVirtual(sunSystemMXBean.getCommittedVirtualMemorySize())
+                    .setFreePhysical(sunSystemMXBean.getFreePhysicalMemorySize())
+                    .setFreeSwap(sunSystemMXBean.getFreePhysicalMemorySize())
+                    .setTotalPhysical(sunSystemMXBean.getTotalPhysicalMemorySize())
+                    .setTotalSwap(sunSystemMXBean.getTotalSwapSpaceSize());
+
+            if (PlatformUtil.isLinux()) {
+                LinuxMem linuxMemoryResult = OSDriver.get().getLinuxMemoryInfo();
+                info.setBufferCache(linuxMemoryResult.getBuffCache());
+                info.setShared(linuxMemoryResult.getShared());
+            }
+        } catch (Throwable e) {
+            log.warn("Get system dynamic info failed. " + e.getMessage(), e);
+        }
         return info;
+    }
+
+    @Override
+    public void getCPU(Consumer<CPUInfo> consumer) {
+        OSDriver.get().getCPUInfo(consumer);
+    }
+
+    @Override
+    public void getNetwork(Consumer<NetInfo> consumer) {
+        OSDriver.get().getNetInfo(consumer);
+    }
+
+    @Override
+    public List<DiskInfo> getDisk() {
+        return OSDriver.get().getDiskInfo();
+    }
+
+    @Override
+    public List<OSFileInfo> getOSFile() {
+        return OSDriver.get().getOsFileInfo();
     }
 
     @Override
     public ProcessInfo getProcess() {
         ProcessInfo info = ProcessInfo.create();
         RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
-        info.setName(runtimeMXBean.getName());
-        info.setStartTime(runtimeMXBean.getStartTime());
-        info.setUptime(runtimeMXBean.getUptime());
-        info.setPid(PidUtil.currentPid());
-        info.setVmName(runtimeMXBean.getVmName());
-        info.setVmVendor(runtimeMXBean.getVmVendor());
-        info.setVmVersion(runtimeMXBean.getVmVersion());
-        boolean bootClassPathSupported = runtimeMXBean.isBootClassPathSupported();
-        if (bootClassPathSupported) {
+        info.setName(runtimeMXBean.getName())
+                .setStartTime(runtimeMXBean.getStartTime())
+                .setUptime(runtimeMXBean.getUptime())
+                .setPid(PidUtil.currentPid())
+                .setVmName(runtimeMXBean.getVmName())
+                .setVmVendor(runtimeMXBean.getVmVendor())
+                .setVmVersion(runtimeMXBean.getVmVersion())
+                .setVmHome(SystemPropertyUtil.get("java.home"))
+                .setVmManagementSpecVersion(runtimeMXBean.getManagementSpecVersion())
+                .setVmSpecName(runtimeMXBean.getSpecName())
+                .setVmSpecVendor(runtimeMXBean.getSpecVendor())
+                .setVmSpecVersion(runtimeMXBean.getSpecVersion())
+                .setWorkDir(SystemPropertyUtil.get("user.dir"))
+                .setInputArgs(runtimeMXBean.getInputArguments());
+
+        if (runtimeMXBean.isBootClassPathSupported()) {
             info.setBootClassPath(runtimeMXBean.getBootClassPath());
         }
-        info.setBootClassPathSupported(bootClassPathSupported);
-        info.setClassPath(runtimeMXBean.getClassPath());
-        info.setLibraryPath(runtimeMXBean.getLibraryPath());
-        info.setInputArgs(runtimeMXBean.getInputArguments());
-        info.setSystemProperties(runtimeMXBean.getSystemProperties());
-
-        info.setManagementSpecVersion(runtimeMXBean.getManagementSpecVersion());
-        info.setSpecName(runtimeMXBean.getSpecName());
-        info.setSpecVendor(runtimeMXBean.getSpecVendor());
-        info.setSpecVersion(runtimeMXBean.getSpecVersion());
         return info;
     }
 
     @Override
-    public ClassLoadingInfo getClassLoading() {
-        ClassLoadingInfo info = ClassLoadingInfo.create();
+    public JvmClassLoadingInfo getClassLoading() {
+        JvmClassLoadingInfo info = JvmClassLoadingInfo.create();
         ClassLoadingMXBean classLoadingMXBean = ManagementFactory.getClassLoadingMXBean();
         info.setVerbose(classLoadingMXBean.isVerbose());
         info.setLoadedClassCount(classLoadingMXBean.getLoadedClassCount());
@@ -84,7 +125,7 @@ class DefaultJvmmCollector implements JvmmCollector {
     }
 
     @Override
-    public List<ClassLoaderInfo> getClassLoaders() {
+    public List<JvmClassLoaderInfo> getClassLoaders() {
         try {
             return Unsafe.getClassLoaders();
         } catch (Exception e) {
@@ -93,8 +134,8 @@ class DefaultJvmmCollector implements JvmmCollector {
     }
 
     @Override
-    public CompilationInfo getCompilation() {
-        CompilationInfo info = CompilationInfo.create();
+    public JvmCompilationInfo getCompilation() {
+        JvmCompilationInfo info = JvmCompilationInfo.create();
         CompilationMXBean compilationMXBean = ManagementFactory.getCompilationMXBean();
         info.setName(compilationMXBean.getName());
         boolean compilationTimeMonitoringSupported = compilationMXBean.isCompilationTimeMonitoringSupported();
@@ -106,11 +147,11 @@ class DefaultJvmmCollector implements JvmmCollector {
     }
 
     @Override
-    public List<GarbageCollectorInfo> getGarbageCollector() {
+    public List<JvmGCInfo> getGarbageCollector() {
         List<GarbageCollectorMXBean> garbageCollectorMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
-        List<GarbageCollectorInfo> infos = new ArrayList<>(garbageCollectorMXBeans.size());
+        List<JvmGCInfo> infos = new ArrayList<>(garbageCollectorMXBeans.size());
         for (GarbageCollectorMXBean b : garbageCollectorMXBeans) {
-            GarbageCollectorInfo info = GarbageCollectorInfo.create();
+            JvmGCInfo info = JvmGCInfo.create();
             info.setName(b.getName());
             info.setValid(b.isValid());
             info.setCollectionCount(b.getCollectionCount());
@@ -122,11 +163,11 @@ class DefaultJvmmCollector implements JvmmCollector {
     }
 
     @Override
-    public List<MemoryManagerInfo> getMemoryManager() {
+    public List<JvmMemoryManagerInfo> getMemoryManager() {
         List<MemoryManagerMXBean> memoryManagerMXBeans = ManagementFactory.getMemoryManagerMXBeans();
-        List<MemoryManagerInfo> infos = new ArrayList<>(memoryManagerMXBeans.size());
+        List<JvmMemoryManagerInfo> infos = new ArrayList<>(memoryManagerMXBeans.size());
         for (MemoryManagerMXBean b : memoryManagerMXBeans) {
-            MemoryManagerInfo info = MemoryManagerInfo.create();
+            JvmMemoryManagerInfo info = JvmMemoryManagerInfo.create();
             info.setName(b.getName());
             info.setValid(b.isValid());
             info.setMemoryPoolNames(b.getMemoryPoolNames());
@@ -136,11 +177,11 @@ class DefaultJvmmCollector implements JvmmCollector {
     }
 
     @Override
-    public List<MemoryPoolInfo> getMemoryPool() {
+    public List<JvmMemoryPoolInfo> getMemoryPool() {
         List<MemoryPoolMXBean> memoryPoolMXBeans = ManagementFactory.getMemoryPoolMXBeans();
-        List<MemoryPoolInfo> infos = new ArrayList<>(memoryPoolMXBeans.size());
+        List<JvmMemoryPoolInfo> infos = new ArrayList<>(memoryPoolMXBeans.size());
         for (MemoryPoolMXBean b : memoryPoolMXBeans) {
-            MemoryPoolInfo info = MemoryPoolInfo.create();
+            JvmMemoryPoolInfo info = JvmMemoryPoolInfo.create();
             info.setName(b.getName());
             info.setValid(b.isValid());
             info.setManagerNames(b.getMemoryManagerNames());
@@ -171,9 +212,9 @@ class DefaultJvmmCollector implements JvmmCollector {
     }
 
     @Override
-    public MemoryInfo getMemory() {
+    public JvmMemoryInfo getMemory() {
         MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
-        MemoryInfo info = MemoryInfo.create();
+        JvmMemoryInfo info = JvmMemoryInfo.create();
         info.setVerbose(memoryMXBean.isVerbose());
         info.setHeapUsage(memoryMXBean.getHeapMemoryUsage());
         info.setPendingCount(memoryMXBean.getObjectPendingFinalizationCount());
@@ -182,48 +223,9 @@ class DefaultJvmmCollector implements JvmmCollector {
     }
 
     @Override
-    public SystemDynamicInfo getSystemDynamic() {
-        OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
-        SystemDynamicInfo info = SystemDynamicInfo.create();
-
-        try {
-            com.sun.management.OperatingSystemMXBean sunSystemMXBean = (com.sun.management.OperatingSystemMXBean) operatingSystemMXBean;
-            info.setCommittedVirtualMemorySize(sunSystemMXBean.getCommittedVirtualMemorySize());
-            info.setFreePhysicalMemorySize(sunSystemMXBean.getFreePhysicalMemorySize());
-            info.setFreeSwapSpaceSize(sunSystemMXBean.getFreeSwapSpaceSize());
-            info.setProcessCpuLoad(sunSystemMXBean.getProcessCpuLoad());
-            info.setProcessCpuTime(sunSystemMXBean.getProcessCpuTime());
-            info.setSystemCpuLoad(sunSystemMXBean.getSystemCpuLoad());
-            info.setTotalPhysicalMemorySize(sunSystemMXBean.getTotalPhysicalMemorySize());
-            info.setTotalSwapSpaceSize(sunSystemMXBean.getTotalSwapSpaceSize());
-
-            if (PlatformUtil.isLinux()) {
-                LinuxMem linuxMemoryResult = getLinuxMemoryResult();
-                info.setBufferCacheMemorySize(linuxMemoryResult.getBuffCache());
-                info.setSharedMemorySize(linuxMemoryResult.getShared());
-            }
-
-            File[] files = File.listRoots();
-            for (File file : files) {
-                info.addDisk(SystemDynamicInfo.DiskInfo.create()
-                        .setName(file.getCanonicalPath())
-                        .setTotal(file.getTotalSpace())
-                        .setUsable(file.getUsableSpace()));
-            }
-
-        } catch (Throwable e) {
-            log.warn("Get system dynamic info failed. " + e.getMessage(), e);
-        }
-
-        info.setLoadAverage(operatingSystemMXBean.getSystemLoadAverage());
-
-        return info;
-    }
-
-    @Override
-    public ThreadDynamicInfo getThreadDynamic() {
+    public JvmThreadInfo getThreadDynamic() {
         ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
-        ThreadDynamicInfo info = ThreadDynamicInfo.create();
+        JvmThreadInfo info = JvmThreadInfo.create();
         info.setThreadCount(threadMXBean.getThreadCount());
         info.setTotalStartedThreadCount(threadMXBean.getTotalStartedThreadCount());
         info.setDaemonThreadCount(threadMXBean.getDaemonThreadCount());
@@ -277,23 +279,6 @@ class DefaultJvmmCollector implements JvmmCollector {
                 result[i] = info.toString();
             } else {
                 result[i] = null;
-            }
-        }
-        return result;
-    }
-
-    private LinuxMem getLinuxMemoryResult() {
-        List<String> results = ExecuteNativeUtil.execute("free -b");
-        LinuxMem result = new LinuxMem();
-        if (results.size() > 1) {
-            String[] split = results.get(1).split("\\s+");
-            if (split.length > 6) {
-                result.setTotal(Long.parseLong(split[1]));
-                result.setUsed(Long.parseLong(split[2]));
-                result.setFree(Long.parseLong(split[3]));
-                result.setShared(Long.parseLong(split[4]));
-                result.setBuffCache(Long.parseLong(split[5]));
-                result.setAvailable(Long.parseLong(split[6]));
             }
         }
         return result;

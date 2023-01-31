@@ -69,13 +69,9 @@ public interface JvmmService {
             res.setThread(collector.getThreadDynamic());
         }
 
-        if (options.isSystemDynamic()) {
-            res.setSystemDynamic(collector.getSystemDynamic());
-        }
-
         //  下面是静态信息
         if (options.isSystem()) {
-            res.setSystem(collector.getSystemStatic());
+            res.setSystem(collector.getSys());
         }
 
         if (options.isProcess()) {

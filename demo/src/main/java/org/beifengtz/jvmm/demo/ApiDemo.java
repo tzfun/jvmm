@@ -6,7 +6,7 @@ import org.beifengtz.jvmm.core.JvmmCollector;
 import org.beifengtz.jvmm.core.JvmmExecutor;
 import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.JvmmProfiler;
-import org.beifengtz.jvmm.core.entity.mx.*;
+import org.beifengtz.jvmm.core.entity.info.*;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerCounter;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerEvent;
 
@@ -33,16 +33,15 @@ public class ApiDemo {
         //  Java虚拟机：Memory、GC、Class、Thread、Compilation信息
         JvmmCollector collector = JvmmFactory.getCollector();
 
-        MemoryInfo memory = collector.getMemory();
-        List<MemoryManagerInfo> memoryManager = collector.getMemoryManager();
-        List<MemoryPoolInfo> memoryPool = collector.getMemoryPool();
-        SystemStaticInfo systemStatic = collector.getSystemStatic();
-        SystemDynamicInfo systemDynamic = collector.getSystemDynamic();
-        ClassLoadingInfo classLoading = collector.getClassLoading();
-        List<GarbageCollectorInfo> garbageCollector = collector.getGarbageCollector();
-        CompilationInfo compilation = collector.getCompilation();
+        JvmMemoryInfo memory = collector.getMemory();
+        List<JvmMemoryManagerInfo> memoryManager = collector.getMemoryManager();
+        List<JvmMemoryPoolInfo> memoryPool = collector.getMemoryPool();
+        SysInfo systemStatic = collector.getSys();
+        JvmClassLoadingInfo classLoading = collector.getClassLoading();
+        List<JvmGCInfo> garbageCollector = collector.getGarbageCollector();
+        JvmCompilationInfo compilation = collector.getCompilation();
         ProcessInfo process = collector.getProcess();
-        ThreadDynamicInfo threadDynamic = collector.getThreadDynamic();
+        JvmThreadInfo threadDynamic = collector.getThreadDynamic();
         String[] threadsInfo = collector.dumpAllThreads();
 
         //  jvmm执行器

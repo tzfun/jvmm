@@ -9,7 +9,7 @@ import org.beifengtz.jvmm.convey.annotation.RequestBody;
 import org.beifengtz.jvmm.convey.enums.GlobalType;
 import org.beifengtz.jvmm.convey.enums.Method;
 import org.beifengtz.jvmm.core.JvmmFactory;
-import org.beifengtz.jvmm.core.entity.mx.*;
+import org.beifengtz.jvmm.core.entity.info.*;
 import org.beifengtz.jvmm.server.entity.conf.CollectOptions;
 import org.beifengtz.jvmm.server.entity.dto.JvmmDataDTO;
 import org.beifengtz.jvmm.server.entity.dto.ThreadInfoDTO;
@@ -34,25 +34,25 @@ public class CollectController {
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_SYSTEM_STATIC_INFO)
     @HttpRequest("/collect/system_static")
-    public SystemStaticInfo getSystemStaticInfo() {
-        return JvmmFactory.getCollector().getSystemStatic();
+    public SysInfo getSystemStaticInfo() {
+        return JvmmFactory.getCollector().getSys();
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_CLASSLOADING_INFO)
     @HttpRequest("/collect/classloading")
-    public ClassLoadingInfo getClassLoadingInfo() {
+    public JvmClassLoadingInfo getClassLoadingInfo() {
         return JvmmFactory.getCollector().getClassLoading();
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_CLASSLOADER_INFO)
     @HttpRequest("/collect/classloader")
-    public List<ClassLoaderInfo> getClassLoaders() {
+    public List<JvmClassLoaderInfo> getClassLoaders() {
         return JvmmFactory.getCollector().getClassLoaders();
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_COMPILATION_INFO)
     @HttpRequest("/collect/compilation")
-    public CompilationInfo getCompilationInfo() {
+    public JvmCompilationInfo getCompilationInfo() {
         return JvmmFactory.getCollector().getCompilation();
     }
 
@@ -64,25 +64,25 @@ public class CollectController {
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_GARBAGE_COLLECTOR_INFO)
     @HttpRequest("/collect/gc")
-    public List<GarbageCollectorInfo> getGarbageCollectorInfo() {
+    public List<JvmGCInfo> getGarbageCollectorInfo() {
         return JvmmFactory.getCollector().getGarbageCollector();
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_MEMORY_MANAGER_INFO)
     @HttpRequest("/collect/memory_manager")
-    public List<MemoryManagerInfo> getMemoryManagerInfo() {
+    public List<JvmMemoryManagerInfo> getMemoryManagerInfo() {
         return JvmmFactory.getCollector().getMemoryManager();
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_MEMORY_POOL_INFO)
     @HttpRequest("/collect/memory_pool")
-    public List<MemoryPoolInfo> getMemoryPoolInfo() {
+    public List<JvmMemoryPoolInfo> getMemoryPoolInfo() {
         return JvmmFactory.getCollector().getMemoryPool();
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_MEMORY_INFO)
     @HttpRequest("/collect/memory")
-    public MemoryInfo getMemoryInfo() {
+    public JvmMemoryInfo getMemoryInfo() {
         return JvmmFactory.getCollector().getMemory();
     }
 
@@ -94,7 +94,7 @@ public class CollectController {
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_THREAD_DYNAMIC_INFO)
     @HttpRequest("/collect/thread_dynamic")
-    public ThreadDynamicInfo getThreadDynamicInfo() {
+    public JvmThreadInfo getThreadDynamicInfo() {
         return JvmmFactory.getCollector().getThreadDynamic();
     }
 

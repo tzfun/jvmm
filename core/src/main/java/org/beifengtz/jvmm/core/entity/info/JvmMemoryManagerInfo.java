@@ -1,4 +1,4 @@
-package org.beifengtz.jvmm.core.entity.mx;
+package org.beifengtz.jvmm.core.entity.info;
 
 import org.beifengtz.jvmm.common.JsonParsable;
 
@@ -11,16 +11,16 @@ import org.beifengtz.jvmm.common.JsonParsable;
  *
  * @author beifengtz
  */
-public class MemoryManagerInfo implements JsonParsable {
+public class JvmMemoryManagerInfo implements JsonParsable {
     private String name;
     private boolean valid;
     private String[] memoryPoolNames;
 
-    private MemoryManagerInfo(){
+    private JvmMemoryManagerInfo(){
     }
 
-    public static MemoryManagerInfo create(){
-        return new MemoryManagerInfo();
+    public static JvmMemoryManagerInfo create(){
+        return new JvmMemoryManagerInfo();
     }
 
     public String getName() {

@@ -1,8 +1,10 @@
 package org.beifengtz.jvmm.core;
 
-import org.beifengtz.jvmm.core.entity.mx.*;
+import org.beifengtz.jvmm.core.entity.info.*;
 
 import java.util.List;
+import java.util.concurrent.ScheduledFuture;
+import java.util.function.Consumer;
 
 /**
  * <p>
@@ -15,27 +17,35 @@ import java.util.List;
  */
 public interface JvmmCollector {
 
-    SystemStaticInfo getSystemStatic();
+    SysInfo getSys();
+
+    SysMemInfo getSysMem();
+
+    void getCPU(Consumer<CPUInfo> consumer);
+
+    void getNetwork(Consumer<NetInfo> consumer);
+
+    List<DiskInfo> getDisk();
+
+    List<OSFileInfo> getOSFile();
 
     ProcessInfo getProcess();
 
-    ClassLoadingInfo getClassLoading();
+    JvmClassLoadingInfo getClassLoading();
 
-    List<ClassLoaderInfo> getClassLoaders();
+    List<JvmClassLoaderInfo> getClassLoaders();
 
-    CompilationInfo getCompilation();
+    JvmCompilationInfo getCompilation();
 
-    List<GarbageCollectorInfo> getGarbageCollector();
+    List<JvmGCInfo> getGarbageCollector();
 
-    List<MemoryManagerInfo> getMemoryManager();
+    List<JvmMemoryManagerInfo> getMemoryManager();
 
-    List<MemoryPoolInfo> getMemoryPool();
+    List<JvmMemoryPoolInfo> getMemoryPool();
 
-    MemoryInfo getMemory();
+    JvmMemoryInfo getMemory();
 
-    SystemDynamicInfo getSystemDynamic();
-
-    ThreadDynamicInfo getThreadDynamic();
+    JvmThreadInfo getThreadDynamic();
 
     String getThreadInfo(long id);
 

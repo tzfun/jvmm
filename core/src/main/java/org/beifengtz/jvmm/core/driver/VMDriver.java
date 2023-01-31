@@ -1,4 +1,4 @@
-package org.beifengtz.jvmm.core;
+package org.beifengtz.jvmm.core.driver;
 
 import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
@@ -14,10 +14,7 @@ import sun.tools.attach.HotSpotVirtualMachine;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.management.ManagementFactory;
-import java.lang.management.ThreadMXBean;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.util.Properties;
 
@@ -30,21 +27,21 @@ import java.util.Properties;
  *
  * @author beifengtz
  */
-public class VMProvider {
+public class VMDriver {
 
-    private static final Logger log = LoggerFactory.logger(VMProvider.class);
+    private static final Logger log = LoggerFactory.logger(VMDriver.class);
 
-    private static volatile VMProvider INSTANCE;
+    private static volatile VMDriver INSTANCE;
 
     private volatile ClassLoader toolsClassLoader;
 
-    private VMProvider() throws Throwable {
+    private VMDriver() throws Throwable {
         initToolsClassLoader();
     }
 
-    public static synchronized VMProvider getInstance() throws Throwable {
+    public static synchronized VMDriver get() throws Throwable {
         if (INSTANCE == null) {
-            INSTANCE = new VMProvider();
+            INSTANCE = new VMDriver();
         }
         return INSTANCE;
     }
