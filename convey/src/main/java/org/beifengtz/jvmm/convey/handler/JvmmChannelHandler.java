@@ -169,7 +169,6 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
         } else if (cause instanceof IOException) {
             logger().debug(cause.toString());
         } else if (cause instanceof TooLongFrameException) {
-            logger().warn("{} | {}", cause.getMessage(), JvmmConnector.getIpByCtx(ctx));
             ctx.close();
         } else {
             logger().error(cause.toString(), cause);
