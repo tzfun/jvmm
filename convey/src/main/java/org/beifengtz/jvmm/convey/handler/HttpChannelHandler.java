@@ -9,6 +9,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -106,9 +107,9 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
             resp = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, status);
         } else {
             resp = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, status, Unpooled.copiedBuffer(data));
-            System.out.println(new String(data, StandardCharsets.UTF_8));
-            resp.headers().set("Content-Length", data.length);
-            resp.headers().set("Content-Encoding", "UTF-8");
+            resp.headers().set(HttpHeaderNames.CONTENT_LENGTH, data.length);
+            resp.headers().set(HttpHeaderNames.CONTENT_ENCODING, "UTF-8");
+            resp.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/json;charset=utf-8");
         }
 
         if (headers != null && !headers.isEmpty()) {
