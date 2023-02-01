@@ -31,13 +31,9 @@ Jvmm是一个同时支持操作系统监控和Java虚拟机监控的工具，提
 * 支持 JDK 8+
 * 支持 Linux/Mac/Windows
 
-## 获取Jvmm
-
-请前往[release](https://github.com/tzfun/jvmm/releases)下载[最新版的jvmm](https://github.com/tzfun/jvmm/releases/download/2.0.2/jvmm-2.0.2.zip)
-
 ## 快速使用
 
-将Jvmm压缩包解压，可前往[releases](https://github.com/tzfun/jvmm/releases)下载，然后运行
+将Jvmm压缩包解压，请前往[releases](https://github.com/tzfun/jvmm/releases)下载最新版的jvmm，然后运行
 
 ```shell
 java -jar jvmm.jar

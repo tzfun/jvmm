@@ -1,12 +1,12 @@
 ## 一、关于Jvmm客户端
 
-使用客户端之前请先下载好程序包，下载方法见[获取Jvmm客户端](../README.md#获取Jvmm客户端)
+使用客户端之前请先下载好程序包，请前往[releases](https://github.com/tzfun/jvmm/releases)下载最新版的jvmm。
 
 ### 功能介绍
 
-* 支持向本地任意一个Java进程装载Jvmm，并启动或关闭多个Jvmm服务
-* 支持连接远程jvmm服务，并向其发起采集数据、gc、生成火焰图、关闭等指令
-* 生成Java Agent所需的jar包，使用Java Agent时需使用客户端生成依赖jar，详情见[Agent使用文档](../agent/README.md)
+* 支持向本地任意一个Java进程装载Jvmm，并启动或关闭Jvmm Service
+* 支持连接远程Jvmm Server，并向其发起采集数据、gc、生成火焰图、关闭等指令
+* 生成[Java Agent](../agent/README.md#premain方式)和[独立启动Server](../server/README.md#独立启动)所需的依赖包
 
 ## 二、使用
 
@@ -14,7 +14,7 @@
 
 ### 引导式执行
 
-引导式填写参数，你只需要不带任何参数执行jar包然后根据引导提示进行，第一步是模式选择，进入不同的模式填写的参数也会不一样。
+引导式填写参数，你只需要**不带任何参数**执行jar包然后根据引导提示操作，第一步是模式选择，进入不同的模式填写的参数也会不一样。
 
 ```shell
 java -jar jvmm.jar
@@ -26,15 +26,25 @@ java -jar jvmm.jar
 
 命令式执行是在命令行后预填好参数，一次执行。
 
+获取完整的参数信息请执行：
+
+```shell
+java -jar jvmm.jar -h
+```
+
+例如：
+
 ```shell
 java -jar jvmm.jar -m attach -c ./config.yml -pid 12345
 ```
 
-## 三、3种模式使用
+## 三、三种运行模式
 
-### 装载
+PS：**所有模式都可以不带任何参数（引导式）运行，客户端会引导你填写参数信息**，即可以直接执行`java -jar jvmm.jar`。
 
-装载模式可以向本地任意一个正在运行的Java进程装载Jvmm，并根据配置文件配置启动或关闭服务
+### 装载模式
+
+装载模式可以向**本地**任意一个正在运行的Java进程装载Jvmm，并根据配置文件配置启动或关闭服务，你不需要重启你的程序。
 
 引导式执行时需**注意第一步模式请选择attach**，而命令式执行需要通过`-m attach`参数指定进入装载模式，其余参数说明如下：
 
@@ -70,9 +80,9 @@ java -jar jvmm.jar -m attach -c ./config.yml -pid 12345 -a ./jvmm-agent.jar -s .
 > 
 > **step 4**：server.type配置为 *jvmm,http*，执行后将启动**jvmm**和**http** 2 个服务
 
-### 连接
+### 连接模式
 
-假设你已经在一个Java进程中启动了jvmm server（配置的`server.type`为**jvmm**），无论这个进程在本地机器上还是远程机器上，你都可以使用客户端连接模式与其建立联系，并执行一些指令
+假设你已经在一个Java进程中启动了jvmm server（配置的`server.type`为**jvmm**），无论这个进程在本地机器上还是远程机器上，你都可以使用客户端连接模式与其建立连接。
 
 引导式执行时请选择client，命令式执行通过`-m client`参数指定进入，其余参数说明如下：
 
@@ -95,7 +105,7 @@ java -jar jvmm.jar -m client -h 127.0.0.1:5010
 #### 连接模式指令
 
 1. **info** 采集信息指令
-   * `-t`: 必填，采集信息类型，允许值：system, systemDynamic, classloading, classloader, compilation, gc, process, memory, memoryManager, memoryPool, thread, threadStack
+   * `-t`: 必填，采集信息类型，允许值：`process`|`disk`|`diskio`|`cpu`|`net`|`sys`|`sysMem`|`sysFile`|`cLoading`|`cLoader`|`comp`|`gc`|`jvmMem`|`memManager`|`memPool`|`thread`|`threadStack`
    * `-f`: 选填，将采集信息结果输出到文件，不填此值将输出到终端
 
 ```shell
@@ -145,16 +155,9 @@ jad -c java.lang.Object -m toString
 jad -c java.lang.Object -f Object.java
 ```
 
-### 生成依赖Jar
+### 依赖生成模式
 
-在[releases](https://github.com/tzfun/jvmm/releases)下载好`jvmm.jar`包
-
-然后执行命令来生成jar包：
-```shell
-java -jar jvmm.jar -m jar
-```
-
-当然你也可以执行`java -jar jvmm.jar`，然后选择 **3** 来生成jar包：
+引导式执行时请选择jar，命令式执行通过`-m jar`参数指定进入，无其他参数。生成过程中可能比较耗时，请耐心等待，如果执行成功你将看到如下类似内容：
 
 ```text
 E:\Jvmm> java -jar jvmm.jar
@@ -169,10 +172,9 @@ Select an execution mode(serial number): 3
 [Jvmm] [Info ] Starting to generate agent jar...
 [Jvmm] [Info ] Generated agent jar to E:\Jvmm\jvmm-agent.jar
 [Jvmm] [Info ] Generate jar finished.
-
 ```
 
-执行完会生成两个jar包：
+执行完之后会生成两个jar包：
 
-* jvmm-agent.jar: 以`premain agent`方式启动Jvmm必须的jar包，请前往[premain agent使用Jvmm](../agent/README.md#premain方式)查看
-* jvmm-server.jar: 可独立运行的jar包，使用方法请前往[独立启动Server](../server/README.md#独立启动)
+* **jvmm-agent.jar**:：以`premain agent`方式启动Jvmm必须的jar包，请前往[premain agent使用Jvmm](../agent/README.md#premain方式)查看
+* **jvmm-server.jar**：可独立运行的jar包，使用方法请前往[独立启动Server](../server/README.md#独立启动)
