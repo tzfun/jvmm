@@ -9,8 +9,12 @@ dependencies {
     compile(project(':convey'))
     compileOnly("org.slf4j:slf4j-log4j12:${slf4jVersion}")
     compileOnly("org.slf4j:slf4j-jdk14:${slf4jVersion}")
-    compileOnly("ch.qos.logback:logback-core:${logbackVersion}")
-    compileOnly("ch.qos.logback:logback-classic:${logbackVersion}")
+    compileOnly("ch.qos.logback:logback-core:${logbackVersion}") {
+        exclude group: "org.slf4j"
+    }
+    compileOnly("ch.qos.logback:logback-classic:${logbackVersion}") {
+        exclude group: "org.slf4j"
+    }
 }
 
 jar {
