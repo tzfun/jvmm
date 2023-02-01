@@ -1,6 +1,21 @@
 server模块是基于[core模块](../core/README.md)开发的对外提供API服务的程序，如果你不想通过[Java Agent方式](../agent/README.md)启动Jvmm服务，可以直接在你的项目中使用它。
 
-## 依赖引入
+## 独立启动
+
+server jar包支持直接运行启动，你需要先生成`jvmm-server.jar`包，具体生成方法请前往[Jvmm客户端Jar模式生成Agent Jar](../client/README.md#生成依赖Jar)
+
+生成的`jvmm-server.jar`就是我们独立启动的目标jar包，它可以直接运行：
+
+```shell
+java -jar jvmm-server.jar ./config.yml
+```
+
+运行时可以指定一个[配置文件](#配置)，如果你不指定将会按一下顺序寻找配置：
+
+1. jvmm-server.jar包同级目录下的`config.yml`文件
+2. 如果没找到则使用默认配置
+
+## 项目中引入依赖启动
 
 Maven引入
 
@@ -24,13 +39,10 @@ implementation "io.github.tzfun.jvmm:jvmm-server:${jvmm-version}"
 ```java
 public class ServerBootDemo {
     public static void main(String[] args) {
-        ServerBootstrap server = ServerBootstrap.getInstance(Configuration.parseFromUrl("config/config.yml"));
-        server.start(msg -> System.out.println(msg));
+        ServerBootstrap.getInstance(Configuration.parseFromUrl("config/config.yml")).start();
     }
 }
 ```
-
-带有msg回调解析的示例代码请见[ServerBootDemo.java#transformServerCallback()](../demo/src/main/java/org/beifengtz/jvmm/demo/ServerBootDemo.java)
 
 ## 配置
 

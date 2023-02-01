@@ -5,31 +5,29 @@
 
 <div align="center">
 
-![license](https://img.shields.io/badge/license-Apache--2.0-yellow)
+![license](https://img.shields.io/github/license/tzfun/jvmm)
 ![JDK](https://img.shields.io/badge/JDK-1.8+-green)
-[![maven](https://img.shields.io/badge/maven--central-2.0.2-blue)](https://search.maven.org/search?q=g:io.github.tzfun.jvmm)
+[![maven](https://img.shields.io/maven-central/v/io.github.tzfun.jvmm/jvmm-server)](https://search.maven.org/search?q=g:io.github.tzfun.jvmm)
 
 </div>
 
-Jvmm是一个轻量的JVM监控工具，提供有丰富的监控功能：查看JVM信息（Runtime、内存、CPU、线程、GC、ClassLoader等）以及OS信息（内存、磁盘等），可生成火焰图，代码热更，反编译，提供多种服务模式（http、哨兵等）。适合用于服务健康监控、线上调优、排查问题、性能测试等场景。
+Jvmm是一个同时支持操作系统监控和Java虚拟机监控的工具，提供有丰富的监控功能：OS监控（内存状态、CPU负载、磁盘IO吞吐率、磁盘健康状态、网卡IO等）、JVM监控（内存、线程、GC、类加载器等），还提供生成火焰图、Java代码热更、反编译功能，支持以服务形式对外提供接口（http、哨兵等）。适合用于服务健康监控、线上调优、排查问题、性能测试等场景。
 
 ## 功能支持
 
-* 支持监控虚拟机gc统计信息、内存使用情况、内存池信息、类文件加载统计、线程堆栈
-* 支持监控物理机基础信息、内存使用情况、磁盘使用情况、cpu负载
-* 支持获取Java运行时启动参数、虚拟机参数、properties参数
-* 支持远程执行JDK自带工具，jps、jstat、jstack、jinfo、jmap、jcmd等
+* 支持操作系统监控：内存状态、CPU负载、磁盘IO及吞吐率、磁盘健康状态、网卡信息、网卡IO
+* 支持Java虚拟机监控：GC信息、内存使用情况、内存池信息、类加载器、线程堆栈
 * 支持生成火焰图（采样事件包括CPU、内存分配、线程栈、Java方法调用栈等）
-* 支持代码反编译生成
-* 支持代码热更新（可指定ClassLoader）
+* 支持Java代码反编译生成
+* 支持Java代码热更新（可指定ClassLoader）
 * 支持远程执行GC
+* 支持远程执行JDK自带工具命令，包含但不限于jps、jstat、jstack、jinfo、jmap、jcmd等
 * 提供客户端交互工具，支持跨进程attach和远程连接功能
-* 支持三种服务模式，足以应对大部分监控场景，可同时开启多个服务
-  * jvmm服务：独有通信协议，需使用jvmm客户端远程连接调用
-  * http服务：提供Http接口，不限语言远程调用
-  * 哨兵：定时采集数据并上报给订阅者
-* 支持在自己项目中直接使用jvmm，只需引入server模块
-* 支持基于core模块进行二次开发
+* 支持三种服务模式（可同时开启多个服务）：
+  * jvmm服务：独有RPC协议，需使用jvmm客户端远程连接调用，安全可靠
+  * http服务：提供Http接口，不限开发语言远程调用
+  * 哨兵服务：定时采集数据并上报给订阅者
+* 提供多种方式使用：客户端工具跨进程attach启动、添加Java Agent启动、server独立运行启动、项目中Maven / Gradle引用server / core依赖进行自定义开发
 * 支持 JDK 8+
 * 支持 Linux/Mac/Windows
 
@@ -39,7 +37,7 @@ Jvmm是一个轻量的JVM监控工具，提供有丰富的监控功能：查看J
 
 ## 快速使用
 
-将Jvmm压缩包解压，然后运行
+将Jvmm压缩包解压，可前往[releases](https://github.com/tzfun/jvmm/releases)下载，然后运行
 
 ```shell
 java -jar jvmm.jar

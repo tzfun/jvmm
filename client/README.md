@@ -132,16 +132,6 @@ jtool jstat -gc 15243
 6. **shutdown** 关闭正在运行的目标服务
    * `-t`：必填，服务类型，可选值：jvmm、http、sentinel
 
-### 生成Agent依赖Jar
-
-如果你需要在启动时装载jvmm，而不是运行时装载，需要在进程启动参数中添加`-javaagent`参数来指定agent jar包，本工具的jar模式则是生成jvmm agent所需要的jar包
-
-jar模式的作用仅仅是生成两个jar包：jvmm-agent.jar 和 jvmm-server.jar，具体使用方法请前往[Agent使用文档](../agent/README.md)
-
-```shell
-java -jar jvmm.jar -m jar
-```
-
 7. **jad** 代码反编译（仅支持以agent方式载入jvmm的时候使用）
     * `-c`：必填，需要反编译的类路径，例如java.lang.Object
     * `-m`：指定只获取类中的方法，如果不填默认输出整个类源码
@@ -154,3 +144,35 @@ jad -c java.lang.Object -m toString
 
 jad -c java.lang.Object -f Object.java
 ```
+
+### 生成依赖Jar
+
+在[releases](https://github.com/tzfun/jvmm/releases)下载好`jvmm.jar`包
+
+然后执行命令来生成jar包：
+```shell
+java -jar jvmm.jar -m jar
+```
+
+当然你也可以执行`java -jar jvmm.jar`，然后选择 **3** 来生成jar包：
+
+```text
+E:\Jvmm> java -jar jvmm.jar
+
+[1] client,     Connect to remote jvmm server.
+[2] attach,     Attach Jvmm to the local java process.
+[3] jar,        Generate the jar files required by the java agent.
+
+Select an execution mode(serial number): 3
+[Jvmm] [Info ] Starting to generate server jar...
+[Jvmm] [Info ] Generated server jar to E:\Jvmm\jvmm-server.jar
+[Jvmm] [Info ] Starting to generate agent jar...
+[Jvmm] [Info ] Generated agent jar to E:\Jvmm\jvmm-agent.jar
+[Jvmm] [Info ] Generate jar finished.
+
+```
+
+执行完会生成两个jar包：
+
+* jvmm-agent.jar: 以`premain agent`方式启动Jvmm必须的jar包，请前往[premain agent使用Jvmm](../agent/README.md#premain方式)查看
+* jvmm-server.jar: 可独立运行的jar包，使用方法请前往[独立启动Server](../server/README.md#独立启动)
