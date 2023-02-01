@@ -43,7 +43,7 @@ public class ServerServiceImpl extends ServerService {
                     hasArg = true,
                     required = true,
                     argName = "type",
-                    desc = "Required *. Info type, optional values: \n<process|disk|cpu|net|sys|sysMem|sysFile|cLoading|cLoader|" +
+                    desc = "Required *. Info type, optional values: \n<process|disk|diskio|cpu|net|sys|sysMem|sysFile|cLoading|cLoader|" +
                             "comp|gc|jvmMem|memManager|memPool|thread|threadStack>"
             ),
             @JvmmOption(
@@ -76,6 +76,9 @@ public class ServerServiceImpl extends ServerService {
                 break;
             case "disk":
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_DISK_INFO);
+                break;
+            case "diskio":
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_DISK_IO_INFO);
                 break;
             case "cpu":
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_CPU_INFO);

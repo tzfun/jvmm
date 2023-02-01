@@ -45,6 +45,12 @@ public class CollectController {
         return JvmmFactory.getCollector().getDisk();
     }
 
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_DISK_IO_INFO)
+    @HttpRequest("/collect/disk_io")
+    public void getDiskIOInfo(ResponseFuture future) {
+        JvmmFactory.getCollector().getDiskIO(future::apply);
+    }
+
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_CPU_INFO)
     @HttpRequest("/collect/cpu")
     public void getCPUInfo(ResponseFuture future) {

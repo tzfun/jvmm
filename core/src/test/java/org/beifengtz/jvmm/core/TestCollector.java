@@ -46,6 +46,7 @@ public class TestCollector {
         osDriver.getCPUInfo(System.out::println);
         System.out.println(osDriver.getCPULoadAverage());
         osDriver.getNetInfo(System.out::println);
+        osDriver.getDiskIOInfo(System.out::println);
 
         Thread.sleep(2000);
     }

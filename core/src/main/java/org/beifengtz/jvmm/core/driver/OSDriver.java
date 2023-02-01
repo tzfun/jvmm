@@ -2,12 +2,13 @@ package org.beifengtz.jvmm.core.driver;
 
 import org.beifengtz.jvmm.common.util.ExecuteNativeUtil;
 import org.beifengtz.jvmm.core.entity.info.CPUInfo;
+import org.beifengtz.jvmm.core.entity.info.DiskIOInfo;
 import org.beifengtz.jvmm.core.entity.info.DiskInfo;
 import org.beifengtz.jvmm.core.entity.info.DiskInfo.DiskPartition;
 import org.beifengtz.jvmm.core.entity.info.NetInfo;
 import org.beifengtz.jvmm.core.entity.info.NetInfo.NetworkIFInfo;
 import org.beifengtz.jvmm.core.entity.info.SysFileInfo;
-import org.beifengtz.jvmm.core.entity.result.LinuxMem;
+import org.beifengtz.jvmm.core.entity.result.LinuxMemResult;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.CentralProcessor.TickType;
@@ -38,8 +39,6 @@ import java.util.function.Consumer;
  */
 public final class OSDriver {
 
-    private static final long OSHI_CPU_TICK_WAIT_SECOND = 1;
-    private static final long OSHI_NETWORK_WAIT_SECOND = 1;
     private static volatile OSDriver INSTANCE;
     private static final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
     private final SystemInfo si;
@@ -64,11 +63,6 @@ public final class OSDriver {
         return INSTANCE;
     }
 
-    /**
-     * 获取磁盘信息，包含磁盘的名字、模式、挂载分区、IO读写、大小、磁盘队列等
-     *
-     * @return {@link DiskInfo}列表
-     */
     public List<DiskInfo> getDiskInfo() {
         List<HWDiskStore> hwDisks = si.getHardware().getDiskStores();
         List<DiskInfo> disks = new ArrayList<>(hwDisks.size());
@@ -78,11 +72,6 @@ public final class OSDriver {
                     .setName(hwDisk.getName().replaceAll("\\\\|\\.", ""))
                     .setModel(hwDisk.getModel())
                     .setSize(hwDisk.getSize())
-                    .setReads(hwDisk.getReads())
-                    .setReadBytes(hwDisk.getReadBytes())
-                    .setWrites(hwDisk.getWrites())
-                    .setWriteBytes(hwDisk.getWriteBytes())
-                    .setReadWriteTransformTime(hwDisk.getTransferTime())
                     .setCurrentQueueLength(hwDisk.getCurrentQueueLength());
             for (HWPartition partition : hwDisk.getPartitions()) {
                 disk.addPartition(DiskPartition.create()
@@ -92,8 +81,64 @@ public final class OSDriver {
             }
             disks.add(disk);
         }
-
         return disks;
+    }
+
+    /**
+     * 获取磁盘信息，包含磁盘的名字、模式、挂载分区、IO读写、大小、磁盘队列等
+     */
+    public void getDiskIOInfo(Consumer<List<DiskIOInfo>> consumer) {
+        List<HWDiskStore> preHwDisks = si.getHardware().getDiskStores();
+        Map<String, HWDiskStore> diskMap = new HashMap<>(preHwDisks.size());
+        for (HWDiskStore disk : preHwDisks) {
+            diskMap.put(disk.getName(), disk);
+        }
+        executor.schedule(() -> {
+            List<HWDiskStore> hwDisks = si.getHardware().getDiskStores();
+            List<DiskIOInfo> disks = new ArrayList<>(hwDisks.size());
+            for (HWDiskStore disk : hwDisks) {
+                HWDiskStore pre = diskMap.get(disk.getName());
+                DiskIOInfo info = DiskIOInfo.create()
+                        .setName(disk.getName().replaceAll("\\\\|\\.", ""))
+                        .setCurrentQueueLength(disk.getCurrentQueueLength())
+                        .setReadPerSecond(disk.getReads() - pre.getReads())
+                        .setReadBytesPerSecond(disk.getReadBytes() - pre.getReadBytes())
+                        .setWritePerSecond(disk.getWrites() - pre.getWrites())
+                        .setWriteBytesPerSecond(disk.getWriteBytes() - pre.getWriteBytes());
+                disks.add(info);
+            }
+            consumer.accept(disks);
+        }, 1, TimeUnit.SECONDS);
+    }
+
+    /**
+     * 获取指定磁盘的IO信息
+     *
+     * @param name     磁盘名
+     * @param consumer 计算完成时返回{@link DiskIOInfo}信息，如果未找到对应磁盘名返回null
+     */
+    public void getDiskIOInfo(String name, Consumer<DiskIOInfo> consumer) {
+        List<HWDiskStore> hwDisks = si.getHardware().getDiskStores();
+        HWDiskStore pre = hwDisks.stream().filter(o -> o.getName().contains(name)).findAny().orElse(null);
+        if (pre == null) {
+            consumer.accept(null);
+            return;
+        }
+        executor.schedule(() -> {
+            HWDiskStore disk = si.getHardware().getDiskStores().stream().filter(o -> o.getName().contains(name)).findAny().orElse(null);
+            if (disk == null) {
+                consumer.accept(null);
+            } else {
+                DiskIOInfo info = DiskIOInfo.create()
+                        .setName(disk.getName().replaceAll("\\\\|\\.", ""))
+                        .setCurrentQueueLength(disk.getCurrentQueueLength())
+                        .setReadPerSecond(disk.getReads() - pre.getReads())
+                        .setReadBytesPerSecond(disk.getReadBytes() - pre.getReadBytes())
+                        .setWritePerSecond(disk.getWrites() - pre.getWrites())
+                        .setWriteBytesPerSecond(disk.getWriteBytes() - pre.getWriteBytes());
+                consumer.accept(info);
+            }
+        }, 1, TimeUnit.SECONDS);
     }
 
     /**
@@ -151,7 +196,7 @@ public final class OSDriver {
                     .setIoWait((double) ioWait / total)
                     .setIdle((double) idle / total)
                     .setProcess(((com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getProcessCpuLoad()));
-        }, OSHI_CPU_TICK_WAIT_SECOND, TimeUnit.SECONDS);
+        }, 1, TimeUnit.SECONDS);
     }
 
     /**
@@ -165,11 +210,11 @@ public final class OSDriver {
     /**
      * 获取Linux环境下系统内存信息
      *
-     * @return {@link LinuxMem}
+     * @return {@link LinuxMemResult}
      */
-    public LinuxMem getLinuxMemoryInfo() {
+    public LinuxMemResult getLinuxMemoryInfo() {
         List<String> results = ExecuteNativeUtil.execute("free -b");
-        LinuxMem result = new LinuxMem();
+        LinuxMemResult result = new LinuxMemResult();
         if (results.size() > 1) {
             String[] split = results.get(1).split("\\s+");
             if (split.length > 6) {
@@ -223,6 +268,6 @@ public final class OSDriver {
                 info.addNetworkIFInfo(ifInfo);
             }
             consumer.accept(info);
-        }, OSHI_NETWORK_WAIT_SECOND, TimeUnit.SECONDS);
+        }, 1, TimeUnit.SECONDS);
     }
 }

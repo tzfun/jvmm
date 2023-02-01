@@ -24,27 +24,6 @@ public class DiskInfo implements JsonParsable {
      */
     private long size;
     /**
-     * 读次数
-     */
-    private long reads;
-    /**
-     * 读大小，bytes
-     */
-    private long readBytes;
-
-    /**
-     * 写次数
-     */
-    private long writes;
-    /**
-     * 写大小，bytes
-     */
-    private long writeBytes;
-    /**
-     * 读写转换时间，可用以IO效率计算
-     */
-    private long readWriteTransformTime;
-    /**
      * 当前磁盘队列长度，包括已向设备发出的IO请求
      */
     private long currentQueueLength;
@@ -54,7 +33,7 @@ public class DiskInfo implements JsonParsable {
      */
     private final List<DiskPartition> partitions = new ArrayList<>();
 
-    private DiskInfo() {
+    protected DiskInfo() {
     }
 
     public static DiskInfo create() {
@@ -71,26 +50,6 @@ public class DiskInfo implements JsonParsable {
 
     public long getSize() {
         return size;
-    }
-
-    public long getReads() {
-        return reads;
-    }
-
-    public long getReadBytes() {
-        return readBytes;
-    }
-
-    public long getWrites() {
-        return writes;
-    }
-
-    public long getWriteBytes() {
-        return writeBytes;
-    }
-
-    public long getReadWriteTransformTime() {
-        return readWriteTransformTime;
     }
 
     public long getCurrentQueueLength() {
@@ -113,31 +72,6 @@ public class DiskInfo implements JsonParsable {
 
     public DiskInfo setSize(long size) {
         this.size = size;
-        return this;
-    }
-
-    public DiskInfo setReads(long reads) {
-        this.reads = reads;
-        return this;
-    }
-
-    public DiskInfo setReadBytes(long readBytes) {
-        this.readBytes = readBytes;
-        return this;
-    }
-
-    public DiskInfo setWrites(long writes) {
-        this.writes = writes;
-        return this;
-    }
-
-    public DiskInfo setWriteBytes(long writeBytes) {
-        this.writeBytes = writeBytes;
-        return this;
-    }
-
-    public DiskInfo setReadWriteTransformTime(long readWriteTransformTime) {
-        this.readWriteTransformTime = readWriteTransformTime;
         return this;
     }
 

@@ -8,7 +8,7 @@ import org.beifengtz.jvmm.common.util.PlatformUtil;
 import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
 import org.beifengtz.jvmm.core.driver.OSDriver;
 import org.beifengtz.jvmm.core.entity.info.*;
-import org.beifengtz.jvmm.core.entity.result.LinuxMem;
+import org.beifengtz.jvmm.core.entity.result.LinuxMemResult;
 import org.slf4j.Logger;
 
 import java.lang.management.*;
@@ -58,7 +58,7 @@ class DefaultJvmmCollector implements JvmmCollector {
                     .setTotalSwap(sunSystemMXBean.getTotalSwapSpaceSize());
 
             if (PlatformUtil.isLinux()) {
-                LinuxMem linuxMemoryResult = OSDriver.get().getLinuxMemoryInfo();
+                LinuxMemResult linuxMemoryResult = OSDriver.get().getLinuxMemoryInfo();
                 info.setBufferCache(linuxMemoryResult.getBuffCache());
                 info.setShared(linuxMemoryResult.getShared());
             }
@@ -81,6 +81,16 @@ class DefaultJvmmCollector implements JvmmCollector {
     @Override
     public List<DiskInfo> getDisk() {
         return OSDriver.get().getDiskInfo();
+    }
+
+    @Override
+    public void getDiskIO(Consumer<List<DiskIOInfo>> consumer) {
+        OSDriver.get().getDiskIOInfo(consumer);
+    }
+
+    @Override
+    public void getDiskIO(String name, Consumer<DiskIOInfo> consumer) {
+        OSDriver.get().getDiskIOInfo(name, consumer);
     }
 
     @Override

@@ -9,7 +9,7 @@ package org.beifengtz.jvmm.core.entity.result;
  *
  * @author beifengtz
  */
-public class LinuxMem {
+public class LinuxMemResult {
     private long total;
     private long used;
     private long free;
@@ -21,7 +21,7 @@ public class LinuxMem {
         return total;
     }
 
-    public LinuxMem setTotal(long total) {
+    public LinuxMemResult setTotal(long total) {
         this.total = total;
         return this;
     }
@@ -30,7 +30,7 @@ public class LinuxMem {
         return used;
     }
 
-    public LinuxMem setUsed(long used) {
+    public LinuxMemResult setUsed(long used) {
         this.used = used;
         return this;
     }
@@ -39,7 +39,7 @@ public class LinuxMem {
         return free;
     }
 
-    public LinuxMem setFree(long free) {
+    public LinuxMemResult setFree(long free) {
         this.free = free;
         return this;
     }
@@ -48,7 +48,7 @@ public class LinuxMem {
         return shared;
     }
 
-    public LinuxMem setShared(long shared) {
+    public LinuxMemResult setShared(long shared) {
         this.shared = shared;
         return this;
     }
@@ -57,7 +57,7 @@ public class LinuxMem {
         return buffCache;
     }
 
-    public LinuxMem setBuffCache(long buffCache) {
+    public LinuxMemResult setBuffCache(long buffCache) {
         this.buffCache = buffCache;
         return this;
     }
@@ -66,7 +66,7 @@ public class LinuxMem {
         return available;
     }
 
-    public LinuxMem setAvailable(long available) {
+    public LinuxMemResult setAvailable(long available) {
         this.available = available;
         return this;
     }
