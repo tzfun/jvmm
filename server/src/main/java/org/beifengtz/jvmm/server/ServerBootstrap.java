@@ -7,6 +7,7 @@ import io.netty.util.concurrent.Promise;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.logger.LoggerLevel;
+import org.beifengtz.jvmm.common.util.IPUtil;
 import org.beifengtz.jvmm.convey.DefaultInternalLoggerFactory;
 import org.beifengtz.jvmm.server.entity.conf.Configuration;
 import org.beifengtz.jvmm.server.entity.conf.ServerConf;
@@ -133,6 +134,44 @@ public class ServerBootstrap {
 
     public Instrumentation getInstrumentation() {
         return instrumentation;
+    }
+
+    public void start() {
+        Logger logger = LoggerFactory.logger(ServerApplication.class);
+        long start = System.currentTimeMillis();
+        Function<Object, Object> callback = msg -> {
+            String content = msg.toString();
+            if ("start".equals(content)) {
+                logger.info("Start jvmm services ...");
+            } else if (content.startsWith("info:")) {
+                logger.info(content.substring(content.indexOf(":") + 1));
+            } else if (content.startsWith("warn:")) {
+                logger.warn(content.substring(content.indexOf(":") + 1));
+            } else if (content.startsWith("ok:")) {
+                String[] split = content.split(":");
+                if ("new".equals(split[1])) {
+                    if ("sentinel".equals(split[2])) {
+                        logger.info("New service started: [sentinel]");
+                    } else {
+                        logger.info("New service started on {}:{} => [{}]", IPUtil.getLocalIP(), split[3], split[2]);
+                    }
+                } else if ("ready".equals(split[1])) {
+                    if ("sentinel".equals(split[2])) {
+                        logger.info("Service already started: [sentinel]");
+                    } else {
+                        logger.info("Service already started on {} => [{}]", split[3], split[2]);
+                    }
+                } else {
+                    logger.info(content);
+                }
+            } else if ("end".equals(content)) {
+                logger.info("Jvmm server boot finished in " + (System.currentTimeMillis() - start) + " ms");
+            } else {
+                logger.info(content);
+            }
+            return null;
+        };
+        start(callback);
     }
 
     public void start(Function<Object, Object> callback) {

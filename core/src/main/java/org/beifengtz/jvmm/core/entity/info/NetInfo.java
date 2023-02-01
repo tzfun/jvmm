@@ -136,13 +136,13 @@ public class NetInfo implements JsonParsable {
          */
         private long mtu;
         /**
-         * 当前发送速率， bytes per second
+         * 当前发送速率
          */
-        private double sentSpeed;
+        private double sentBytesPerSecond;
         /**
-         * 当前接收速率，bytes per second
+         * 当前接收速率
          */
-        private double recvSpeed;
+        private double recvBytesPerSecond;
         /**
          * 总收包大小，bytes
          */
@@ -231,21 +231,21 @@ public class NetInfo implements JsonParsable {
             return this;
         }
 
-        public double getSentSpeed() {
-            return sentSpeed;
+        public double getSentBytesPerSecond() {
+            return sentBytesPerSecond;
         }
 
-        public NetworkIFInfo setSentSpeed(double sentSpeed) {
-            this.sentSpeed = sentSpeed;
+        public NetworkIFInfo setSentBytesPerSecond(double sentBytesPerSecond) {
+            this.sentBytesPerSecond = sentBytesPerSecond;
             return this;
         }
 
-        public double getRecvSpeed() {
-            return recvSpeed;
+        public double getRecvBytesPerSecond() {
+            return recvBytesPerSecond;
         }
 
-        public NetworkIFInfo setRecvSpeed(double recvSpeed) {
-            this.recvSpeed = recvSpeed;
+        public NetworkIFInfo setRecvBytesPerSecond(double recvBytesPerSecond) {
+            this.recvBytesPerSecond = recvBytesPerSecond;
             return this;
         }
 

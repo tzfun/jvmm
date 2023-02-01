@@ -263,8 +263,8 @@ public final class OSDriver {
                         .setRecvCount(networkIF.getPacketsRecv())
                         .setSentBytes(networkIF.getBytesSent())
                         .setSentCount(networkIF.getPacketsSent())
-                        .setRecvSpeed(networkIF.getBytesRecv() - networkIFMap.get(networkIF.getName()).getBytesRecv())
-                        .setSentSpeed(networkIF.getBytesSent() - networkIFMap.get(networkIF.getName()).getBytesSent());
+                        .setRecvBytesPerSecond(networkIF.getBytesRecv() - networkIFMap.get(networkIF.getName()).getBytesRecv())
+                        .setSentBytesPerSecond(networkIF.getBytesSent() - networkIFMap.get(networkIF.getName()).getBytesSent());
                 info.addNetworkIFInfo(ifInfo);
             }
             consumer.accept(info);
