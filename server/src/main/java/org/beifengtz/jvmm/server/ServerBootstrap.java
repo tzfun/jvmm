@@ -248,7 +248,7 @@ public class ServerBootstrap {
                 logger().error(msg);
             }
         } catch (Throwable e) {
-            logger().error("Jvmm service start failed " + e.getMessage(), e);
+            logger().error("Jvmm service start failed: " + e.getMessage(), e);
             callback.apply(e.getMessage());
             callback.apply("end");
         }

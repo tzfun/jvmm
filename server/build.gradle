@@ -24,6 +24,10 @@ jar {
     def jarName = "jvmm-server.jar"
     archiveName(jarName)
 
+    manifest {
+        attributes 'Main-Class': 'org.beifengtz.jvmm.server.ServerApplication'
+    }
+
     //  发布时去掉
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }

@@ -3,7 +3,7 @@ name: jvmm_server
 
 server:
   # Config server type, jvmm is the default type. You can enable multiple options like this: http,sentinel,jvmm
-  type: jvmm
+  type: jvmm,http
 
   # Jvmm server config options
   # The difference between jvmm server and http server is that jvmm server provides the encryption function of communication messages,

@@ -11,7 +11,7 @@ package org.beifengtz.jvmm.server.entity.conf;
  */
 public class LogConf {
     private String level = "info";
-    private boolean useJvmm;
+    private boolean useJvmm = true;
 
     public String getLevel() {
         return level;

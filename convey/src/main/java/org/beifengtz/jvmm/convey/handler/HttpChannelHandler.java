@@ -106,7 +106,9 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
             resp = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, status);
         } else {
             resp = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, status, Unpooled.copiedBuffer(data));
+            System.out.println(new String(data, StandardCharsets.UTF_8));
             resp.headers().set("Content-Length", data.length);
+            resp.headers().set("Content-Encoding", "UTF-8");
         }
 
         if (headers != null && !headers.isEmpty()) {

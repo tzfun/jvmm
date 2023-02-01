@@ -28,9 +28,6 @@ public class ServerBootDemo {
         LoggerInitializer.init(LoggerLevel.INFO);
         Logger logger = LoggerFactory.logger(ServerBootDemo.class);
 
-
-
-
         InputStream is = ServerBootDemo.class.getResourceAsStream("/config.yml");
         if (is != null) {
             //  从resource中读取配置文件，除此之外你也可以自己通过代码构造Configuration

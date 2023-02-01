@@ -54,7 +54,7 @@ public class HttpServerHandlerProvider implements HandlerProvider {
 
     private void loadSslContext() {
         SslConf sslConf = ServerContext.getConfiguration().getServer().getHttp().getSsl();
-        if (sslConf != null) {
+        if (sslConf != null && sslConf.isEnable()) {
             File certCaFile = new File(sslConf.getCertCa());
             File certFile = new File(sslConf.getCert());
             File certKeyFile = new File(sslConf.getCertKey());

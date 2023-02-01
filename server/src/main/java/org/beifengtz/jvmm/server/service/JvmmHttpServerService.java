@@ -9,6 +9,8 @@ import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
 import org.beifengtz.jvmm.convey.channel.HttpServerChannelInitializer;
 import org.beifengtz.jvmm.server.ServerContext;
+import org.beifengtz.jvmm.server.entity.conf.HttpServerConf;
+import org.beifengtz.jvmm.server.entity.conf.JvmmServerConf;
 import org.beifengtz.jvmm.server.handler.HttpServerHandlerProvider;
 import org.slf4j.Logger;
 
@@ -26,6 +28,11 @@ public class JvmmHttpServerService extends AbstractListenerServerService {
     private static final Logger logger = LoggerFactory.logger(JvmmHttpServerService.class);
 
     protected Channel channel;
+
+    @Override
+    protected HttpServerConf getConf() {
+        return ServerContext.getConfiguration().getServer().getHttp();
+    }
 
     @Override
     protected Logger logger() {
