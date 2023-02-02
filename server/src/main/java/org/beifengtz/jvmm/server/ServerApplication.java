@@ -3,6 +3,7 @@ package org.beifengtz.jvmm.server;
 import org.beifengtz.jvmm.server.entity.conf.Configuration;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.file.Files;
@@ -15,7 +16,7 @@ import java.nio.file.Paths;
  */
 public class ServerApplication {
 
-    private static Configuration loadConf(String[] args) {
+    private static Configuration loadConf(String[] args) throws IOException {
         if (args.length > 0) {
             File file = new File(args[0]);
             if (file.exists()) {
@@ -29,7 +30,12 @@ public class ServerApplication {
             if (is == null) {
                 File file = new File(System.getProperty("user.dir") + "/config.yml");
                 if (file.exists()) {
-                    return Configuration.parseFromUrl(file.getAbsolutePath());
+                    return Configuration.parseFromYamlFile(file);
+                } else {
+                    file = new File(System.getProperty("user.dir") + "/config/config.yml");
+                    if (file.exists()) {
+                        return Configuration.parseFromYamlFile(file);
+                    }
                 }
             } else {
                 return Configuration.parseFromStream(is);

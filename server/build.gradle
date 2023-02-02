@@ -15,6 +15,7 @@ dependencies {
     compileOnly("ch.qos.logback:logback-classic:${logbackVersion}") {
         exclude group: "org.slf4j"
     }
+    compile "org.yaml:snakeyaml:${snakeyamlVersion}"
 }
 
 jar {

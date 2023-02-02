@@ -9,7 +9,7 @@ package org.beifengtz.jvmm.server.entity.conf;
  *
  * @author beifengtz
  */
-public class SubscriberConf {
+public class SentinelSubscriberConf {
     private String url;
     private AuthOptionConf auth;
 
@@ -17,7 +17,7 @@ public class SubscriberConf {
         return url;
     }
 
-    public SubscriberConf setUrl(String url) {
+    public SentinelSubscriberConf setUrl(String url) {
         this.url = url;
         return this;
     }
@@ -26,7 +26,7 @@ public class SubscriberConf {
         return auth;
     }
 
-    public SubscriberConf setAuth(AuthOptionConf auth) {
+    public SentinelSubscriberConf setAuth(AuthOptionConf auth) {
         this.auth = auth;
         return this;
     }

@@ -1,5 +1,8 @@
 package org.beifengtz.jvmm.server.entity.conf;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * <p>
  * Description: TODO
@@ -13,7 +16,7 @@ public class ServerConf {
     private String type = "jvmm";
     private JvmmServerConf jvmm = new JvmmServerConf();
     private HttpServerConf http;
-    private SentinelConf sentinel;
+    private List<SentinelConf> sentinel = new ArrayList<>();
 
     public String getType() {
         return type;
@@ -42,12 +45,22 @@ public class ServerConf {
         return this;
     }
 
-    public SentinelConf getSentinel() {
+    public List<SentinelConf> getSentinel() {
         return sentinel;
     }
 
-    public ServerConf setSentinel(SentinelConf sentinel) {
+    public ServerConf setSentinel(List<SentinelConf> sentinel) {
         this.sentinel = sentinel;
+        return this;
+    }
+
+    public ServerConf addSentinel(SentinelConf sentinel) {
+        this.sentinel.add(sentinel);
+        return this;
+    }
+
+    public ServerConf clearSentinel() {
+        this.sentinel.clear();
         return this;
     }
 }

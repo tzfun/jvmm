@@ -103,6 +103,12 @@ public class ServerContext {
         return boosGroup;
     }
 
+    /**
+     * 关闭指定某一个服务
+     *
+     * @param type {@link ServerType}
+     * @return true-服务已成功关闭  false-服务未启动
+     */
     public static boolean stop(ServerType type) {
         JvmmService service = serviceContainer.get(type);
         if (service != null) {
@@ -111,6 +117,13 @@ public class ServerContext {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 关闭所有服务
+     */
+    public static void stopAll() {
+        ServerBootstrap.getInstance().stop();
     }
 
     public static JvmmService getService(ServerType type) {

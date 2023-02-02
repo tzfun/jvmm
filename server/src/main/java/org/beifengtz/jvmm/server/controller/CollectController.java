@@ -1,6 +1,7 @@
 package org.beifengtz.jvmm.server.controller;
 
 import com.google.gson.JsonArray;
+import org.beifengtz.jvmm.common.factory.ExecutorFactory;
 import org.beifengtz.jvmm.convey.annotation.HttpController;
 import org.beifengtz.jvmm.convey.annotation.HttpRequest;
 import org.beifengtz.jvmm.convey.annotation.JvmmController;
@@ -11,9 +12,8 @@ import org.beifengtz.jvmm.convey.enums.GlobalType;
 import org.beifengtz.jvmm.convey.enums.Method;
 import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.entity.info.*;
-import org.beifengtz.jvmm.server.entity.conf.CollectOptions;
-import org.beifengtz.jvmm.server.entity.dto.JvmmDataDTO;
 import org.beifengtz.jvmm.server.entity.dto.ThreadInfoDTO;
+import org.beifengtz.jvmm.server.enums.CollectionType;
 import org.beifengtz.jvmm.server.service.JvmmService;
 
 import java.util.ArrayList;
@@ -157,7 +157,11 @@ public class CollectController {
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_BATCH)
     @HttpRequest(value = "/collect/by_options", method = Method.POST)
-    public JvmmDataDTO collectBatch(@RequestBody CollectOptions options) {
-        return JvmmService.collectByOptions(options);
+    public void collectBatch(@RequestBody List<CollectionType> options, ResponseFuture future) {
+        JvmmService.collectByOptions(options, pair -> {
+            if (pair.getLeft().get() <= 0) {
+                future.apply(pair.getRight());
+            }
+        });
     }
 }

@@ -39,6 +39,7 @@ tasks.compileJava.configure {
                 include 'config.yml'
                 include 'module-info.class'
                 include 'org/beifengtz/jvmm/server/**'
+                include 'org/yaml/**'
                 include 'META-INF/INDEX.LIST'
                 include 'META-INF/MANIFEST.MF'
             }

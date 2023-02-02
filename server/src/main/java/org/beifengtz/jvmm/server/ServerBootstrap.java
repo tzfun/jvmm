@@ -136,6 +136,9 @@ public class ServerBootstrap {
         return instrumentation;
     }
 
+    /**
+     * 启动Server，使用默认的callback处理逻辑
+     */
     public void start() {
         Logger logger = LoggerFactory.logger(ServerApplication.class);
         long start = System.currentTimeMillis();
@@ -174,6 +177,11 @@ public class ServerBootstrap {
         start(callback);
     }
 
+    /**
+     * 启动Server，启动信息会由callback回传
+     *
+     * @param callback 启动信息，包含日志信息
+     */
     public void start(Function<Object, Object> callback) {
         callback.apply("start");
         try {
@@ -293,6 +301,9 @@ public class ServerBootstrap {
         }
     }
 
+    /**
+     * 关闭所有服务，如果有agent向agent通知服务关闭
+     */
     public void stop() {
         for (ServerType server : ServerType.values()) {
             try {

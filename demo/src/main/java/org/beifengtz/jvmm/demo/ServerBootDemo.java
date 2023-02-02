@@ -10,8 +10,7 @@ import org.beifengtz.jvmm.server.entity.conf.JvmmServerConf;
 import org.beifengtz.jvmm.server.entity.conf.LogConf;
 import org.beifengtz.jvmm.server.entity.conf.SentinelConf;
 import org.beifengtz.jvmm.server.entity.conf.ServerConf;
-import org.beifengtz.jvmm.server.entity.conf.SslConf;
-import org.beifengtz.jvmm.server.entity.conf.SubscriberConf;
+import org.beifengtz.jvmm.server.entity.conf.SentinelSubscriberConf;
 import org.slf4j.Logger;
 
 import java.io.InputStream;
@@ -56,8 +55,8 @@ public class ServerBootDemo {
                 .setAuth(globalAuth);
 
         SentinelConf sentinel = new SentinelConf()
-                .addSubscribers(new SubscriberConf().setUrl("http://exaple.jvmm.com/subscriber"))
-                .addSubscribers(new SubscriberConf().setUrl("http://127.0.0.1:8080/subscriber")
+                .addSubscribers(new SentinelSubscriberConf().setUrl("http://exaple.jvmm.com/subscriber"))
+                .addSubscribers(new SentinelSubscriberConf().setUrl("http://127.0.0.1:8080/subscriber")
                         .setAuth(new AuthOptionConf().setEnable(true)
                                 .setUsername("auth-account")
                                 .setPassword("auth-password")))

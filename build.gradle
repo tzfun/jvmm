@@ -16,6 +16,7 @@ ext {
     commonsCli = "1.5.0"
     cfrVersion = "0.152"
     oshiVersion = "6.4.0"
+    snakeyamlVersion = "1.29"
 }
 
 subprojects {
