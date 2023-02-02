@@ -188,6 +188,7 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
 
     public abstract Logger logger();
 
+    @SuppressWarnings("unchecked")
     public void handleRequest(ChannelHandlerContext ctx, JvmmRequest reqMsg) {
         try {
             if (!handleBefore(ctx, reqMsg)) {
@@ -257,8 +258,10 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
                                 .setData(HandlerProvider.parseResult2Json(data));
                         ctx.channel().writeAndFlush(response.serialize());
                     });
+                } else if (parameterType.isAssignableFrom(Enum.class)) {
+                    parameter[i] = Enum.valueOf((Class<? extends Enum>)parameterType, reqMsg.getData().toString());
                 } else {
-                    parameter[i] = new Gson().fromJson(reqMsg.getData(), parameterType);
+                    parameter[i] = new Gson().fromJson(reqMsg.getData(), method.getGenericParameterTypes()[i]);
                 }
             }
 

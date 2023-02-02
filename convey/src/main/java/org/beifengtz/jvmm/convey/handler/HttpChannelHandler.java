@@ -30,6 +30,7 @@ import org.beifengtz.jvmm.convey.entity.ResponseFuture;
 import org.slf4j.Logger;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -139,6 +140,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) throws Exception {
         PairKey<URI, String> pair = filterUri(ctx, msg);
         if (pair == null) {
@@ -162,6 +164,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                 }
             });
 
+            Annotation[][] parameterAnnotations = method.getParameterAnnotations();
             Class<?>[] parameterTypes = method.getParameterTypes();
             Object[] parameter = new Object[parameterTypes.length];
             for (int i = 0; i < parameterTypes.length; i++) {
@@ -170,29 +173,35 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                     parameter[i] = ctx.channel();
                 } else if (FullHttpRequest.class.isAssignableFrom(parameterType)) {
                     parameter[i] = null;
-                } else if (parameterType.isAnnotationPresent(RequestBody.class)) {
-                    byte[] body = getBody(msg);
-                    if (String.class.isAssignableFrom(parameterType)) {
-                        parameter[i] = body == null ? null : new String(body, StandardCharsets.UTF_8);
-                    } else {
-                        parameter[i] = body == null ? null : new Gson().fromJson(new String(body, StandardCharsets.UTF_8), parameterType);
-                    }
-                } else if (parameterType.isAnnotationPresent(RequestParam.class)) {
-                    RequestParam rp = parameterType.getAnnotation(RequestParam.class);
-                    String key = "".equals(rp.value()) ? method.getParameters()[i].getName() : rp.value();
-                    String value = params.get(key);
-                    if (parameterType.isAssignableFrom(String.class)) {
-                        parameter[i] = value;
-                    } else if (parameterType.isAssignableFrom(int.class)) {
-                        parameter[i] = Integer.parseInt(value);
-                    } else if (parameterType.isAssignableFrom(double.class)) {
-                        parameter[i] = Double.parseDouble(value);
-                    } else if (parameterType.isAssignableFrom(boolean.class)) {
-                        parameter[i] = Boolean.parseBoolean(value);
-                    } else if (parameterType.isAssignableFrom(long.class)) {
-                        parameter[i] = Long.parseLong(value);
-                    } else {
-                        throw new IllegalArgumentException("Can not resolve param " + key);
+                } else if (parameterAnnotations[i].length > 0) {
+                    for (Annotation anno : parameterAnnotations[i]) {
+                        if (anno.annotationType() == RequestBody.class) {
+                            byte[] body = getBody(msg);
+                            if (String.class.isAssignableFrom(parameterType)) {
+                                parameter[i] = body == null ? null : new String(body, StandardCharsets.UTF_8);
+                            } else {
+                                parameter[i] = body == null ? null : new Gson().fromJson(new String(body, StandardCharsets.UTF_8), method.getGenericParameterTypes()[i]);
+                            }
+                        } else if (anno.annotationType() == RequestParam.class) {
+                            RequestParam rp = parameterType.getAnnotation(RequestParam.class);
+                            String key = "".equals(rp.value()) ? method.getParameters()[i].getName() : rp.value();
+                            String value = params.get(key);
+                            if (parameterType.isAssignableFrom(String.class)) {
+                                parameter[i] = value;
+                            } else if (parameterType.isAssignableFrom(int.class)) {
+                                parameter[i] = Integer.parseInt(value);
+                            } else if (parameterType.isAssignableFrom(double.class)) {
+                                parameter[i] = Double.parseDouble(value);
+                            } else if (parameterType.isAssignableFrom(boolean.class)) {
+                                parameter[i] = Boolean.parseBoolean(value);
+                            } else if (parameterType.isAssignableFrom(long.class)) {
+                                parameter[i] = Long.parseLong(value);
+                            } else if (parameterType.isAssignableFrom(Enum.class)) {
+                                parameter[i] = Enum.valueOf((Class<? extends Enum>)parameterType, value);
+                            } else {
+                                throw new IllegalArgumentException("Can not resolve param " + key);
+                            }
+                        }
                     }
                 } else if (EventExecutor.class.isAssignableFrom(parameterType)) {
                     parameter[i] = ctx.executor();
