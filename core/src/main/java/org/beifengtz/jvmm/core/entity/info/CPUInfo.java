@@ -29,10 +29,6 @@ public class CPUInfo implements JsonParsable {
      * 空闲率
      */
     private double idle;
-    /**
-     * 当前进程负载
-     */
-    private double process;
 
     private CPUInfo() {
     }
@@ -88,15 +84,6 @@ public class CPUInfo implements JsonParsable {
 
     public CPUInfo setIdle(double idle) {
         this.idle = idle;
-        return this;
-    }
-
-    public double getProcess() {
-        return process;
-    }
-
-    public CPUInfo setProcess(double process) {
-        this.process = process;
         return this;
     }
 }

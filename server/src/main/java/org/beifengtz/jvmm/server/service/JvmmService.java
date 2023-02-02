@@ -52,6 +52,9 @@ public interface JvmmService {
         JvmmCollector collector = JvmmFactory.getCollector();
         AtomicInteger asyncNum = new AtomicInteger(0);
         for (CollectionType type : options) {
+            if (type == null) {
+                continue;
+            }
             switch (type) {
                 case process:
                     res.setProcess(collector.getProcess());

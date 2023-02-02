@@ -116,10 +116,6 @@ class DefaultJvmmCollector implements JvmmCollector {
                 .setVmSpecVersion(runtimeMXBean.getSpecVersion())
                 .setWorkDir(SystemPropertyUtil.get("user.dir"))
                 .setInputArgs(runtimeMXBean.getInputArguments());
-
-        if (runtimeMXBean.isBootClassPathSupported()) {
-            info.setBootClassPath(runtimeMXBean.getBootClassPath());
-        }
         return info;
     }
 

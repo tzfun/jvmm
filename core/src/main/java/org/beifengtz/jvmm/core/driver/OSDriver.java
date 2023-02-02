@@ -98,6 +98,7 @@ public final class OSDriver {
             List<DiskIOInfo> disks = new ArrayList<>(hwDisks.size());
             for (HWDiskStore disk : hwDisks) {
                 HWDiskStore pre = diskMap.get(disk.getName());
+                if (pre == null) continue;
                 DiskIOInfo info = DiskIOInfo.create()
                         .setName(disk.getName().replaceAll("\\\\|\\.", ""))
                         .setCurrentQueueLength(disk.getCurrentQueueLength())
@@ -194,8 +195,7 @@ public final class OSDriver {
                     .setSys((double) sys / total)
                     .setUser((double) user / total)
                     .setIoWait((double) ioWait / total)
-                    .setIdle((double) idle / total)
-                    .setProcess(((com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getProcessCpuLoad()));
+                    .setIdle((double) idle / total));
         }, 1, TimeUnit.SECONDS);
     }
 
@@ -251,6 +251,8 @@ public final class OSDriver {
 
         executor.schedule(() -> {
             for (NetworkIF networkIF : si.getHardware().getNetworkIFs()) {
+                NetworkIF preIF = networkIFMap.get(networkIF.getName());
+                if (preIF == null) continue;
                 NetworkIFInfo ifInfo = NetworkIFInfo.create()
                         .setName(networkIF.getName())
                         .setAlias(networkIF.getIfAlias())
@@ -263,8 +265,8 @@ public final class OSDriver {
                         .setRecvCount(networkIF.getPacketsRecv())
                         .setSentBytes(networkIF.getBytesSent())
                         .setSentCount(networkIF.getPacketsSent())
-                        .setRecvBytesPerSecond(networkIF.getBytesRecv() - networkIFMap.get(networkIF.getName()).getBytesRecv())
-                        .setSentBytesPerSecond(networkIF.getBytesSent() - networkIFMap.get(networkIF.getName()).getBytesSent());
+                        .setRecvBytesPerSecond(networkIF.getBytesRecv() - preIF.getBytesRecv())
+                        .setSentBytesPerSecond(networkIF.getBytesSent() - preIF.getBytesSent());
                 info.addNetworkIFInfo(ifInfo);
             }
             consumer.accept(info);

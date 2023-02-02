@@ -41,13 +41,13 @@ public class ProcessInfo implements JsonParsable {
     /**
      * 进程环境及启动信息
      */
-    private String bootClassPath;
     private List<String> inputArgs;
     private String workDir;
 
-    private ProcessInfo(){}
+    private ProcessInfo() {
+    }
 
-    public static ProcessInfo create(){
+    public static ProcessInfo create() {
         return new ProcessInfo();
     }
 
@@ -120,15 +120,6 @@ public class ProcessInfo implements JsonParsable {
 
     public ProcessInfo setVmHome(String vmHome) {
         this.vmHome = vmHome;
-        return this;
-    }
-
-    public String getBootClassPath() {
-        return bootClassPath;
-    }
-
-    public ProcessInfo setBootClassPath(String bootClassPath) {
-        this.bootClassPath = bootClassPath;
         return this;
     }
 
