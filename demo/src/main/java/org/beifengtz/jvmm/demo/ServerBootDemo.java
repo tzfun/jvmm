@@ -66,7 +66,8 @@ public class ServerBootDemo {
                 .setName("jvmm-server")
                 .setWorkThread(2)
                 .setLog(new LogConf().setLevel(LoggerLevel.INFO))
-                .setServer(new ServerConf().setType("jvmm,sentinel")
+                .setServer(new ServerConf()
+                        .setType("jvmm,sentinel")
                         .setJvmm(jvmmServer)
                         .setHttp(httpServer)
                         .addSentinel(sentinel));

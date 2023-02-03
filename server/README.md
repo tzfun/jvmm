@@ -22,6 +22,15 @@ java -jar jvmm-server.jar ./config.yml
 2. jvmm-server.jar包`config`目录下的`config.yml`文件
 3. 如果以上都没找到则使用默认配置
 
+**注意！如果你的JDK版本是9以上，需要设置下面两个虚拟机参数：**
+
+```shell
+# JDK 9+开始不允许动态加载依赖，需要设置以下两个虚拟机参数
+# --add-opens java.base/jdk.internal.loader=ALL-UNNAMED
+# --add-opens jdk.zipfs/jdk.nio.zipfs=ALL-UNNAMED
+java -jar --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens jdk.zipfs/jdk.nio.zipfs=ALL-UNNAMED jvmm-server.jar ./config.yml
+```
+
 ## 载入Java程序启动
 
 如果你的监控对象更专注于某一个Java程序，比如想监控JVM的内存使用情况、GC、线程状态、Class加载情况等，亦或是想对某一个Java程序做性能分析（火焰图）、代码热更、代码反编译等，此种方式可能比较适合你的应用场景。
@@ -91,13 +100,13 @@ name: jvmm_server
 
 server:
   # Config server type, jvmm is the default type. You can enable multiple options like this: http,sentinel,jvmm
-  type: jvmm
+  type: jvmm,http
 
   # Jvmm server config options
   # The difference between jvmm server and http server is that jvmm server provides the encryption function of communication messages,
   # the client must use a private protocol to communicate with the server.
   # And jvmm server is a tcp long connection, the client and the server can communicate in both directions.
-  # --------------------------------------------------------------------------------------------------------------------------------------------------
+  # --------------------------------------------------------------------------------------------------------------------------------------------------------
   jvmm:
     # Jvmm server running port
     port: 5010
@@ -113,7 +122,7 @@ server:
 
   # Http server config options.
   # The configuration of opening the http segment will start the http server, and you can call the relevant api through http requests.
-  # --------------------------------------------------------------------------------------------------------------------------------------------------
+  # --------------------------------------------------------------------------------------------------------------------------------------------------------
   http:
     # Http server running port
     port: 8080
@@ -142,45 +151,58 @@ server:
 
   # Sentinel config options.
   # Enabling the sentinel segment configuration will start the Jvmm sentinel mode, and the sentinel will regularly push monitoring data to subscribers
-  # --------------------------------------------------------------------------------------------------------------------------------------------------
+  # --------------------------------------------------------------------------------------------------------------------------------------------------------
   sentinel:
     # Subscriber list, if this item is not configured or the list is empty, the sentry mode cannot be started
     # The subscriber's push interface only supports Basic authentication, which is configured through the auth segment
-    subscribers:
-      - url: http://127.0.0.1:9999/monitor/subscriber
-        auth:
-          enable: true
-          username: 123456
-          password: 123456
-      - url: http://monitor.example.com:9999/monitor/subscriber
-    # The interval between sentinels executing tasks, unit is second
-    interval: 15
-    # When static options are not enabled, the first N pushes after Sentinel is started will be filled with static data.
-    # This value N is configured sendStaticInfoTimes
-    sendStaticInfoTimes: 10
-    # Sentinel content options for each push
-    options:
-      classloading: false
-      compilation: false
-      gc: false
-      memory: false
-      memoryManager: false
-      memoryPool: false
-      systemDynamic: false
-      threadDynamic: false
-      # The next information is static and will not change over time.
-      # It is generally not recommended that you enable these options, because it is repetitive and unnecessary.
-      # It is recommended to modify sendStaticInfoTimes configuration instead.
-      system: false
-      process: false
+    - subscribers:
+        - url: http://127.0.0.1:9999/monitor/subscriber
+          auth:
+            enable: true
+            username: 123456
+            password: 123456
+        - url: http://monitor.example.com:9999/monitor/subscriber
+      # The interval between sentinels executing tasks, unit is second.
+      # Notice! Some collection items take time, it is recommended that the interval be greater than 1 second.
+      interval: 15
+      # Total sending times, -1 means unlimited
+      count: 20
+      # The collection items executed by the sentinel, the sentinel will collect the data and send it to subscribers.
+      # Optional values: process|disk|disk_io|cpu|network|sys|sys_memory|sys_file|jvm_classloading|jvm_classloader|jvm_compilation|jvm_gc|jvm_memory|jvm_memory_manager|jvm_memory_pool|jvm_thread
+      tasks:
+        - process
+        - disk
+        - disk_io
+        - cpu
+    # You can define multiple sentinels, which perform different tasks
+    - subscribers:
+        - url: http://monitor.example.com:9999/monitor/subscriber
+      interval: 15
+      count: -1
+      tasks:
+        - jvm_gc
+        - jvm_memory
+        - jvm_memory_pool
+        - jvm_memory_manager
+        - jvm_thread
+        - jvm_classloader
+        - jvm_classloading
 
-# Log level configuration
+# The default Jvmm log configuration, if no SLF4J log implementation is found in the startup environment, use this configuration.
 log:
-  # Log level: error, warn, info, debug, trace, off
-  level: info
-  #  Whether to use jvmm log, if it is false, it will try to use the log of the host program according to the host program environment.
-  #  But this does not guarantee that the log provider of the host program can be successfully searched
-  useJvmm: true
+  # Log level: error, warn, info, debug, trace
+  level: INFO
+  # Log file output directory
+  file: log
+  # Log file prefix
+  fileName: jvmm
+  # If the current log file size exceeds this value, a new log file will be generated, in MB.
+  fileLimitSize: 10
+  # Log output formatting matching rules.
+  # The color output supports ANSI code, but it will only appear in the standard output of the console, and will not pollute the log file.
+  pattern: "%ansi{%date{yyyy-MM-dd HH:mm:ss}}{36} %ansi{%level}{ERROR=31,INFO=32,WARN=33,DEBUG=34,TRACE=35} %ansi{%class}{38;5;14} : %msg"
+  # Output type, support standard output and file output.
+  printers: std,file
 
 # The number of worker threads for the service
 workThread: 2
@@ -206,20 +228,21 @@ public class ServerBootDemo {
                 .setAdaptivePort(true)
                 .setAuth(globalAuth);
 
-        SentinelConf sentinel = new SentinelConf()
-                .addSubscribers(new SubscriberConf().setUrl("http://exaple.jvmm.com/subscriber"))
-                .addSubscribers(new SubscriberConf().setUrl("http://127.0.0.1:8080/subscriber")
-                        .setAuth(new AuthOptionConf().setEnable(true)
-                                .setUsername("auth-account")
-                                .setPassword("auth-password")))
-                .setInterval(10)
-                .setSendStaticInfoTimes(5);
+      SentinelConf sentinel = new SentinelConf()
+              .addSubscriber(new SentinelSubscriberConf().setUrl("http://exaple.jvmm.com/subscriber"))
+              .addSubscriber(new SentinelSubscriberConf().setUrl("http://127.0.0.1:8080/subscriber")
+                      .setAuth(new AuthOptionConf().setEnable(true)
+                              .setUsername("auth-account")
+                              .setPassword("auth-password")))
+              .setInterval(10)
+              .setCount(-1);
 
         Configuration config = new Configuration()
                 .setName("jvmm-server")
                 .setWorkThread(2)
-                .setLog(new LogConf().setLevel("info").setUseJvmm(true))
-                .setServer(new ServerConf().setType("jvmm,sentinel")
+                .setLog(new LogConf().setLevel(LoggerLevel.INFO))
+                .setServer(new ServerConf()
+                        .setType("jvmm,sentinel")
                         .setJvmm(jvmmServer)
                         .setHttp(httpServer)
                         .setSentinel(sentinel));
@@ -416,4 +439,25 @@ Http Service提供了以下API接口：
 
 你需要**提前搭建好订阅者服务**并对外公开一个接收哨兵通知数据的http接口，如果接口访问需要进行身份认证，哨兵模式支持 **Basic** 方式认证，将订阅者信息配置后哨兵将定时向此接口推送监控数据，相关配置段在[config.yml](../server/src/main/resources/config.yml)中的`server.sentinel`。
 
-> PS：`sendStaticInfoTimes`配置项是指哨兵启动之后前多少次会推送静态数据，一般一个进程启动后的物理环境信息、进程信息等是不变的，这些信息称之为静态数据，为了避免每次推送体积较大且重复的数据，仅启动前N次进行推送，如果你仍然希望每次推送这些静态数据可以在`options`中打开。
+总共支持以下采集项，其中`disk_io`、`cpu`、`network`执行需要耗时，程序内部为异步回调实现，但如果你是Http API请求会表现为同步，每一项等待时间为`1s`。
+
+```json
+[
+  "process",
+  "disk",
+  "disk_io",
+  "cpu",
+  "network",
+  "sys",
+  "sys_memory",
+  "sys_file",
+  "jvm_classloading",
+  "jvm_classloader",
+  "jvm_compilation",
+  "jvm_gc",
+  "jvm_memory",
+  "jvm_memory_manager",
+  "jvm_memory_pool",
+  "jvm_thread"
+]
+```

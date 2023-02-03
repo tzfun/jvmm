@@ -61,13 +61,13 @@ public class JvmmServerBootDemo {
 ## 使用文档
 
 * [Jvmm工具使用文档](client/README.md)
+* [Server组件使用及三种服务模式说明文档](server/README.md)
 * [两种Java Agent方式使用Jvmm](agent/README.md)
 * [Core模块提供的API接口](core/README.md)
-* [Server组件使用及三种服务模式说明文档](server/README.md)
 
 ## 示例
 
-在这里提供了一些简单示例
+在这里提供了一些简单的代码调用示例
 
 * [API调用示例](demo/src/main/java/org/beifengtz/jvmm/demo/ApiDemo.java)
 * [Server启动使用示例](demo/src/main/java/org/beifengtz/jvmm/demo/ServerBootDemo.java)
@@ -83,13 +83,16 @@ Dashboard应用示例
 
 ## 联系作者
 
-在使用过程中遇到任何问题，或者对本项目有独特的见解或建议，欢迎[提交issue](https://github.com/tzfun/jvmm/issues)
+在使用过程中遇到任何问题，或者对本项目有独特的见解或建议，欢迎[提交issue](https://github.com/tzfun/jvmm/issues)或私信我
 
-联系邮箱：[beifengtz@qq.com](mailto://beifengtz@qq.com)
+> 邮箱：[beifengtz@qq.com](mailto://beifengtz@qq.com)
+> 
+> 微信：beifeng-tz（添加请备注**jvmm**）
 
 ## 问题解决
 
 ### 1.kernel.perf_event_paranoid权限开关
+
 如果你在生成火焰图时提示`No access to perf events. Try --fdtransfer or --all-user option or 'sysctl kernel.perf_event_paranoid=1'`，原因是系统内核默认禁止了检测系统性能，你需要开启这个选项。
 
 ```shell
@@ -101,6 +104,23 @@ sudo systcl -w kernel.perf_event_paranoid=1
 ```shell
 sudo sh -c 'echo "kernel.perf_event_paranoid=1" >> /etc/sysctl.conf'
 sudo sysctl -p
+```
+
+### 2. 启动server时报错 java.lang.reflect.InaccessibleObjectException
+
+如果你在启动 jvmm-server.jar 时报下面错，原因是你使用了 **JDK 9**及以上版本，在JDK 9+开始Java禁止了动态加载依赖。
+
+```log
+java.lang.reflect.InaccessibleObjectException: Unable to make field final jdk.internal.loader.URLClassPath jdk.internal.loader.ClassLoaders$AppClassLoader.ucp accessible: module java.base does not "opens jdk.internal.loader" to unnamed module @2d127a61
+```
+
+解决办法：添加下面两个虚拟机参数
+
+```shell
+# JDK 9+开始不允许动态加载依赖，需要设置以下两个虚拟机参数
+# --add-opens java.base/jdk.internal.loader=ALL-UNNAMED
+# --add-opens jdk.zipfs/jdk.nio.zipfs=ALL-UNNAMED
+java -jar --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens jdk.zipfs/jdk.nio.zipfs=ALL-UNNAMED jvmm-server.jar ./config.yml
 ```
 
 ## 感谢
