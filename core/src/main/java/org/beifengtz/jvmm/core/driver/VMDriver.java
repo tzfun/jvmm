@@ -8,22 +8,13 @@ import org.beifengtz.jvmm.common.util.JavaEnvUtil;
 import org.beifengtz.jvmm.common.util.JavaVersionUtils;
 import org.beifengtz.jvmm.common.util.PidUtil;
 import org.slf4j.Logger;
-<<<<<<< HEAD:core/src/main/java/org/beifengtz/jvmm/core/VMProvider.java
-=======
 import org.slf4j.LoggerFactory;
->>>>>>> develop:core/src/main/java/org/beifengtz/jvmm/core/driver/VMDriver.java
 import sun.tools.attach.HotSpotVirtualMachine;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-<<<<<<< HEAD:core/src/main/java/org/beifengtz/jvmm/core/VMProvider.java
-import java.lang.management.ManagementFactory;
-import java.lang.management.ThreadMXBean;
-=======
->>>>>>> develop:core/src/main/java/org/beifengtz/jvmm/core/driver/VMDriver.java
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.util.Properties;
 
@@ -36,23 +27,6 @@ import java.util.Properties;
  *
  * @author beifengtz
  */
-<<<<<<< HEAD:core/src/main/java/org/beifengtz/jvmm/core/VMProvider.java
-public class VMProvider {
-
-    private static final Logger log = LoggerFactory.logger(VMProvider.class);
-
-    private static volatile VMProvider INSTANCE;
-
-    private volatile ClassLoader toolsClassLoader;
-
-    private VMProvider() throws Throwable {
-        initToolsClassLoader();
-    }
-
-    public static synchronized VMProvider getInstance() throws Throwable {
-        if (INSTANCE == null) {
-            INSTANCE = new VMProvider();
-=======
 public class VMDriver {
 
     private static final Logger log = LoggerFactory.getLogger(VMDriver.class);
@@ -68,7 +42,6 @@ public class VMDriver {
     public static synchronized VMDriver get() throws Throwable {
         if (INSTANCE == null) {
             INSTANCE = new VMDriver();
->>>>>>> develop:core/src/main/java/org/beifengtz/jvmm/core/driver/VMDriver.java
         }
         return INSTANCE;
     }
