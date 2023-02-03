@@ -207,12 +207,12 @@ public class CommandRunner {
                 logger.warn("Decode path failed. " + e.getClass().getName() + ": " + e.getMessage());
             }
 
-            File tempDir = new File(JvmmFactory.getTempPath(), "jar/server");
+            File tempDir = new File(JvmmFactory.getTempPath(), "server");
             try {
                 if (tempDir.exists()) {
                     FileUtil.delFile(tempDir);
                 }
-                String regex = "async-profiler/.*|com/.*|io/.*|org/benf.*|org/slf4j.*|META-INF/maven/.*" +
+                String regex = "async-profiler/.*|com/.*|io/.*|org/benf.*|org/slf4j/(?!impl).*|META-INF/maven/.*" +
                         "|META-INF/native/.*|META-INF/native-image/.*|io.netty.versions.propeties|server-source/.*|" +
                         ".*jvmm/common/.*|.*jvmm/convey/.*|.*jvmm/core/.*|oshi/.*|oshi.*|org/yaml.*";
                 FileUtil.copyFromJar(new JarFile(path), tempDir, regex, fileName -> {

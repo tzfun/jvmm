@@ -9,11 +9,11 @@ import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.server.entity.conf.Configuration;
 import org.beifengtz.jvmm.server.enums.ServerType;
 import org.beifengtz.jvmm.server.service.JvmmService;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.URLClassLoader;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Set;
@@ -150,16 +150,18 @@ public class ServerContext {
 
         try {
             Class.forName("org.slf4j.impl.StaticLoggerBinder");
+            LoggerFactory.getLogger(ServerContext.class).info("The SLF4J implementation already exists in the Jvmm startup environment, this log framework is used by default");
         } catch (NoClassDefFoundError | ClassNotFoundException e) {
             final String jarName = "jvmm-logger.jar";
             InputStream is = ServerApplication.class.getResourceAsStream("/" + jarName);
             if (is == null) {
-                throw new RuntimeException("Can not load jvmm logger library, case: jar not found.");
+                throw new RuntimeException("Can not load jvmm logger library, case: jar not found");
             }
             File file = new File(JvmmFactory.getTempPath(), jarName);
             FileUtil.writeByteArrayToFile(file, IOUtil.toByteArray(is));
 
-            ClassLoaderUtil.systemLoadJar(file.toPath().toUri().toURL());
+            ClassLoaderUtil.classLoaderAddURL((URLClassLoader) ServerContext.class.getClassLoader(), file.toPath().toUri().toURL());
+            LoggerFactory.getLogger(ServerContext.class).info("Using jvmm logger framework as the implementation of SLF4J");
         }
 
         loadedLogLib = true;

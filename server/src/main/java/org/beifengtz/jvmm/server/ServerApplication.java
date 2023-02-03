@@ -42,7 +42,6 @@ public class ServerApplication {
     }
 
     public static void main(String[] args) throws Throwable {
-        ServerContext.loadLoggerLib();
         ServerBootstrap.getInstance(loadConf(args)).start();
     }
 }

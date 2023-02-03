@@ -90,6 +90,7 @@ public class ServerBootstrap {
         ServerContext.setConfiguration(config);
 
         if (fromAgent) {
+            //  如果从agent启动，则取消默认的标注输出和文件输出
             System.setProperty("jvmm.log.printers", "agentProxy");
         }
 
