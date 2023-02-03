@@ -160,7 +160,7 @@ public class ServerContext {
             File file = new File(JvmmFactory.getTempPath(), jarName);
             FileUtil.writeByteArrayToFile(file, IOUtil.toByteArray(is));
 
-            ClassLoaderUtil.classLoaderAddURL((URLClassLoader) ServerContext.class.getClassLoader(), file.toPath().toUri().toURL());
+            ClassLoaderUtil.loadJar(ServerContext.class.getClassLoader(), file.toPath().toUri().toURL());
             LoggerFactory.getLogger(ServerContext.class).info("Using jvmm logger framework as the implementation of SLF4J");
         }
 
