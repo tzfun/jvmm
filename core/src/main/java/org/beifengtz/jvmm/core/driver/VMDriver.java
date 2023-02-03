@@ -2,13 +2,13 @@ package org.beifengtz.jvmm.core.driver;
 
 import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.util.ClassLoaderUtil;
 import org.beifengtz.jvmm.common.util.IOUtil;
 import org.beifengtz.jvmm.common.util.JavaEnvUtil;
 import org.beifengtz.jvmm.common.util.JavaVersionUtils;
 import org.beifengtz.jvmm.common.util.PidUtil;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sun.tools.attach.HotSpotVirtualMachine;
 
 import java.io.File;
@@ -29,7 +29,7 @@ import java.util.Properties;
  */
 public class VMDriver {
 
-    private static final Logger log = LoggerFactory.logger(VMDriver.class);
+    private static final Logger log = LoggerFactory.getLogger(VMDriver.class);
 
     private static volatile VMDriver INSTANCE;
 

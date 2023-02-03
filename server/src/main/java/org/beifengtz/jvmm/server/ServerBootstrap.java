@@ -4,22 +4,18 @@ import io.netty.util.concurrent.DefaultPromise;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.Promise;
-import io.netty.util.internal.logging.InternalLoggerFactory;
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.logger.LoggerLevel;
 import org.beifengtz.jvmm.common.util.IPUtil;
-import org.beifengtz.jvmm.convey.DefaultInternalLoggerFactory;
 import org.beifengtz.jvmm.server.entity.conf.Configuration;
 import org.beifengtz.jvmm.server.entity.conf.ServerConf;
 import org.beifengtz.jvmm.server.enums.ServerType;
-import org.beifengtz.jvmm.server.logger.DefaultILoggerFactory;
-import org.beifengtz.jvmm.server.logger.DefaultJvmmILoggerFactory;
 import org.beifengtz.jvmm.server.service.JvmmHttpServerService;
 import org.beifengtz.jvmm.server.service.JvmmSentinelService;
 import org.beifengtz.jvmm.server.service.JvmmServerService;
 import org.beifengtz.jvmm.server.service.JvmmService;
 import org.beifengtz.jvmm.server.service.ServiceManager;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.Instrumentation;
@@ -95,12 +91,8 @@ public class ServerBootstrap {
 
         if (config.getLog().isUseJvmm()) {
             initJvmmLogger(config.getLog().getLevel());
-        } else {
-            if (fromAgent) {
-                initAgentLogger(config.getLog().getLevel());
-            } else {
-                initBaseLogger();
-            }
+        } else if (fromAgent) {
+            initAgentLogger(config.getLog().getLevel());
         }
 
         bootstrap = new ServerBootstrap(inst);
@@ -111,25 +103,16 @@ public class ServerBootstrap {
 
     private static void initJvmmLogger(String levelStr) {
         LoggerLevel level = LoggerLevel.valueOf(levelStr.toUpperCase(Locale.ROOT));
-        InternalLoggerFactory.setDefaultFactory(DefaultInternalLoggerFactory.newInstance(level));
-        LoggerFactory.register(DefaultJvmmILoggerFactory.newInstance(level));
-    }
-
-    private static void initBaseLogger() {
-        LoggerFactory.register(org.slf4j.LoggerFactory.getILoggerFactory());
+        //  TODO 载入jvmm-log
     }
 
     private static void initAgentLogger(String levelStr) {
         LoggerLevel level = LoggerLevel.valueOf(levelStr.toUpperCase(Locale.ROOT));
-
-        DefaultILoggerFactory defaultILoggerFactory = DefaultILoggerFactory.newInstance(level);
-
-        InternalLoggerFactory.setDefaultFactory(defaultILoggerFactory);
-        LoggerFactory.register(defaultILoggerFactory);
+        //  TODO 载入jvmm-log，但只初始化 agentProxy 这一个Printer
     }
 
     private static Logger logger() {
-        return LoggerFactory.logger(ServerBootstrap.class);
+        return LoggerFactory.getLogger(ServerBootstrap.class);
     }
 
     public Instrumentation getInstrumentation() {
@@ -140,7 +123,7 @@ public class ServerBootstrap {
      * 启动Server，使用默认的callback处理逻辑
      */
     public void start() {
-        Logger logger = LoggerFactory.logger(ServerApplication.class);
+        Logger logger = LoggerFactory.getLogger(ServerApplication.class);
         long start = System.currentTimeMillis();
         Function<Object, Object> callback = msg -> {
             String content = msg.toString();

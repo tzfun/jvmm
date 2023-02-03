@@ -1,8 +1,8 @@
 package org.beifengtz.jvmm.core;
 
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.core.entity.info.JvmClassLoaderInfo;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import java.util.Set;
  */
 public final class Unsafe {
 
-    private static final Logger logger = LoggerFactory.logger(Unsafe.class);
+    private static final Logger logger = LoggerFactory.getLogger(Unsafe.class);
 
     private static Method threadsMethod;
     private static Method findLoadedClassMethod;

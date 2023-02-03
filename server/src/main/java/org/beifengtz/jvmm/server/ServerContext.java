@@ -1,12 +1,12 @@
 package org.beifengtz.jvmm.server;
 
 import io.netty.channel.EventLoopGroup;
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
 import org.beifengtz.jvmm.server.entity.conf.Configuration;
 import org.beifengtz.jvmm.server.enums.ServerType;
 import org.beifengtz.jvmm.server.service.JvmmService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ServerContext {
 
-    private static final Logger logger = LoggerFactory.logger(ServerContext.class);
+    private static final Logger logger = LoggerFactory.getLogger(ServerContext.class);
 
     public static final String STATUS_OK = "ok";
 

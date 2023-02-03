@@ -9,11 +9,11 @@ import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.SupportedCipherSuiteFilter;
 import io.netty.util.concurrent.EventExecutorGroup;
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.convey.handler.HandlerProvider;
 import org.beifengtz.jvmm.server.ServerContext;
 import org.beifengtz.jvmm.server.entity.conf.SslConf;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLException;
 import java.io.File;
@@ -29,7 +29,7 @@ import java.io.File;
  */
 public class HttpServerHandlerProvider implements HandlerProvider {
 
-    private static final Logger logger = LoggerFactory.logger(HttpServerHandlerProvider.class);
+    private static final Logger logger = LoggerFactory.getLogger(HttpServerHandlerProvider.class);
 
     public static final String HTTP_SERVER_HANDLER_NAME = "httpServerHandler";
 

@@ -2,6 +2,7 @@ package org.beifengtz.jvmm.common.factory;
 
 import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -50,7 +51,7 @@ public class ExecutorFactory {
         if (SCHEDULE_THREAD_POOL != null && !SCHEDULE_THREAD_POOL.isShutdown()) {
             SCHEDULE_THREAD_POOL.shutdown();
             if (SCHEDULE_THREAD_POOL.isShutdown()) {
-                LoggerFactory.logger(ExecutorFactory.class).info("jvmm schedule thread pool shutdown.");
+                LoggerFactory.getLogger(ExecutorFactory.class).info("jvmm schedule thread pool shutdown.");
             }
         }
     }

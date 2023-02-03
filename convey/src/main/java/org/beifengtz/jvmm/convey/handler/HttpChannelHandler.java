@@ -17,7 +17,6 @@ import io.netty.handler.codec.http.HttpVersion;
 import io.netty.util.concurrent.EventExecutor;
 import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
 import org.beifengtz.jvmm.common.exception.InvalidJvmmMappingException;
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.util.CommonUtil;
 import org.beifengtz.jvmm.common.util.ReflexUtil;
 import org.beifengtz.jvmm.common.util.StringUtil;
@@ -28,6 +27,7 @@ import org.beifengtz.jvmm.convey.annotation.RequestBody;
 import org.beifengtz.jvmm.convey.annotation.RequestParam;
 import org.beifengtz.jvmm.convey.entity.ResponseFuture;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
@@ -64,7 +64,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
         mappings = new HashMap<>(controllers.size() * 5);
         methodMappings = new HashMap<>(controllers.size() * 5);
 
-        Logger logger = LoggerFactory.logger(HttpChannelHandler.class);
+        Logger logger = LoggerFactory.getLogger(HttpChannelHandler.class);
 
         for (Class<?> controller : controllers) {
             Set<Method> methods = ReflexUtil.scanMethodAnnotation(controller, HttpRequest.class);

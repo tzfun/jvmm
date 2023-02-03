@@ -1,12 +1,19 @@
 package org.beifengtz.jvmm.demo;
 
-import org.beifengtz.jvmm.common.logger.LoggerLevel;
 import org.beifengtz.jvmm.common.util.meta.PairKey;
 import org.beifengtz.jvmm.core.JvmmCollector;
 import org.beifengtz.jvmm.core.JvmmExecutor;
 import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.JvmmProfiler;
-import org.beifengtz.jvmm.core.entity.info.*;
+import org.beifengtz.jvmm.core.entity.info.JvmClassLoadingInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmCompilationInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmGCInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmMemoryInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmMemoryManagerInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmMemoryPoolInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmThreadInfo;
+import org.beifengtz.jvmm.core.entity.info.ProcessInfo;
+import org.beifengtz.jvmm.core.entity.info.SysInfo;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerCounter;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerEvent;
 
@@ -26,7 +33,6 @@ import java.util.concurrent.TimeoutException;
  */
 public class ApiDemo {
     public static void main(String[] args) throws Exception {
-        LoggerInitializer.init(LoggerLevel.INFO);
 
         //  jvmm收集器，可以获取以下信息：
         //  操作系统：基础信息、Memory、CPU、Process信息

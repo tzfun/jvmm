@@ -1,7 +1,6 @@
 package org.beifengtz.jvmm.core;
 
 
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.util.CommonUtil;
 import org.beifengtz.jvmm.common.util.ExecuteNativeUtil;
 import org.beifengtz.jvmm.common.util.FileUtil;
@@ -13,6 +12,7 @@ import org.beifengtz.jvmm.common.util.meta.PairKey;
 import org.beifengtz.jvmm.core.entity.result.JpsResult;
 import org.beifengtz.jvmm.core.ext.jad.JadUtil;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,7 +40,7 @@ import java.util.concurrent.TimeoutException;
  */
 class DefaultJvmmExecutor implements JvmmExecutor {
 
-    private static final Logger log = LoggerFactory.logger(DefaultJvmmExecutor.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultJvmmExecutor.class);
 
     private static final Set<String> ENABLED_PROGRAM_NAME = CommonUtil.hashSetOf("jps", "jstat", "jmap", "jcmd", "jstack", "jinfo");
 

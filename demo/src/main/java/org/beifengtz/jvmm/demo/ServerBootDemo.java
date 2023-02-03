@@ -1,7 +1,5 @@
 package org.beifengtz.jvmm.demo;
 
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
-import org.beifengtz.jvmm.common.logger.LoggerLevel;
 import org.beifengtz.jvmm.server.ServerBootstrap;
 import org.beifengtz.jvmm.server.entity.conf.AuthOptionConf;
 import org.beifengtz.jvmm.server.entity.conf.Configuration;
@@ -9,9 +7,10 @@ import org.beifengtz.jvmm.server.entity.conf.HttpServerConf;
 import org.beifengtz.jvmm.server.entity.conf.JvmmServerConf;
 import org.beifengtz.jvmm.server.entity.conf.LogConf;
 import org.beifengtz.jvmm.server.entity.conf.SentinelConf;
-import org.beifengtz.jvmm.server.entity.conf.ServerConf;
 import org.beifengtz.jvmm.server.entity.conf.SentinelSubscriberConf;
+import org.beifengtz.jvmm.server.entity.conf.ServerConf;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 
@@ -24,8 +23,7 @@ import java.io.InputStream;
  */
 public class ServerBootDemo {
     public static void main(String[] args) throws Throwable {
-        LoggerInitializer.init(LoggerLevel.INFO);
-        Logger logger = LoggerFactory.logger(ServerBootDemo.class);
+        Logger logger = LoggerFactory.getLogger(ServerBootDemo.class);
 
         InputStream is = ServerBootDemo.class.getResourceAsStream("/config.yml");
         if (is != null) {
@@ -55,13 +53,13 @@ public class ServerBootDemo {
                 .setAuth(globalAuth);
 
         SentinelConf sentinel = new SentinelConf()
-                .addSubscribers(new SentinelSubscriberConf().setUrl("http://exaple.jvmm.com/subscriber"))
-                .addSubscribers(new SentinelSubscriberConf().setUrl("http://127.0.0.1:8080/subscriber")
+                .addSubscriber(new SentinelSubscriberConf().setUrl("http://exaple.jvmm.com/subscriber"))
+                .addSubscriber(new SentinelSubscriberConf().setUrl("http://127.0.0.1:8080/subscriber")
                         .setAuth(new AuthOptionConf().setEnable(true)
                                 .setUsername("auth-account")
                                 .setPassword("auth-password")))
                 .setInterval(10)
-                .setSendStaticInfoTimes(5);
+                .setCount(-1);
 
         return new Configuration()
                 .setName("jvmm-server")
@@ -70,11 +68,11 @@ public class ServerBootDemo {
                 .setServer(new ServerConf().setType("jvmm,sentinel")
                         .setJvmm(jvmmServer)
                         .setHttp(httpServer)
-                        .setSentinel(sentinel));
+                        .addSentinel(sentinel));
     }
 
     private static Object transformServerCallback(String content) {
-        Logger logger = LoggerFactory.logger(ServerBootDemo.class);
+        Logger logger = LoggerFactory.getLogger(ServerBootDemo.class);
         if ("start".equals(content)) {
             logger.info("Try to start or stop services...");
         } else if (content.startsWith("info:")) {

@@ -1,8 +1,8 @@
 package org.beifengtz.jvmm.server.service;
 
 import io.netty.util.concurrent.Promise;
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,7 +21,7 @@ import static com.google.gson.internal.$Gson$Preconditions.checkNotNull;
  */
 public class ServiceManager {
 
-    private static final Logger logger = LoggerFactory.logger(JvmmServerService.class);
+    private static final Logger logger = LoggerFactory.getLogger(JvmmServerService.class);
 
     private final Map<Integer, JvmmService> uniqueServices = new ConcurrentHashMap<>();
     private final Map<Integer, Thread> threadPool = new ConcurrentHashMap<>();

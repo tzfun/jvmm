@@ -2,7 +2,6 @@ package org.beifengtz.jvmm.server.service;
 
 import io.netty.util.concurrent.Promise;
 import org.beifengtz.jvmm.common.factory.ExecutorFactory;
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.util.CommonUtil;
 import org.beifengtz.jvmm.common.util.HttpUtil;
 import org.beifengtz.jvmm.server.ServerContext;
@@ -11,6 +10,7 @@ import org.beifengtz.jvmm.server.entity.conf.SentinelConf;
 import org.beifengtz.jvmm.server.entity.conf.SentinelSubscriberConf;
 import org.beifengtz.jvmm.server.entity.dto.JvmmDataDTO;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
  */
 public class JvmmSentinelService implements JvmmService {
 
-    private static final Logger logger = LoggerFactory.logger(JvmmHttpServerService.class);
+    private static final Logger logger = LoggerFactory.getLogger(JvmmHttpServerService.class);
     protected static final Map<String, String> globalHeaders = CommonUtil.hasMapOf("Content-Type", "application/json;charset=UTF-8");
 
     protected ScheduledExecutorService executor;

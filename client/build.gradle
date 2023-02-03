@@ -5,6 +5,7 @@ repositories {
 dependencies {
     compile(project(':convey'))
     compile(project(':core'))
+    compile(project(':logger'))
     compile("commons-cli:commons-cli:${commonsCli}")
 }
 

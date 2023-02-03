@@ -1,7 +1,6 @@
 package org.beifengtz.jvmm.core;
 
 import org.beifengtz.jvmm.common.exception.ExecutionException;
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.util.IPUtil;
 import org.beifengtz.jvmm.common.util.PidUtil;
 import org.beifengtz.jvmm.common.util.PlatformUtil;
@@ -10,6 +9,7 @@ import org.beifengtz.jvmm.core.driver.OSDriver;
 import org.beifengtz.jvmm.core.entity.info.*;
 import org.beifengtz.jvmm.core.entity.result.LinuxMemResult;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.management.*;
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ import java.util.function.Consumer;
  */
 class DefaultJvmmCollector implements JvmmCollector {
 
-    private static final Logger log = LoggerFactory.logger(DefaultJvmmCollector.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultJvmmCollector.class);
 
     DefaultJvmmCollector() {
     }

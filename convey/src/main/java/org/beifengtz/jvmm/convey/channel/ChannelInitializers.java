@@ -12,9 +12,9 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.util.PlatformUtil;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.Executor;
 
@@ -28,7 +28,7 @@ import java.util.concurrent.Executor;
  * @author beifengtz
  */
 public class ChannelInitializers {
-    private static final Logger logger = LoggerFactory.logger(ChannelInitializers.class);
+    private static final Logger logger = LoggerFactory.getLogger(ChannelInitializers.class);
 
     public static final String IDLE_STATE_HANDLER = "idleStateHandler";
 

@@ -1,7 +1,7 @@
 package org.beifengtz.jvmm.common.util;
 
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -17,7 +17,7 @@ import java.security.PrivilegedAction;
  */
 public class SystemPropertyUtil {
     private static Logger logger() {
-        return LoggerFactory.logger(SystemPropertyUtil.class);
+        return LoggerFactory.getLogger(SystemPropertyUtil.class);
     }
 
     public static boolean contains(String key) {

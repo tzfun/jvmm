@@ -7,6 +7,7 @@ version = rootProject.version
 dependencies {
     compile(project(':core'))
     compile(project(':convey'))
+    compile(project(':logger'))
     compileOnly("org.slf4j:slf4j-log4j12:${slf4jVersion}")
     compileOnly("org.slf4j:slf4j-jdk14:${slf4jVersion}")
     compileOnly("ch.qos.logback:logback-core:${logbackVersion}") {
@@ -22,8 +23,7 @@ jar {
     manifestContentCharset 'utf-8'
     metadataCharset 'utf-8'
 
-    def jarName = "jvmm-server.jar"
-    archiveName(jarName)
+    archiveName("jvmm-server.jar")
 
     manifest {
         attributes 'Main-Class': 'org.beifengtz.jvmm.server.ServerApplication'

@@ -3,9 +3,9 @@ package org.beifengtz.jvmm.convey.auth;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import org.beifengtz.jvmm.common.exception.InvalidMsgException;
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.util.SignatureUtil;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class JvmmBubbleDecrypt extends MessageToMessageDecoder<String> {
 
-    private static final Logger logger = LoggerFactory.logger(JvmmBubbleDecrypt.class);
+    private static final Logger logger = LoggerFactory.getLogger(JvmmBubbleDecrypt.class);
 
     private final String key;
     private final AtomicInteger seedCounter;

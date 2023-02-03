@@ -20,6 +20,9 @@ public class SentinelConf {
      * 采集项
      */
     private List<CollectionType> tasks = new ArrayList<>();
+    /**
+     * 执行次数，如果为负数则表示无限制
+     */
     private int count = -1;
     /**
      * 采集周期，秒
@@ -32,6 +35,16 @@ public class SentinelConf {
 
     public SentinelConf setSubscribers(List<SentinelSubscriberConf> subscribers) {
         this.subscribers = subscribers;
+        return this;
+    }
+
+    public SentinelConf addSubscriber(SentinelSubscriberConf subscriber) {
+        this.subscribers.add(subscriber);
+        return this;
+    }
+
+    public SentinelConf clearSubscriber() {
+        this.subscribers.clear();
         return this;
     }
 
