@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 public class TestExecutor {
 
     @Test
-    public void testListProcess(){
+    public void testListProcess() {
         JvmmExecutor executor = JvmmFactory.getExecutor();
         System.out.println(executor.listJavaProcess());
     }

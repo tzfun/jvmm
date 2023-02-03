@@ -15,7 +15,6 @@ import io.netty.util.concurrent.DefaultPromise;
 import io.netty.util.concurrent.Future;
 import org.beifengtz.jvmm.common.exception.ErrorStatusException;
 import org.beifengtz.jvmm.common.exception.SocketExecuteException;
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.util.SignatureUtil;
 import org.beifengtz.jvmm.convey.enums.GlobalStatus;
 import org.beifengtz.jvmm.convey.enums.GlobalType;
@@ -27,6 +26,7 @@ import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.handler.HandlerProvider;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -49,7 +49,7 @@ import java.util.concurrent.TimeoutException;
  */
 public class JvmmConnector implements Closeable {
 
-    private static final Logger logger = LoggerFactory.logger(JvmmConnector.class);
+    private static final Logger logger = LoggerFactory.getLogger(JvmmConnector.class);
 
     private String host;
     private int port;

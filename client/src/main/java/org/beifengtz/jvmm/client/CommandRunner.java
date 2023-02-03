@@ -9,7 +9,6 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.util.FileUtil;
 import org.beifengtz.jvmm.common.util.IOUtil;
 import org.beifengtz.jvmm.common.util.PidUtil;
@@ -18,8 +17,9 @@ import org.beifengtz.jvmm.common.util.meta.PairKey;
 import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 import org.beifengtz.jvmm.core.JvmmFactory;
-import org.beifengtz.jvmm.core.VMProvider;
+import org.beifengtz.jvmm.core.driver.VMDriver;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,7 +47,7 @@ import java.util.jar.JarFile;
  */
 public class CommandRunner {
 
-    private static final Logger logger = LoggerFactory.logger(CommandRunner.class);
+    private static final Logger logger = LoggerFactory.getLogger(CommandRunner.class);
 
     private static final Options options;
     private static final Options rootOptions;
@@ -199,6 +199,7 @@ public class CommandRunner {
             if (checkJarVersion(dir) && serverJarFile.exists()) {
                 return;
             }
+            logger.info("Starting to generate server jar...");
             String path = CommandRunner.class.getProtectionDomain().getCodeSource().getLocation().getPath();
             try {
                 path = URLDecoder.decode(path, "UTF-8");
@@ -206,14 +207,14 @@ public class CommandRunner {
                 logger.warn("Decode path failed. " + e.getClass().getName() + ": " + e.getMessage());
             }
 
-            File tempDir = new File(JvmmFactory.getTempPath(), "jar/server");
+            File tempDir = new File(JvmmFactory.getTempPath(), "server");
             try {
                 if (tempDir.exists()) {
                     FileUtil.delFile(tempDir);
                 }
-                String regex = "async-profiler/.*|com/.*|io/.*|org/benf.*|org/slf4j.*|META-INF/maven/.*" +
+                String regex = "async-profiler/.*|com/.*|io/.*|org/benf.*|org/slf4j/(?!impl).*|META-INF/maven/.*" +
                         "|META-INF/native/.*|META-INF/native-image/.*|io.netty.versions.propeties|server-source/.*|" +
-                        ".*jvmm/common/.*|.*jvmm/convey/.*|.*jvmm/core/.*";
+                        ".*jvmm/common/.*|.*jvmm/convey/.*|.*jvmm/core/.*|oshi/.*|oshi.*|org/yaml.*";
                 FileUtil.copyFromJar(new JarFile(path), tempDir, regex, fileName -> {
                     if (fileName.startsWith("server-source")) {
                         return fileName.replace("server-source/", "");
@@ -277,7 +278,7 @@ public class CommandRunner {
             if (checkJarVersion(dir) && agentJarFile.exists()) {
                 return;
             }
-
+            logger.info("Starting to generate agent jar...");
             FileUtil.writeByteArrayToFile(agentJarFile, IOUtil.toByteArray(CommandRunner.class.getResourceAsStream("/jvmm-agent.jar")));
             logger.info("Generated agent jar to " + agentJarFile.getAbsolutePath());
         } else {
@@ -451,7 +452,7 @@ public class CommandRunner {
 
         logger.info("Start to attach program {} ...", pid);
         try {
-            VMProvider.getInstance().attachAgent(pid, agentFile.getAbsolutePath(), serverFile.getAbsolutePath(), args);
+            VMDriver.get().attachAgent(pid, agentFile.getAbsolutePath(), serverFile.getAbsolutePath(), args);
             pair.getRight().join(30000);
         } catch (Exception e) {
             logger.warn("An error was encountered while attaching: " + e.getMessage(), e);

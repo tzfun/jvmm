@@ -1,0 +1,31 @@
+ext.projectName = 'jvmm-logger'
+archivesBaseName = "jvmm-logger"
+
+group = rootProject.group
+version = rootProject.version
+
+dependencies {
+    compile(project(":common"))
+    compile("org.slf4j:slf4j-api:${slf4jVersion}")
+}
+
+jar {
+    manifestContentCharset 'utf-8'
+    metadataCharset 'utf-8'
+
+    archiveName("jvmm-logger.jar")
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    getArchiveClassifier().set('sources')
+}
+
+task javadocJar(type: Jar) {
+    from javadoc
+    getArchiveClassifier().set('javadoc')
+}
+
+javadoc {
+    options.addStringOption("charset", "UTF-8")
+}

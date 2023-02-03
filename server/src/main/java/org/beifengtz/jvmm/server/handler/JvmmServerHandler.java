@@ -3,7 +3,6 @@ package org.beifengtz.jvmm.server.handler;
 import com.google.gson.JsonObject;
 import io.netty.channel.ChannelHandlerContext;
 import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.util.SignatureUtil;
 import org.beifengtz.jvmm.convey.enums.GlobalStatus;
 import org.beifengtz.jvmm.convey.enums.GlobalType;
@@ -13,6 +12,7 @@ import org.beifengtz.jvmm.convey.handler.JvmmChannelHandler;
 import org.beifengtz.jvmm.server.entity.conf.JvmmServerConf;
 import org.beifengtz.jvmm.server.ServerContext;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
@@ -26,7 +26,7 @@ import java.util.Objects;
  * @author beifengtz
  */
 public class JvmmServerHandler extends JvmmChannelHandler {
-    private static final Logger logger = LoggerFactory.logger(JvmmServerHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(JvmmServerHandler.class);
 
     private boolean authed = !ServerContext.getConfiguration().getServer().getJvmm().getAuth().isEnable();
 

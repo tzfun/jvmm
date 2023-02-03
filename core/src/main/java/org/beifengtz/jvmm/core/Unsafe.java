@@ -1,8 +1,8 @@
 package org.beifengtz.jvmm.core;
 
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
-import org.beifengtz.jvmm.core.entity.mx.ClassLoaderInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmClassLoaderInfo;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import java.util.Set;
  */
 public final class Unsafe {
 
-    private static final Logger logger = LoggerFactory.logger(Unsafe.class);
+    private static final Logger logger = LoggerFactory.getLogger(Unsafe.class);
 
     private static Method threadsMethod;
     private static Method findLoadedClassMethod;
@@ -154,11 +154,11 @@ public final class Unsafe {
     /**
      * 获取所有 ClassLoader信息
      *
-     * @return list of {@link ClassLoaderInfo}
+     * @return list of {@link JvmClassLoaderInfo}
      * @throws Exception 调用失败
      */
-    public static List<ClassLoaderInfo> getClassLoaders() throws Exception {
-        List<ClassLoaderInfo> list = new ArrayList<>();
+    public static List<JvmClassLoaderInfo> getClassLoaders() throws Exception {
+        List<JvmClassLoaderInfo> list = new ArrayList<>();
         Set<ClassLoader> scannedClassLoader = new HashSet<>();
         for (Thread thread : getThreads()) {
             ClassLoader classLoader = thread.getContextClassLoader();
@@ -166,7 +166,7 @@ public final class Unsafe {
                 continue;
             }
             if (scannedClassLoader.add(classLoader)) {
-                ClassLoaderInfo info = ClassLoaderInfo.create(classLoader.hashCode()).setName(classLoader.getClass().getName());
+                JvmClassLoaderInfo info = JvmClassLoaderInfo.create(classLoader.hashCode()).setName(classLoader.getClass().getName());
 
                 ClassLoader parent = classLoader.getParent();
                 while (parent != null) {

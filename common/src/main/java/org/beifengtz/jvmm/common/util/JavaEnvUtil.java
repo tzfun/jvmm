@@ -1,7 +1,7 @@
 package org.beifengtz.jvmm.common.util;
 
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class JavaEnvUtil {
 
-    private static final Logger log = LoggerFactory.logger(JavaEnvUtil.class);
+    private static final Logger log = LoggerFactory.getLogger(JavaEnvUtil.class);
 
     private static volatile String JAVA_HOME = null;
 

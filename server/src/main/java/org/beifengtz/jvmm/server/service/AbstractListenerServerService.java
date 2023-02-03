@@ -49,7 +49,7 @@ public abstract class AbstractListenerServerService implements JvmmService {
 
     @Override
     public void start(Promise<Integer> promise) {
-        JvmmServerConf conf = ServerContext.getConfiguration().getServer().getJvmm();
+        JvmmServerConf conf = getConf();
         if (conf == null) {
             promise.tryFailure(new IllegalArgumentException("No jvmm configuration"));
             return;
@@ -115,6 +115,8 @@ public abstract class AbstractListenerServerService implements JvmmService {
     public int getPort() {
         return runningPort.get();
     }
+
+    protected abstract JvmmServerConf getConf();
 
     protected abstract Logger logger();
 

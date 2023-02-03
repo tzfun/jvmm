@@ -2,13 +2,13 @@ package org.beifengtz.jvmm.server.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.convey.handler.HttpChannelHandler;
 import org.beifengtz.jvmm.server.entity.conf.AuthOptionConf;
 import org.beifengtz.jvmm.server.entity.conf.HttpServerConf;
 import org.beifengtz.jvmm.server.ServerContext;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -27,7 +27,7 @@ public class HttpServerHandler extends HttpChannelHandler {
 
     @Override
     public Logger logger() {
-        return LoggerFactory.logger(HttpServerHandler.class);
+        return LoggerFactory.getLogger(HttpServerHandler.class);
     }
 
     @Override

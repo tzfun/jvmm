@@ -23,9 +23,9 @@ public class GuidedRunner {
     private static final Scanner scanner = new Scanner(System.in);
 
     public static String askMode() {
-        System.out.println("\n[1] client, Connect to remote jvmm server.");
-        System.out.println("[2] attach, Attach Jvmm to the local java process.");
-        System.out.println("[3] jar, Generate the jar files required by the java agent.");
+        System.out.println("\n[1] client,\tConnect to remote jvmm server.");
+        System.out.println("[2] attach,\tAttach Jvmm to the local java process.");
+        System.out.println("[3] jar,\tGenerate the jar files required by the java agent.");
         System.out.print("\nSelect an execution mode(serial number): ");
 
         String mode = null;
@@ -86,7 +86,7 @@ public class GuidedRunner {
         String path = null;
         File f = new File("config.yml");
         if (f.exists()) {
-            System.out.print("A configuration file config.yml was found in the current directory, do you want to use it?(Y/N) ");
+            System.out.print("A configuration file config.yml was found in the current directory, do you want to use it?(y/n): ");
             String res = scanner.nextLine();
             if ("y".equalsIgnoreCase(res)) {
                 return f.getAbsolutePath();
@@ -115,26 +115,16 @@ public class GuidedRunner {
     }
 
     public static int askAttachPid() {
-        System.out.println();
-        PairKey<List<JpsResult>, String> PairKey = JvmmFactory.getExecutor().listJavaProcess();
-        if (PairKey.getRight() == null) {
-            List<JpsResult> jpsList = PairKey.getLeft();
-
-            long currentPid = PidUtil.currentPid();
-            jpsList.removeIf(o -> o.getPid() == currentPid);
-
-            for (int i = 1; i <= jpsList.size(); i++) {
-                JpsResult jps = jpsList.get(i - 1);
-                System.out.printf("[%d] %d %s%n", i, jps.getPid(), jps.getMainClass());
-            }
-
-            System.out.print("\nSelect the program number you will attach: ");
+        List<JpsResult> jpsList = printJps();
+        if (jpsList != null) {
             JpsResult jps = null;
             while (scanner.hasNextLine()) {
                 String str = scanner.nextLine();
-                int result = str.matches("\\d+") ? Integer.parseInt(str) : 0;
+                int result = str.matches("\\d+") ? Integer.parseInt(str) : -1;
 
-                if (result <= 0 || result > jpsList.size()) {
+                if (result == 0) {
+                    jpsList = printJps();
+                } else if (result < 0 || result > jpsList.size()) {
                     System.out.println("Wrong serial number.");
                     System.out.print("Select the program number you will attach: ");
                 } else {
@@ -144,20 +134,41 @@ public class GuidedRunner {
             }
             assert jps != null;
             return (int) jps.getPid();
-        } else {
-            System.out.println("Can not get local java processes, case: " + PairKey.getRight());
-            System.exit(-1);
         }
         return -1;
     }
 
+    private static List<JpsResult> printJps() {
+        System.out.println();
+        PairKey<List<JpsResult>, String> pairKey = JvmmFactory.getExecutor().listJavaProcess();
+        if (pairKey.getRight() == null) {
+            List<JpsResult> jpsList = pairKey.getLeft();
+
+            jpsList.removeIf(o -> o.getPid() == PidUtil.currentPid() || o.getMainClass().endsWith("jps.Jps"));
+
+            for (int i = 1; i <= jpsList.size(); i++) {
+                JpsResult jps = jpsList.get(i - 1);
+                System.out.printf("[%d]\t%d\t%s%n", i, jps.getPid(), jps.getMainClass());
+            }
+
+            System.out.print("\nType 0 to reload processes list.\n");
+            System.out.print("\nSelect the program number you will attach: ");
+
+            return jpsList;
+        } else {
+            System.out.println("Can not get local java processes, case: " + pairKey.getRight());
+            System.exit(-1);
+        }
+        return null;
+    }
+
     public static String askServerAddress() {
-        System.out.print("Enter the Jvmm server address: ");
+        System.out.print("Enter the Jvmm server address (eg. 127.0.0.1:5010): ");
         return scanner.nextLine();
     }
 
     public static boolean askServerAuthEnable() {
-        System.out.print("Does the jvmm server require authentication?(Y/N): ");
+        System.out.print("Does the jvmm server require authentication?(y/n): ");
         String result = scanner.nextLine();
         return "y".equalsIgnoreCase(result);
     }

@@ -1,10 +1,5 @@
 package org.beifengtz.jvmm.client;
 
-import io.netty.util.internal.logging.InternalLoggerFactory;
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
-import org.beifengtz.jvmm.common.logger.LoggerLevel;
-import org.beifengtz.jvmm.convey.DefaultInternalLoggerFactory;
-
 /**
  * <p>
  * Description: TODO
@@ -15,12 +10,14 @@ import org.beifengtz.jvmm.convey.DefaultInternalLoggerFactory;
  * @author beifengtz
  */
 public class ClientApplication {
-    static {
-        LoggerFactory.setDefaultLoggerLevel(LoggerLevel.INFO);
-        InternalLoggerFactory.setDefaultFactory(DefaultInternalLoggerFactory.newInstance(LoggerLevel.INFO));
+
+    private static void initLogger() {
+        System.setProperty("jvmm.log.level", "info");
+        System.setProperty("jvmm.log.pattern", "[%ansi{%level}{ERROR=31,INFO=32,WARN=33,DEBUG=34,TRACE=35}] %msg");
     }
 
     public static void main(String[] args) throws Throwable {
+        initLogger();
         CommandRunner.run(args);
     }
 }

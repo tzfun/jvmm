@@ -1,8 +1,8 @@
 package org.beifengtz.jvmm.common.util;
 
 import org.beifengtz.jvmm.common.PlatformEnum;
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -22,7 +22,7 @@ import java.util.concurrent.RejectedExecutionException;
  */
 public class PlatformUtil {
 
-    private static final Logger log = LoggerFactory.logger(PlatformUtil.class);
+    private static final Logger log = LoggerFactory.getLogger(PlatformUtil.class);
 
     private static final String OPERATING_SYSTEM_NAME = SystemPropertyUtil.get("os.name").toLowerCase(Locale.ENGLISH);
     private static final String OPERATING_SYSTEM_ARCH = SystemPropertyUtil.get("os.arch").toLowerCase(Locale.ENGLISH);

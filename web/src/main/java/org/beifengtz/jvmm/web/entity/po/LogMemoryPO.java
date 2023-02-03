@@ -2,7 +2,7 @@ package org.beifengtz.jvmm.web.entity.po;
 
 import com.baomidou.mybatisplus.annotations.TableName;
 import lombok.Data;
-import org.beifengtz.jvmm.core.entity.mx.MemoryInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmMemoryInfo;
 
 import java.lang.management.MemoryUsage;
 
@@ -30,7 +30,7 @@ public class LogMemoryPO {
     private long nonHeapMax;
     private long createTime;
 
-    public void merge(MemoryInfo info) {
+    public void merge(JvmMemoryInfo info) {
         this.verbose = info.isVerbose();
         this.pendingCount = info.getPendingCount();
         MemoryUsage heapUsage = info.getHeapUsage();

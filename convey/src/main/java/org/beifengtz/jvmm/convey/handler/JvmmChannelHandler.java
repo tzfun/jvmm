@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSyntaxException;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -13,7 +12,6 @@ import io.netty.handler.codec.TooLongFrameException;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.concurrent.EventExecutor;
-import org.beifengtz.jvmm.common.JsonParsable;
 import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
 import org.beifengtz.jvmm.common.exception.InvalidJvmmMappingException;
 import org.beifengtz.jvmm.common.exception.InvalidMsgException;
@@ -27,6 +25,7 @@ import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
 import org.beifengtz.jvmm.convey.channel.JvmmServerChannelInitializer;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
+import org.beifengtz.jvmm.convey.entity.ResponseFuture;
 import org.beifengtz.jvmm.convey.enums.GlobalStatus;
 import org.beifengtz.jvmm.convey.enums.GlobalType;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
@@ -170,7 +169,6 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
         } else if (cause instanceof IOException) {
             logger().debug(cause.toString());
         } else if (cause instanceof TooLongFrameException) {
-            logger().warn("{} | {}", cause.getMessage(), JvmmConnector.getIpByCtx(ctx));
             ctx.close();
         } else {
             logger().error(cause.toString(), cause);
@@ -190,6 +188,7 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
 
     public abstract Logger logger();
 
+    @SuppressWarnings("unchecked")
     public void handleRequest(ChannelHandlerContext ctx, JvmmRequest reqMsg) {
         try {
             if (!handleBefore(ctx, reqMsg)) {
@@ -251,8 +250,18 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
                     parameter[i] = ctx;
                 } else if (getClass().isAssignableFrom(parameterType)) {
                     parameter[i] = this;
+                } else if (ResponseFuture.class.isAssignableFrom(parameterType)) {
+                    parameter[i] = new ResponseFuture(data -> {
+                        JvmmResponse response = JvmmResponse.create()
+                                .setStatus(GlobalStatus.JVMM_STATUS_OK)
+                                .setType(reqMsg.getType())
+                                .setData(HandlerProvider.parseResult2Json(data));
+                        ctx.channel().writeAndFlush(response.serialize());
+                    });
+                } else if (parameterType.isAssignableFrom(Enum.class)) {
+                    parameter[i] = Enum.valueOf((Class<? extends Enum>)parameterType, reqMsg.getData().toString());
                 } else {
-                    parameter[i] = new Gson().fromJson(reqMsg.getData(), parameterType);
+                    parameter[i] = new Gson().fromJson(reqMsg.getData(), method.getGenericParameterTypes()[i]);
                 }
             }
 
@@ -260,24 +269,10 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
             if (result instanceof JvmmResponse) {
                 ctx.channel().writeAndFlush(((JvmmResponse) result).serialize());
             } else if (result != null) {
-                JvmmResponse response = JvmmResponse.create().setStatus(GlobalStatus.JVMM_STATUS_OK).setType(reqMsg.getType());
-                JsonElement data = null;
-                if (result instanceof Boolean) {
-                    data = new JsonPrimitive((Boolean) result);
-                } else if (result instanceof Number) {
-                    data = new JsonPrimitive((Number) result);
-                } else if (result instanceof String) {
-                    data = new JsonPrimitive((String) result);
-                } else if (result instanceof Character) {
-                    data = new JsonPrimitive((Character) result);
-                } else if (result instanceof JsonElement) {
-                    data = (JsonElement) result;
-                } else if (result instanceof JsonParsable) {
-                    data = ((JsonParsable) result).toJson();
-                } else {
-                    data = new Gson().toJsonTree(result);
-                }
-                response.setData(data);
+                JvmmResponse response = JvmmResponse.create()
+                        .setStatus(GlobalStatus.JVMM_STATUS_OK)
+                        .setType(reqMsg.getType())
+                        .setData(HandlerProvider.parseResult2Json(result));
                 ctx.channel().writeAndFlush(response.serialize());
             }
         } catch (Throwable e) {

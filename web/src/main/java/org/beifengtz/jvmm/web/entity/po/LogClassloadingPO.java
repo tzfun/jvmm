@@ -2,7 +2,7 @@ package org.beifengtz.jvmm.web.entity.po;
 
 import com.baomidou.mybatisplus.annotations.TableName;
 import lombok.Data;
-import org.beifengtz.jvmm.core.entity.mx.ClassLoadingInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmClassLoadingInfo;
 
 /**
  * Description: TODO
@@ -22,7 +22,7 @@ public class LogClassloadingPO {
     private long tlcc;
     private long createTime;
 
-    public void merge(ClassLoadingInfo info) {
+    public void merge(JvmClassLoadingInfo info) {
         this.verbose = info.isVerbose();
         this.lcc = info.getLoadedClassCount();
         this.ulcc = info.getUnLoadedClassCount();

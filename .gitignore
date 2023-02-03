@@ -46,3 +46,7 @@ web/src/main/resources/application*.yml
 /logs/*
 /client/src/main/resources/
 /.jvmm/
+/extension/jvmm-sysio/cmake-build-debug*/
+/jni-header/
+/server/src/main/resources/jvmm-logger.jar
+/log/
