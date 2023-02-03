@@ -1,5 +1,5 @@
-ext.projectName = 'jvmm-log'
-archivesBaseName = "jvmm-log"
+ext.projectName = 'jvmm-logger'
+archivesBaseName = "jvmm-logger"
 
 group = rootProject.group
 version = rootProject.version
@@ -13,7 +13,7 @@ jar {
     manifestContentCharset 'utf-8'
     metadataCharset 'utf-8'
 
-    archiveName("jvmm-log.jar")
+    archiveName("jvmm-logger.jar")
 }
 
 task sourcesJar(type: Jar) {

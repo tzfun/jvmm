@@ -4,9 +4,9 @@ import io.netty.util.concurrent.DefaultPromise;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.Promise;
-import org.beifengtz.jvmm.common.logger.LoggerLevel;
 import org.beifengtz.jvmm.common.util.IPUtil;
 import org.beifengtz.jvmm.server.entity.conf.Configuration;
+import org.beifengtz.jvmm.server.entity.conf.LogConf;
 import org.beifengtz.jvmm.server.entity.conf.ServerConf;
 import org.beifengtz.jvmm.server.enums.ServerType;
 import org.beifengtz.jvmm.server.service.JvmmHttpServerService;
@@ -21,7 +21,6 @@ import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -88,26 +87,25 @@ public class ServerBootstrap {
         if (config == null) {
             config = new Configuration();
         }
+        ServerContext.setConfiguration(config);
 
-        if (config.getLog().isUseJvmm()) {
-            initJvmmLogger(config.getLog().getLevel());
-        } else if (fromAgent) {
-            initAgentLogger(config.getLog().getLevel());
+        if (fromAgent) {
+            System.setProperty("jvmm.log.printers", "agentProxy");
+        }
+
+        try {
+            ServerContext.loadLoggerLib();
+        } catch (Throwable t) {
+            System.err.println("The implementation of SLF4J was not found in the startup environment, and the Jvmm log dependency failed to load:" + t.getMessage());
+            t.printStackTrace();
         }
 
         bootstrap = new ServerBootstrap(inst);
-        ServerContext.setConfiguration(config);
 
         return bootstrap;
     }
 
-    private static void initJvmmLogger(String levelStr) {
-        LoggerLevel level = LoggerLevel.valueOf(levelStr.toUpperCase(Locale.ROOT));
-        //  TODO 载入jvmm-log
-    }
-
-    private static void initAgentLogger(String levelStr) {
-        LoggerLevel level = LoggerLevel.valueOf(levelStr.toUpperCase(Locale.ROOT));
+    private static void initAgentLogger(LogConf conf) {
         //  TODO 载入jvmm-log，但只初始化 agentProxy 这一个Printer
     }
 

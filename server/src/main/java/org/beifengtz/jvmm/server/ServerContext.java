@@ -1,7 +1,11 @@
 package org.beifengtz.jvmm.server;
 
 import io.netty.channel.EventLoopGroup;
+import org.beifengtz.jvmm.common.util.ClassLoaderUtil;
+import org.beifengtz.jvmm.common.util.FileUtil;
+import org.beifengtz.jvmm.common.util.IOUtil;
 import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
+import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.server.entity.conf.Configuration;
 import org.beifengtz.jvmm.server.enums.ServerType;
 import org.beifengtz.jvmm.server.service.JvmmService;
@@ -9,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Set;
@@ -25,8 +30,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ServerContext {
 
-    private static final Logger logger = LoggerFactory.getLogger(ServerContext.class);
-
     public static final String STATUS_OK = "ok";
 
     private static volatile Configuration configuration;
@@ -34,6 +37,8 @@ public class ServerContext {
     private static final Map<ServerType, JvmmService> serviceContainer = new ConcurrentHashMap<>(1);
 
     private static volatile EventLoopGroup boosGroup;
+
+    private static volatile boolean loadedLogLib = false;
 
     static {
         try {
@@ -62,13 +67,13 @@ public class ServerContext {
             System.setProperty("jvmm.home", homePath.getAbsolutePath());
             System.setProperty("jvmm.tempPath", tempPath.getAbsolutePath());
         } catch (Exception e) {
-            logger.error("Init server config failed: " + e.getMessage(), e);
+            LoggerFactory.getLogger(ServerContext.class).error("Init server config failed: " + e.getMessage(), e);
         }
     }
 
     public static synchronized void setConfiguration(Configuration config) {
         configuration = config;
-        System.setProperty("jvmm.log.level", config.getLog().getLevel());
+        config.getLog().setSystemProperties();
         System.setProperty("jvmm.workThread", String.valueOf(config.getWorkThread()));
     }
 
@@ -136,5 +141,27 @@ public class ServerContext {
 
     public static void unregisterService(ServerType type) {
         serviceContainer.remove(type);
+    }
+
+    static synchronized void loadLoggerLib() throws Throwable {
+        if (loadedLogLib) {
+            return;
+        }
+
+        try {
+            Class.forName("org.slf4j.impl.StaticLoggerBinder");
+        } catch (NoClassDefFoundError | ClassNotFoundException e) {
+            final String jarName = "jvmm-logger.jar";
+            InputStream is = ServerApplication.class.getResourceAsStream("/" + jarName);
+            if (is == null) {
+                throw new RuntimeException("Can not load jvmm logger library, case: jar not found.");
+            }
+            File file = new File(JvmmFactory.getTempPath(), jarName);
+            FileUtil.writeByteArrayToFile(file, IOUtil.toByteArray(is));
+
+            ClassLoaderUtil.systemLoadJar(file.toPath().toUri().toURL());
+        }
+
+        loadedLogLib = true;
     }
 }

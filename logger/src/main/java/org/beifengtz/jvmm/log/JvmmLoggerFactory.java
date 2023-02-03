@@ -1,9 +1,7 @@
-package org.slf4j.impl;
+package org.beifengtz.jvmm.log;
 
 import org.beifengtz.jvmm.common.logger.LoggerLevel;
 import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
-import org.beifengtz.jvmm.log.JvmmLogConfiguration;
-import org.beifengtz.jvmm.log.Logger;
 import org.beifengtz.jvmm.log.printer.AgentProxyPrinter;
 import org.beifengtz.jvmm.log.printer.FilePrinter;
 import org.beifengtz.jvmm.log.printer.Printer;
@@ -20,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @description: TODO
  * @date 10:01 2023/2/3
  */
-class JvmmLoggerFactory implements ILoggerFactory {
+public class JvmmLoggerFactory implements ILoggerFactory {
     static ConcurrentHashMap<String, Logger> loggerMap = new ConcurrentHashMap<>();
 
     private final List<Printer> printers = new ArrayList<>(2);

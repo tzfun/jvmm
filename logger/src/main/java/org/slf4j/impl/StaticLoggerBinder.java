@@ -1,6 +1,7 @@
 package org.slf4j.impl;
 
 import org.beifengtz.jvmm.log.JvmmLogConfiguration;
+import org.beifengtz.jvmm.log.JvmmLoggerFactory;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.spi.LoggerFactoryBinder;
 

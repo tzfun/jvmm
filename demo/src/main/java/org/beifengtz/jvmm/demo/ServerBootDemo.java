@@ -1,5 +1,6 @@
 package org.beifengtz.jvmm.demo;
 
+import org.beifengtz.jvmm.common.logger.LoggerLevel;
 import org.beifengtz.jvmm.server.ServerBootstrap;
 import org.beifengtz.jvmm.server.entity.conf.AuthOptionConf;
 import org.beifengtz.jvmm.server.entity.conf.Configuration;
@@ -64,7 +65,7 @@ public class ServerBootDemo {
         return new Configuration()
                 .setName("jvmm-server")
                 .setWorkThread(2)
-                .setLog(new LogConf().setLevel("info").setUseJvmm(true))
+                .setLog(new LogConf().setLevel(LoggerLevel.INFO))
                 .setServer(new ServerConf().setType("jvmm,sentinel")
                         .setJvmm(jvmmServer)
                         .setHttp(httpServer)

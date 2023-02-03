@@ -5,9 +5,6 @@ import org.beifengtz.jvmm.server.entity.conf.Configuration;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 /**
  * @author beifengtz
@@ -44,9 +41,8 @@ public class ServerApplication {
         return null;
     }
 
-    public static void main(String[] args) throws Exception {
-        System.setErr(new PrintStream(Files.newOutputStream(Paths.get("jvmm-err.log"))));
-        ServerBootstrap server = ServerBootstrap.getInstance(loadConf(args));
-        server.start();
+    public static void main(String[] args) throws Throwable {
+        ServerContext.loadLoggerLib();
+        ServerBootstrap.getInstance(loadConf(args)).start();
     }
 }

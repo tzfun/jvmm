@@ -9,13 +9,13 @@ import org.beifengtz.jvmm.common.logger.LoggerLevel;
  */
 public class JvmmLogConfiguration {
 
-    private static final String DEFAULT_PATTERN = "%ansi{%date{yyyy-MM-dd HH:mm:ss.SSSZ}}{36} %ansi{%level}{ERROR=31,INFO=32,WARN=33,DEBUG=34,TRACE=35} %ansi{%class}{38;5;14} %msg";
+    private static final String DEFAULT_PATTERN = "%ansi{%date{yyyy-MM-dd HH:mm:ss}}{36} %ansi{%level}{ERROR=31,INFO=32,WARN=33,DEBUG=34,TRACE=35} %ansi{%class}{38;5;14}\t: %msg";
     /**
      * 日志等级
      */
     private LoggerLevel level = LoggerLevel.INFO;
     /**
-     * 日志文件输出路径
+     * 日志文件输出目录
      */
     private String file = "log";
     /**
