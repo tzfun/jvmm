@@ -6,7 +6,6 @@ import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.Promise;
 import org.beifengtz.jvmm.common.util.IPUtil;
 import org.beifengtz.jvmm.server.entity.conf.Configuration;
-import org.beifengtz.jvmm.server.entity.conf.LogConf;
 import org.beifengtz.jvmm.server.entity.conf.ServerConf;
 import org.beifengtz.jvmm.server.enums.ServerType;
 import org.beifengtz.jvmm.server.service.JvmmHttpServerService;
@@ -104,10 +103,6 @@ public class ServerBootstrap {
         bootstrap = new ServerBootstrap(inst);
 
         return bootstrap;
-    }
-
-    private static void initAgentLogger(LogConf conf) {
-        //  TODO 载入jvmm-log，但只初始化 agentProxy 这一个Printer
     }
 
     private static Logger logger() {

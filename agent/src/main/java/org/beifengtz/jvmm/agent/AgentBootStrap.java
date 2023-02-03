@@ -37,7 +37,6 @@ import java.util.jar.JarFile;
  */
 public class AgentBootStrap {
     private static volatile Logger log = null;
-    private static final String STATIC_LOGGER_BINDER_PATH = "org.slf4j.impl.StaticLoggerBinder";
     private static final String JVMM_SERVER_JAR = "jvmm-server.jar";
     private static final String SERVER_MAIN_CLASS = "org.beifengtz.jvmm.server.ServerBootstrap";
     private static volatile Instrumentation instrumentation;
@@ -260,7 +259,7 @@ public class AgentBootStrap {
                 String finalJarPath = tmpPath + tmpJar;
 
                 URL jarFile = new File(finalJarPath).toURI().toURL();
-                ClassLoaderUtil.classLoaderAddURL(loader, jarFile);
+                ClassLoaderUtil.loadJar(loader, jarFile);
                 log.info("Load jar file from " + finalJarPath);
                 return true;
             }
@@ -305,7 +304,7 @@ public class AgentBootStrap {
             try {
                 if (needPreLoad != null && !needPreLoad.isEmpty()) {
                     for (URL url : needPreLoad) {
-                        ClassLoaderUtil.classLoaderAddURL(agentClassLoader, url);
+                        ClassLoaderUtil.loadJar(agentClassLoader, url);
                     }
                 }
 

@@ -5,7 +5,6 @@ import org.beifengtz.jvmm.common.util.ClassLoaderUtil;
 import org.beifengtz.jvmm.common.util.FileUtil;
 import org.beifengtz.jvmm.common.util.IOUtil;
 import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
-import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.server.entity.conf.Configuration;
 import org.beifengtz.jvmm.server.enums.ServerType;
 import org.beifengtz.jvmm.server.service.JvmmService;
@@ -13,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.InputStream;
-import java.net.URLClassLoader;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Set;
@@ -157,7 +155,7 @@ public class ServerContext {
             if (is == null) {
                 throw new RuntimeException("Can not load jvmm logger library, case: jar not found");
             }
-            File file = new File(JvmmFactory.getTempPath(), jarName);
+            File file = new File(FileUtil.getTempPath(), jarName);
             FileUtil.writeByteArrayToFile(file, IOUtil.toByteArray(is));
 
             ClassLoaderUtil.loadJar(ServerContext.class.getClassLoader(), file.toPath().toUri().toURL());

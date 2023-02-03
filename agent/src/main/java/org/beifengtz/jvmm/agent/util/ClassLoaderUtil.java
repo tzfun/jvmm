@@ -1,7 +1,6 @@
 package org.beifengtz.jvmm.agent.util;
 
-import org.beifengtz.jvmm.agent.JvmmAgentClassLoader;
-
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -13,23 +12,35 @@ import java.net.URLClassLoader;
  */
 public class ClassLoaderUtil {
 
-    public static ClassLoader systemLoadJar(URL jar) throws Throwable {
-        ClassLoader cl = ClassLoader.getSystemClassLoader();
-        if (cl instanceof URLClassLoader) {
-            classLoaderAddURL((URLClassLoader) cl, jar);
-            return cl;
+    public static void loadJar(ClassLoader classLoader, URL jar) throws Throwable {
+        if (classLoader instanceof URLClassLoader) {
+            urlClassloaderLoadJar((URLClassLoader) classLoader, jar);
         } else {
-            throw new UnsupportedOperationException("Can not load jar library from " + cl.getClass());
+            try {
+                Field field = classLoader.getClass().getDeclaredField("ucp");
+                field.setAccessible(true);
+                Object ucp = field.get(classLoader);
+
+                Method method = ucp.getClass().getDeclaredMethod("addURL", URL.class);
+                method.setAccessible(true);
+
+                method.invoke(ucp, jar);
+            } catch (Exception exception) {
+                exception.printStackTrace();
+                throw new IllegalStateException(exception.getMessage(), exception);
+            }
         }
     }
 
-    public static void classLoaderAddURL(URLClassLoader classLoader, URL url) throws Throwable {
-        Method addURL = classLoader.getClass().getSuperclass().getDeclaredMethod("addURL", URL.class);
-        addURL.setAccessible(true);
-        addURL.invoke(classLoader, url);
+    public static ClassLoader systemLoadJar(URL jar) throws Throwable {
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        loadJar(classLoader, jar);
+        return classLoader;
     }
 
-    public static void classLoaderAddURL(JvmmAgentClassLoader classLoader, URL url) {
-        classLoader.addURL(url);
+    private static void urlClassloaderLoadJar(URLClassLoader classLoader, URL jar) throws Throwable {
+        Method addURL = classLoader.getClass().getSuperclass().getDeclaredMethod("addURL", URL.class);
+        addURL.setAccessible(true);
+        addURL.invoke(classLoader, jar);
     }
 }

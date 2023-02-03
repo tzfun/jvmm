@@ -2,6 +2,7 @@ package org.beifengtz.jvmm.core;
 
 import org.beifengtz.jvmm.common.factory.ExecutorFactory;
 import org.beifengtz.jvmm.common.util.CommonUtil;
+import org.beifengtz.jvmm.common.util.FileUtil;
 import org.beifengtz.jvmm.common.util.PlatformUtil;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerCounter;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerEvent;
@@ -55,7 +56,7 @@ public class AsyncProfiler {
         if (soPath != null) {
             InputStream stream = AsyncProfiler.class.getResourceAsStream(soPath);
             if (stream != null) {
-                File file = new File(JvmmFactory.getTempPath(), "libasyncProfiler.so");
+                File file = new File(FileUtil.getTempPath(), "libasyncProfiler.so");
                 if (!file.getParentFile().exists()) {
                     file.getParentFile().mkdirs();
                 }
