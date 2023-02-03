@@ -14,13 +14,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Scanner;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -39,6 +37,11 @@ import java.util.zip.ZipOutputStream;
 public class FileUtil {
 
     private static final int SAFE_BYTE_LENGTH = 2048;
+    private static final String TEMP_PATH = ".jvmm";
+
+    public static String getTempPath() {
+        return TEMP_PATH;
+    }
 
     public static void writeByteArrayToFile(File file, byte[] data) throws IOException {
         writeByteArrayToFile(file, data, false);
@@ -216,7 +219,7 @@ public class FileUtil {
                 }
                 try (InputStream is = jar.getInputStream(entry);
                      FileOutputStream fos = new FileOutputStream(f)) {
-                    byte[] bytes = new byte[2048];
+                    byte[] bytes = new byte[SAFE_BYTE_LENGTH];
                     int read = 0;
                     while ((read = is.read(bytes, 0, bytes.length)) > 0) {
                         fos.write(bytes, 0, read);
@@ -255,7 +258,7 @@ public class FileUtil {
                 }
                 try (InputStream is = jarFile.getInputStream(entry);
                      FileOutputStream fos = new FileOutputStream(f)) {
-                    byte[] bytes = new byte[2048];
+                    byte[] bytes = new byte[SAFE_BYTE_LENGTH];
                     int read = 0;
                     while ((read = is.read(bytes, 0, bytes.length)) > 0) {
                         fos.write(bytes, 0, read);
@@ -370,5 +373,47 @@ public class FileUtil {
             to.createNewFile();
         }
         Files.write(to.toPath(), CodingUtil.hexStr2Bytes(hexStr));
+    }
+
+    /**
+     * 从Jar包中删除文件
+     *
+     * @param jarFile Jar
+     * @param regex   正则匹配
+     */
+    public static void delFromJar(String jarPath, String regex) throws IOException {
+        File tmpFile = new File(getTempPath(), UUID.randomUUID().toString());
+        try (JarFile jarFile = new JarFile(jarPath)) {
+            boolean found = jarFile.stream().anyMatch(o -> !o.isDirectory() && o.getName().matches(regex));
+            if (found) {
+                Enumeration<JarEntry> entries = jarFile.entries();
+                while (entries.hasMoreElements()) {
+                    JarEntry entry = entries.nextElement();
+                    if (!entry.isDirectory() && !entry.getName().matches(regex)) {
+                        File f = new File(tmpFile, entry.getName());
+                        if (f.getParentFile() != null && !f.getParentFile().exists()) {
+                            f.getParentFile().mkdirs();
+                        }
+                        if (f.exists()) {
+                            f.delete();
+                        }
+                        try (InputStream is = jarFile.getInputStream(entry);
+                             FileOutputStream fos = new FileOutputStream(f)) {
+                            byte[] bytes = new byte[SAFE_BYTE_LENGTH];
+                            int read = 0;
+                            while ((read = is.read(bytes, 0, bytes.length)) > 0) {
+                                fos.write(bytes, 0, read);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (tmpFile.exists()) {
+            File file = new File(jarPath);
+            file.delete();
+            zip(tmpFile, file, false);
+            delFile(tmpFile);
+        }
     }
 }

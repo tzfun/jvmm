@@ -45,7 +45,7 @@ public class ProfilerController {
     @HttpRequest(value = "/profiler/flame_graph", method = Method.POST)
     public JvmmResponse flameGraph(@RequestBody ProfilerSampleDTO data) throws Exception {
 
-        File to = new File(JvmmFactory.getTempPath(), UUID.randomUUID() + "." + data.getFormat());
+        File to = new File(FileUtil.getTempPath(), UUID.randomUUID() + "." + data.getFormat());
         if (to.getParentFile() != null && !to.getParentFile().exists()) {
             to.getParentFile().mkdirs();
         }

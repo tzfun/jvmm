@@ -1,6 +1,6 @@
 //  为了缩小agent的体积，不直接依赖common包，尽可能少的引入依赖
 dependencies {
-    compile "org.slf4j:slf4j-api:${slf4jVersion}"
+    compile("org.slf4j:slf4j-api:${slf4jVersion}")
 }
 
 jar {

@@ -206,7 +206,7 @@ class DefaultJvmmExecutor implements JvmmExecutor {
             throw new IllegalStateException("No instrumentation");
         }
         byte[] bytes = JadUtil.toBytes(instrumentation, className);
-        File file = new File(JvmmFactory.getTempPath(), className + ".class");
+        File file = new File(FileUtil.getTempPath(), className + ".class");
         FileUtil.writeByteArrayToFile(file, bytes);
         return JadUtil.decompile(file, methodName);
     }
