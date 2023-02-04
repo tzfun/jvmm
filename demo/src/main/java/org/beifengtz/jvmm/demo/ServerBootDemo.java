@@ -13,8 +13,6 @@ import org.beifengtz.jvmm.server.entity.conf.ServerConf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.InputStream;
-
 /**
  * Description: TODO
  * <p>
@@ -24,17 +22,8 @@ import java.io.InputStream;
  */
 public class ServerBootDemo {
     public static void main(String[] args) throws Throwable {
-        Logger logger = LoggerFactory.getLogger(ServerBootDemo.class);
-
-        InputStream is = ServerBootDemo.class.getResourceAsStream("/config.yml");
-        if (is != null) {
-            //  从resource中读取配置文件，除此之外你也可以自己通过代码构造Configuration
-            Configuration config = Configuration.parseFromStream(is);
-            ServerBootstrap server = ServerBootstrap.getInstance(config);
-            server.start(msg -> transformServerCallback(msg.toString()));
-        } else {
-            logger.error("Can not found config.yml in resources");
-        }
+        ServerBootstrap server = ServerBootstrap.getInstance();
+        server.start(msg -> transformServerCallback(msg.toString()));
     }
 
     private static Configuration constructConfig() {

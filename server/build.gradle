@@ -10,18 +10,21 @@ dependencies {
     compile "org.yaml:snakeyaml:${snakeyamlVersion}"
 }
 
-//  发布时去掉
-//tasks.compileJava.configure {
-//    dependsOn project(':logger').tasks.jar
-//
-//    doLast {
+tasks.compileJava.configure {
+    dependsOn project(':logger').tasks.jar
+
+    doLast {
+
+        delete 'src/main/resources/jvmm-logger.jar'
+
+        // 发布时去掉
 //        println("copy logger jar file to resources")
 //        copy {
 //            from '../logger/build/libs/jvmm-logger.jar'
 //            into 'src/main/resources'
 //        }
-//    }
-//}
+    }
+}
 
 jar {
     manifestContentCharset 'utf-8'
