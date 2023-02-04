@@ -5,12 +5,13 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
 import io.netty.util.concurrent.Promise;
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
 import org.beifengtz.jvmm.convey.channel.HttpServerChannelInitializer;
 import org.beifengtz.jvmm.server.ServerContext;
+import org.beifengtz.jvmm.server.entity.conf.HttpServerConf;
 import org.beifengtz.jvmm.server.handler.HttpServerHandlerProvider;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -23,9 +24,14 @@ import org.slf4j.Logger;
  */
 public class JvmmHttpServerService extends AbstractListenerServerService {
 
-    private static final Logger logger = LoggerFactory.logger(JvmmHttpServerService.class);
+    private static final Logger logger = LoggerFactory.getLogger(JvmmHttpServerService.class);
 
     protected Channel channel;
+
+    @Override
+    protected HttpServerConf getConf() {
+        return ServerContext.getConfiguration().getServer().getHttp();
+    }
 
     @Override
     protected Logger logger() {

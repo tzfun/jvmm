@@ -3,7 +3,7 @@ package org.beifengtz.jvmm.web.entity.po;
 import com.baomidou.mybatisplus.annotations.TableName;
 import lombok.Data;
 import org.beifengtz.jvmm.common.util.StringUtil;
-import org.beifengtz.jvmm.core.entity.mx.GarbageCollectorInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmGCInfo;
 
 /**
  * Description: TODO
@@ -24,7 +24,7 @@ public class LogGcPO {
     private String memoryPool;
     private long createTime;
 
-    public void merge(GarbageCollectorInfo info) {
+    public void merge(JvmGCInfo info) {
         this.name = info.getName();
         this.valid = info.isValid();
         this.gcCount = info.getCollectionCount();

@@ -3,7 +3,7 @@ package org.beifengtz.jvmm.web.entity.po;
 import com.baomidou.mybatisplus.annotations.TableName;
 import lombok.Data;
 import org.beifengtz.jvmm.common.util.StringUtil;
-import org.beifengtz.jvmm.core.entity.mx.MemoryPoolInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmMemoryPoolInfo;
 
 import java.lang.management.MemoryUsage;
 
@@ -29,7 +29,7 @@ public class LogMemoryPoolPO {
     private long max;
     private long createTime;
 
-    public void merge(MemoryPoolInfo info) {
+    public void merge(JvmMemoryPoolInfo info) {
         this.name = info.getName();
         this.valid = info.getValid();
         this.managerNames = StringUtil.join(",", info.getManagerNames());

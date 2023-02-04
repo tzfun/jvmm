@@ -1,10 +1,5 @@
 package org.beifengtz.jvmm.common.util;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,13 +14,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Scanner;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -44,6 +37,11 @@ import java.util.zip.ZipOutputStream;
 public class FileUtil {
 
     private static final int SAFE_BYTE_LENGTH = 2048;
+    private static final String TEMP_PATH = ".jvmm";
+
+    public static String getTempPath() {
+        return TEMP_PATH;
+    }
 
     public static void writeByteArrayToFile(File file, byte[] data) throws IOException {
         writeByteArrayToFile(file, data, false);
@@ -109,134 +107,6 @@ public class FileUtil {
                 map.put(key, v.toString());
             });
             return map;
-        }
-    }
-
-    public static Map<String, String> readYml(String file) throws IOException {
-        Map<String, String> map = new HashMap<>();
-        try (Scanner scanner = new Scanner(Files.newInputStream(Paths.get(file)))) {
-            LinkedList<String> stack = new LinkedList<>();
-            while (scanner.hasNext()) {
-                String line = scanner.nextLine();
-                if (line.trim().isEmpty() || line.trim().startsWith("#")) {
-                    continue;
-                }
-
-                int blankCount = 0;
-                for (char c : line.toCharArray()) {
-                    if (c == ' ') {
-                        blankCount++;
-                    } else {
-                        break;
-                    }
-                }
-                int lvl = blankCount / 2;
-                String[] kv = line.trim().split(":");
-
-                if (stack.size() > lvl) {
-                    while (stack.size() != lvl) {
-                        stack.removeLast();
-                    }
-                }
-
-                stack.add(kv[0]);
-
-                if (kv.length > 1 && !kv[1].trim().isEmpty()) {
-                    map.put(CommonUtil.join(".", stack), kv[1].trim());
-                }
-            }
-        }
-        return map;
-    }
-
-    public static JsonObject readYml2Json(File file) throws IOException {
-        JsonObject json = new JsonObject();
-        if (file == null || !file.exists()) {
-            return json;
-        }
-        try (Scanner scanner = new Scanner(Files.newInputStream(file.toPath()))) {
-            JsonElement tmp = json;
-            //  保留tmp的父节点堆栈，不包括tmp节点
-            LinkedList<JsonElement> stack = new LinkedList<>();
-            //  保留tmp的父节点名字堆栈，包括tmp的名字
-            LinkedList<Object> nameStack = new LinkedList<>();
-            nameStack.addLast("_root");
-            while (scanner.hasNext()) {
-                String line = scanner.nextLine();
-                if (line.trim().isEmpty() || line.trim().startsWith("#")) {
-                    continue;
-                }
-                int lvl = 0;
-                int type = 1;   //  1-object, 2-array
-                for (int i = 0; i < line.toCharArray().length - 1; i += 2) {
-                    if (line.charAt(i) == ' ' && line.charAt(i + 1) == ' ') {
-                        type = 1;
-                        lvl++;
-                    } else if (line.charAt(i) == '-' && line.charAt(i + 1) == ' ') {
-                        type = 2;
-                        lvl++;
-                    } else {
-                        break;
-                    }
-                }
-
-                String[] kv = line.trim().split(":");
-
-                //  堆栈回溯
-                while (type == 2 ? stack.size() >= lvl : stack.size() > lvl) {
-                    nameStack.removeLast();
-                    stack.removeLast();
-                    tmp = stack.isEmpty() ? json : stack.getLast();
-                }
-
-                //  对类型进行矫正
-                if (type == 2 && !tmp.isJsonArray()) {
-                    //  先取到父节点，更新类型
-                    Object name = nameStack.getLast();
-                    if (name instanceof String) {
-                        tmp = new JsonArray();
-                        stack.removeLast();
-                        stack.getLast().getAsJsonObject().add((String) name, tmp);
-                    } else {
-                        //  数字后继元素需要再回退一次，tmp为当前数组
-                        stack.removeLast();
-                        nameStack.removeLast();
-                        tmp = stack.getLast().getAsJsonObject().get((String) nameStack.getLast());
-                    }
-                }
-
-                if (kv.length <= 1 || kv[1].trim().isEmpty()) {
-                    //  添加新的节点
-                    JsonObject sub = new JsonObject();
-                    tmp.getAsJsonObject().add(kv[0], sub);
-                    stack.addLast(sub);
-                    nameStack.addLast(kv[0]);
-                    tmp = sub;
-                } else {
-                    JsonPrimitive value;
-                    String valueStr = line.substring(line.indexOf(":") + 1).trim();
-                    if (valueStr.matches("\\d+")) {
-                        value = new JsonPrimitive(Integer.parseInt(valueStr));
-                    } else if (valueStr.matches("(true|false)")) {
-                        value = new JsonPrimitive(Boolean.parseBoolean(valueStr));
-                    } else {
-                        value = new JsonPrimitive(valueStr);
-                    }
-                    //  当前节点添加元素，分数组和对象添加
-                    if (type == 2) {
-                        JsonObject e = new JsonObject();
-                        tmp.getAsJsonArray().add(e);
-                        nameStack.addLast(tmp.getAsJsonArray().size() - 1);
-                        tmp = e;
-                        stack.addLast(e);
-                        e.add(kv[0].replace("- ", ""), value);
-                    } else {
-                        tmp.getAsJsonObject().add(kv[0], value);
-                    }
-                }
-            }
-
-            return json;
         }
     }
 
@@ -349,7 +219,7 @@ public class FileUtil {
                 }
                 try (InputStream is = jar.getInputStream(entry);
                      FileOutputStream fos = new FileOutputStream(f)) {
-                    byte[] bytes = new byte[2048];
+                    byte[] bytes = new byte[SAFE_BYTE_LENGTH];
                     int read = 0;
                     while ((read = is.read(bytes, 0, bytes.length)) > 0) {
                         fos.write(bytes, 0, read);
@@ -368,11 +238,11 @@ public class FileUtil {
     /**
      * 从jar包中复制指定文件
      *
-     * @param jarFile           jar文件对象
-     * @param targetDir         复制目标目录
-     * @param regex             文件正则匹配
-     * @param subDirFunction    生成目标文件子目录function
-     * @throws IOException  复制失败时抛出
+     * @param jarFile        jar文件对象
+     * @param targetDir      复制目标目录
+     * @param regex          文件正则匹配
+     * @param subDirFunction 生成目标文件子目录function
+     * @throws IOException 复制失败时抛出
      */
     public static void copyFromJar(JarFile jarFile, File targetDir, String regex, Function<String, String> subDirFunction) throws IOException {
         Enumeration<JarEntry> entries = jarFile.entries();
@@ -388,7 +258,7 @@ public class FileUtil {
                 }
                 try (InputStream is = jarFile.getInputStream(entry);
                      FileOutputStream fos = new FileOutputStream(f)) {
-                    byte[] bytes = new byte[2048];
+                    byte[] bytes = new byte[SAFE_BYTE_LENGTH];
                     int read = 0;
                     while ((read = is.read(bytes, 0, bytes.length)) > 0) {
                         fos.write(bytes, 0, read);
@@ -401,10 +271,10 @@ public class FileUtil {
     /**
      * zip文件压缩
      *
-     * @param inputFile     待压缩文件夹/文件名
-     * @param outputFile    生成的压缩包
-     * @param containsRoot  是否包含根目录
-     * @throws IOException  压缩异常
+     * @param inputFile    待压缩文件夹/文件名
+     * @param outputFile   生成的压缩包
+     * @param containsRoot 是否包含根目录
+     * @throws IOException 压缩异常
      */
     public static void zip(File inputFile, File outputFile, boolean containsRoot) throws IOException {
         if (outputFile.getParentFile() != null && !outputFile.getParentFile().exists()) {
@@ -418,10 +288,10 @@ public class FileUtil {
     /**
      * 将fileToZip文件夹及其子目录文件递归压缩到zip文件中
      *
-     * @param sourceFile    递归当前处理对象，可能是文件夹，也可能是文件
-     * @param fileName      fileToZip文件或文件夹名称
-     * @param zipOut        压缩文件输出流
-     * @throws IOException  压缩异常
+     * @param sourceFile 递归当前处理对象，可能是文件夹，也可能是文件
+     * @param fileName   fileToZip文件或文件夹名称
+     * @param zipOut     压缩文件输出流
+     * @throws IOException 压缩异常
      */
     private static void zip(File sourceFile, String fileName, ZipOutputStream zipOut) throws IOException {
         //不压缩隐藏文件夹
@@ -503,5 +373,47 @@ public class FileUtil {
             to.createNewFile();
         }
         Files.write(to.toPath(), CodingUtil.hexStr2Bytes(hexStr));
+    }
+
+    /**
+     * 从Jar包中删除文件
+     *
+     * @param jarPath Jar
+     * @param regex   正则匹配
+     */
+    public static void delFromJar(String jarPath, String regex) throws IOException {
+        File tmpFile = new File(getTempPath(), UUID.randomUUID().toString());
+        try (JarFile jarFile = new JarFile(jarPath)) {
+            boolean found = jarFile.stream().anyMatch(o -> !o.isDirectory() && o.getName().matches(regex));
+            if (found) {
+                Enumeration<JarEntry> entries = jarFile.entries();
+                while (entries.hasMoreElements()) {
+                    JarEntry entry = entries.nextElement();
+                    if (!entry.isDirectory() && !entry.getName().matches(regex)) {
+                        File f = new File(tmpFile, entry.getName());
+                        if (f.getParentFile() != null && !f.getParentFile().exists()) {
+                            f.getParentFile().mkdirs();
+                        }
+                        if (f.exists()) {
+                            f.delete();
+                        }
+                        try (InputStream is = jarFile.getInputStream(entry);
+                             FileOutputStream fos = new FileOutputStream(f)) {
+                            byte[] bytes = new byte[SAFE_BYTE_LENGTH];
+                            int read = 0;
+                            while ((read = is.read(bytes, 0, bytes.length)) > 0) {
+                                fos.write(bytes, 0, read);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (tmpFile.exists()) {
+            File file = new File(jarPath);
+            file.delete();
+            zip(tmpFile, file, false);
+            delFile(tmpFile);
+        }
     }
 }

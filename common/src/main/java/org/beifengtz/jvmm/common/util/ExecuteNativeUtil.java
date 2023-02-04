@@ -1,7 +1,7 @@
 package org.beifengtz.jvmm.common.util;
 
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,7 +21,7 @@ import java.util.Scanner;
  */
 public class ExecuteNativeUtil {
 
-    private static final Logger log = LoggerFactory.logger(ExecuteNativeUtil.class);
+    private static final Logger log = LoggerFactory.getLogger(ExecuteNativeUtil.class);
 
     public static List<String> execute(String command) {
         return execute(command.split(" "));

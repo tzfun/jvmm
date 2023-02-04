@@ -6,22 +6,20 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import io.netty.channel.ChannelFuture;
 import lombok.extern.slf4j.Slf4j;
-import org.beifengtz.jvmm.convey.enums.GlobalStatus;
-import org.beifengtz.jvmm.convey.enums.GlobalType;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
+import org.beifengtz.jvmm.convey.enums.GlobalStatus;
+import org.beifengtz.jvmm.convey.enums.GlobalType;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
-import org.beifengtz.jvmm.core.entity.mx.ClassLoadingInfo;
-import org.beifengtz.jvmm.core.entity.mx.GarbageCollectorInfo;
-import org.beifengtz.jvmm.core.entity.mx.MemoryInfo;
-import org.beifengtz.jvmm.core.entity.mx.MemoryPoolInfo;
-import org.beifengtz.jvmm.core.entity.mx.SystemDynamicInfo;
-import org.beifengtz.jvmm.core.entity.mx.ThreadDynamicInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmClassLoadingInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmGCInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmMemoryInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmMemoryPoolInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmThreadInfo;
 import org.beifengtz.jvmm.web.entity.po.LogClassloadingPO;
 import org.beifengtz.jvmm.web.entity.po.LogGcPO;
 import org.beifengtz.jvmm.web.entity.po.LogMemoryPO;
 import org.beifengtz.jvmm.web.entity.po.LogMemoryPoolPO;
-import org.beifengtz.jvmm.web.entity.po.LogSystemPO;
 import org.beifengtz.jvmm.web.entity.po.LogThreadPO;
 import org.beifengtz.jvmm.web.entity.po.NodeConfPO;
 import org.beifengtz.jvmm.web.entity.po.NodePO;
@@ -238,36 +236,31 @@ public class CollectService {
             for (String key : data.keySet()) {
                 if ("classloading".equals(key)) {
                     LogClassloadingPO po = new LogClassloadingPO();
-                    po.merge(gson.fromJson(data.get(key), ClassLoadingInfo.class));
+                    po.merge(gson.fromJson(data.get(key), JvmClassLoadingInfo.class));
                     po.setCreateTime(now);
                     logClassloadingMapper.insert(po);
                 } else if ("gc".equals(key)) {
                     LogGcPO po = new LogGcPO();
-                    po.merge(gson.fromJson(data.get(key), GarbageCollectorInfo.class));
+                    po.merge(gson.fromJson(data.get(key), JvmGCInfo.class));
                     po.setCreateTime(now);
                     logGcMapper.insert(po);
                 } else if ("memory".equals(key)) {
                     LogMemoryPO po = new LogMemoryPO();
-                    po.merge(gson.fromJson(data.get(key), MemoryInfo.class));
+                    po.merge(gson.fromJson(data.get(key), JvmMemoryInfo.class));
                     po.setCreateTime(now);
                     logMemoryMapper.insert(po);
                 } else if ("memoryPool".equals(key)) {
-                    List<MemoryPoolInfo> list = gson.fromJson(data.get(key), newParameterizedTypeWithOwner(List.class, MemoryPoolInfo.class));
-                    for (MemoryPoolInfo info : list) {
+                    List<JvmMemoryPoolInfo> list = gson.fromJson(data.get(key), newParameterizedTypeWithOwner(List.class, JvmMemoryPoolInfo.class));
+                    for (JvmMemoryPoolInfo info : list) {
                         LogMemoryPoolPO po = new LogMemoryPoolPO();
                         po.merge(info);
                         po.setCreateTime(now);
                         logMemoryPoolMapper.insert(po);
                     }
-                } else if ("system".equals(key)) {
-                    LogSystemPO po = new LogSystemPO();
-                    po.merge(gson.fromJson(data.get(key), SystemDynamicInfo.class));
-                    po.setCreateTime(now);
-                    logSystemMapper.insert(po);
                 } else if ("thread".equals(key)) {
                     LogThreadPO po = new LogThreadPO();
                     po.setCreateTime(now);
-                    po.merge(gson.fromJson(data.get(key), ThreadDynamicInfo.class));
+                    po.merge(gson.fromJson(data.get(key), JvmThreadInfo.class));
                     logThreadMapper.insert(po);
                 }
             }

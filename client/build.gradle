@@ -5,6 +5,7 @@ repositories {
 dependencies {
     compile(project(':convey'))
     compile(project(':core'))
+    compile(project(':logger'))
     compile("commons-cli:commons-cli:${commonsCli}")
 }
 
@@ -37,8 +38,10 @@ tasks.compileJava.configure {
             def targetDir = file(resourcesPath + '/server-source')
             FileTree fileTree = zipTree(zipFile).matching {
                 include 'config.yml'
+                include 'jvmm-logger.jar'
                 include 'module-info.class'
                 include 'org/beifengtz/jvmm/server/**'
+                include 'org/yaml/**'
                 include 'META-INF/INDEX.LIST'
                 include 'META-INF/MANIFEST.MF'
             }

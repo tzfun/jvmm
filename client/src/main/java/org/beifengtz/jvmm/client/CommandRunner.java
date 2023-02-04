@@ -9,7 +9,6 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.util.FileUtil;
 import org.beifengtz.jvmm.common.util.IOUtil;
 import org.beifengtz.jvmm.common.util.PidUtil;
@@ -18,8 +17,9 @@ import org.beifengtz.jvmm.common.util.meta.PairKey;
 import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 import org.beifengtz.jvmm.core.JvmmFactory;
-import org.beifengtz.jvmm.core.VMProvider;
+import org.beifengtz.jvmm.core.driver.VMDriver;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,7 +47,8 @@ import java.util.jar.JarFile;
  */
 public class CommandRunner {
 
-    private static final Logger logger = LoggerFactory.logger(CommandRunner.class);
+    private static final Logger logger = LoggerFactory.getLogger(CommandRunner.class);
+    private static final String SLF4J_API_REGEX = "org/slf4j/(?!impl).*";
 
     private static final Options options;
     private static final Options rootOptions;
@@ -180,7 +181,7 @@ public class CommandRunner {
 
     private static void handleGenerateJar(CommandLine cmd) throws IOException {
         if (canGenerateAgentJar() && canGenerateServerJar()) {
-            generateServerJar(null);
+            generateServerJar(null, true);
             generateAgentJar(null);
             logger.info("Generate jar finished.");
         } else {
@@ -193,12 +194,13 @@ public class CommandRunner {
         return CommandRunner.class.getResourceAsStream("/server-source") != null && path.endsWith(".jar");
     }
 
-    private static void generateServerJar(String dir) throws IOException {
+    private static void generateServerJar(String dir, boolean containsSlf4j) throws IOException {
         if (canGenerateServerJar()) {
             File serverJarFile = new File(dir, "jvmm-server.jar");
             if (checkJarVersion(dir) && serverJarFile.exists()) {
                 return;
             }
+            logger.info("Starting to generate server jar...");
             String path = CommandRunner.class.getProtectionDomain().getCodeSource().getLocation().getPath();
             try {
                 path = URLDecoder.decode(path, "UTF-8");
@@ -206,14 +208,17 @@ public class CommandRunner {
                 logger.warn("Decode path failed. " + e.getClass().getName() + ": " + e.getMessage());
             }
 
-            File tempDir = new File(JvmmFactory.getTempPath(), "jar/server");
+            File tempDir = new File(FileUtil.getTempPath(), "server");
             try {
                 if (tempDir.exists()) {
                     FileUtil.delFile(tempDir);
                 }
-                String regex = "async-profiler/.*|com/.*|io/.*|org/benf.*|org/slf4j.*|META-INF/maven/.*" +
+                String regex = "async-profiler/.*|com/.*|io/.*|org/benf.*|META-INF/maven/.*" +
                         "|META-INF/native/.*|META-INF/native-image/.*|io.netty.versions.propeties|server-source/.*|" +
-                        ".*jvmm/common/.*|.*jvmm/convey/.*|.*jvmm/core/.*";
+                        ".*jvmm/common/.*|.*jvmm/convey/.*|.*jvmm/core/.*|oshi/.*|oshi.*|org/yaml.*";
+                if (containsSlf4j) {
+                    regex += ("|" + SLF4J_API_REGEX);
+                }
                 FileUtil.copyFromJar(new JarFile(path), tempDir, regex, fileName -> {
                     if (fileName.startsWith("server-source")) {
                         return fileName.replace("server-source/", "");
@@ -257,14 +262,14 @@ public class CommandRunner {
 
     private static File getVersionFile(String dir) {
         if (StringUtil.isEmpty(dir)) {
-            return new File(JvmmFactory.getTempPath(), ".version");
+            return new File(FileUtil.getTempPath(), ".version");
         }
         dir = dir.replaceAll("\\\\", "/");
         if (dir.endsWith("/")) {
             dir = dir.substring(0, dir.length() - 1);
         }
 
-        return new File(dir.endsWith(JvmmFactory.getTempPath()) ? dir : (dir + "/" + JvmmFactory.getTempPath()), ".version");
+        return new File(dir.endsWith(FileUtil.getTempPath()) ? dir : (dir + "/" + FileUtil.getTempPath()), ".version");
     }
 
     private static boolean canGenerateAgentJar() {
@@ -277,7 +282,7 @@ public class CommandRunner {
             if (checkJarVersion(dir) && agentJarFile.exists()) {
                 return;
             }
-
+            logger.info("Starting to generate agent jar...");
             FileUtil.writeByteArrayToFile(agentJarFile, IOUtil.toByteArray(CommandRunner.class.getResourceAsStream("/jvmm-agent.jar")));
             logger.info("Generated agent jar to " + agentJarFile.getAbsolutePath());
         } else {
@@ -363,19 +368,22 @@ public class CommandRunner {
         if (cmd.hasOption("a")) {
             agentFilePath = cmd.getOptionValue("a");
         } else if (canGenerateAgentJar()) {
-            generateAgentJar(JvmmFactory.getTempPath());
-            agentFilePath = new File(JvmmFactory.getTempPath(), "jvmm-agent.jar").getAbsolutePath();
+            generateAgentJar(FileUtil.getTempPath());
+            agentFilePath = new File(FileUtil.getTempPath(), "jvmm-agent.jar").getAbsolutePath();
         } else {
             agentFilePath = GuidedRunner.askAgentFilePath();
         }
 
         if (cmd.hasOption("s")) {
             serverFilePath = cmd.getOptionValue("s");
+            FileUtil.delFromJar(serverFilePath, SLF4J_API_REGEX);
         } else if (canGenerateServerJar()) {
-            generateServerJar(JvmmFactory.getTempPath());
-            serverFilePath = new File(JvmmFactory.getTempPath(), "jvmm-server.jar").getAbsolutePath();
+            //  通过agent载入的server包不需要包含slf4j依赖，否则可能会导致LinkageError
+            generateServerJar(FileUtil.getTempPath(), false);
+            serverFilePath = new File(FileUtil.getTempPath(), "jvmm-server.jar").getAbsolutePath();
         } else {
             serverFilePath = GuidedRunner.askServerFilePath();
+            FileUtil.delFromJar(serverFilePath, SLF4J_API_REGEX);
         }
 
         if (cmd.hasOption("c")) {
@@ -408,9 +416,9 @@ public class CommandRunner {
         //  支持从网络下载jar包
         if (agentFilePath.startsWith("http://") || agentFilePath.startsWith("https://")) {
             logger.info("Start downloading jar file from " + agentFilePath);
-            boolean loaded = FileUtil.readFileFromNet(agentFilePath, JvmmFactory.getTempPath(), "jvmm-agent.jar");
+            boolean loaded = FileUtil.readFileFromNet(agentFilePath, FileUtil.getTempPath(), "jvmm-agent.jar");
             if (loaded) {
-                agentFile = new File(JvmmFactory.getTempPath(), "jvmm-agent.jar");
+                agentFile = new File(FileUtil.getTempPath(), "jvmm-agent.jar");
             } else {
                 logger.error("Can not download 'jvmm-agent.jar'");
                 return;
@@ -426,9 +434,9 @@ public class CommandRunner {
         File serverFile;
         if (serverFilePath.startsWith("http://") || serverFilePath.startsWith("https://")) {
             logger.info("Start downloading jar file from " + serverFilePath);
-            boolean loaded = FileUtil.readFileFromNet(serverFilePath, JvmmFactory.getTempPath(), "jvmm-server.jar");
+            boolean loaded = FileUtil.readFileFromNet(serverFilePath, FileUtil.getTempPath(), "jvmm-server.jar");
             if (loaded) {
-                serverFile = new File(JvmmFactory.getTempPath(), "jvmm-server.jar");
+                serverFile = new File(FileUtil.getTempPath(), "jvmm-server.jar");
             } else {
                 logger.error("Can not download 'jvmm-server.jar'");
                 return;
@@ -451,7 +459,7 @@ public class CommandRunner {
 
         logger.info("Start to attach program {} ...", pid);
         try {
-            VMProvider.getInstance().attachAgent(pid, agentFile.getAbsolutePath(), serverFile.getAbsolutePath(), args);
+            VMDriver.get().attachAgent(pid, agentFile.getAbsolutePath(), serverFile.getAbsolutePath(), args);
             pair.getRight().join(30000);
         } catch (Exception e) {
             logger.warn("An error was encountered while attaching: " + e.getMessage(), e);

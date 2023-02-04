@@ -1,8 +1,6 @@
 package org.beifengtz.jvmm.convey.handler;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonPrimitive;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
@@ -11,15 +9,14 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.util.concurrent.EventExecutor;
-import org.beifengtz.jvmm.common.JsonParsable;
 import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
 import org.beifengtz.jvmm.common.exception.InvalidJvmmMappingException;
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.util.CommonUtil;
 import org.beifengtz.jvmm.common.util.ReflexUtil;
 import org.beifengtz.jvmm.common.util.StringUtil;
@@ -28,9 +25,12 @@ import org.beifengtz.jvmm.convey.annotation.HttpController;
 import org.beifengtz.jvmm.convey.annotation.HttpRequest;
 import org.beifengtz.jvmm.convey.annotation.RequestBody;
 import org.beifengtz.jvmm.convey.annotation.RequestParam;
+import org.beifengtz.jvmm.convey.entity.ResponseFuture;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -64,7 +64,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
         mappings = new HashMap<>(controllers.size() * 5);
         methodMappings = new HashMap<>(controllers.size() * 5);
 
-        Logger logger = LoggerFactory.logger(HttpChannelHandler.class);
+        Logger logger = LoggerFactory.getLogger(HttpChannelHandler.class);
 
         for (Class<?> controller : controllers) {
             Set<Method> methods = ReflexUtil.scanMethodAnnotation(controller, HttpRequest.class);
@@ -108,7 +108,9 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
             resp = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, status);
         } else {
             resp = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, status, Unpooled.copiedBuffer(data));
-            resp.headers().set("Content-Length", data.length);
+            resp.headers().set(HttpHeaderNames.CONTENT_LENGTH, data.length);
+            resp.headers().set(HttpHeaderNames.CONTENT_ENCODING, "UTF-8");
+            resp.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/json;charset=utf-8");
         }
 
         if (headers != null && !headers.isEmpty()) {
@@ -138,6 +140,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) throws Exception {
         PairKey<URI, String> pair = filterUri(ctx, msg);
         if (pair == null) {
@@ -161,6 +164,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                 }
             });
 
+            Annotation[][] parameterAnnotations = method.getParameterAnnotations();
             Class<?>[] parameterTypes = method.getParameterTypes();
             Object[] parameter = new Object[parameterTypes.length];
             for (int i = 0; i < parameterTypes.length; i++) {
@@ -169,29 +173,35 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                     parameter[i] = ctx.channel();
                 } else if (FullHttpRequest.class.isAssignableFrom(parameterType)) {
                     parameter[i] = null;
-                } else if (parameterType.isAnnotationPresent(RequestBody.class)) {
-                    byte[] body = getBody(msg);
-                    if (String.class.isAssignableFrom(parameterType)) {
-                        parameter[i] = body == null ? null : new String(body, StandardCharsets.UTF_8);
-                    } else {
-                        parameter[i] = body == null ? null : new Gson().fromJson(new String(body, StandardCharsets.UTF_8), parameterType);
-                    }
-                } else if (parameterType.isAnnotationPresent(RequestParam.class)) {
-                    RequestParam rp = parameterType.getAnnotation(RequestParam.class);
-                    String key = "".equals(rp.value()) ? method.getParameters()[i].getName() : rp.value();
-                    String value = params.get(key);
-                    if (parameterType.isAssignableFrom(String.class)) {
-                        parameter[i] = value;
-                    } else if (parameterType.isAssignableFrom(int.class)) {
-                        parameter[i] = Integer.parseInt(value);
-                    } else if (parameterType.isAssignableFrom(double.class)) {
-                        parameter[i] = Double.parseDouble(value);
-                    } else if (parameterType.isAssignableFrom(boolean.class)) {
-                        parameter[i] = Boolean.parseBoolean(value);
-                    } else if (parameterType.isAssignableFrom(long.class)) {
-                        parameter[i] = Long.parseLong(value);
-                    } else {
-                        throw new IllegalArgumentException("Can not resolve param " + key);
+                } else if (parameterAnnotations[i].length > 0) {
+                    for (Annotation anno : parameterAnnotations[i]) {
+                        if (anno.annotationType() == RequestBody.class) {
+                            byte[] body = getBody(msg);
+                            if (String.class.isAssignableFrom(parameterType)) {
+                                parameter[i] = body == null ? null : new String(body, StandardCharsets.UTF_8);
+                            } else {
+                                parameter[i] = body == null ? null : new Gson().fromJson(new String(body, StandardCharsets.UTF_8), method.getGenericParameterTypes()[i]);
+                            }
+                        } else if (anno.annotationType() == RequestParam.class) {
+                            RequestParam rp = parameterType.getAnnotation(RequestParam.class);
+                            String key = "".equals(rp.value()) ? method.getParameters()[i].getName() : rp.value();
+                            String value = params.get(key);
+                            if (parameterType.isAssignableFrom(String.class)) {
+                                parameter[i] = value;
+                            } else if (parameterType.isAssignableFrom(int.class)) {
+                                parameter[i] = Integer.parseInt(value);
+                            } else if (parameterType.isAssignableFrom(double.class)) {
+                                parameter[i] = Double.parseDouble(value);
+                            } else if (parameterType.isAssignableFrom(boolean.class)) {
+                                parameter[i] = Boolean.parseBoolean(value);
+                            } else if (parameterType.isAssignableFrom(long.class)) {
+                                parameter[i] = Long.parseLong(value);
+                            } else if (parameterType.isAssignableFrom(Enum.class)) {
+                                parameter[i] = Enum.valueOf((Class<? extends Enum>)parameterType, value);
+                            } else {
+                                throw new IllegalArgumentException("Can not resolve param " + key);
+                            }
+                        }
                     }
                 } else if (EventExecutor.class.isAssignableFrom(parameterType)) {
                     parameter[i] = ctx.executor();
@@ -199,6 +209,8 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                     parameter[i] = ctx;
                 } else if (getClass().isAssignableFrom(parameterType)) {
                     parameter[i] = this;
+                } else if (ResponseFuture.class.isAssignableFrom(parameterType)) {
+                    parameter[i] = new ResponseFuture(data -> response(ctx, HttpResponseStatus.OK, HandlerProvider.parseResult2Json(data).toString()));
                 } else {
                     parameter[i] = null;
                 }
@@ -209,23 +221,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
             if (result instanceof HttpResponse) {
                 ctx.writeAndFlush(result).addListener(ChannelFutureListener.CLOSE);
             } else if (result != null) {
-                JsonElement data = null;
-                if (result instanceof Boolean) {
-                    data = new JsonPrimitive((Boolean) result);
-                } else if (result instanceof Number) {
-                    data = new JsonPrimitive((Number) result);
-                } else if (result instanceof String) {
-                    data = new JsonPrimitive((String) result);
-                } else if (result instanceof Character) {
-                    data = new JsonPrimitive((Character) result);
-                } else if (result instanceof JsonElement) {
-                    data = (JsonElement) result;
-                } else if (result instanceof JsonParsable) {
-                    data = ((JsonParsable) result).toJson();
-                } else {
-                    data = new Gson().toJsonTree(result);
-                }
-                response(ctx, HttpResponseStatus.OK, data.toString());
+                response(ctx, HttpResponseStatus.OK, HandlerProvider.parseResult2Json(result).toString());
             }
 
         } catch (Exception e) {

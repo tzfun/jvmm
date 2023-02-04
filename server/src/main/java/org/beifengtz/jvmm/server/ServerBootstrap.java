@@ -4,27 +4,22 @@ import io.netty.util.concurrent.DefaultPromise;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.Promise;
-import io.netty.util.internal.logging.InternalLoggerFactory;
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
-import org.beifengtz.jvmm.common.logger.LoggerLevel;
-import org.beifengtz.jvmm.convey.DefaultInternalLoggerFactory;
+import org.beifengtz.jvmm.common.util.IPUtil;
 import org.beifengtz.jvmm.server.entity.conf.Configuration;
 import org.beifengtz.jvmm.server.entity.conf.ServerConf;
 import org.beifengtz.jvmm.server.enums.ServerType;
-import org.beifengtz.jvmm.server.logger.DefaultILoggerFactory;
-import org.beifengtz.jvmm.server.logger.DefaultJvmmILoggerFactory;
 import org.beifengtz.jvmm.server.service.JvmmHttpServerService;
 import org.beifengtz.jvmm.server.service.JvmmSentinelService;
 import org.beifengtz.jvmm.server.service.JvmmServerService;
 import org.beifengtz.jvmm.server.service.JvmmService;
 import org.beifengtz.jvmm.server.service.ServiceManager;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -91,50 +86,79 @@ public class ServerBootstrap {
         if (config == null) {
             config = new Configuration();
         }
+        ServerContext.setConfiguration(config);
 
-        if (config.getLog().isUseJvmm()) {
-            initJvmmLogger(config.getLog().getLevel());
-        } else {
-            if (fromAgent) {
-                initAgentLogger(config.getLog().getLevel());
-            } else {
-                initBaseLogger();
-            }
+        if (fromAgent) {
+            //  如果从agent启动，则取消默认的标注输出和文件输出
+            System.setProperty("jvmm.log.printers", "agentProxy");
+        }
+
+        try {
+            ServerContext.loadLoggerLib();
+        } catch (Throwable t) {
+            System.err.println("The implementation of SLF4J was not found in the startup environment, and the Jvmm log dependency failed to load:" + t.getMessage());
+            t.printStackTrace();
         }
 
         bootstrap = new ServerBootstrap(inst);
-        ServerContext.setConfiguration(config);
 
         return bootstrap;
     }
 
-    private static void initJvmmLogger(String levelStr) {
-        LoggerLevel level = LoggerLevel.valueOf(levelStr.toUpperCase(Locale.ROOT));
-        InternalLoggerFactory.setDefaultFactory(DefaultInternalLoggerFactory.newInstance(level));
-        LoggerFactory.register(DefaultJvmmILoggerFactory.newInstance(level));
-    }
-
-    private static void initBaseLogger() {
-        LoggerFactory.register(org.slf4j.LoggerFactory.getILoggerFactory());
-    }
-
-    private static void initAgentLogger(String levelStr) {
-        LoggerLevel level = LoggerLevel.valueOf(levelStr.toUpperCase(Locale.ROOT));
-
-        DefaultILoggerFactory defaultILoggerFactory = DefaultILoggerFactory.newInstance(level);
-
-        InternalLoggerFactory.setDefaultFactory(defaultILoggerFactory);
-        LoggerFactory.register(defaultILoggerFactory);
-    }
-
     private static Logger logger() {
-        return LoggerFactory.logger(ServerBootstrap.class);
+        return LoggerFactory.getLogger(ServerBootstrap.class);
     }
 
     public Instrumentation getInstrumentation() {
         return instrumentation;
     }
 
+    /**
+     * 启动Server，使用默认的callback处理逻辑
+     */
+    public void start() {
+        Logger logger = LoggerFactory.getLogger(ServerApplication.class);
+        long start = System.currentTimeMillis();
+        Function<Object, Object> callback = msg -> {
+            String content = msg.toString();
+            if ("start".equals(content)) {
+                logger.info("Start jvmm services ...");
+            } else if (content.startsWith("info:")) {
+                logger.info(content.substring(content.indexOf(":") + 1));
+            } else if (content.startsWith("warn:")) {
+                logger.warn(content.substring(content.indexOf(":") + 1));
+            } else if (content.startsWith("ok:")) {
+                String[] split = content.split(":");
+                if ("new".equals(split[1])) {
+                    if ("sentinel".equals(split[2])) {
+                        logger.info("New service started: [sentinel]");
+                    } else {
+                        logger.info("New service started on {}:{} => [{}]", IPUtil.getLocalIP(), split[3], split[2]);
+                    }
+                } else if ("ready".equals(split[1])) {
+                    if ("sentinel".equals(split[2])) {
+                        logger.info("Service already started: [sentinel]");
+                    } else {
+                        logger.info("Service already started on {} => [{}]", split[3], split[2]);
+                    }
+                } else {
+                    logger.info(content);
+                }
+            } else if ("end".equals(content)) {
+                logger.info("Jvmm server boot finished in " + (System.currentTimeMillis() - start) + " ms");
+            } else {
+                logger.info(content);
+            }
+            return null;
+        };
+        start(callback);
+    }
+
+    /**
+     * 启动Server，启动信息会由callback回传
+     *
+     * @param callback 启动信息，包含日志信息
+     */
     public void start(Function<Object, Object> callback) {
         callback.apply("start");
         try {
@@ -248,12 +272,15 @@ public class ServerBootstrap {
                 logger().error(msg);
             }
         } catch (Throwable e) {
-            logger().error("Jvmm service start failed " + e.getMessage(), e);
+            logger().error("Jvmm service start failed: " + e.getMessage(), e);
             callback.apply(e.getMessage());
             callback.apply("end");
         }
     }
 
+    /**
+     * 关闭所有服务，如果有agent向agent通知服务关闭
+     */
     public void stop() {
         for (ServerType server : ServerType.values()) {
             try {

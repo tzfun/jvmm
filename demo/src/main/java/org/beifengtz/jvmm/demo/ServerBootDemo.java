@@ -1,6 +1,5 @@
 package org.beifengtz.jvmm.demo;
 
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
 import org.beifengtz.jvmm.common.logger.LoggerLevel;
 import org.beifengtz.jvmm.server.ServerBootstrap;
 import org.beifengtz.jvmm.server.entity.conf.AuthOptionConf;
@@ -9,12 +8,10 @@ import org.beifengtz.jvmm.server.entity.conf.HttpServerConf;
 import org.beifengtz.jvmm.server.entity.conf.JvmmServerConf;
 import org.beifengtz.jvmm.server.entity.conf.LogConf;
 import org.beifengtz.jvmm.server.entity.conf.SentinelConf;
+import org.beifengtz.jvmm.server.entity.conf.SentinelSubscriberConf;
 import org.beifengtz.jvmm.server.entity.conf.ServerConf;
-import org.beifengtz.jvmm.server.entity.conf.SslConf;
-import org.beifengtz.jvmm.server.entity.conf.SubscriberConf;
 import org.slf4j.Logger;
-
-import java.io.InputStream;
+import org.slf4j.LoggerFactory;
 
 /**
  * Description: TODO
@@ -25,21 +22,8 @@ import java.io.InputStream;
  */
 public class ServerBootDemo {
     public static void main(String[] args) throws Throwable {
-        LoggerInitializer.init(LoggerLevel.INFO);
-        Logger logger = LoggerFactory.logger(ServerBootDemo.class);
-
-
-
-
-        InputStream is = ServerBootDemo.class.getResourceAsStream("/config.yml");
-        if (is != null) {
-            //  从resource中读取配置文件，除此之外你也可以自己通过代码构造Configuration
-            Configuration config = Configuration.parseFromStream(is);
-            ServerBootstrap server = ServerBootstrap.getInstance(config);
-            server.start(msg -> transformServerCallback(msg.toString()));
-        } else {
-            logger.error("Can not found config.yml in resources");
-        }
+        ServerBootstrap server = ServerBootstrap.getInstance();
+        server.start(msg -> transformServerCallback(msg.toString()));
     }
 
     private static Configuration constructConfig() {
@@ -59,26 +43,27 @@ public class ServerBootDemo {
                 .setAuth(globalAuth);
 
         SentinelConf sentinel = new SentinelConf()
-                .addSubscribers(new SubscriberConf().setUrl("http://exaple.jvmm.com/subscriber"))
-                .addSubscribers(new SubscriberConf().setUrl("http://127.0.0.1:8080/subscriber")
+                .addSubscriber(new SentinelSubscriberConf().setUrl("http://exaple.jvmm.com/subscriber"))
+                .addSubscriber(new SentinelSubscriberConf().setUrl("http://127.0.0.1:8080/subscriber")
                         .setAuth(new AuthOptionConf().setEnable(true)
                                 .setUsername("auth-account")
                                 .setPassword("auth-password")))
                 .setInterval(10)
-                .setSendStaticInfoTimes(5);
+                .setCount(-1);
 
         return new Configuration()
                 .setName("jvmm-server")
                 .setWorkThread(2)
-                .setLog(new LogConf().setLevel("info").setUseJvmm(true))
-                .setServer(new ServerConf().setType("jvmm,sentinel")
+                .setLog(new LogConf().setLevel(LoggerLevel.INFO))
+                .setServer(new ServerConf()
+                        .setType("jvmm,sentinel")
                         .setJvmm(jvmmServer)
                         .setHttp(httpServer)
-                        .setSentinel(sentinel));
+                        .addSentinel(sentinel));
     }
 
     private static Object transformServerCallback(String content) {
-        Logger logger = LoggerFactory.logger(ServerBootDemo.class);
+        Logger logger = LoggerFactory.getLogger(ServerBootDemo.class);
         if ("start".equals(content)) {
             logger.info("Try to start or stop services...");
         } else if (content.startsWith("info:")) {

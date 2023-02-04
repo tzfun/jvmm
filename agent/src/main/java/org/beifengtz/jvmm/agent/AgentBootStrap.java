@@ -37,8 +37,6 @@ import java.util.jar.JarFile;
  */
 public class AgentBootStrap {
     private static volatile Logger log = null;
-    private static final String STATIC_LOGGER_BINDER_CLASS = "org/slf4j/impl/StaticLoggerBinder.class";
-    private static final String STATIC_LOGGER_BINDER_PATH = "org.slf4j.impl.StaticLoggerBinder";
     private static final String JVMM_SERVER_JAR = "jvmm-server.jar";
     private static final String SERVER_MAIN_CLASS = "org.beifengtz.jvmm.server.ServerBootstrap";
     private static volatile Instrumentation instrumentation;
@@ -164,27 +162,11 @@ public class AgentBootStrap {
             //  拓展搜索范围
             inst.appendToSystemClassLoaderSearch(new JarFile(serverJarFile));
 
-            //  需要预装载的文件，这里共享装载logger
+            //  需要预装载的文件
             List<URL> needPreLoad = new ArrayList<>();
             if (agentClassLoader == null) {
                 List<URL> urlList = new LinkedList<>();
                 urlList.add(serverJarFile.toURI().toURL());
-
-                ClassLoader loggerClassLoader = LoggerFactory.class.getClassLoader();
-                Enumeration<URL> loggerResources = loggerClassLoader.getResources(STATIC_LOGGER_BINDER_CLASS);
-                while (loggerResources.hasMoreElements()) {
-                    String urlPath = loggerResources.nextElement().getFile();
-                    String jarFilePath1 = urlPath.substring(5).split("!")[0];
-                    int chIdx = jarFilePath1.lastIndexOf("/");
-                    String jarName = jarFilePath1.substring(chIdx);
-                    if (jarName.contains("logback-classic")) {
-                        String jarFilePath2 = jarFilePath1.substring(0, chIdx) + jarName.replace("classic", "core");
-                        urlList.add(new File(jarFilePath2).toURI().toURL());
-                    }
-                    URL jarFile = new File(jarFilePath1).toURI().toURL();
-                    urlList.add(jarFile);
-                    needPreLoad.add(jarFile);
-                }
                 agentClassLoader = new JvmmAgentClassLoader(urlList.toArray(new URL[0]), ClassLoader.getSystemClassLoader());
             }
 
@@ -239,44 +221,12 @@ public class AgentBootStrap {
                         break;
                     }
                 }
-
-                if (springLaunchClassLoader != null) {
-                    ClassLoader cl = AgentBootStrap.class.getClassLoader();
-                    if (cl instanceof URLClassLoader) {
-                        loadLogClassFromAnotherClassLoader((URLClassLoader) cl, springLaunchClassLoader);
-                        FileUtil.delFile(new File(AppUtil.getTempPath()));
-                    } else {
-                        System.err.println("WARNING: Can not load log jar by classloader: " + cl.getClass().getName());
-                        System.err.println("WARNING: " + cl.getClass().getName() + " is not java.net.URLClassLoader or its subclasses ");
-                    }
-                }
                 return springLaunchClassLoader;
             }
         } catch (Throwable e) {
             e.printStackTrace();
         }
         return null;
-    }
-
-    private static void loadLogClassFromAnotherClassLoader(URLClassLoader loader, ClassLoader another) throws Throwable {
-        String logMsg = String.format("Class loader [%s] load logger class from [%s]", loader.getClass().getName(), another.getClass().getName());
-        log.info(logMsg);
-
-        loadResourceFromAnother(loader, another, STATIC_LOGGER_BINDER_CLASS);
-        while (true) {
-            try {
-                Class.forName(STATIC_LOGGER_BINDER_PATH);
-                logMsg = "Agent logger initialization is ok.";
-                log.info(logMsg);
-                break;
-            } catch (NoClassDefFoundError e) {
-                if (!loadResourceFromAnother(loader, another, e.getMessage() + ".class")) {
-                    break;
-                }
-            } catch (ClassNotFoundException ignored) {
-                break;
-            }
-        }
     }
 
     private static boolean loadResourceFromAnother(URLClassLoader loader, ClassLoader another, String classPath) throws Throwable {
@@ -309,7 +259,7 @@ public class AgentBootStrap {
                 String finalJarPath = tmpPath + tmpJar;
 
                 URL jarFile = new File(finalJarPath).toURI().toURL();
-                ClassLoaderUtil.classLoaderAddURL(loader, jarFile);
+                ClassLoaderUtil.loadJar(loader, jarFile);
                 log.info("Load jar file from " + finalJarPath);
                 return true;
             }
@@ -354,7 +304,7 @@ public class AgentBootStrap {
             try {
                 if (needPreLoad != null && !needPreLoad.isEmpty()) {
                     for (URL url : needPreLoad) {
-                        ClassLoaderUtil.classLoaderAddURL(agentClassLoader, url);
+                        ClassLoaderUtil.loadJar(agentClassLoader, url);
                     }
                 }
 

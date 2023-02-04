@@ -1,6 +1,7 @@
 package org.beifengtz.jvmm.client;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -42,14 +43,26 @@ public class ServerServiceImpl extends ServerService {
                     hasArg = true,
                     required = true,
                     argName = "type",
-                    desc = "Info type (required *), optional values: system, systemDynamic, classloading, classloader, compilation, gc, process, " +
-                            "memory, memoryManager, memoryPool, thread, threadStack."
+                    desc = "Required *. Info type, optional values: \n<process|disk|diskio|cpu|net|sys|sysMem|sysFile|cLoading|cLoader|" +
+                            "comp|gc|jvmMem|memManager|memPool|thread|threadStack>"
             ),
             @JvmmOption(
                     name = "f",
                     hasArg = true,
                     argName = "output",
                     desc = "File path (optional), output info to file."
+            ),
+            @JvmmOption(
+                    name = "tid",
+                    hasArg = true,
+                    argName = "threadId",
+                    desc = "When querying info 'threadStack', you can specify a thread id, multiple ids use ',' separate them"
+            ),
+            @JvmmOption(
+                    name = "tdeep",
+                    hasArg = true,
+                    argName = "threadDepp",
+                    desc = "When querying info 'threadStack', this option is used to specify the stack depth, default 5"
             )
     })
     @JvmmCmdDesc(desc = "Get information about the target server")
@@ -58,42 +71,73 @@ public class ServerServiceImpl extends ServerService {
 
         JvmmRequest request = JvmmRequest.create();
         switch (type) {
-            case "system":
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_SYSTEM_STATIC_INFO);
-                break;
-            case "systemDynamic":
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_SYSTEM_DYNAMIC_INFO);
-                break;
-            case "classloading":
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_CLASSLOADING_INFO);
-                break;
-            case "classloader":
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_CLASSLOADER_INFO);
-                break;
-            case "compilation":
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_COMPILATION_INFO);
-                break;
-            case "gc":
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_GARBAGE_COLLECTOR_INFO);
-                break;
             case "process":
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_PROCESS_INFO);
                 break;
-            case "memory":
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_MEMORY_INFO);
+            case "disk":
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_DISK_INFO);
                 break;
-            case "memoryManager":
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_MEMORY_MANAGER_INFO);
+            case "diskio":
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_DISK_IO_INFO);
                 break;
-            case "memoryPool":
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_MEMORY_POOL_INFO);
+            case "cpu":
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_CPU_INFO);
+                break;
+            case "net":
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_NETWORK_INFO);
+                break;
+            case "sys":
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_SYS_INFO);
+                break;
+            case "sysMem":
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_SYS_MEMORY_INFO);
+                break;
+            case "sysFile":
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_SYS_FILE_INFO);
+                break;
+            case "cLoading":
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_CLASSLOADING_INFO);
+                break;
+            case "cLoader":
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_CLASSLOADER_INFO);
+                break;
+            case "comp":
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_COMPILATION_INFO);
+                break;
+            case "gc":
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_GC_INFO);
+                break;
+            case "jvmMem":
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_MEMORY_INFO);
+                break;
+            case "memManager":
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_MEMORY_MANAGER_INFO);
+                break;
+            case "memPool":
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_MEMORY_POOL_INFO);
                 break;
             case "thread":
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_THREAD_DYNAMIC_INFO);
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_INFO);
                 break;
-            case "threadStack":
-                request.setType(GlobalType.JVMM_TYPE_DUMP_THREAD_INFO);
-                break;
+            case "threadStack": {
+                if (cmd.hasOption("tid")) {
+                    request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_STACK);
+                    JsonObject data = new JsonObject();
+                    if (cmd.hasOption("tdeep")) {
+                        data.addProperty("depth", Integer.parseInt(cmd.getOptionValue("tdeep")));
+                    }
+                    JsonArray idArr = new JsonArray();
+                    String[] ids = cmd.getOptionValue("tid").split(",");
+                    for (String id : ids) {
+                        idArr.add(Long.parseLong(id));
+                    }
+                    data.add("idArr", idArr);
+                    request.setData(data);
+                } else {
+                    request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_DUMP_THREAD);
+                }
+            }
+            break;
             default:
                 printErr("Invalid info type: " + type);
                 return;
@@ -106,7 +150,23 @@ public class ServerServiceImpl extends ServerService {
         if (cmd.hasOption("f")) {
             try {
                 File file = new File(cmd.getOptionValue("f"));
-                FileUtil.writeByteArrayToFile(file, response.getData().toString().getBytes(StandardCharsets.UTF_8));
+                String str;
+                if (response.getData().isJsonArray()) {
+                    StringBuilder sb = new StringBuilder();
+                    for (JsonElement ele : response.getData().getAsJsonArray()) {
+                        sb.append(ele.getAsString());
+                    }
+                    str = sb.toString();
+                } else if (response.getData().isJsonObject()) {
+                    Gson gson = new GsonBuilder()
+                            .setPrettyPrinting()
+                            .serializeNulls()
+                            .create();
+                    str = gson.toJson(response.getData());
+                } else {
+                    str = response.getData().toString();
+                }
+                FileUtil.writeByteArrayToFile(file, str.getBytes(StandardCharsets.UTF_8));
                 System.out.println("Write server info to file successful, path is " + file.getAbsolutePath());
             } catch (IOException e) {
                 printErr("Write failed, " + e.getMessage());
@@ -140,7 +200,7 @@ public class ServerServiceImpl extends ServerService {
             required = true,
             hasArg = true,
             argName = "type",
-            desc = "The type of service to be closed, allowed values: jvmm, http, sentinel"
+            desc = "Required *. The type of service to be closed, allowed values: jvmm, http, sentinel"
     )
     @JvmmCmdDesc(desc = "Shutdown service.")
     public static void shutdown(JvmmConnector connector, CommandLine cmd) {
@@ -287,7 +347,7 @@ public class ServerServiceImpl extends ServerService {
                     required = true,
                     hasArg = true,
                     argName = "class",
-                    desc = "Required, the java class to be decompiled"
+                    desc = "Required *. The java class to be decompiled"
             ),
             @JvmmOption(
                     name = "m",
@@ -303,7 +363,7 @@ public class ServerServiceImpl extends ServerService {
             ),
     })
 
-    @JvmmCmdDesc(desc = "Shutdown service.")
+    @JvmmCmdDesc(desc = "Decompile class files at runtime.")
     public static void jad(JvmmConnector connector, CommandLine cmd) throws IOException {
         JsonObject json = new JsonObject();
         json.addProperty("className", cmd.getOptionValue("c"));

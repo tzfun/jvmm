@@ -2,11 +2,13 @@ package org.beifengtz.jvmm.server.entity.conf;
 
 import com.google.gson.Gson;
 import org.beifengtz.jvmm.common.util.FileUtil;
-import org.beifengtz.jvmm.common.util.IOUtil;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.introspector.BeanAccess;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 
 /**
  * <p>
@@ -37,14 +39,14 @@ public final class Configuration {
             if (url.startsWith("http://") || url.startsWith("https://")) {
                 boolean loaded = FileUtil.readFileFromNet(url, "tmp", "config.yml");
                 if (loaded) {
-                    return new Gson().fromJson(FileUtil.readYml2Json(new File(url)), Configuration.class);
+                    return parseFromYamlFile(new File("tmp", "config.yml"));
                 } else {
                     throw new RuntimeException("Can not load 'config.yml' from " + url);
                 }
             } else {
                 File file = new File(url);
                 if (file.exists()) {
-                    return new Gson().fromJson(FileUtil.readYml2Json(file), Configuration.class);
+                    return parseFromYamlFile(file);
                 } else {
                     System.err.println("Can not load config from not exist file: " + url);
                     return null;
@@ -56,17 +58,21 @@ public final class Configuration {
     }
 
     public static Configuration parseFromStream(InputStream is) {
-        try {
-            File tempFile = File.createTempFile("config", "yml");
-            try {
-                FileUtil.writeByteArrayToFile(tempFile, IOUtil.toByteArray(is));
-                return new Gson().fromJson(FileUtil.readYml2Json(tempFile), Configuration.class);
-            } finally {
-                tempFile.delete();
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        Yaml yaml = new Yaml();
+        yaml.setBeanAccess(BeanAccess.FIELD);
+        return yaml.loadAs(is, Configuration.class);
+    }
+
+    public static Configuration parseFromYamlStr(String ymlStr) {
+        Yaml yaml = new Yaml();
+        yaml.setBeanAccess(BeanAccess.FIELD);
+        return yaml.loadAs(ymlStr, Configuration.class);
+    }
+
+    public static Configuration parseFromYamlFile(File file) throws IOException {
+        Yaml yaml = new Yaml();
+        yaml.setBeanAccess(BeanAccess.FIELD);
+        return yaml.loadAs(Files.newInputStream(file.toPath()), Configuration.class);
     }
 
     @Override

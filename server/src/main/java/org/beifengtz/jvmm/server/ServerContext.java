@@ -1,14 +1,17 @@
 package org.beifengtz.jvmm.server;
 
 import io.netty.channel.EventLoopGroup;
-import org.beifengtz.jvmm.common.factory.LoggerFactory;
+import org.beifengtz.jvmm.common.util.ClassLoaderUtil;
+import org.beifengtz.jvmm.common.util.FileUtil;
+import org.beifengtz.jvmm.common.util.IOUtil;
 import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
 import org.beifengtz.jvmm.server.entity.conf.Configuration;
 import org.beifengtz.jvmm.server.enums.ServerType;
 import org.beifengtz.jvmm.server.service.JvmmService;
-import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Set;
@@ -25,8 +28,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ServerContext {
 
-    private static final Logger logger = LoggerFactory.logger(ServerContext.class);
-
     public static final String STATUS_OK = "ok";
 
     private static volatile Configuration configuration;
@@ -34,6 +35,8 @@ public class ServerContext {
     private static final Map<ServerType, JvmmService> serviceContainer = new ConcurrentHashMap<>(1);
 
     private static volatile EventLoopGroup boosGroup;
+
+    private static volatile boolean loadedLogLib = false;
 
     static {
         try {
@@ -62,13 +65,13 @@ public class ServerContext {
             System.setProperty("jvmm.home", homePath.getAbsolutePath());
             System.setProperty("jvmm.tempPath", tempPath.getAbsolutePath());
         } catch (Exception e) {
-            logger.error("Init server config failed: " + e.getMessage(), e);
+            LoggerFactory.getLogger(ServerContext.class).error("Init server config failed: " + e.getMessage(), e);
         }
     }
 
     public static synchronized void setConfiguration(Configuration config) {
         configuration = config;
-        System.setProperty("jvmm.log.level", config.getLog().getLevel());
+        config.getLog().setSystemProperties();
         System.setProperty("jvmm.workThread", String.valueOf(config.getWorkThread()));
     }
 
@@ -103,6 +106,12 @@ public class ServerContext {
         return boosGroup;
     }
 
+    /**
+     * 关闭指定某一个服务
+     *
+     * @param type {@link ServerType}
+     * @return true-服务已成功关闭  false-服务未启动
+     */
     public static boolean stop(ServerType type) {
         JvmmService service = serviceContainer.get(type);
         if (service != null) {
@@ -111,6 +120,13 @@ public class ServerContext {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 关闭所有服务
+     */
+    public static void stopAll() {
+        ServerBootstrap.getInstance().stop();
     }
 
     public static JvmmService getService(ServerType type) {
@@ -123,5 +139,29 @@ public class ServerContext {
 
     public static void unregisterService(ServerType type) {
         serviceContainer.remove(type);
+    }
+
+    static synchronized void loadLoggerLib() throws Throwable {
+        if (loadedLogLib) {
+            return;
+        }
+
+        try {
+            Class.forName("org.slf4j.impl.StaticLoggerBinder");
+            LoggerFactory.getLogger(ServerContext.class).info("The SLF4J implementation already exists in the Jvmm startup environment, this log framework is used by default");
+        } catch (NoClassDefFoundError | ClassNotFoundException e) {
+            final String jarName = "jvmm-logger.jar";
+            InputStream is = ServerApplication.class.getResourceAsStream("/" + jarName);
+            if (is == null) {
+                throw new RuntimeException("Can not load jvmm logger library, case: jar not found");
+            }
+            File file = new File(FileUtil.getTempPath(), jarName);
+            FileUtil.writeByteArrayToFile(file, IOUtil.toByteArray(is));
+
+            ClassLoaderUtil.loadJar(ServerContext.class.getClassLoader(), file.toPath().toUri().toURL());
+            LoggerFactory.getLogger(ServerContext.class).info("Using jvmm logger framework as the implementation of SLF4J");
+        }
+
+        loadedLogLib = true;
     }
 }
