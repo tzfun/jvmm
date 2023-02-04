@@ -45,7 +45,6 @@ public interface JvmmService {
      * @param consumer 异步回调，采集结束后回调返回{@link JvmmDataDTO}，其中有 left 和 right 两个值：
      *                 left  - 为当前还需要等待的异步项数量，如果小于等于0则表示已采集完；
      *                 right - 为当前采集的数据，当采集完时该数据才是有效数据。
-     * @param executor 等待异步线程，如果采集项中没有需要异步等待的项，则不会使用它。如果传入null则用当前线程等待
      */
     static void collectByOptions(List<CollectionType> options, Consumer<PairKey<AtomicInteger, JvmmDataDTO>> consumer) {
         JvmmDataDTO res = new JvmmDataDTO();

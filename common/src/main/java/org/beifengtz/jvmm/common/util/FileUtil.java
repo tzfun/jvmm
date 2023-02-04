@@ -378,7 +378,7 @@ public class FileUtil {
     /**
      * 从Jar包中删除文件
      *
-     * @param jarFile Jar
+     * @param jarPath Jar
      * @param regex   正则匹配
      */
     public static void delFromJar(String jarPath, String regex) throws IOException {
