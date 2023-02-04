@@ -42,18 +42,26 @@ java -jar jvmm.jar
 或直接在你的项目中使用
 
 ```xml
-<dependency>
+<dependencies>
+  <dependency>
     <groupId>io.github.tzfun.jvmm</groupId>
     <artifactId>jvmm-server</artifactId>
     <version>${jvmm-version}</version>
-</dependency>
+  </dependency>
+
+<!-- Jvmm的SLF4J实现，如果你的项目中有默认实现，可以去掉此依赖 -->
+  <dependency>
+    <groupId>io.github.tzfun.jvmm</groupId>
+    <artifactId>jvmm-logger</artifactId>
+    <version>${jvmm-version}</version>
+  </dependency>  
+</dependencies>
 ```
 
 ```java
 public class JvmmServerBootDemo {
     public static void main(String[] args) {
-        ServerBootstrap server = ServerBootstrap.getInstance();
-        server.start(msg -> System.out.println(msg));
+        ServerBootstrap.getInstance().start();
     }
 }
 ```

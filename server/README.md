@@ -66,7 +66,6 @@ java -jar --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens jdk.
 Maven引入
 
 ```xml
-
 <dependency>
     <groupId>io.github.tzfun.jvmm</groupId>
     <artifactId>jvmm-server</artifactId>
@@ -78,6 +77,22 @@ Maven引入
 
 ```groovy
 implementation "io.github.tzfun.jvmm:jvmm-server:${jvmm-version}"
+```
+
+**如果你的项目中没有SLF4J的依赖**，可以使用jvmm的SLF4J日志实现，只需引入jvmm-logger依赖
+
+```xml
+<dependency>
+    <groupId>io.github.tzfun.jvmm</groupId>
+    <artifactId>jvmm-logger</artifactId>
+    <version>${jvmm-version}</version>
+</dependency>
+```
+
+或
+
+```groovy
+implementation "io.github.tzfun.jvmm:jvmm-logger:${jvmm-version}"
 ```
 
 ### 示例代码
