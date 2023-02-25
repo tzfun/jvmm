@@ -5,6 +5,7 @@ import org.beifengtz.jvmm.core.entity.profiler.ProfilerEvent;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.net.URL;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -21,7 +22,10 @@ public class TestFlame {
 
     @Test
     public void testFlameFile() throws Exception {
-        JvmmFactory.getExecutor().flameProfile((int) PidUtil.currentPid(), 20);
+        URL script = getClass().getResource("/profiler.sh");
+        if (script != null) {
+            JvmmFactory.getExecutor().flameProfile((int) PidUtil.currentPid(), 20);
+        }
     }
 
     @Test

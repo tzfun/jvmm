@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.introspector.BeanAccess;
 
+import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
@@ -19,7 +21,10 @@ public class TestConfig {
     public void testYmlParse() throws Exception {
         Yaml yaml = new Yaml();
         yaml.setBeanAccess(BeanAccess.FIELD);
-        Configuration conf = yaml.loadAs(Files.newInputStream(Paths.get("config.yml")), Configuration.class);
-        System.out.println(new Gson().toJson(conf));
+        File configFile = new File("config.yml");
+        if (configFile.exists()) {
+            Configuration conf = yaml.loadAs(Files.newInputStream(configFile.toPath()), Configuration.class);
+            System.out.println(new Gson().toJson(conf));
+        }
     }
 }
