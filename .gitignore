@@ -41,7 +41,7 @@ out/
 */logs/
 /web/src/main/resources/application.yml
 
-gradle.properties
+gradle.properties.0
 web/src/main/resources/application*.yml
 /logs/*
 /client/src/main/resources/
