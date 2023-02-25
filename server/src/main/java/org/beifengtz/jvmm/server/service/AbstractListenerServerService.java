@@ -104,9 +104,6 @@ public abstract class AbstractListenerServerService implements JvmmService {
                 logger().error("An exception occurred while executing the shutdown listener: " + e.getMessage(), e);
             }
         }
-        if (globalWorkerGroup != null) {
-            globalWorkerGroup.shutdownGracefully();
-        }
         runningPort.set(-1);
         retry.set(0);
     }
