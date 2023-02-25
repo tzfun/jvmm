@@ -13,7 +13,10 @@ def resourcesPath = 'src/main/resources'
 
 task clearResourcesPath(type: Delete) {
     delete {
-        file(resourcesPath).list().each { delete "${resourcesPath}/${it}" }
+        File f = file(resourcesPath)
+        if(f != null && f.exists()) {
+            f.list().each { delete "${resourcesPath}/${it}" }
+        }
     }
 }
 
