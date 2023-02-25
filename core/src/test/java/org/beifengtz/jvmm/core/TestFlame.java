@@ -1,6 +1,7 @@
 package org.beifengtz.jvmm.core;
 
 import org.beifengtz.jvmm.common.util.PidUtil;
+import org.beifengtz.jvmm.common.util.PlatformUtil;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerEvent;
 import org.junit.jupiter.api.Test;
 
@@ -30,9 +31,12 @@ public class TestFlame {
 
     @Test
     public void testProfiler() throws Exception {
-        JvmmProfiler profiler = JvmmFactory.getProfiler();
-        Future<String> future = profiler.sample(new File("test_sample.html"), ProfilerEvent.cpu.name(), 5, TimeUnit.SECONDS);
-        String s = future.get(10, TimeUnit.SECONDS);
-        System.out.println(s);
+        //  Github的测试环境执行没有权限，因此去掉
+        if (PlatformUtil.isMac()) {
+            JvmmProfiler profiler = JvmmFactory.getProfiler();
+            Future<String> future = profiler.sample(new File("test_sample.html"), ProfilerEvent.cpu.name(), 5, TimeUnit.SECONDS);
+            String s = future.get(10, TimeUnit.SECONDS);
+            System.out.println(s);
+        }
     }
 }
