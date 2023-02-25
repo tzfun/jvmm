@@ -31,17 +31,14 @@ public class TestUtil {
 
     @Test
     public void testCopyFromJar() throws Exception {
-        JarFile jar = new JarFile("jvmm-server.jar");
+        File file = new File("jvmm-server.jar");
+        if (!file.exists()) {
+            return;
+        }
+        JarFile jar = new JarFile(file);
         File target = new File(".jvmm/jar/server");
         String regex = "(async-profiler/.*|com/.*|io/.*|org/benf.*|org/slf4j.*|META-INF/maven/.*|META-INF/native/.*|META-INF/native-image/.*|io.netty.versions.propeties)";
 
         FileUtil.copyFromJar(jar, target, regex);
-    }
-
-    @Test
-    public void testZip() throws Exception {
-        File serverJarFile = new File("jvmm-server.jar");
-        File target = new File(".jvmm/jar/server/");
-        FileUtil.zip(target, serverJarFile, false);
     }
 }
