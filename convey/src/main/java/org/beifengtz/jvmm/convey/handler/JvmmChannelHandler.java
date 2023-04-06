@@ -139,7 +139,7 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
                 handleRequest(ctx, request);
             }
             if (!request.isHeartbeat()) {
-                logger().debug(String.format("%s %dms", request.getType(), System.currentTimeMillis() - startTime));
+                logger().debug("{} {} ms", request.getType(), System.currentTimeMillis() - startTime);
             }
         } catch (AuthenticationFailedException e) {
             ctx.channel().writeAndFlush(JvmmResponse.create()

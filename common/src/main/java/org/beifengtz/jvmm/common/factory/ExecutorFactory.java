@@ -6,7 +6,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -24,7 +26,7 @@ public class ExecutorFactory {
 
     static {
         Thread shutdownHook = new Thread(ExecutorFactory::shutdown);
-        shutdownHook.setName("jvmmExtHook");
+        shutdownHook.setName("jvmm-shutdown-hook");
         Runtime.getRuntime().addShutdownHook(shutdownHook);
     }
 
@@ -33,21 +35,21 @@ public class ExecutorFactory {
     }
 
     public static int getNThreads() {
-        return SystemPropertyUtil.getInt("jvmm.workThread", Runtime.getRuntime().availableProcessors());
+        return Math.max(2, SystemPropertyUtil.getInt("jvmm.workThread", Runtime.getRuntime().availableProcessors()));
     }
 
     public static ScheduledExecutorService getScheduleThreadPool() {
-        if (SCHEDULE_THREAD_POOL == null || SCHEDULE_THREAD_POOL.isShutdown()) {
+        if (SCHEDULE_THREAD_POOL == null) {
             synchronized (ExecutorFactory.class) {
-                if (SCHEDULE_THREAD_POOL == null || SCHEDULE_THREAD_POOL.isShutdown()) {
-                    SCHEDULE_THREAD_POOL = Executors.newScheduledThreadPool(getNThreads(), getThreadFactory("jvmm-schedule"));
+                if (SCHEDULE_THREAD_POOL == null) {
+                    SCHEDULE_THREAD_POOL = new ScheduledThreadPoolExecutor(getNThreads(), getThreadFactory("jvmm"), new CallerRunsPolicy());
                 }
             }
         }
         return SCHEDULE_THREAD_POOL;
     }
 
-    public static void shutdown() {
+    private static void shutdown() {
         if (SCHEDULE_THREAD_POOL != null && !SCHEDULE_THREAD_POOL.isShutdown()) {
             SCHEDULE_THREAD_POOL.shutdown();
             if (SCHEDULE_THREAD_POOL.isShutdown()) {
@@ -72,10 +74,14 @@ public class ExecutorFactory {
             Thread t = new Thread(group, r,
                     namePrefix + threadNumber.getAndIncrement(),
                     0);
-            if (t.isDaemon())
+            if (t.isDaemon()) {
                 t.setDaemon(false);
-            if (t.getPriority() != Thread.NORM_PRIORITY)
+            }
+
+            if (t.getPriority() != Thread.NORM_PRIORITY) {
                 t.setPriority(Thread.NORM_PRIORITY);
+            }
+
             return t;
         }
     }

@@ -1,6 +1,7 @@
 package org.beifengtz.jvmm.server;
 
 import io.netty.channel.EventLoopGroup;
+import org.beifengtz.jvmm.common.factory.ExecutorFactory;
 import org.beifengtz.jvmm.common.util.ClassLoaderUtil;
 import org.beifengtz.jvmm.common.util.FileUtil;
 import org.beifengtz.jvmm.common.util.IOUtil;
@@ -34,7 +35,7 @@ public class ServerContext {
 
     private static final Map<ServerType, JvmmService> serviceContainer = new ConcurrentHashMap<>(1);
 
-    private static volatile EventLoopGroup boosGroup;
+    private static volatile EventLoopGroup workerGroup;
 
     private static volatile boolean loadedLogLib = false;
 
@@ -95,15 +96,15 @@ public class ServerContext {
         return serviceContainer.keySet();
     }
 
-    public static EventLoopGroup getBoosGroup() {
-        if (boosGroup == null || boosGroup.isShutdown()) {
+    public static EventLoopGroup getWorkerGroup() {
+        if (workerGroup == null) {
             synchronized (ServerContext.class) {
-                if (boosGroup == null || boosGroup.isShutdown()) {
-                    boosGroup = ChannelInitializers.newEventLoopGroup(2);
+                if (workerGroup == null) {
+                    workerGroup = ChannelInitializers.newEventLoopGroup(ServerContext.getConfiguration().getWorkThread(), ExecutorFactory.getScheduleThreadPool());
                 }
             }
         }
-        return boosGroup;
+        return workerGroup;
     }
 
     /**

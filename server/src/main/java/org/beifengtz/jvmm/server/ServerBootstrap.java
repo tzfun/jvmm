@@ -223,7 +223,7 @@ public class ServerBootstrap {
                     }
                     assert service != null;
 
-                    Promise<Integer> promise = new DefaultPromise<>(ServerContext.getBoosGroup().next());
+                    Promise<Integer> promise = new DefaultPromise<>(ServerContext.getWorkerGroup().next());
                     JvmmService finalService = service;
 
                     service.addShutdownListener(() -> {
@@ -289,7 +289,7 @@ public class ServerBootstrap {
                 logger().error("An exception occurred while shutting down the jvmm service: " + e.getMessage(), e);
             }
         }
-        ServerContext.getBoosGroup().shutdownGracefully();
+        ServerContext.getWorkerGroup().shutdownGracefully();
         if (shutdownHook != null) {
             try {
                 Runtime.getRuntime().removeShutdownHook(shutdownHook);

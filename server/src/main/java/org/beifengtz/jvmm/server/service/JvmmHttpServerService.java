@@ -40,11 +40,11 @@ public class JvmmHttpServerService extends AbstractListenerServerService {
 
     @Override
     protected void startUp(Promise<Integer> promise) {
-        EventLoopGroup workerGroup = getWorkableGlobalWorkerGroup();
+        EventLoopGroup group = ServerContext.getWorkerGroup();
         ChannelFuture future = new ServerBootstrap()
-                .group(ServerContext.getBoosGroup(), workerGroup)
-                .channel(ChannelInitializers.serverChannelClass(ServerContext.getBoosGroup()))
-                .childHandler(new HttpServerChannelInitializer(new HttpServerHandlerProvider(10, workerGroup)))
+                .group(group, group)
+                .channel(ChannelInitializers.serverChannelClass(ServerContext.getWorkerGroup()))
+                .childHandler(new HttpServerChannelInitializer(new HttpServerHandlerProvider(10, group)))
                 .bind(runningPort.get())
                 .syncUninterruptibly();
 

@@ -11,7 +11,6 @@ package org.beifengtz.jvmm.core;
  */
 public class JvmmFactory {
 
-
     private static volatile JvmmCollector jvmmCollector = null;
     private static volatile JvmmExecutor jvmmExecutor = null;
     private static volatile JvmmProfiler jvmmProfiler = null;
