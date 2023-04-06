@@ -1,4 +1,5 @@
-server模块是基于[core模块](../core/README.md)开发的对外提供API服务的程序，如果你不想通过[Java Agent方式](../agent/README.md)启动Jvmm服务，可以直接在你的项目中使用它。
+server模块是基于[core模块](../core/README.md)
+开发的对外提供API服务的程序，如果你不想通过[Java Agent方式](../agent/README.md)启动Jvmm服务，可以直接在你的项目中使用它。
 
 # 启动方式
 
@@ -6,9 +7,11 @@ server模块是基于[core模块](../core/README.md)开发的对外提供API服�
 
 ## 独立启动
 
-如果你的监控对象更专注于操作系统或者物理机，独立启动方式可能比较适合你的应用场景。启动一个独立的Jvmm Server，并对外提供查询OS的内存、磁盘、网卡、进程等信息。
+如果你的监控对象更专注于操作系统或者物理机，独立启动方式可能比较适合你的应用场景。启动一个独立的Jvmm
+Server，并对外提供查询OS的内存、磁盘、网卡、进程等信息。
 
-server jar包支持直接运行启动，你需要先生成`jvmm-server.jar`包，具体生成方法请前往[Jvmm客户端Jar模式生成Agent Jar](../client/README.md#依赖生成模式)
+server jar包支持直接运行启动，你需要先生成`jvmm-server.jar`
+包，具体生成方法请前往[Jvmm客户端Jar模式生成Agent Jar](../client/README.md#依赖生成模式)
 
 生成的`jvmm-server.jar`就是我们独立启动的目标jar包，它可以直接运行：
 
@@ -44,18 +47,21 @@ java -jar --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens jdk.
 
 ## 项目中引入依赖启动
 
-如果你的监控对象更专注于自己的Java程序，同[载入Java程序启动](#载入Java程序启动)一样，但你不想用agent的方式启动，或者是你的项目是一个多模块项目，Jvmm作为项目的监控程序，想一次引入多模块生效，那么引入依赖方式启动会更加适合你的应用场景。
+如果你的监控对象更专注于自己的Java程序，同[载入Java程序启动](#载入Java程序启动)
+一样，但你不想用agent的方式启动，或者是你的项目是一个多模块项目，Jvmm作为项目的监控程序，想一次引入多模块生效，那么引入依赖方式启动会更加适合你的应用场景。
 
 你可以有两个选择在自己的项目中使用Jvmm的依赖：
 
 * 直接引入`jvmm-server`依赖，直接调用`server.start()`启动，它的优缺点如下：
-  * **优点**：简单快捷，只需调用**一行**启动代码就可实现三种服务的启动：jvmm、http、sentinel。
-  * **缺点**：
-    1. 内置了RPC模块（netty实现），如果你的项目也依赖了netty，可能有依赖版本冲突的问题。
-    2. server的日志系统为了兼容agent模式，日志输出做了代理实现，当你的Jvmm Server日志输出量比较大时，可能会造成性能问题。（经过测试如果你的jvmm请求频次在**100ms**以上是没有影响的，在**100ms**内可能会有性能问题，但一般场景谁会那么频繁的去请求监控数据呢是吧，并且不是所有接口都会输出日志）。
+    * **优点**：简单快捷，只需调用**一行**启动代码就可实现三种服务的启动：jvmm、http、sentinel。
+    * **缺点**：
+        1. 内置了RPC模块（netty实现），如果你的项目也依赖了netty，可能有依赖版本冲突的问题。
+        2. server的日志系统为了兼容agent模式，日志输出做了代理实现，当你的Jvmm
+           Server日志输出量比较大时，可能会造成性能问题。（经过测试如果你的jvmm请求频次在**100ms**以上是没有影响的，在*
+           *100ms**内可能会有性能问题，但一般场景谁会那么频繁的去请求监控数据呢是吧，并且不是所有接口都会输出日志）。
 * 引入`jvmm-core`依赖，调用API，使用自己项目中的RPC模块提供服务，它的优缺点如下：
-  * **优点**：可完全自定义实现监控，监控项目及数据更加完整，没有RPC模块和日志系统，可以更优雅的嵌入你的项目。
-  * **缺点**：开发难度较高，需阅读各个API的使用方法。
+    * **优点**：可完全自定义实现监控，监控项目及数据更加完整，没有RPC模块和日志系统，可以更优雅的嵌入你的项目。
+    * **缺点**：开发难度较高，需阅读各个API的使用方法。
 
 下面是引入`jvmm-server`依赖的使用文档，引入jvmm-core的方法请见[core模块文档](../core/README.md)
 
@@ -66,6 +72,7 @@ java -jar --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens jdk.
 Maven引入
 
 ```xml
+
 <dependency>
     <groupId>io.github.tzfun.jvmm</groupId>
     <artifactId>jvmm-server</artifactId>
@@ -76,12 +83,13 @@ Maven引入
 或 gradle引入
 
 ```groovy
-implementation "io.github.tzfun.jvmm:jvmm-server:${jvmm-version}"
+implementation "io.github.tzfun.jvmm:jvmm-server:${jvmm - version}"
 ```
 
 **如果你的项目中没有SLF4J的依赖**，可以使用jvmm的SLF4J日志实现，只需引入jvmm-logger依赖
 
 ```xml
+
 <dependency>
     <groupId>io.github.tzfun.jvmm</groupId>
     <artifactId>jvmm-logger</artifactId>
@@ -92,7 +100,7 @@ implementation "io.github.tzfun.jvmm:jvmm-server:${jvmm-version}"
 或
 
 ```groovy
-implementation "io.github.tzfun.jvmm:jvmm-logger:${jvmm-version}"
+implementation "io.github.tzfun.jvmm:jvmm-logger:${jvmm - version}"
 ```
 
 ### 示例代码
@@ -243,14 +251,14 @@ public class ServerBootDemo {
                 .setAdaptivePort(true)
                 .setAuth(globalAuth);
 
-      SentinelConf sentinel = new SentinelConf()
-              .addSubscriber(new SentinelSubscriberConf().setUrl("http://exaple.jvmm.com/subscriber"))
-              .addSubscriber(new SentinelSubscriberConf().setUrl("http://127.0.0.1:8080/subscriber")
-                      .setAuth(new AuthOptionConf().setEnable(true)
-                              .setUsername("auth-account")
-                              .setPassword("auth-password")))
-              .setInterval(10)
-              .setCount(-1);
+        SentinelConf sentinel = new SentinelConf()
+                .addSubscriber(new SentinelSubscriberConf().setUrl("http://exaple.jvmm.com/subscriber"))
+                .addSubscriber(new SentinelSubscriberConf().setUrl("http://127.0.0.1:8080/subscriber")
+                        .setAuth(new AuthOptionConf().setEnable(true)
+                                .setUsername("auth-account")
+                                .setPassword("auth-password")))
+                .setInterval(10)
+                .setCount(-1);
 
         Configuration config = new Configuration()
                 .setName("jvmm-server")
@@ -276,7 +284,8 @@ server提供了三种service：
 * **http**：对外提供http服务，不限编程语言，请求相应的http接口即可
 * **sentinel**：在server端启动一个哨兵，定时采集数据并上报给订阅者
 
-它们可以同时运行，启动服务类型在配置文件中的`server.type`配置或代码中构造Configuration时`ServerConf#setType()`配置，如需代码关闭服务可以这样调用
+它们可以同时运行，启动服务类型在配置文件中的`server.type`配置或代码中构造Configuration时`ServerConf#setType()`
+配置，如需代码关闭服务可以这样调用
 
 ```java
 public class ServerStopDemo {
@@ -292,9 +301,11 @@ public class ServerStopDemo {
 
 ## 1. Jvmm Service
 
-Jvmm Service启动后会在程序中启动一个Jvmm RPC服务，与之通信需要使用`JvmmConnector`，相关配置段在[config.yml](../server/src/main/resources/config.yml)中的`server.jvmm`。
+Jvmm Service启动后会在程序中启动一个Jvmm RPC服务，与之通信需要使用`JvmmConnector`
+，相关配置段在[config.yml](../server/src/main/resources/config.yml)中的`server.jvmm`。
 
-> Jvmm RPC与Http不同的是Jvmm服务支持TCP长连接，可长期保持双向通信，并且每个消息包都会进行身份校验和数据加密，**客户端工具只能用这种方式连接**。
+> Jvmm RPC与Http不同的是Jvmm服务支持TCP长连接，可长期保持双向通信，并且每个消息包都会进行身份校验和数据加密，*
+*客户端工具只能用这种方式连接**。
 >
 > 请求为JvmmRequest，响应为JvmmResponse
 
@@ -380,81 +391,91 @@ public class ServerConveyDemo {
 
 Jvmm Service提供了以下API接口：
 
-| Type                                      | Data                                                                                            | Description                                                                           |
-|-------------------------------------------|-------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|
-| JVMM_TYPE_COLLECT_SYS_INFO                | /                                                                                               | 采集操作系统信息                                                                              |
-| JVMM_TYPE_COLLECT_SYS_MEMORY_INFO         | /                                                                                               | 采集操作系统内存数据                                                                            |
-| JVMM_TYPE_COLLECT_SYS_FILE_INFO           | /                                                                                               | 采集操作系统磁盘分区使用情况数据                                                                      |
-| JVMM_TYPE_COLLECT_PROCESS_INFO            | /                                                                                               | 采集当前进程数据                                                                              |
-| JVMM_TYPE_COLLECT_DISK_INFO               | /                                                                                               | 采集物理机磁盘数据                                                                             |
-| JVMM_TYPE_COLLECT_DISK_IO_INFO            | /                                                                                               | 采集物理机磁盘IO及吞吐量数据                                                                       |
-| JVMM_TYPE_COLLECT_CPU_INFO                | /                                                                                               | 采集物理机CPU负载数据                                                                          |
-| JVMM_TYPE_COLLECT_NETWORK_INFO            | /                                                                                               | 采集物理机网卡信息及IO数据                                                                        |
-| JVMM_TYPE_COLLECT_JVM_CLASSLOADING_INFO   | /                                                                                               | 采集JVM类加载信息                                                                            |
-| JVMM_TYPE_COLLECT_JVM_CLASSLOADER_INFO    | /                                                                                               | 采集JVM类加载器信息                                                                           |
-| JVMM_TYPE_COLLECT_JVM_COMPILATION_INFO    | /                                                                                               | 采集JVM编译信息                                                                             |
-| JVMM_TYPE_COLLECT_JVM_GC_INFO             | /                                                                                               | 采集JVM垃圾收集器信息                                                                          |
-| JVMM_TYPE_COLLECT_JVM_MEMORY_MANAGER_INFO | /                                                                                               | 采集JVM内存管理器信息                                                                          |
-| JVMM_TYPE_COLLECT_JVM_MEMORY_POOL_INFO    | /                                                                                               | 采集JVM内存池信息                                                                            |
-| JVMM_TYPE_COLLECT_JVM_MEMORY_INFO         | /                                                                                               | 采集JVM内存使用情况                                                                           |
-| JVMM_TYPE_COLLECT_JVM_THREAD_INFO         | /                                                                                               | 采集JVM线程统计数据                                                                           |
-| JVMM_TYPE_COLLECT_JVM_THREAD_STACK        | 见[ThreadInfoDTO](src/main/java/org/beifengtz/jvmm/server/entity/dto/ThreadInfoDTO.java)         | 采集JVM线程堆栈数据                                                                           |
-| JVMM_TYPE_COLLECT_JVM_DUMP_THREAD         | /                                                                                               | dump所有线程堆栈数据                                                                          |
-| JVMM_TYPE_COLLECT_BATCH                   | 见[CollectOptions](src/main/java/org/beifengtz/jvmm/server/entity/conf/CollectOptions.java)      | 根据选项批量采集数据                                                                            |
-| JVMM_TYPE_EXECUTE_GC                      | /                                                                                               | 执行gc                                                                                  |
-| JVMM_TYPE_EXECUTE_JAVA_PROCESS            | /                                                                                               | 列出所有Java进程                                                                            |
-| JVMM_TYPE_EXECUTE_JVM_TOOL                | String                                                                                          | 执行jvm tool命令                                                                          |
-| JVMM_TYPE_PROFILER_SAMPLE                 | 见[ProfilerSampleDTO](src/main/java/org/beifengtz/jvmm/server/entity/dto/ProfilerSampleDTO.java) | 生成火焰图                                                                                 |
-| JVMM_TYPE_PROFILER_EXECUTE                | String                                                                                          | 执行profiler命令，见[async-profiler](https://github.com/jvm-profiling-tools/async-profiler) |
-| JVMM_TYPE_SERVER_SHUTDOWN                 | String                                                                                          | 关闭服务，data为服务类型                                                                        |
-| JVMM_TYPE_EXECUTE_JAD                     | JsonObject，其属性为：className(String), methodName(String)                                           | 代码反编译（仅支持agent）                                                                       |
-| JVMM_TYPE_EXECUTE_LOAD_PATCH              | JsonArray，其元素为[PatchDTO](src/main/java/org/beifengtz/jvmm/server/entity/dto/PatchDTO.java)      | 代码热更，当指定ClassLoader的hash时只针对于改ClassLoader加载的类进行热更                                     |
+| Type                                      | Data                                                                                                                               | Description                                                                           |
+|-------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|
+| JVMM_TYPE_COLLECT_SYS_INFO                | /                                                                                                                                  | 采集操作系统信息                                                                              |
+| JVMM_TYPE_COLLECT_SYS_MEMORY_INFO         | /                                                                                                                                  | 采集操作系统内存数据                                                                            |
+| JVMM_TYPE_COLLECT_SYS_FILE_INFO           | /                                                                                                                                  | 采集操作系统磁盘分区使用情况数据                                                                      |
+| JVMM_TYPE_COLLECT_PROCESS_INFO            | /                                                                                                                                  | 采集当前进程数据                                                                              |
+| JVMM_TYPE_COLLECT_DISK_INFO               | /                                                                                                                                  | 采集物理机磁盘数据                                                                             |
+| JVMM_TYPE_COLLECT_DISK_IO_INFO            | /                                                                                                                                  | 采集物理机磁盘IO及吞吐量数据                                                                       |
+| JVMM_TYPE_COLLECT_CPU_INFO                | /                                                                                                                                  | 采集物理机CPU负载数据                                                                          |
+| JVMM_TYPE_COLLECT_NETWORK_INFO            | /                                                                                                                                  | 采集物理机网卡信息及IO数据                                                                        |
+| JVMM_TYPE_COLLECT_JVM_CLASSLOADING_INFO   | /                                                                                                                                  | 采集JVM类加载信息                                                                            |
+| JVMM_TYPE_COLLECT_JVM_CLASSLOADER_INFO    | /                                                                                                                                  | 采集JVM类加载器信息                                                                           |
+| JVMM_TYPE_COLLECT_JVM_COMPILATION_INFO    | /                                                                                                                                  | 采集JVM编译信息                                                                             |
+| JVMM_TYPE_COLLECT_JVM_GC_INFO             | /                                                                                                                                  | 采集JVM垃圾收集器信息                                                                          |
+| JVMM_TYPE_COLLECT_JVM_MEMORY_MANAGER_INFO | /                                                                                                                                  | 采集JVM内存管理器信息                                                                          |
+| JVMM_TYPE_COLLECT_JVM_MEMORY_POOL_INFO    | /                                                                                                                                  | 采集JVM内存池信息                                                                            |
+| JVMM_TYPE_COLLECT_JVM_MEMORY_INFO         | /                                                                                                                                  | 采集JVM内存使用情况                                                                           |
+| JVMM_TYPE_COLLECT_JVM_THREAD_INFO         | /                                                                                                                                  | 采集JVM线程统计数据                                                                           |
+| JVMM_TYPE_COLLECT_JVM_THREAD_STACK        | 见[ThreadInfoDTO](src/main/java/org/beifengtz/jvmm/server/entity/dto/ThreadInfoDTO.java)                                            | 采集JVM线程堆栈数据                                                                           |
+| JVMM_TYPE_COLLECT_JVM_DUMP_THREAD         | /                                                                                                                                  | dump所有线程堆栈数据                                                                          |
+| JVMM_TYPE_COLLECT_BATCH                   | 见[CollectOptions](src/main/java/org/beifengtz/jvmm/server/entity/conf/CollectOptions.java)                                         | 根据选项批量采集数据                                                                            |
+| JVMM_TYPE_EXECUTE_GC                      | /                                                                                                                                  | 执行gc                                                                                  |
+| JVMM_TYPE_EXECUTE_JAVA_PROCESS            | /                                                                                                                                  | 列出所有Java进程                                                                            |
+| JVMM_TYPE_EXECUTE_JVM_TOOL                | String                                                                                                                             | 执行jvm tool命令                                                                          |
+| JVMM_TYPE_PROFILER_SAMPLE                 | 见[ProfilerSampleDTO](src/main/java/org/beifengtz/jvmm/server/entity/dto/ProfilerSampleDTO.java)                                    | 生成火焰图                                                                                 |
+| JVMM_TYPE_PROFILER_EXECUTE                | String                                                                                                                             | 执行profiler命令，见[async-profiler](https://github.com/jvm-profiling-tools/async-profiler) |
+| JVMM_TYPE_PROFILER_START                  | 见[ProfilerSampleDTO](src/main/java/org/beifengtz/jvmm/server/entity/dto/ProfilerSampleDTO.java)，其中只有`event\counter\inteval`字段有效    | 执行profiler开始采样命令                                                                      |
+| JVMM_TYPE_PROFILER_STOP                   | String，[ProfilerSampleDTO](src/main/java/org/beifengtz/jvmm/server/entity/dto/ProfilerSampleDTO.java)中的format字段，可选值为`html\txt\jfr` | 执行profiler结束采样并导出文件命令                                                                 |
+| JVMM_TYPE_SERVER_SHUTDOWN                 | String                                                                                                                             | 关闭服务，data为服务类型                                                                        |
+| JVMM_TYPE_EXECUTE_JAD                     | JsonObject，其属性为：className(String), methodName(String)                                                                              | 代码反编译（仅支持agent）                                                                       |
+| JVMM_TYPE_EXECUTE_LOAD_PATCH              | JsonArray，其元素为[PatchDTO](src/main/java/org/beifengtz/jvmm/server/entity/dto/PatchDTO.java)                                         | 代码热更，当指定ClassLoader的hash时只针对于改ClassLoader加载的类进行热更                                     |
 
 ## 2. Http Service
 
-Http Service启动之后会在程序中启动一个http服务，你可以在浏览器或者以http协议调用相关接口，相关配置段在[config.yml](../server/src/main/resources/config.yml)中的`server.http`。
+Http
+Service启动之后会在程序中启动一个http服务，你可以在浏览器或者以http协议调用相关接口，相关配置段在[config.yml](../server/src/main/resources/config.yml)
+中的`server.http`。
 
 ### Http接口
 
 Http Service提供了以下API接口：
 
-| Uri                         | 方法   | 参数                                    | Body                                                                                            | 描述                                                                                    |
-|-----------------------------|------|---------------------------------------|-------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|
-| /collect/process            | GET  | /                                     | /                                                                                               | 采集进程信息                                                                                |
-| /collect/disk               | GET  | /                                     | /                                                                                               | 采集物理机磁盘数据                                                                             |
-| /collect/disk_io            | GET  | /                                     | /                                                                                               | 采集物理机磁盘IO及吞吐量数据                                                                       |
-| /collect/cpu                | GET  | /                                     | /                                                                                               | 采集物理机CPU负载数据                                                                          |
-| /collect/network            | GET  | /                                     | /                                                                                               | 采集物理机网卡信息及IO数据                                                                        |
-| /collect/sys                | GET  | /                                     | /                                                                                               | 采集操作系统信息                                                                              |
-| /collect/sys/memory         | GET  | /                                     | /                                                                                               | 采集操作系统内存数据                                                                            |
-| /collect/sys/file           | GET  | /                                     | /                                                                                               | 采集操作系统磁盘分区使用情况数据                                                                      |
-| /collect/jvm/classloading   | GET  | /                                     | /                                                                                               | 采集JVM类加载信息                                                                            |
-| /collect/jvm/classloader    | GET  | /                                     | /                                                                                               | 采集JVM类加载器信息                                                                           |
-| /collect/jvm/compilation    | GET  | /                                     | /                                                                                               | 采集JVM编译信息                                                                             |
-| /collect/jvm/gc             | GET  | /                                     | /                                                                                               | 采集JVM垃圾收集器信息                                                                          |
-| /collect/jvm/memory_manager | GET  | /                                     | /                                                                                               | 采集JVM内存管理器信息                                                                          |
-| /collect/jvm/memory_pool    | GET  | /                                     | /                                                                                               | 采集JVM内存池信息                                                                            |
-| /collect/jvm/memory         | GET  | /                                     | /                                                                                               | 采集JVM内存使用情况                                                                           |
-| /collect/jvm/thread         | GET  | /                                     | /                                                                                               | 采集JVM线程统计数据                                                                           |
-| /collect/jvm/thread_stack   | POST | /                                     | 见[ThreadInfoDTO](src/main/java/org/beifengtz/jvmm/server/entity/dto/ThreadInfoDTO.java)         | 采集JVM线程堆栈数据                                                                           |
-| /collect/jvm/dump_thread    | GET  | /                                     | /                                                                                               | dump所有线程堆栈数据                                                                          |
-| /collect/by_options         | POST | /                                     | 见[CollectOptions](src/main/java/org/beifengtz/jvmm/server/entity/conf/CollectOptions.java)      | 根据选项批量采集数据                                                                            |
-| /execute/gc                 | GET  | /                                     | /                                                                                               | 执行gc                                                                                  |
-| /execute/jps                | GET  | /                                     | /                                                                                               | 列出所有Java进程                                                                            |
-| /execute/jvm_tool           | POST | /                                     | command(String)                                                                                 | 执行jvm tool命令                                                                          |
-| /profiler/flame_graph       | POST | /                                     | 见[ProfilerSampleDTO](src/main/java/org/beifengtz/jvmm/server/entity/dto/ProfilerSampleDTO.java) | 生成火焰图                                                                                 |
-| /profiler/execute           | POST | /                                     | command(String)                                                                                 | 执行profiler命令，见[async-profiler](https://github.com/jvm-profiling-tools/async-profiler) |
-| /server/shutdown            | GET  | target(String)                        | /                                                                                               | 关闭服务，data为服务类型                                                                        |
-| /execute/jad                | GET  | className(String), methodName(String) | /                                                                                               | 代码反编译（仅支持agent）                                                                       |
-| /execute/load_patch         | POST | /                                     | JsonArray，其元素为[PatchDTO](src/main/java/org/beifengtz/jvmm/server/entity/dto/PatchDTO.java)      | 代码热更，当指定ClassLoader的hash时只针对于改ClassLoader加载的类进行热更                                     |
+| Uri                         | 方法   | 参数                                    | Body                                                                                                                               | 描述                                                                                    |
+|-----------------------------|------|---------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|
+| /collect/process            | GET  | /                                     | /                                                                                                                                  | 采集进程信息                                                                                |
+| /collect/disk               | GET  | /                                     | /                                                                                                                                  | 采集物理机磁盘数据                                                                             |
+| /collect/disk_io            | GET  | /                                     | /                                                                                                                                  | 采集物理机磁盘IO及吞吐量数据                                                                       |
+| /collect/cpu                | GET  | /                                     | /                                                                                                                                  | 采集物理机CPU负载数据                                                                          |
+| /collect/network            | GET  | /                                     | /                                                                                                                                  | 采集物理机网卡信息及IO数据                                                                        |
+| /collect/sys                | GET  | /                                     | /                                                                                                                                  | 采集操作系统信息                                                                              |
+| /collect/sys/memory         | GET  | /                                     | /                                                                                                                                  | 采集操作系统内存数据                                                                            |
+| /collect/sys/file           | GET  | /                                     | /                                                                                                                                  | 采集操作系统磁盘分区使用情况数据                                                                      |
+| /collect/jvm/classloading   | GET  | /                                     | /                                                                                                                                  | 采集JVM类加载信息                                                                            |
+| /collect/jvm/classloader    | GET  | /                                     | /                                                                                                                                  | 采集JVM类加载器信息                                                                           |
+| /collect/jvm/compilation    | GET  | /                                     | /                                                                                                                                  | 采集JVM编译信息                                                                             |
+| /collect/jvm/gc             | GET  | /                                     | /                                                                                                                                  | 采集JVM垃圾收集器信息                                                                          |
+| /collect/jvm/memory_manager | GET  | /                                     | /                                                                                                                                  | 采集JVM内存管理器信息                                                                          |
+| /collect/jvm/memory_pool    | GET  | /                                     | /                                                                                                                                  | 采集JVM内存池信息                                                                            |
+| /collect/jvm/memory         | GET  | /                                     | /                                                                                                                                  | 采集JVM内存使用情况                                                                           |
+| /collect/jvm/thread         | GET  | /                                     | /                                                                                                                                  | 采集JVM线程统计数据                                                                           |
+| /collect/jvm/thread_stack   | POST | /                                     | 见[ThreadInfoDTO](src/main/java/org/beifengtz/jvmm/server/entity/dto/ThreadInfoDTO.java)                                            | 采集JVM线程堆栈数据                                                                           |
+| /collect/jvm/dump_thread    | GET  | /                                     | /                                                                                                                                  | dump所有线程堆栈数据                                                                          |
+| /collect/by_options         | POST | /                                     | 见[CollectOptions](src/main/java/org/beifengtz/jvmm/server/entity/conf/CollectOptions.java)                                         | 根据选项批量采集数据                                                                            |
+| /execute/gc                 | GET  | /                                     | /                                                                                                                                  | 执行gc                                                                                  |
+| /execute/jps                | GET  | /                                     | /                                                                                                                                  | 列出所有Java进程                                                                            |
+| /execute/jvm_tool           | POST | /                                     | command(String)                                                                                                                    | 执行jvm tool命令                                                                          |
+| /profiler/flame_graph       | POST | /                                     | 见[ProfilerSampleDTO](src/main/java/org/beifengtz/jvmm/server/entity/dto/ProfilerSampleDTO.java)                                    | 生成火焰图                                                                                 |
+| /profiler/start             | POST | /                                     | 见[ProfilerSampleDTO](src/main/java/org/beifengtz/jvmm/server/entity/dto/ProfilerSampleDTO.java)，其中只有`event\counter\inteval`字段有效    | 执行profiler开始采样命令                                                                      |
+| /profiler/stop              | POST | /                                     | String，[ProfilerSampleDTO](src/main/java/org/beifengtz/jvmm/server/entity/dto/ProfilerSampleDTO.java)中的format字段，可选值为`html\txt\jfr` | 执行profiler结束采样并导出文件命令                                                                 |
+| /profiler/execute           | POST | /                                     | command(String)                                                                                                                    | 执行profiler命令，见[async-profiler](https://github.com/jvm-profiling-tools/async-profiler) |
+| /server/shutdown            | GET  | target(String)                        | /                                                                                                                                  | 关闭服务，data为服务类型                                                                        |
+| /execute/jad                | GET  | className(String), methodName(String) | /                                                                                                                                  | 代码反编译（仅支持agent）                                                                       |
+| /execute/load_patch         | POST | /                                     | JsonArray，其元素为[PatchDTO](src/main/java/org/beifengtz/jvmm/server/entity/dto/PatchDTO.java)                                         | 代码热更，当指定ClassLoader的hash时只针对于改ClassLoader加载的类进行热更                                     |
 
 ### 3. Sentinel Service
 
 哨兵模式的运作逻辑是**定期采集指定数据项然后向订阅者推送**，一般可以用于节点探活、健康监控等场景。
 
-你需要**提前搭建好订阅者服务**并对外公开一个接收哨兵通知数据的http接口，如果接口访问需要进行身份认证，哨兵模式支持 **Basic** 方式认证，将订阅者信息配置后哨兵将定时向此接口推送监控数据，相关配置段在[config.yml](../server/src/main/resources/config.yml)中的`server.sentinel`。
+你需要**提前搭建好订阅者服务**并对外公开一个接收哨兵通知数据的http接口，如果接口访问需要进行身份认证，哨兵模式支持 **Basic
+**
+方式认证，将订阅者信息配置后哨兵将定时向此接口推送监控数据，相关配置段在[config.yml](../server/src/main/resources/config.yml)
+中的`server.sentinel`。
 
-总共支持以下采集项，其中`disk_io`、`cpu`、`network`执行需要耗时，程序内部为异步回调实现，但如果你是Http API请求会表现为同步，每一项等待时间为`1s`。
+总共支持以下采集项，其中`disk_io`、`cpu`、`network`执行需要耗时，程序内部为异步回调实现，但如果你是Http
+API请求会表现为同步，每一项等待时间为`1s`。
 
 ```json
 [

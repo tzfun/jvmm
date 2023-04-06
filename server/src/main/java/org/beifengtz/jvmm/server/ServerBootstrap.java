@@ -12,7 +12,6 @@ import org.beifengtz.jvmm.server.service.JvmmHttpServerService;
 import org.beifengtz.jvmm.server.service.JvmmSentinelService;
 import org.beifengtz.jvmm.server.service.JvmmServerService;
 import org.beifengtz.jvmm.server.service.JvmmService;
-import org.beifengtz.jvmm.server.service.ServiceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,16 +35,10 @@ import java.util.function.Function;
  */
 public class ServerBootstrap {
 
-    public static final String AGENT_BOOT_CLASS = "org.beifengtz.jvmm.agent.AgentBootStrap";
     private static volatile ServerBootstrap bootstrap;
-    private static boolean fromAgent;
-
-    private Instrumentation instrumentation;
-    private Thread shutdownHook;
-    private volatile ServiceManager serviceManager;
 
     private ServerBootstrap(Instrumentation inst) {
-        this.instrumentation = inst;
+        ServerContext.setInstrumentation(inst);
     }
 
     public static ServerBootstrap getInstance() {
@@ -65,7 +58,7 @@ public class ServerBootstrap {
                 if ("config".equalsIgnoreCase(split[0])) {
                     configFileUrl = split[1];
                 } else if ("fromAgent".equalsIgnoreCase(split[0])) {
-                    fromAgent = Boolean.parseBoolean(split[1]);
+                    ServerContext.setFromAgent(Boolean.parseBoolean(split[1]));
                 }
             }
         }
@@ -88,7 +81,7 @@ public class ServerBootstrap {
         }
         ServerContext.setConfiguration(config);
 
-        if (fromAgent) {
+        if (ServerContext.isFromAgent()) {
             //  如果从agent启动，则取消默认的标注输出和文件输出
             System.setProperty("jvmm.log.printers", "agentProxy");
         }
@@ -107,10 +100,6 @@ public class ServerBootstrap {
 
     private static Logger logger() {
         return LoggerFactory.getLogger(ServerBootstrap.class);
-    }
-
-    public Instrumentation getInstrumentation() {
-        return instrumentation;
     }
 
     /**
@@ -162,7 +151,7 @@ public class ServerBootstrap {
     public void start(Function<Object, Object> callback) {
         callback.apply("start");
         try {
-            if (ServerContext.isInited()) {
+            if (ServerContext.isInitialized()) {
 
                 //  如果服务类型不同，先关闭现有服务
                 Set<ServerType> serverSet = ServerContext.getServerSet();
@@ -207,9 +196,6 @@ public class ServerBootstrap {
                     return;
                 }
 
-                if (serviceManager == null) {
-                    serviceManager = new ServiceManager();
-                }
                 CountDownLatch latch = new CountDownLatch(startServers.size());
                 for (ServerType server : startServers) {
                     JvmmService service = null;
@@ -226,10 +212,7 @@ public class ServerBootstrap {
                     Promise<Integer> promise = new DefaultPromise<>(ServerContext.getWorkerGroup().next());
                     JvmmService finalService = service;
 
-                    service.addShutdownListener(() -> {
-                        serviceManager.remove(finalService);
-                        ServerContext.unregisterService(server);
-                    });
+                    service.addShutdownListener(() -> ServerContext.unregisterService(server));
 
                     promise.addListener((GenericFutureListener<Future<Integer>>) future -> {
                         try {
@@ -243,13 +226,7 @@ public class ServerBootstrap {
                             latch.countDown();
                         }
                     });
-                    serviceManager.startIfAbsent(service, promise);
-                }
-
-                if (shutdownHook == null) {
-                    shutdownHook = new Thread(this::stop);
-                    shutdownHook.setName("jvmm-shutdown");
-                    Runtime.getRuntime().addShutdownHook(shutdownHook);
+                    ServerContext.startIfAbsent(server, service, promise);
                 }
 
                 try {
@@ -278,42 +255,11 @@ public class ServerBootstrap {
         }
     }
 
-    /**
-     * 关闭所有服务，如果有agent向agent通知服务关闭
-     */
-    public void stop() {
-        for (ServerType server : ServerType.values()) {
-            try {
-                ServerContext.stop(server);
-            } catch (Exception e) {
-                logger().error("An exception occurred while shutting down the jvmm service: " + e.getMessage(), e);
-            }
-        }
-        ServerContext.getWorkerGroup().shutdownGracefully();
-        if (shutdownHook != null) {
-            try {
-                Runtime.getRuntime().removeShutdownHook(shutdownHook);
-            } catch (Exception ignored) {
-            }
-            shutdownHook = null;
-        }
-        logger().info("Jvmm server service stopped.");
-
-        if (fromAgent) {
-            try {
-                Class<?> bootClazz = Thread.currentThread().getContextClassLoader().loadClass(AGENT_BOOT_CLASS);
-                bootClazz.getMethod("serverStop").invoke(null);
-            } catch (Throwable e) {
-                logger().error("Invoke agent boot method(#serverStop) failed", e);
-            }
-        }
-    }
-
     public boolean redefineClass(ClassDefinition... definitions) throws ClassNotFoundException, UnmodifiableClassException {
-        if (instrumentation == null) {
+        if (ServerContext.getInstrumentation() == null) {
             return false;
         }
-        instrumentation.redefineClasses(definitions);
+        ServerContext.getInstrumentation().redefineClasses(definitions);
         return true;
     }
 }

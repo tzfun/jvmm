@@ -108,7 +108,7 @@ public final class Configuration {
     }
 
     public int getWorkThread() {
-        return workThread;
+        return Math.max(2, workThread);
     }
 
     public Configuration setWorkThread(int workThread) {
