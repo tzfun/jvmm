@@ -49,3 +49,4 @@ web/src/main/resources/application*.yml
 /jni-header/
 /server/src/main/resources/jvmm-logger.jar
 /log/
+/.jvmm/

@@ -2,6 +2,7 @@ package org.beifengtz.jvmm.core;
 
 import org.beifengtz.jvmm.common.exception.ProfilerNotSupportedException;
 import org.beifengtz.jvmm.common.factory.ExecutorFactory;
+import org.beifengtz.jvmm.common.util.meta.ListenableFuture;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerAction;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerCommander;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerCounter;
@@ -10,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -95,18 +95,8 @@ class DefaultJvmmProfiler implements JvmmProfiler {
     }
 
     @Override
-    public Future<String> sample(ScheduledExecutorService executor, File to, String event, ProfilerCounter counter, long interval, long time, TimeUnit timeUnit) {
-        int dotIdx = to.getName().lastIndexOf(".");
-        if (dotIdx >= 0) {
-            String format = to.getName().substring(dotIdx + 1);
-            if ("csv".equalsIgnoreCase(format)) {
-                throw new IllegalArgumentException("SVG format is obsolete, use .html for FlameGraph");
-            } else if (!format.toLowerCase().matches("(txt|html|jfr)")) {
-                throw new IllegalArgumentException("Invalid flame graph format: " + format);
-            }
-        }
-
-        execute(ProfilerCommander.newInstance()
+    public String start(String event, ProfilerCounter counter, long interval) {
+        return execute(ProfilerCommander.newInstance()
                 .setAction(ProfilerAction.start)
                 .setEvent(event)
                 .setInterval(interval <= 1000 ? DEFAULT_INTERVAL : interval)
@@ -114,116 +104,167 @@ class DefaultJvmmProfiler implements JvmmProfiler {
                 .setAllKernel(true)
                 .setAllUser(true)
                 .setThreads(true));
-
-        return executor.schedule(() -> execute(
-                ProfilerCommander.newInstance().setAction(ProfilerAction.stop).setFile(to.getAbsolutePath())
-        ), time <= 0 ? 10 : time, timeUnit);
     }
 
     @Override
-    public Future<String> sample(File to, String event, ProfilerCounter counter, long interval, long time, TimeUnit timeUnit) {
+    public String stop(File to) {
+        return execute(ProfilerCommander.newInstance()
+                .setAction(ProfilerAction.stop)
+                .setFile(to.getAbsolutePath()));
+    }
+
+    @Override
+    public ListenableFuture<String> sample(ScheduledExecutorService executor, File to, String event, ProfilerCounter counter, long interval, long time, TimeUnit timeUnit) {
+        int dotIdx = to.getName().lastIndexOf(".");
+        if (dotIdx >= 0) {
+            String format = to.getName().substring(dotIdx + 1);
+            if ("csv".equalsIgnoreCase(format)) {
+                throw new IllegalArgumentException("SVG format is obsolete, use .html for FlameGraph");
+            } else if (!format.toLowerCase().matches("(txt|html|jfr)")) {
+                throw new IllegalArgumentException("Invalid flame graph format: " + format + ", expected: txt, html, jfr");
+            }
+        }
+
+        start(event, counter, interval);
+        ListenableFuture<String> future = new ListenableFuture<>();
+        executor.schedule(() -> {
+            try {
+                future.complete(stop(to));
+            } catch (Throwable t) {
+                future.cause(t);
+            }
+        }, time <= 0 ? 10 : time, timeUnit);
+        return future;
+    }
+
+    @Override
+    public ListenableFuture<String> sample(File to, String event, ProfilerCounter counter, long interval, long time, TimeUnit timeUnit) {
         return this.sample(getDefaultExecutor(), to, event, counter, interval, time, timeUnit);
     }
 
     @Override
-    public Future<String> sample(ScheduledExecutorService executor, File to, String event, ProfilerCounter counter, long time, TimeUnit timeUnit) {
+    public ListenableFuture<String> sample(ScheduledExecutorService executor, File to, String event, ProfilerCounter counter, long time, TimeUnit timeUnit) {
         return this.sample(executor, to, event, counter, DEFAULT_INTERVAL, time, timeUnit);
     }
 
     @Override
-    public Future<String> sample(File to, String event, ProfilerCounter counter, long time, TimeUnit timeUnit) {
+    public ListenableFuture<String> sample(File to, String event, ProfilerCounter counter, long time, TimeUnit timeUnit) {
         return sample(to, event, counter, DEFAULT_INTERVAL, time, timeUnit);
     }
 
     @Override
-    public Future<String> sample(ScheduledExecutorService executor, File to, String event, long time, TimeUnit timeUnit) {
+    public ListenableFuture<String> sample(ScheduledExecutorService executor, File to, String event, long time, TimeUnit timeUnit) {
         return sample(executor, to, event, ProfilerCounter.samples, time, timeUnit);
     }
 
     @Override
-    public Future<String> sample(File to, String event, long time, TimeUnit timeUnit) {
+    public ListenableFuture<String> sample(File to, String event, long time, TimeUnit timeUnit) {
         return sample(to, event, ProfilerCounter.samples, time, timeUnit);
     }
 
     @Override
-    public Future<String> dumpCollapsed(ScheduledExecutorService executor, ProfilerCounter counter, String event, long interval, long time, TimeUnit timeUnit) {
+    public ListenableFuture<String> dumpCollapsed(ScheduledExecutorService executor, ProfilerCounter counter, String event, long interval, long time, TimeUnit timeUnit) {
         execute(ProfilerCommander.newInstance()
                 .setAction(ProfilerAction.start)
                 .setEvent(event)
                 .setInterval(interval)
                 .setCounter(counter));
+        ListenableFuture<String> future = new ListenableFuture<>();
 
-        return executor.schedule(() -> execute(
-                ProfilerCommander.newInstance().setAction(ProfilerAction.collapsed).setCounter(counter)
-        ), time, timeUnit);
+        executor.schedule(() -> {
+            try {
+                future.complete(execute(
+                        ProfilerCommander.newInstance().setAction(ProfilerAction.collapsed).setCounter(counter)
+                ));
+            } catch (Throwable t) {
+                future.cause(t);
+            }
+        }, time, timeUnit);
+
+        return future;
     }
 
     @Override
-    public Future<String> dumpCollapsed(ScheduledExecutorService executor, ProfilerCounter counter, String event, long time, TimeUnit timeUnit) {
+    public ListenableFuture<String> dumpCollapsed(ScheduledExecutorService executor, ProfilerCounter counter, String event, long time, TimeUnit timeUnit) {
         return dumpCollapsed(executor, counter, event, DEFAULT_INTERVAL, time, timeUnit);
     }
 
     @Override
-    public Future<String> dumpCollapsed(ProfilerCounter counter, String event, long interval, long time, TimeUnit timeUnit) {
+    public ListenableFuture<String> dumpCollapsed(ProfilerCounter counter, String event, long interval, long time, TimeUnit timeUnit) {
         return dumpCollapsed(getDefaultExecutor(), counter, event, interval, time, timeUnit);
     }
 
     @Override
-    public Future<String> dumpCollapsed(ProfilerCounter counter, String event, long time, TimeUnit timeUnit) {
+    public ListenableFuture<String> dumpCollapsed(ProfilerCounter counter, String event, long time, TimeUnit timeUnit) {
         return dumpCollapsed(counter, event, DEFAULT_INTERVAL, time, timeUnit);
     }
 
     @Override
-    public Future<String> dumpTraces(ScheduledExecutorService executor, int maxTraces, String event, long interval, long time, TimeUnit timeUnit) {
+    public ListenableFuture<String> dumpTraces(ScheduledExecutorService executor, int maxTraces, String event, long interval, long time, TimeUnit timeUnit) {
         execute(ProfilerCommander.newInstance()
                 .setAction(ProfilerAction.start)
                 .setEvent(event)
                 .setInterval(interval));
-
-        return executor.schedule(() -> execute(
-                ProfilerCommander.newInstance().setAction(ProfilerAction.summary).setTraces(maxTraces)
-        ), time, timeUnit);
+        ListenableFuture<String> future = new ListenableFuture<>();
+        executor.schedule(() -> {
+            try {
+                future.complete(execute(
+                        ProfilerCommander.newInstance().setAction(ProfilerAction.summary).setTraces(maxTraces)
+                ));
+            } catch (Throwable t) {
+                future.cause(t);
+            }
+        }, time, timeUnit);
+        return future;
     }
 
     @Override
-    public Future<String> dumpTraces(ScheduledExecutorService executor, int maxTraces, String event, long time, TimeUnit timeUnit) {
+    public ListenableFuture<String> dumpTraces(ScheduledExecutorService executor, int maxTraces, String event, long time, TimeUnit timeUnit) {
         return dumpTraces(executor, maxTraces, event, DEFAULT_INTERVAL, time, timeUnit);
     }
 
     @Override
-    public Future<String> dumpTraces(int maxTraces, String event, long interval, long time, TimeUnit timeUnit) {
+    public ListenableFuture<String> dumpTraces(int maxTraces, String event, long interval, long time, TimeUnit timeUnit) {
         return dumpTraces(getDefaultExecutor(), maxTraces, event, interval, time, timeUnit);
     }
 
     @Override
-    public Future<String> dumpTraces(int maxTraces, String event, long time, TimeUnit timeUnit) {
+    public ListenableFuture<String> dumpTraces(int maxTraces, String event, long time, TimeUnit timeUnit) {
         return dumpTraces(maxTraces, event, DEFAULT_INTERVAL, time, timeUnit);
     }
 
     @Override
-    public Future<String> dumpFlat(ScheduledExecutorService executor, int maxMethods, String event, long interval, long time, TimeUnit timeUnit) {
+    public ListenableFuture<String> dumpFlat(ScheduledExecutorService executor, int maxMethods, String event, long interval, long time, TimeUnit timeUnit) {
         execute(ProfilerCommander.newInstance()
                 .setAction(ProfilerAction.start)
                 .setEvent(event)
                 .setInterval(interval));
 
-        return executor.schedule(() -> execute(
-                ProfilerCommander.newInstance().setAction(ProfilerAction.summary).setFlat(maxMethods)
-        ), time, timeUnit);
+        ListenableFuture<String> future = new ListenableFuture<>();
+        executor.schedule(() -> {
+            try {
+                future.complete(execute(
+                        ProfilerCommander.newInstance().setAction(ProfilerAction.summary).setFlat(maxMethods)
+                ));
+            } catch (Throwable t) {
+                future.cause(t);
+            }
+        }, time, timeUnit);
+        return future;
     }
 
     @Override
-    public Future<String> dumpFlat(ScheduledExecutorService executor, int maxMethods, String event, long time, TimeUnit timeUnit) {
+    public ListenableFuture<String> dumpFlat(ScheduledExecutorService executor, int maxMethods, String event, long time, TimeUnit timeUnit) {
         return dumpFlat(executor, maxMethods, event, DEFAULT_INTERVAL, time, timeUnit);
     }
 
     @Override
-    public Future<String> dumpFlat(int maxMethods, String event, long interval, long time, TimeUnit timeUnit) {
+    public ListenableFuture<String> dumpFlat(int maxMethods, String event, long interval, long time, TimeUnit timeUnit) {
         return dumpFlat(getDefaultExecutor(), maxMethods, event, interval, time, timeUnit);
     }
 
     @Override
-    public Future<String> dumpFlat(int maxMethods, String event, long time, TimeUnit timeUnit) {
+    public ListenableFuture<String> dumpFlat(int maxMethods, String event, long time, TimeUnit timeUnit) {
         return dumpFlat(getDefaultExecutor(), maxMethods, event, DEFAULT_INTERVAL, time, timeUnit);
     }
 }
