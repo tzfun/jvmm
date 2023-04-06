@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'io.github.tzfun.jvmm'
-version = '2.0.2'
+version = '2.1.0'
 
 ext {
     nettyVersion = "4.1.65.Final"
@@ -46,5 +46,13 @@ subprojects {
 
     test {
         useJUnitPlatform()
+    }
+}
+
+if (JavaVersion.current().isJava8Compatible()) {
+    allprojects {
+        tasks.withType(Javadoc) {
+            options.addStringOption('Xdoclint:none', '-quiet')
+        }
     }
 }

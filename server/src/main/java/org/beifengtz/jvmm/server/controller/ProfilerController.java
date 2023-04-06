@@ -2,24 +2,26 @@ package org.beifengtz.jvmm.server.controller;
 
 import com.google.gson.JsonPrimitive;
 import org.beifengtz.jvmm.common.util.FileUtil;
+import org.beifengtz.jvmm.common.util.meta.ListenableFuture;
 import org.beifengtz.jvmm.convey.annotation.HttpController;
 import org.beifengtz.jvmm.convey.annotation.HttpRequest;
 import org.beifengtz.jvmm.convey.annotation.JvmmController;
 import org.beifengtz.jvmm.convey.annotation.JvmmMapping;
 import org.beifengtz.jvmm.convey.annotation.RequestBody;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
+import org.beifengtz.jvmm.convey.entity.ResponseFuture;
 import org.beifengtz.jvmm.convey.enums.GlobalStatus;
 import org.beifengtz.jvmm.convey.enums.GlobalType;
 import org.beifengtz.jvmm.convey.enums.Method;
 import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerCounter;
 import org.beifengtz.jvmm.server.entity.dto.ProfilerSampleDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.UUID;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -35,6 +37,9 @@ import java.util.concurrent.TimeUnit;
 @HttpController
 public class ProfilerController {
 
+    private static final Logger logger = LoggerFactory.getLogger(ProfilerController.class);
+    private static volatile boolean PROFILER_STARTED = false;
+
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_PROFILER_EXECUTE)
     @HttpRequest(value = "/profiler/execute", method = Method.POST)
     public String execute(@RequestBody String command) throws IOException {
@@ -43,8 +48,7 @@ public class ProfilerController {
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_PROFILER_SAMPLE)
     @HttpRequest(value = "/profiler/flame_graph", method = Method.POST)
-    public JvmmResponse flameGraph(@RequestBody ProfilerSampleDTO data) throws Exception {
-
+    public void flameGraph(@RequestBody ProfilerSampleDTO data, ResponseFuture respFuture) throws Exception {
         File to = new File(FileUtil.getTempPath(), UUID.randomUUID() + "." + data.getFormat());
         if (to.getParentFile() != null && !to.getParentFile().exists()) {
             to.getParentFile().mkdirs();
@@ -54,22 +58,47 @@ public class ProfilerController {
         ProfilerCounter counter = data.getCounter();
         int time = data.getTime();
 
-        Future<String> future;
+        ListenableFuture<String> future;
         if (data.getInterval() != null) {
             future = JvmmFactory.getProfiler().sample(to, event, counter, data.getInterval(), time, TimeUnit.SECONDS);
         } else {
             future = JvmmFactory.getProfiler().sample(to, event, counter, time, TimeUnit.SECONDS);
         }
-        JvmmResponse response = JvmmResponse.create().setType(GlobalType.JVMM_TYPE_PROFILER_SAMPLE.name());
-        String result = future.get();
-        if (to.exists()) {
-            response.setStatus(GlobalStatus.JVMM_STATUS_OK).setData(new JsonPrimitive(FileUtil.readToHexStr(to)));
-            to.delete();
-        } else {
-            response.setStatus(GlobalStatus.JVMM_STATUS_PROFILER_FAILED);
-        }
-        response.setMessage(result);
+        PROFILER_STARTED = true;
+        future.registerListener(f -> {
+            JvmmResponse response = JvmmResponse.create().setType(GlobalType.JVMM_TYPE_PROFILER_SAMPLE.name());
 
-        return response;
+            if (f.isSuccess()) {
+                String result = f.getNow();
+                if (to.exists()) {
+                    try {
+                        response.setData(new JsonPrimitive(FileUtil.readToHexStr(to))).setStatus(GlobalStatus.JVMM_STATUS_OK);
+                    } catch (IOException e) {
+                        logger.error("Read profiler file failed: " + e.getMessage(), e);
+                        response.setStatus(GlobalStatus.JVMM_STATUS_PROFILER_FAILED).setMessage(e.getMessage());
+                    } finally {
+                        to.delete();
+                    }
+                } else {
+                    response.setStatus(GlobalStatus.JVMM_STATUS_PROFILER_FAILED).setMessage("Generate failed.");
+                }
+                response.setMessage(result);
+            } else {
+                response.setStatus(GlobalStatus.JVMM_STATUS_PROFILER_FAILED).setMessage(f.getCause().getMessage());
+            }
+            respFuture.apply(response);
+        });
+    }
+
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_PROFILER_SAMPLE_START)
+    @HttpRequest(value = "/profiler/start", method = Method.GET)
+    public String start() {
+        return JvmmFactory.getProfiler().start();
+    }
+
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_PROFILER_SAMPLE_STOP)
+    @HttpRequest(value = "/profiler/stop", method = Method.GET)
+    public JvmmResponse stop() {
+
     }
 }

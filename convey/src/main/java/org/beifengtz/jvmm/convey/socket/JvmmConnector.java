@@ -58,7 +58,7 @@ public class JvmmConnector implements Closeable {
     private String authPassword;
 
     private EventLoopGroup workGroup;
-    private State state = State.NONE;
+    private volatile State state = State.NONE;
     private DefaultPromise<Boolean> openPromise;
     private Channel channel;
 
@@ -189,7 +189,7 @@ public class JvmmConnector implements Closeable {
      *                     false - 不自动发送心跳包，连接闲置后会自动断开连接。
      * @param authAccount  安全认证账号
      * @param authPassword 安全认证密码
-     * @param workerGroup  连接工作线程组，建议使用{@link ChannelInitializers#newEventLoopGroup(int)}方法获得
+     * @param workerGroup  连接工作线程组，建议使用{@link ChannelInitializers#newEventLoopGroup}方法获得
      * @return {@link JvmmConnector} 实例
      */
     public static JvmmConnector newInstance(String host, int port, EventLoopGroup workerGroup, boolean keepAlive, String authAccount, String authPassword) {

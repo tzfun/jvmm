@@ -252,14 +252,19 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
                     parameter[i] = this;
                 } else if (ResponseFuture.class.isAssignableFrom(parameterType)) {
                     parameter[i] = new ResponseFuture(data -> {
-                        JvmmResponse response = JvmmResponse.create()
-                                .setStatus(GlobalStatus.JVMM_STATUS_OK)
-                                .setType(reqMsg.getType())
-                                .setData(HandlerProvider.parseResult2Json(data));
+                        JvmmResponse response;
+                        if (data instanceof JvmmResponse) {
+                            response = (JvmmResponse) data;
+                        } else {
+                            response = JvmmResponse.create()
+                                    .setStatus(GlobalStatus.JVMM_STATUS_OK)
+                                    .setType(reqMsg.getType())
+                                    .setData(HandlerProvider.parseResult2Json(data));
+                        }
                         ctx.channel().writeAndFlush(response.serialize());
                     });
                 } else if (parameterType.isAssignableFrom(Enum.class)) {
-                    parameter[i] = Enum.valueOf((Class<? extends Enum>)parameterType, reqMsg.getData().toString());
+                    parameter[i] = Enum.valueOf((Class<? extends Enum>) parameterType, reqMsg.getData().toString());
                 } else {
                     parameter[i] = new Gson().fromJson(reqMsg.getData(), method.getGenericParameterTypes()[i]);
                 }

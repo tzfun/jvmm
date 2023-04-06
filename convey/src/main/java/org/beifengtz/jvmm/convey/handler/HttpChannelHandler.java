@@ -25,7 +25,9 @@ import org.beifengtz.jvmm.convey.annotation.HttpController;
 import org.beifengtz.jvmm.convey.annotation.HttpRequest;
 import org.beifengtz.jvmm.convey.annotation.RequestBody;
 import org.beifengtz.jvmm.convey.annotation.RequestParam;
+import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.entity.ResponseFuture;
+import org.beifengtz.jvmm.convey.enums.GlobalStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -210,7 +212,18 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                 } else if (getClass().isAssignableFrom(parameterType)) {
                     parameter[i] = this;
                 } else if (ResponseFuture.class.isAssignableFrom(parameterType)) {
-                    parameter[i] = new ResponseFuture(data -> response(ctx, HttpResponseStatus.OK, HandlerProvider.parseResult2Json(data).toString()));
+                    parameter[i] = new ResponseFuture(data -> {
+                        if (data instanceof JvmmResponse) {
+                            JvmmResponse resp = (JvmmResponse) data;
+                            if (GlobalStatus.JVMM_STATUS_OK.name().equals(resp.getStatus())) {
+                                response(ctx, HttpResponseStatus.OK, resp.getData().toString());
+                            } else {
+                                response(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR, resp.getMessage());
+                            }
+                        } else {
+                            response(ctx, HttpResponseStatus.OK, HandlerProvider.parseResult2Json(data).toString());
+                        }
+                    });
                 } else {
                     parameter[i] = null;
                 }
