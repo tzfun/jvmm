@@ -1,6 +1,7 @@
 package org.beifengtz.jvmm.server;
 
 import io.netty.channel.EventLoopGroup;
+import io.netty.util.concurrent.Promise;
 import org.beifengtz.jvmm.common.factory.ExecutorFactory;
 import org.beifengtz.jvmm.common.util.ClassLoaderUtil;
 import org.beifengtz.jvmm.common.util.FileUtil;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.InputStream;
+import java.lang.instrument.Instrumentation;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Set;
@@ -31,13 +33,17 @@ public class ServerContext {
 
     public static final String STATUS_OK = "ok";
 
-    private static volatile Configuration configuration;
-
     private static final Map<ServerType, JvmmService> serviceContainer = new ConcurrentHashMap<>(1);
+
+    private static volatile Configuration configuration;
 
     private static volatile EventLoopGroup workerGroup;
 
     private static volatile boolean loadedLogLib = false;
+
+    private static boolean fromAgent = false;
+
+    private static Instrumentation instrumentation;
 
     static {
         try {
@@ -70,6 +76,22 @@ public class ServerContext {
         }
     }
 
+    public static void setFromAgent(boolean flag) {
+        fromAgent = flag;
+    }
+
+    public static boolean isFromAgent() {
+        return fromAgent;
+    }
+
+    public static void setInstrumentation(Instrumentation inst) {
+        instrumentation = inst;
+    }
+
+    public static Instrumentation getInstrumentation() {
+        return instrumentation;
+    }
+
     public static synchronized void setConfiguration(Configuration config) {
         configuration = config;
         config.getLog().setSystemProperties();
@@ -80,7 +102,7 @@ public class ServerContext {
         return configuration;
     }
 
-    public static boolean isInited() {
+    public static boolean isInitialized() {
         return configuration != null;
     }
 
@@ -124,10 +146,38 @@ public class ServerContext {
     }
 
     /**
-     * 关闭所有服务
+     * 关闭所有服务，如果有agent向agent通知服务关闭
      */
-    public static void stopAll() {
-        ServerBootstrap.getInstance().stop();
+    public static synchronized void stopAll() {
+        for (ServerType server : ServerType.values()) {
+            try {
+                ServerContext.stop(server);
+            } catch (Exception e) {
+                LoggerFactory.getLogger(ServerContext.class).error("An exception occurred while shutting down the jvmm service: " + e.getMessage(), e);
+            }
+        }
+
+        if (fromAgent) {
+            try {
+                Class<?> bootClazz = Thread.currentThread().getContextClassLoader().loadClass("org.beifengtz.jvmm.agent.AgentBootStrap");
+                bootClazz.getMethod("serverStop").invoke(null);
+            } catch (Throwable e) {
+                LoggerFactory.getLogger(ServerContext.class).error("Invoke agent boot method(#serverStop) failed", e);
+            }
+        }
+        instrumentation = null;
+    }
+
+    public static void startIfAbsent(ServerType serverType, JvmmService service, Promise<Integer> promise) {
+        try {
+            if (serviceContainer.containsKey(serverType)) {
+                promise.trySuccess(serviceContainer.get(serverType).getPort());
+            } else {
+                service.start(promise);
+            }
+        } catch (Exception e) {
+            promise.tryFailure(e);
+        }
     }
 
     public static JvmmService getService(ServerType type) {

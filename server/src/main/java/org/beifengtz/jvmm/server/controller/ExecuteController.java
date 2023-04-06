@@ -106,7 +106,7 @@ public class ExecuteController {
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_EXECUTE_JAD)
     @HttpRequest("/execute/jad")
     public String jad(@RequestParam String className, @RequestParam String methodName) throws Throwable {
-        return JvmmFactory.getExecutor().jad(ServerBootstrap.getInstance().getInstrumentation(), className, methodName);
+        return JvmmFactory.getExecutor().jad(ServerContext.getInstrumentation(), className, methodName);
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_EXECUTE_LOAD_PATCH)

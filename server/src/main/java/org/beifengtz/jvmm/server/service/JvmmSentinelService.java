@@ -21,8 +21,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -53,7 +55,7 @@ public class JvmmSentinelService implements JvmmService {
     protected final Map<String, AtomicInteger> failStepCounter = new ConcurrentHashMap<>();
     protected Set<ShutdownListener> shutdownListeners = new HashSet<>();
 
-    protected List<SentinelTask> taskList = new ArrayList<>();
+    protected Queue<SentinelTask> taskList = new ConcurrentLinkedQueue<>();
 
     public JvmmSentinelService() {
         this(ExecutorFactory.getScheduleThreadPool());
@@ -83,14 +85,12 @@ public class JvmmSentinelService implements JvmmService {
             }
 
             scheduledFuture = executor.scheduleWithFixedDelay(() -> {
-                synchronized (taskList) {
-                    Iterator<SentinelTask> it = taskList.iterator();
-                    while (it.hasNext()) {
-                        SentinelTask task = it.next();
-                        if (System.currentTimeMillis() >= task.execTime) {
-                            if (task.run()) {
-                                it.remove();
-                            }
+                Iterator<SentinelTask> it = taskList.iterator();
+                while (it.hasNext()) {
+                    SentinelTask task = it.next();
+                    if (System.currentTimeMillis() >= task.execTime) {
+                        if (task.run()) {
+                            it.remove();
                         }
                     }
                 }

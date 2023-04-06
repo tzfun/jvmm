@@ -42,7 +42,7 @@ public class JvmmHttpServerService extends AbstractListenerServerService {
     protected void startUp(Promise<Integer> promise) {
         EventLoopGroup group = ServerContext.getWorkerGroup();
         ChannelFuture future = new ServerBootstrap()
-                .group(group, group)
+                .group(group)
                 .channel(ChannelInitializers.serverChannelClass(ServerContext.getWorkerGroup()))
                 .childHandler(new HttpServerChannelInitializer(new HttpServerHandlerProvider(10, group)))
                 .bind(runningPort.get())
@@ -51,7 +51,6 @@ public class JvmmHttpServerService extends AbstractListenerServerService {
         promise.trySuccess(runningPort.get());
         logger().info("Http server service started on {}, node name: {}", runningPort.get(), ServerContext.getConfiguration().getName());
         channel = future.channel();
-        channel.closeFuture().syncUninterruptibly();
     }
 
     @Override

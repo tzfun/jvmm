@@ -26,7 +26,7 @@ public class JvmmServerService extends AbstractListenerServerService {
 
     private static final Logger logger = LoggerFactory.getLogger(JvmmServerService.class);
 
-    protected Channel channel;
+    protected volatile Channel channel;
 
     @Override
     protected JvmmServerConf getConf() {
@@ -42,7 +42,7 @@ public class JvmmServerService extends AbstractListenerServerService {
     protected void startUp(Promise<Integer> promise) {
         EventLoopGroup group = ServerContext.getWorkerGroup();
         ChannelFuture future = new ServerBootstrap()
-                .group(group, group)
+                .group(group)
                 .channel(ChannelInitializers.serverChannelClass(ServerContext.getWorkerGroup()))
                 .childHandler(new JvmmServerChannelInitializer(new JvmmServerHandlerProvider(10, group)))
                 .bind(runningPort.get())
@@ -51,7 +51,6 @@ public class JvmmServerService extends AbstractListenerServerService {
         promise.trySuccess(runningPort.get());
         logger().info("Jvmm server service started on {}, node name: {}", runningPort.get(), ServerContext.getConfiguration().getName());
         channel = future.channel();
-        channel.closeFuture().syncUninterruptibly();
     }
 
     @Override

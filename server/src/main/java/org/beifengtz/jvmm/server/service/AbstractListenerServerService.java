@@ -40,10 +40,10 @@ public abstract class AbstractListenerServerService implements JvmmService {
             return;
         }
         runningPort.set(conf.getPort());
-        execute(conf, promise);
+        start0(conf, promise);
     }
 
-    protected void execute(JvmmServerConf conf, Promise<Integer> promise) {
+    protected void start0(JvmmServerConf conf, Promise<Integer> promise) {
         retry.incrementAndGet();
         if (PlatformUtil.portAvailable(runningPort.get())) {
             try {
@@ -56,7 +56,7 @@ public abstract class AbstractListenerServerService implements JvmmService {
                 if (retry.get() <= BIND_LIMIT_TIMES && conf.isAdaptivePort()) {
                     logger().warn("Port {} is not available, trying to find available ports by auto-incrementing ports.", runningPort.get());
                     runningPort.incrementAndGet();
-                    execute(conf, promise);
+                    start0(conf, promise);
                 } else {
                     logger().error("Jvmm service start up failed." + e.getMessage(), e);
                     promise.tryFailure(e);
@@ -71,7 +71,7 @@ public abstract class AbstractListenerServerService implements JvmmService {
             if (conf.isAdaptivePort()) {
                 logger().warn("Port {} is not available, trying to find available ports by auto-incrementing ports.", runningPort.get());
                 runningPort.incrementAndGet();
-                execute(conf, promise);
+                start0(conf, promise);
             } else {
                 promise.tryFailure(new RuntimeException("Port " + runningPort.get() + " is not available and the auto increase switch is closed."));
                 this.shutdown();
