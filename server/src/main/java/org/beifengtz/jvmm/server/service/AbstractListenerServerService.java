@@ -1,11 +1,8 @@
 package org.beifengtz.jvmm.server.service;
 
-import io.netty.channel.EventLoopGroup;
 import io.netty.channel.unix.Errors;
 import io.netty.util.concurrent.Promise;
 import org.beifengtz.jvmm.common.util.PlatformUtil;
-import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
-import org.beifengtz.jvmm.server.ServerContext;
 import org.beifengtz.jvmm.server.entity.conf.JvmmServerConf;
 import org.slf4j.Logger;
 
@@ -28,18 +25,6 @@ public abstract class AbstractListenerServerService implements JvmmService {
     protected Set<ShutdownListener> shutdownListeners = new HashSet<>();
     protected AtomicInteger runningPort = new AtomicInteger();
     protected final AtomicInteger retry = new AtomicInteger(0);
-    private static EventLoopGroup globalWorkerGroup;
-
-    protected static EventLoopGroup getWorkableGlobalWorkerGroup() {
-        if (globalWorkerGroup == null || globalWorkerGroup.isShutdown()) {
-            synchronized (AbstractListenerServerService.class) {
-                if (globalWorkerGroup == null || globalWorkerGroup.isShutdown()) {
-                    globalWorkerGroup = ChannelInitializers.newEventLoopGroup(ServerContext.getConfiguration().getWorkThread());
-                }
-            }
-        }
-        return globalWorkerGroup;
-    }
 
     @SuppressWarnings("unchecked")
     public <T extends JvmmService> T addShutdownListener(ShutdownListener listener) {

@@ -186,7 +186,5 @@ public class AsyncProfiler {
 
         future = profiler.sample(new File("test-method.html"), "java.util.Random.nextInt", ProfilerCounter.total, 10, TimeUnit.SECONDS);
         System.out.println(future.get(12, TimeUnit.SECONDS));
-
-        ExecutorFactory.shutdown();
     }
 }

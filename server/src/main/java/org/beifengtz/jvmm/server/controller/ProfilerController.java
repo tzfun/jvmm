@@ -8,6 +8,7 @@ import org.beifengtz.jvmm.convey.annotation.HttpRequest;
 import org.beifengtz.jvmm.convey.annotation.JvmmController;
 import org.beifengtz.jvmm.convey.annotation.JvmmMapping;
 import org.beifengtz.jvmm.convey.annotation.RequestBody;
+import org.beifengtz.jvmm.convey.annotation.RequestParam;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.entity.ResponseFuture;
 import org.beifengtz.jvmm.convey.enums.GlobalStatus;
@@ -48,7 +49,15 @@ public class ProfilerController {
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_PROFILER_SAMPLE)
     @HttpRequest(value = "/profiler/flame_graph", method = Method.POST)
-    public void flameGraph(@RequestBody ProfilerSampleDTO data, ResponseFuture respFuture) throws Exception {
+    public void flameGraph(@RequestBody ProfilerSampleDTO data, ResponseFuture respFuture) {
+        if (PROFILER_STARTED) {
+            respFuture.apply(JvmmResponse.create()
+                    .setType(GlobalType.JVMM_TYPE_PROFILER_SAMPLE)
+                    .setStatus(GlobalStatus.JVMM_STATUS_PROFILER_FAILED)
+                    .setMessage("Profiler started"));
+            return;
+        }
+
         File to = new File(FileUtil.getTempPath(), UUID.randomUUID() + "." + data.getFormat());
         if (to.getParentFile() != null && !to.getParentFile().exists()) {
             to.getParentFile().mkdirs();
@@ -66,6 +75,7 @@ public class ProfilerController {
         }
         PROFILER_STARTED = true;
         future.registerListener(f -> {
+            PROFILER_STARTED = false;
             JvmmResponse response = JvmmResponse.create().setType(GlobalType.JVMM_TYPE_PROFILER_SAMPLE.name());
 
             if (f.isSuccess()) {
@@ -80,7 +90,7 @@ public class ProfilerController {
                         to.delete();
                     }
                 } else {
-                    response.setStatus(GlobalStatus.JVMM_STATUS_PROFILER_FAILED).setMessage("Generate failed.");
+                    response.setStatus(GlobalStatus.JVMM_STATUS_PROFILER_FAILED).setMessage("Generate failed");
                 }
                 response.setMessage(result);
             } else {
@@ -91,14 +101,44 @@ public class ProfilerController {
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_PROFILER_SAMPLE_START)
-    @HttpRequest(value = "/profiler/start", method = Method.GET)
-    public String start() {
-        return JvmmFactory.getProfiler().start();
+    @HttpRequest(value = "/profiler/start", method = Method.POST)
+    public String start(@RequestBody ProfilerSampleDTO data) {
+        if (PROFILER_STARTED) {
+            return "Profiler started";
+        }
+        String result = JvmmFactory.getProfiler().start(data.getEvent(), data.getCounter(), data.getInterval());
+        PROFILER_STARTED = true;
+        return result;
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_PROFILER_SAMPLE_STOP)
-    @HttpRequest(value = "/profiler/stop", method = Method.GET)
-    public JvmmResponse stop() {
-
+    @HttpRequest(value = "/profiler/stop", method = Method.POST)
+    public JvmmResponse stop(@RequestParam String format) throws IOException {
+        JvmmResponse response = JvmmResponse.create().setType(GlobalType.JVMM_TYPE_PROFILER_SAMPLE.name());
+        if (!PROFILER_STARTED) {
+            return response.setStatus(GlobalStatus.JVMM_STATUS_PROFILER_FAILED).setMessage("Profiler not start");
+        }
+        if (format == null || format.isEmpty()) {
+            format = "html";
+        }
+        File to = new File(FileUtil.getTempPath(), UUID.randomUUID() + "." + format);
+        if (to.getParentFile() != null && !to.getParentFile().exists()) {
+            to.getParentFile().mkdirs();
+        }
+        try {
+            JvmmFactory.getProfiler().stop(to);
+            if (to.exists()) {
+                response.setData(new JsonPrimitive(FileUtil.readToHexStr(to))).setStatus(GlobalStatus.JVMM_STATUS_OK);
+                to.delete();
+            } else {
+                response.setStatus(GlobalStatus.JVMM_STATUS_PROFILER_FAILED).setMessage("Generate failed");
+            }
+            return response;
+        } finally {
+            PROFILER_STARTED = false;
+            if (to.exists()) {
+                to.exists();
+            }
+        }
     }
 }
