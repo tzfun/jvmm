@@ -7,6 +7,9 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.group.ChannelGroup;
+import io.netty.channel.group.ChannelGroupFuture;
+import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaderNames;
@@ -15,6 +18,7 @@ import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.util.concurrent.EventExecutor;
+import io.netty.util.concurrent.ImmediateEventExecutor;
 import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
 import org.beifengtz.jvmm.common.exception.InvalidJvmmMappingException;
 import org.beifengtz.jvmm.common.util.CommonUtil;
@@ -60,6 +64,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
     private static final Set<Class<?>> controllers;
     private static final Map<String, Method> mappings;
     private static final Map<String, HttpMethod> methodMappings;
+    private static final ChannelGroup channels = new DefaultChannelGroup(ImmediateEventExecutor.INSTANCE);
 
     static {
         controllers = ReflexUtil.scanAnnotation(getScanPack(), HttpController.class);
@@ -90,6 +95,10 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
 
     public HttpChannelHandler() {
         super(false);
+    }
+
+    public static ChannelGroupFuture closeAllChannels() {
+        return channels.close();
     }
 
     public static String getScanPack() {
@@ -142,6 +151,16 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
     }
 
     @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        channels.add(ctx.channel());
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        channels.remove(ctx.channel());
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) throws Exception {
         PairKey<URI, String> pair = filterUri(ctx, msg);
@@ -185,7 +204,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                                 parameter[i] = body == null ? null : new Gson().fromJson(new String(body, StandardCharsets.UTF_8), method.getGenericParameterTypes()[i]);
                             }
                         } else if (anno.annotationType() == RequestParam.class) {
-                            RequestParam rp = parameterType.getAnnotation(RequestParam.class);
+                            RequestParam rp = (RequestParam) anno;
                             String key = "".equals(rp.value()) ? method.getParameters()[i].getName() : rp.value();
                             String value = params.get(key);
                             if (parameterType.isAssignableFrom(String.class)) {
@@ -199,7 +218,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                             } else if (parameterType.isAssignableFrom(long.class)) {
                                 parameter[i] = Long.parseLong(value);
                             } else if (parameterType.isAssignableFrom(Enum.class)) {
-                                parameter[i] = Enum.valueOf((Class<? extends Enum>)parameterType, value);
+                                parameter[i] = Enum.valueOf((Class<? extends Enum>) parameterType, value);
                             } else {
                                 throw new IllegalArgumentException("Can not resolve param " + key);
                             }
@@ -323,8 +342,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
 
     protected void handleException(ChannelHandlerContext ctx, FullHttpRequest req, Throwable e) {
         if (e instanceof IllegalArgumentException) {
-            logger().error(e.getMessage(), e);
-            response401(ctx);
+            response400(ctx, e.getMessage());
         } else {
             logger().error(e.getMessage(), e);
             response500(ctx, e.getClass().getName() + ": " + e.getMessage());

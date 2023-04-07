@@ -8,10 +8,14 @@ import com.google.gson.JsonSyntaxException;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.group.ChannelGroup;
+import io.netty.channel.group.ChannelGroupFuture;
+import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.handler.codec.TooLongFrameException;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.concurrent.EventExecutor;
+import io.netty.util.concurrent.ImmediateEventExecutor;
 import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
 import org.beifengtz.jvmm.common.exception.InvalidJvmmMappingException;
 import org.beifengtz.jvmm.common.exception.InvalidMsgException;
@@ -56,6 +60,7 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
     private final Map<Class<?>, Object> controllerInstance = new ConcurrentHashMap<>(controllers.size());
     private static final Set<Class<?>> controllers;
     private static final Map<String, Method> mappings;
+    private static final ChannelGroup channels = new DefaultChannelGroup(ImmediateEventExecutor.INSTANCE);
 
     static {
         controllers = ReflexUtil.scanAnnotation(getScanPack(), JvmmController.class);
@@ -85,6 +90,10 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
         return "org.beifengtz.jvmm";
     }
 
+    public static ChannelGroupFuture closeAllChannels() {
+        return channels.close();
+    }
+
     public JvmmChannelHandler() {
         super(false);
     }
@@ -107,7 +116,7 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
                         JvmmServerChannelInitializer.JVMM_BUBBLE_ENCODER, new JvmmBubbleEncrypt(seed, bubble.getKey()))
                 .addAfter(ctx.executor(), ChannelInitializers.STRING_DECODER_HANDLER,
                         JvmmServerChannelInitializer.JVMM_BUBBLE_DECODER, new JvmmBubbleDecrypt(seed, bubble.getKey()));
-
+        channels.add(ctx.channel());
         super.channelActive(ctx);
     }
 
@@ -119,6 +128,7 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
             }
         }
         controllerInstance.clear();
+        channels.remove(ctx.channel());
         super.channelInactive(ctx);
     }
 
@@ -295,7 +305,7 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
         JvmmResponse response = JvmmResponse.create().setType(req.getType());
         if (e instanceof IllegalArgumentException) {
             logger().error(e.getMessage(), e);
-            response.setStatus(GlobalStatus.JVMM_STATUS_ILLEGAL_ARGUMENTS);
+            response.setStatus(GlobalStatus.JVMM_STATUS_ILLEGAL_ARGUMENTS).setMessage(e.getMessage());
         } else {
             logger().error(e.getMessage(), e);
             response.setStatus(GlobalStatus.JVMM_STATUS_SERVER_ERROR);

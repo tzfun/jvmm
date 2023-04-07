@@ -107,7 +107,9 @@ public class Logger implements org.slf4j.Logger {
         JvmmLogConfiguration config = StaticLoggerBinder.getSingleton().getConfig();
         for (Printer printer : printers) {
             if (printer.preformat()) {
-                String msg = String.format(event.getMsg().replaceAll("\\{}", "%s"), event.getArgs());
+                String msg = event.getMsg() == null
+                        ? ""
+                        : String.format(event.getMsg().replaceAll("\\{}", "%s"), event.getArgs());
                 if (event.getThrowable() != null) {
                     msg += ('\n' + throwableToString(event.getThrowable()));
                 }

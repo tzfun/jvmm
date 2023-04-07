@@ -122,7 +122,7 @@ public class ServerContext {
         if (workerGroup == null) {
             synchronized (ServerContext.class) {
                 if (workerGroup == null) {
-                    workerGroup = ChannelInitializers.newEventLoopGroup(ServerContext.getConfiguration().getWorkThread(), ExecutorFactory.getScheduleThreadPool());
+                    workerGroup = ChannelInitializers.newEventLoopGroup(ServerContext.getConfiguration().getWorkThread(), ExecutorFactory.getThreadPool());
                 }
             }
         }
@@ -135,11 +135,10 @@ public class ServerContext {
      * @param type {@link ServerType}
      * @return true-服务已成功关闭  false-服务未启动
      */
-    public static boolean stop(ServerType type) {
+    public static synchronized boolean stop(ServerType type) {
         JvmmService service = serviceContainer.get(type);
         if (service != null) {
             service.shutdown();
-            serviceContainer.remove(type);
             return true;
         }
         return false;
@@ -184,12 +183,17 @@ public class ServerContext {
         return serviceContainer.get(type);
     }
 
-    public static void registerService(ServerType type, JvmmService service) {
+    public static synchronized void registerService(ServerType type, JvmmService service) {
         serviceContainer.put(type, service);
     }
 
-    public static void unregisterService(ServerType type) {
+    public static synchronized void unregisterService(ServerType type) {
         serviceContainer.remove(type);
+        if (serviceContainer.isEmpty()) {
+            ExecutorFactory.releaseThreadPool();
+            workerGroup.shutdownGracefully();
+            workerGroup = null;
+        }
     }
 
     static synchronized void loadLoggerLib() throws Throwable {

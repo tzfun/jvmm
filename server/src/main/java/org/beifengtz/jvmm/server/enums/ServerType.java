@@ -27,6 +27,12 @@ public enum ServerType {
     sentinel;
 
     public static ServerType of(String t) {
-        return valueOf(t.toLowerCase(Locale.ROOT));
+        t = t.toLowerCase(Locale.ROOT);
+        for (ServerType type : values()) {
+            if (type.name().equals(t)) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException("Server type '" + t + "' is not exist");
     }
 }

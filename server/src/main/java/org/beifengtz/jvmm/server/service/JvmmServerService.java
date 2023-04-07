@@ -4,9 +4,12 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.Promise;
 import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
 import org.beifengtz.jvmm.convey.channel.JvmmServerChannelInitializer;
+import org.beifengtz.jvmm.convey.handler.JvmmChannelHandler;
 import org.beifengtz.jvmm.server.ServerContext;
 import org.beifengtz.jvmm.server.entity.conf.JvmmServerConf;
 import org.beifengtz.jvmm.server.handler.JvmmServerHandlerProvider;
@@ -55,9 +58,16 @@ public class JvmmServerService extends AbstractListenerServerService {
 
     @Override
     protected void onShutdown() {
-        logger.info("Trigger to shutdown jvmm server");
         if (channel != null) {
-            channel.close();
+            logger.info("Trigger to shutdown jvmm server...");
+            channel.close().addListener((GenericFutureListener<Future<Void>>) future -> {
+                if (future.isSuccess()) {
+                    logger.info("Jvmm server is shutdown");
+                    JvmmChannelHandler.closeAllChannels().addListener((GenericFutureListener<Future<Void>>) f -> {
+                        logger.info("Jvmm server all channels has closed");
+                    });
+                }
+            });
         }
     }
 

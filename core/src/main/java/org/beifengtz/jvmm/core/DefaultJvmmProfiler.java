@@ -48,7 +48,7 @@ class DefaultJvmmProfiler implements JvmmProfiler {
     }
 
     private ScheduledExecutorService getDefaultExecutor() {
-        return ExecutorFactory.getScheduleThreadPool();
+        return ExecutorFactory.getThreadPool();
     }
 
     @Override
