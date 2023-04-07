@@ -4,7 +4,6 @@ import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
@@ -25,7 +24,7 @@ public class ExecutorFactory {
     private static volatile ScheduledExecutorService SCHEDULE_THREAD_POOL;
 
     static {
-        Thread shutdownHook = new Thread(ExecutorFactory::shutdown);
+        Thread shutdownHook = new Thread(ExecutorFactory::releaseThreadPool);
         shutdownHook.setName("jvmm-shutdown-hook");
         Runtime.getRuntime().addShutdownHook(shutdownHook);
     }
@@ -38,7 +37,7 @@ public class ExecutorFactory {
         return Math.max(2, SystemPropertyUtil.getInt("jvmm.workThread", Runtime.getRuntime().availableProcessors()));
     }
 
-    public static ScheduledExecutorService getScheduleThreadPool() {
+    public static ScheduledExecutorService getThreadPool() {
         if (SCHEDULE_THREAD_POOL == null) {
             synchronized (ExecutorFactory.class) {
                 if (SCHEDULE_THREAD_POOL == null) {
@@ -49,12 +48,11 @@ public class ExecutorFactory {
         return SCHEDULE_THREAD_POOL;
     }
 
-    private static void shutdown() {
-        if (SCHEDULE_THREAD_POOL != null && !SCHEDULE_THREAD_POOL.isShutdown()) {
+    public static void releaseThreadPool() {
+        if (SCHEDULE_THREAD_POOL != null) {
+            LoggerFactory.getLogger(ExecutorFactory.class).info("Jvmm thread pool shutdown...");
             SCHEDULE_THREAD_POOL.shutdown();
-            if (SCHEDULE_THREAD_POOL.isShutdown()) {
-                LoggerFactory.getLogger(ExecutorFactory.class).info("jvmm schedule thread pool shutdown.");
-            }
+            SCHEDULE_THREAD_POOL = null;
         }
     }
 

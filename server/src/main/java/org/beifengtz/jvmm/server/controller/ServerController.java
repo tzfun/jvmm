@@ -1,5 +1,6 @@
 package org.beifengtz.jvmm.server.controller;
 
+import org.beifengtz.jvmm.common.util.AssertUtil;
 import org.beifengtz.jvmm.convey.annotation.HttpController;
 import org.beifengtz.jvmm.convey.annotation.HttpRequest;
 import org.beifengtz.jvmm.convey.annotation.JvmmController;
@@ -8,8 +9,6 @@ import org.beifengtz.jvmm.convey.annotation.RequestParam;
 import org.beifengtz.jvmm.convey.enums.GlobalType;
 import org.beifengtz.jvmm.server.ServerContext;
 import org.beifengtz.jvmm.server.enums.ServerType;
-
-import static com.google.gson.internal.$Gson$Preconditions.checkArgument;
 
 /**
  * <p>
@@ -31,7 +30,7 @@ public class ServerController {
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_SERVER_SHUTDOWN)
     @HttpRequest("/server/shutdown")
     public String shutdown(@RequestParam String target) {
-        checkArgument(target != null);
+        AssertUtil.checkArguments(target != null, "Missing required param 'target'");
         ServerType type = ServerType.of(target);
         if (ServerContext.stop(type)) {
             return "ok";

@@ -10,6 +10,14 @@ dependencies {
     compile "org.yaml:snakeyaml:${snakeyamlVersion}"
 }
 
+task cleanJar(type: Delete) {
+    delete 'src/main/resources/jvmm-logger.jar'
+}
+
+tasks.clean.configure {
+    dependsOn cleanJar
+}
+
 tasks.compileJava.configure {
     dependsOn project(':logger').tasks.jar
 

@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -58,7 +57,7 @@ public class JvmmSentinelService implements JvmmService {
     protected Queue<SentinelTask> taskList = new ConcurrentLinkedQueue<>();
 
     public JvmmSentinelService() {
-        this(ExecutorFactory.getScheduleThreadPool());
+        this(ExecutorFactory.getThreadPool());
     }
 
     public JvmmSentinelService(ScheduledExecutorService executor) {

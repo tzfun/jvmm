@@ -42,7 +42,7 @@ class DefaultJvmmExecutor implements JvmmExecutor {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultJvmmExecutor.class);
 
-    private static final Set<String> ENABLED_PROGRAM_NAME = CommonUtil.hashSetOf("jps", "jstat", "jmap", "jcmd", "jstack", "jinfo");
+    private static final Set<String> ENABLED_TOOL_SCRIPT = CommonUtil.hashSetOf("jps", "jstat", "jmap", "jcmd", "jstack", "jinfo");
 
     DefaultJvmmExecutor() {
     }
@@ -91,7 +91,7 @@ class DefaultJvmmExecutor implements JvmmExecutor {
         }
 
         String programName = command.split("\\s")[0];
-        if (!ENABLED_PROGRAM_NAME.contains(programName)) {
+        if (!ENABLED_TOOL_SCRIPT.contains(programName)) {
             throw new IllegalArgumentException("The command execution is not supported: " + programName);
         }
 

@@ -4,6 +4,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.util.concurrent.Future;
 import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
 import org.beifengtz.jvmm.common.factory.ExecutorFactory;
+import org.beifengtz.jvmm.common.util.AssertUtil;
 import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 import org.beifengtz.jvmm.web.entity.po.NodePO;
@@ -26,7 +27,7 @@ import static com.google.gson.internal.$Gson$Preconditions.checkArgument;
  */
 @Component
 public class JvmmConnectorFactory {
-    private static final EventLoopGroup GLOBAL_GROUP = ChannelInitializers.newEventLoopGroup(ExecutorFactory.getNThreads(), ExecutorFactory.getScheduleThreadPool());
+    private static final EventLoopGroup GLOBAL_GROUP = ChannelInitializers.newEventLoopGroup(ExecutorFactory.getNThreads(), ExecutorFactory.getThreadPool());
 
     private final Map<String, JvmmConnector> connectorPool = new ConcurrentHashMap<>(2);
     private final Map<String, Object> addressLock = new ConcurrentHashMap<>(2);
@@ -48,7 +49,7 @@ public class JvmmConnectorFactory {
 
     public JvmmConnector getConnector(EventLoopGroup group, String address, String authAccount, String authPassword)
             throws TimeoutException, AuthenticationFailedException {
-        checkArgument(address != null);
+        AssertUtil.checkArguments(address != null, "Missing required address");
 
         JvmmConnector connector = connectorPool.get(address);
         if (connector != null && connector.isConnected()) {
