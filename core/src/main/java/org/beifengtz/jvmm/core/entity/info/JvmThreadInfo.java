@@ -2,6 +2,10 @@ package org.beifengtz.jvmm.core.entity.info;
 
 import org.beifengtz.jvmm.common.JsonParsable;
 
+import java.lang.Thread.State;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * <p>
  * Description: TODO
@@ -12,7 +16,7 @@ import org.beifengtz.jvmm.common.JsonParsable;
  * @author beifengtz
  */
 public class JvmThreadInfo implements JsonParsable {
-    private long[] deadlockedThreads;
+    private long[] deadlockedThreads = new long[0];
     /**
      * 启动Java虚拟机或重置峰值以来的活动线程峰值
      */
@@ -29,6 +33,7 @@ public class JvmThreadInfo implements JsonParsable {
      * 自Java虚拟机启动以来创建和启动的线程总数
      */
     private long totalStartedThreadCount;
+    private final Map<State, Integer> stateCount = new HashMap<>();
 
     private JvmThreadInfo() {
     }
@@ -75,6 +80,14 @@ public class JvmThreadInfo implements JsonParsable {
 
     public void setTotalStartedThreadCount(long totalStartedThreadCount) {
         this.totalStartedThreadCount = totalStartedThreadCount;
+    }
+
+    public void increaseStateCount(State state) {
+        stateCount.put(state, stateCount.getOrDefault(state, 0) + 1);
+    }
+
+    public Map<State, Integer> getStateCount() {
+        return stateCount;
     }
 
     @Override
