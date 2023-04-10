@@ -47,7 +47,9 @@ public class JvmThreadInfo implements JsonParsable {
     }
 
     public void setDeadlockedThreads(long[] deadlockedThreads) {
-        this.deadlockedThreads = deadlockedThreads;
+        if (deadlockedThreads != null) {
+            this.deadlockedThreads = deadlockedThreads;
+        }
     }
 
     public int getPeakThreadCount() {
