@@ -237,6 +237,14 @@ class DefaultJvmmCollector implements JvmmCollector {
         info.setDaemonThreadCount(threadMXBean.getDaemonThreadCount());
         info.setDeadlockedThreads(threadMXBean.findDeadlockedThreads());
         info.setPeakThreadCount(threadMXBean.getPeakThreadCount());
+
+        try {
+            for (Thread thread : Unsafe.getThreads()) {
+                info.increaseStateCount(thread.getState());
+            }
+        } catch (Exception e) {
+            log.error("Collect thread info failed: " + e.getMessage(), e);
+        }
         return info;
     }
 
