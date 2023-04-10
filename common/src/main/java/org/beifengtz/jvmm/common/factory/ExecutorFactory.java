@@ -23,12 +23,6 @@ public class ExecutorFactory {
 
     private static volatile ScheduledExecutorService SCHEDULE_THREAD_POOL;
 
-    static {
-        Thread shutdownHook = new Thread(ExecutorFactory::releaseThreadPool);
-        shutdownHook.setName("jvmm-shutdown-hook");
-        Runtime.getRuntime().addShutdownHook(shutdownHook);
-    }
-
     private static ThreadFactory getThreadFactory(String name) {
         return new DefaultThreadFactory(StringUtil.isEmpty(name) ? "jvmm" : name);
     }
