@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,15 +68,28 @@ class DefaultJvmmExecutor implements JvmmExecutor {
     }
 
     @Override
-    public void setThreadCpuTimeEnabled(boolean enabled) {
-        ManagementFactory.getThreadMXBean().setThreadCpuTimeEnabled(enabled);
-        log.info("Jvmm trigger execution of 'setThreadCpuTimeEnabled', param:{}", enabled);
+    public void setThreadCpuTimeEnabled(boolean enable) {
+        ThreadMXBean mx = ManagementFactory.getThreadMXBean();
+        mx.setThreadCpuTimeEnabled(enable);
+
+        boolean checkValue = mx.isThreadCpuTimeEnabled();
+        if (enable != checkValue) {
+            log.error("Could not set threadCpuTimeEnabled to " + enable + ", got " + checkValue + " instead");
+        } else {
+            log.info("Jvmm trigger execution of 'setThreadCpuTimeEnabled', param:{}", enable);
+        }
     }
 
     @Override
-    public void setThreadContentionMonitoringEnabled(boolean enabled) {
-        ManagementFactory.getThreadMXBean().setThreadContentionMonitoringEnabled(enabled);
-        log.info("Jvmm trigger execution of 'setThreadContentionMonitoringEnabled', param:{}", enabled);
+    public void setThreadContentionMonitoringEnabled(boolean enable) {
+        ThreadMXBean mx = ManagementFactory.getThreadMXBean();
+        mx.setThreadContentionMonitoringEnabled(enable);
+        boolean checkValue = mx.isThreadContentionMonitoringEnabled();
+        if (enable != checkValue) {
+            log.error("Could not set threadContentionMonitoringEnabled to " + enable + ", got " + checkValue + " instead");
+        } else {
+            log.info("Jvmm trigger execution of 'setThreadContentionMonitoringEnabled', param:{}", enable);
+        }
     }
 
     @Override

@@ -122,18 +122,32 @@ public interface JvmmCollector {
     List<JvmMemoryPoolInfo> getJvmMemoryPool();
 
     /**
-     * 获取JVM当前内存信息
+     * 获取 JVM 当前内存信息
      *
      * @return {@link JvmMemoryInfo}
      */
     JvmMemoryInfo getJvmMemory();
 
     /**
-     * 获取JVM 线程运行数
+     * 获取 JVM 线程运行数
      *
      * @return {@link JvmThreadInfo}
      */
     JvmThreadInfo getJvmThread();
+
+    /**
+     * 获取 JVM 线程统计信息，部分信息需要开启线程监控：
+     * {@link JvmmExecutor#setThreadCpuTimeEnabled(boolean)}
+     * {@link JvmmExecutor#setThreadContentionMonitoringEnabled(boolean)}
+     *
+     * @param id 线程id
+     * @return {@link JvmThreadStatisticInfo}
+     */
+    JvmThreadStatisticInfo getJvmThreadStatisticInfo(long id);
+
+    JvmThreadStatisticInfo[] getJvmThreadStatisticInfo(long... ids);
+
+    JvmThreadStatisticInfo[] getAllJvmThreadStatisticInfo();
 
     /**
      * 获取指定线程ID的堆栈
@@ -168,6 +182,12 @@ public interface JvmmCollector {
      * @return {@link String}[] 线程堆栈
      */
     String[] getJvmThreadStack(long[] ids, int maxDepth);
+
+    /**
+     * 获取死锁线程堆栈
+     * @return {@link String}[] 线程堆栈
+     */
+    String[] getJvmDeadlockThreadStack();
 
     /**
      * dump JVM当前运行的所有线程堆栈信息

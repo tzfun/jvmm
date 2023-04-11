@@ -56,7 +56,7 @@ public final class Unsafe {
      * @return Thread实例
      * @throws Exception 调用异常
      */
-    public static Thread getThread(int threadId) throws Exception {
+    public static Thread getThread(long threadId) throws Exception {
         for (Thread thread : getThreads()) {
             if (thread.getId() == threadId) {
                 return thread;

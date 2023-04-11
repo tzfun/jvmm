@@ -26,9 +26,9 @@ public interface JvmmExecutor {
 
     void setMemoryVerbose(boolean verbose);
 
-    void setThreadCpuTimeEnabled(boolean enabled);
+    void setThreadCpuTimeEnabled(boolean enable);
 
-    void setThreadContentionMonitoringEnabled(boolean enabled);
+    void setThreadContentionMonitoringEnabled(boolean enable);
 
     void resetPeakThreadCount();
 

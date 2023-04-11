@@ -30,8 +30,11 @@ public class MemoryUsageInfo {
     private long max;
 
     public static MemoryUsageInfo parseFrom(MemoryUsage mu) {
-        return new MemoryUsageInfo()
-                .setInit(mu.getInit())
+        MemoryUsageInfo mui = new MemoryUsageInfo();
+        if (mu == null) {
+            return mui;
+        }
+        return mui.setInit(mu.getInit())
                 .setCommitted(mu.getCommitted())
                 .setUsed(mu.getUsed())
                 .setMax(mu.getMax());
