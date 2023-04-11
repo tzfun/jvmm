@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * description: 网卡信息
+ * date 16:08 2023/1/31
  * @author beifengtz
- * @description: 网卡信息
- * @date 16:08 2023/1/31
  */
 public class NetInfo implements JsonParsable {
     /**

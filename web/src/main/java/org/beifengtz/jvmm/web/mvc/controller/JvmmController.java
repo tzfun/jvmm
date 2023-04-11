@@ -1,11 +1,13 @@
 package org.beifengtz.jvmm.web.mvc.controller;
 
+import org.beifengtz.jvmm.core.entity.JvmmData;
 import org.beifengtz.jvmm.web.common.Constant;
 import org.beifengtz.jvmm.web.entity.vo.ResultVO;
 import org.beifengtz.jvmm.web.manage.factory.ResultFactory;
 import org.beifengtz.jvmm.web.mvc.service.JvmmService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,5 +36,10 @@ public class JvmmController {
     @GetMapping(Constant.API_NON_PUB + "/verify_token")
     public ResultVO<?> verifyToken() {
         return resultFactory.success();
+    }
+
+    @PostMapping(Constant.API_PUB + "/monitor/subscriber")
+    public void monitorSubscriber(@RequestBody JvmmData data) {
+        System.out.println(data);
     }
 }

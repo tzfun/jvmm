@@ -7,12 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * <p>
- * Description: TODO
- * </p>
- * <p>
- * Created in 16:11 2021/5/11
- *
+ * description: JVM 线程信息
+ * date 16:11 2021/5/11
  * @author beifengtz
  */
 public class JvmThreadInfo implements JsonParsable {

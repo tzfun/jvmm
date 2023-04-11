@@ -6,11 +6,8 @@ import java.lang.management.MemoryType;
 import java.lang.management.MemoryUsage;
 
 /**
- * <p>
- * Description: TODO
- * </p>
- * <p>
- * Created in 15:40 2021/5/11
+ * description: JVM 内存池信息
+ * date 15:40 2021/5/11
  *
  * @author beifengtz
  */
@@ -25,15 +22,15 @@ public class JvmMemoryPoolInfo implements JsonParsable {
     /**
      * 内存池的内存使用量估计值
      */
-    private MemoryUsage usage;
+    private MemoryUsageInfo usage;
     /**
      * Java虚拟机最近为回收该内存池中未使用的对象而花费的精力之后的内存使用情况
      */
-    private MemoryUsage collectionUsage;
+    private MemoryUsageInfo collectionUsage;
     /**
      * 自启动Java虚拟机或重置峰值以来此内存池的峰值内存使用情况
      */
-    private MemoryUsage peakUsage;
+    private MemoryUsageInfo peakUsage;
 
     private boolean usageThresholdSupported;
     private boolean usageThresholdExceeded;
@@ -96,27 +93,27 @@ public class JvmMemoryPoolInfo implements JsonParsable {
         this.type = type;
     }
 
-    public MemoryUsage getUsage() {
+    public MemoryUsageInfo getUsage() {
         return usage;
     }
 
-    public void setUsage(MemoryUsage usage) {
+    public void setUsage(MemoryUsageInfo usage) {
         this.usage = usage;
     }
 
-    public MemoryUsage getCollectionUsage() {
+    public MemoryUsageInfo getCollectionUsage() {
         return collectionUsage;
     }
 
-    public void setCollectionUsage(MemoryUsage collectionUsage) {
+    public void setCollectionUsage(MemoryUsageInfo collectionUsage) {
         this.collectionUsage = collectionUsage;
     }
 
-    public MemoryUsage getPeakUsage() {
+    public MemoryUsageInfo getPeakUsage() {
         return peakUsage;
     }
 
-    public void setPeakUsage(MemoryUsage peakUsage) {
+    public void setPeakUsage(MemoryUsageInfo peakUsage) {
         this.peakUsage = peakUsage;
     }
 

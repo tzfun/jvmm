@@ -4,7 +4,7 @@ import io.netty.util.concurrent.Promise;
 import org.beifengtz.jvmm.common.util.meta.PairKey;
 import org.beifengtz.jvmm.core.JvmmCollector;
 import org.beifengtz.jvmm.core.JvmmFactory;
-import org.beifengtz.jvmm.server.entity.dto.JvmmDataDTO;
+import org.beifengtz.jvmm.core.entity.JvmmData;
 import org.beifengtz.jvmm.server.enums.CollectionType;
 
 import java.util.List;
@@ -42,12 +42,12 @@ public interface JvmmService {
      * 根据采集项收集数据
      *
      * @param options  {@link CollectionType}采集项
-     * @param consumer 异步回调，采集结束后回调返回{@link JvmmDataDTO}，其中有 left 和 right 两个值：
+     * @param consumer 异步回调，采集结束后回调返回{@link JvmmData}，其中有 left 和 right 两个值：
      *                 left  - 为当前还需要等待的异步项数量，如果小于等于0则表示已采集完；
      *                 right - 为当前采集的数据，当采集完时该数据才是有效数据。
      */
-    static void collectByOptions(List<CollectionType> options, Consumer<PairKey<AtomicInteger, JvmmDataDTO>> consumer) {
-        JvmmDataDTO res = new JvmmDataDTO();
+    static void collectByOptions(List<CollectionType> options, Consumer<PairKey<AtomicInteger, JvmmData>> consumer) {
+        JvmmData res = new JvmmData();
         JvmmCollector collector = JvmmFactory.getCollector();
         AtomicInteger asyncNum = new AtomicInteger(0);
         for (CollectionType type : options) {

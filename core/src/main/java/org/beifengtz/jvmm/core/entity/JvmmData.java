@@ -1,4 +1,4 @@
-package org.beifengtz.jvmm.server.entity.dto;
+package org.beifengtz.jvmm.core.entity;
 
 import org.beifengtz.jvmm.common.JsonParsable;
 import org.beifengtz.jvmm.core.entity.info.*;
@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author beifengtz
  */
-public class JvmmDataDTO implements JsonParsable {
+public class JvmmData implements JsonParsable {
     private String node;
 
     private ProcessInfo process;
@@ -36,7 +36,7 @@ public class JvmmDataDTO implements JsonParsable {
         return node;
     }
 
-    public JvmmDataDTO setNode(String node) {
+    public JvmmData setNode(String node) {
         this.node = node;
         return this;
     }
@@ -45,7 +45,7 @@ public class JvmmDataDTO implements JsonParsable {
         return process;
     }
 
-    public JvmmDataDTO setProcess(ProcessInfo process) {
+    public JvmmData setProcess(ProcessInfo process) {
         this.process = process;
         return this;
     }
@@ -54,7 +54,7 @@ public class JvmmDataDTO implements JsonParsable {
         return disk;
     }
 
-    public JvmmDataDTO setDisk(List<DiskInfo> disk) {
+    public JvmmData setDisk(List<DiskInfo> disk) {
         this.disk = disk;
         return this;
     }
@@ -63,7 +63,7 @@ public class JvmmDataDTO implements JsonParsable {
         return diskIO;
     }
 
-    public JvmmDataDTO setDiskIO(List<DiskIOInfo> diskIO) {
+    public JvmmData setDiskIO(List<DiskIOInfo> diskIO) {
         this.diskIO = diskIO;
         return this;
     }
@@ -72,7 +72,7 @@ public class JvmmDataDTO implements JsonParsable {
         return cpu;
     }
 
-    public JvmmDataDTO setCpu(CPUInfo cpu) {
+    public JvmmData setCpu(CPUInfo cpu) {
         this.cpu = cpu;
         return this;
     }
@@ -81,7 +81,7 @@ public class JvmmDataDTO implements JsonParsable {
         return network;
     }
 
-    public JvmmDataDTO setNetwork(NetInfo network) {
+    public JvmmData setNetwork(NetInfo network) {
         this.network = network;
         return this;
     }
@@ -90,7 +90,7 @@ public class JvmmDataDTO implements JsonParsable {
         return sys;
     }
 
-    public JvmmDataDTO setSys(SysInfo sys) {
+    public JvmmData setSys(SysInfo sys) {
         this.sys = sys;
         return this;
     }
@@ -99,7 +99,7 @@ public class JvmmDataDTO implements JsonParsable {
         return sysMem;
     }
 
-    public JvmmDataDTO setSysMem(SysMemInfo sysMem) {
+    public JvmmData setSysMem(SysMemInfo sysMem) {
         this.sysMem = sysMem;
         return this;
     }
@@ -108,7 +108,7 @@ public class JvmmDataDTO implements JsonParsable {
         return sysFile;
     }
 
-    public JvmmDataDTO setSysFile(List<SysFileInfo> sysFile) {
+    public JvmmData setSysFile(List<SysFileInfo> sysFile) {
         this.sysFile = sysFile;
         return this;
     }
@@ -117,7 +117,7 @@ public class JvmmDataDTO implements JsonParsable {
         return jvmClassLoading;
     }
 
-    public JvmmDataDTO setJvmClassLoading(JvmClassLoadingInfo jvmClassLoading) {
+    public JvmmData setJvmClassLoading(JvmClassLoadingInfo jvmClassLoading) {
         this.jvmClassLoading = jvmClassLoading;
         return this;
     }
@@ -126,7 +126,7 @@ public class JvmmDataDTO implements JsonParsable {
         return jvmClassLoader;
     }
 
-    public JvmmDataDTO setJvmClassLoader(List<JvmClassLoaderInfo> jvmClassLoader) {
+    public JvmmData setJvmClassLoader(List<JvmClassLoaderInfo> jvmClassLoader) {
         this.jvmClassLoader = jvmClassLoader;
         return this;
     }
@@ -135,7 +135,7 @@ public class JvmmDataDTO implements JsonParsable {
         return jvmCompilation;
     }
 
-    public JvmmDataDTO setJvmCompilation(JvmCompilationInfo jvmCompilation) {
+    public JvmmData setJvmCompilation(JvmCompilationInfo jvmCompilation) {
         this.jvmCompilation = jvmCompilation;
         return this;
     }
@@ -144,7 +144,7 @@ public class JvmmDataDTO implements JsonParsable {
         return jvmGc;
     }
 
-    public JvmmDataDTO setJvmGc(List<JvmGCInfo> jvmGc) {
+    public JvmmData setJvmGc(List<JvmGCInfo> jvmGc) {
         this.jvmGc = jvmGc;
         return this;
     }
@@ -153,7 +153,7 @@ public class JvmmDataDTO implements JsonParsable {
         return jvmMemory;
     }
 
-    public JvmmDataDTO setJvmMemory(JvmMemoryInfo jvmMemory) {
+    public JvmmData setJvmMemory(JvmMemoryInfo jvmMemory) {
         this.jvmMemory = jvmMemory;
         return this;
     }
@@ -162,7 +162,7 @@ public class JvmmDataDTO implements JsonParsable {
         return jvmMemoryManager;
     }
 
-    public JvmmDataDTO setJvmMemoryManager(List<JvmMemoryManagerInfo> jvmMemoryManager) {
+    public JvmmData setJvmMemoryManager(List<JvmMemoryManagerInfo> jvmMemoryManager) {
         this.jvmMemoryManager = jvmMemoryManager;
         return this;
     }
@@ -171,7 +171,7 @@ public class JvmmDataDTO implements JsonParsable {
         return jvmMemoryPool;
     }
 
-    public JvmmDataDTO setJvmMemoryPool(List<JvmMemoryPoolInfo> jvmMemoryPool) {
+    public JvmmData setJvmMemoryPool(List<JvmMemoryPoolInfo> jvmMemoryPool) {
         this.jvmMemoryPool = jvmMemoryPool;
         return this;
     }
@@ -180,7 +180,7 @@ public class JvmmDataDTO implements JsonParsable {
         return jvmThread;
     }
 
-    public JvmmDataDTO setJvmThread(JvmThreadInfo jvmThread) {
+    public JvmmData setJvmThread(JvmThreadInfo jvmThread) {
         this.jvmThread = jvmThread;
         return this;
     }

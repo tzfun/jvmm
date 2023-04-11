@@ -3,11 +3,8 @@ package org.beifengtz.jvmm.core.entity.info;
 import org.beifengtz.jvmm.common.JsonParsable;
 
 /**
- * <p>
- * Description: TODO
- * </p>
- * <p>
- * Created in 15:32 2021/5/11
+ * description: JVM 内存管理信息
+ * date 15:32 2021/5/11
  *
  * @author beifengtz
  */

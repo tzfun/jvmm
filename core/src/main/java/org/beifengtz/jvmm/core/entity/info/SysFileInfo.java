@@ -4,8 +4,8 @@ import org.beifengtz.jvmm.common.JsonParsable;
 
 /**
  * @author beifengtz
- * @description: 文件系统信息，包含各个磁盘分区的使用情况，磁盘类型
- * @date 14:21 2023/1/31
+ * description: 文件系统信息，包含各个磁盘分区的使用情况，磁盘类型
+ * date 14:21 2023/1/31
  */
 public class SysFileInfo implements JsonParsable {
 

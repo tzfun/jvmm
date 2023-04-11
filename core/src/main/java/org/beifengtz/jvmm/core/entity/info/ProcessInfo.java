@@ -5,11 +5,8 @@ import org.beifengtz.jvmm.common.JsonParsable;
 import java.util.List;
 
 /**
- * <p>
- * Description: TODO 进程信息
- * </p>
- * <p>
- * Created in 14:53 2021/5/11
+ * description: 进程信息
+ * date 14:53 2021/5/11
  *
  * @author beifengtz
  */

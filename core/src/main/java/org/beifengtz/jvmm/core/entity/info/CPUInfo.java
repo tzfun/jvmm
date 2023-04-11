@@ -3,9 +3,9 @@ package org.beifengtz.jvmm.core.entity.info;
 import org.beifengtz.jvmm.common.JsonParsable;
 
 /**
+ * description: TODO
+ * date 14:36 2023/1/31
  * @author beifengtz
- * @description: TODO
- * @date 14:36 2023/1/31
  */
 public class CPUInfo implements JsonParsable {
 

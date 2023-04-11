@@ -3,12 +3,11 @@ package org.beifengtz.jvmm.web.entity.po;
 import com.baomidou.mybatisplus.annotations.TableName;
 import lombok.Data;
 import org.beifengtz.jvmm.core.entity.info.JvmMemoryInfo;
-
-import java.lang.management.MemoryUsage;
+import org.beifengtz.jvmm.core.entity.info.MemoryUsageInfo;
 
 /**
  * Description: TODO
- *
+ * <p>
  * Created in 17:54 2022/2/25
  *
  * @author beifengtz
@@ -33,7 +32,7 @@ public class LogMemoryPO {
     public void merge(JvmMemoryInfo info) {
         this.verbose = info.isVerbose();
         this.pendingCount = info.getPendingCount();
-        MemoryUsage heapUsage = info.getHeapUsage();
+        MemoryUsageInfo heapUsage = info.getHeapUsage();
         if (heapUsage != null) {
             this.heapInit = heapUsage.getInit();
             this.heapUsed = heapUsage.getUsed();
@@ -41,7 +40,7 @@ public class LogMemoryPO {
             this.heapMax = heapUsage.getMax();
         }
 
-        MemoryUsage nonHeapUsage = info.getNonHeapUsage();
+        MemoryUsageInfo nonHeapUsage = info.getNonHeapUsage();
         if (nonHeapUsage != null) {
             this.nonHeapInit = nonHeapUsage.getInit();
             this.nonHeapUsed = nonHeapUsage.getUsed();

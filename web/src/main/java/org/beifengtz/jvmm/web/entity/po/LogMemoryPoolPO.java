@@ -4,12 +4,11 @@ import com.baomidou.mybatisplus.annotations.TableName;
 import lombok.Data;
 import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.core.entity.info.JvmMemoryPoolInfo;
-
-import java.lang.management.MemoryUsage;
+import org.beifengtz.jvmm.core.entity.info.MemoryUsageInfo;
 
 /**
  * Description: TODO
- *
+ * <p>
  * Created in 17:49 2022/2/25
  *
  * @author beifengtz
@@ -34,7 +33,7 @@ public class LogMemoryPoolPO {
         this.valid = info.getValid();
         this.managerNames = StringUtil.join(",", info.getManagerNames());
         this.type = info.getType().toString();
-        MemoryUsage usage = info.getUsage();
+        MemoryUsageInfo usage = info.getUsage();
         if (usage != null) {
             this.init = usage.getInit();
             this.used = usage.getUsed();

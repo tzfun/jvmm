@@ -3,8 +3,8 @@ package org.beifengtz.jvmm.core.entity.info;
 import org.beifengtz.jvmm.common.JsonParsable;
 
 /**
- * @author beifengtz
- * @description: 系统内存信息
+ * author beifengtz
+ * description: 系统内存信息
  * @date 15:17 2023/1/31
  */
 public class SysMemInfo implements JsonParsable {
