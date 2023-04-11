@@ -184,4 +184,9 @@ public class JvmmData implements JsonParsable {
         this.jvmThread = jvmThread;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return toJsonStr();
+    }
 }

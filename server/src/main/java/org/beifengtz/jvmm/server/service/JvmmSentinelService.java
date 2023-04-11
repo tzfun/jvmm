@@ -177,16 +177,22 @@ public class JvmmSentinelService implements JvmmService {
             if (conf.getCount() > 0 && counter > conf.getCount()) {
                 return true;
             }
-            executor.execute(() -> JvmmService.collectByOptions(conf.getTasks(), pair -> {
-                if (pair.getLeft().get() <= 0) {
-                    JvmmData data = pair.getRight().setNode(ServerContext.getConfiguration().getName());
-                    String body = data.toJsonStr();
-                    for (SentinelSubscriberConf subscriber : conf.getSubscribers()) {
-                        executor.submit(() -> publish(subscriber, body, conf.getInterval()));
-                    }
-                    execTime = System.currentTimeMillis() + conf.getInterval() * 1000L;
+            executor.execute(() -> {
+                try {
+                    JvmmService.collectByOptions(conf.getTasks(), pair -> {
+                        if (pair.getLeft().get() <= 0) {
+                            JvmmData data = pair.getRight().setNode(ServerContext.getConfiguration().getName());
+                            String body = data.toJsonStr();
+                            for (SentinelSubscriberConf subscriber : conf.getSubscribers()) {
+                                executor.submit(() -> publish(subscriber, body, conf.getInterval()));
+                            }
+                            execTime = System.currentTimeMillis() + conf.getInterval() * 1000L;
+                        }
+                    });
+                } catch (Exception e) {
+                    logger.error("Sentinel execute task failed: " + e.getMessage(), e);
                 }
-            }));
+            });
             return false;
         }
     }
