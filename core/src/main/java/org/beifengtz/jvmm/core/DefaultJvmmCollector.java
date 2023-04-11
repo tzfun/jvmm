@@ -11,7 +11,6 @@ import org.beifengtz.jvmm.core.entity.result.LinuxMemResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.Thread.State;
 import java.lang.management.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -307,6 +306,9 @@ class DefaultJvmmCollector implements JvmmCollector {
     public String[] getJvmDeadlockThreadStack() {
         ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
         long[] deadlockedThreads = threadMXBean.findDeadlockedThreads();
+        if (deadlockedThreads == null) {
+            return new String[0];
+        }
         String[] res = new String[deadlockedThreads.length];
         for (int i = 0; i < deadlockedThreads.length; i++) {
             res[i] = threadInfo2Str(threadMXBean, threadMXBean.getThreadInfo(deadlockedThreads[i], 10));
@@ -319,6 +321,9 @@ class DefaultJvmmCollector implements JvmmCollector {
         ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
         ThreadInfo[] threadInfo = threadMXBean.dumpAllThreads(true, true);
         long[] deadlockedThreads = threadMXBean.findDeadlockedThreads();
+        if (deadlockedThreads == null) {
+            deadlockedThreads = new long[0];
+        }
         String[] res = new String[threadInfo.length + deadlockedThreads.length + 1];
         int i = 0;
         for (; i < threadInfo.length; i++) {
@@ -336,8 +341,23 @@ class DefaultJvmmCollector implements JvmmCollector {
 
     private static String threadInfo2Str(ThreadMXBean threadMXBean, ThreadInfo ti) {
         if (ti == null) return null;
+
         StringBuilder sb = new StringBuilder("\"" + ti.getThreadName() + "\"");
+        Thread thread = Unsafe.getThread(ti.getThreadId());
+        if (thread != null) {
+            if (thread.isDaemon()) {
+                sb.append(" daemon");
+            }
+
+        }
         sb.append(" Id=").append(ti.getThreadId());
+        if (thread != null) {
+            ThreadGroup group = thread.getThreadGroup();
+            if (group != null) {
+                sb.append(" group='").append(group.getName()).append("'");
+            }
+            sb.append(" pri=").append(thread.getPriority());
+        }
         sb.append(" cpu=").append(threadMXBean.getThreadCpuTime(ti.getThreadId())).append(" ns");
         sb.append(" usr=").append(threadMXBean.getThreadUserTime(ti.getThreadId())).append(" ns");
         sb.append(" blocked ").append(ti.getBlockedCount()).append(" for ").append(ti.getBlockedTime()).append(" ms");
@@ -347,14 +367,19 @@ class DefaultJvmmCollector implements JvmmCollector {
             sb.append(" (suspended)");
         }
         if (ti.isInNative()) {
-            sb.append(" (running in native)");
+            sb.append(" (in native)");
         }
         sb.append("\r\n");
         sb.append("   state: ").append(ti.getThreadState());
+        if (thread != null) {
+            sb.append("(")
+                    .append(Unsafe.getThreadNativeStatus(thread))
+                    .append(")");
+        }
         sb.append("\r\n");
 
         for (LockInfo li : ti.getLockedSynchronizers()) {
-            sb.append("\tlocks ").append(li.toString()).append("\r\n");
+            sb.append("\r\n\tlocks ").append(li.toString()).append("\r\n\r\n");
         }
         boolean start = true;
         StackTraceElement[] stes = ti.getStackTrace();
