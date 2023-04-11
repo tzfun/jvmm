@@ -1,9 +1,12 @@
 package org.beifengtz.jvmm.core;
 
+import org.beifengtz.jvmm.common.exception.ExecutionException;
 import org.beifengtz.jvmm.core.entity.info.JvmClassLoaderInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -23,6 +26,7 @@ public final class Unsafe {
 
     private static Method threadsMethod;
     private static Method findLoadedClassMethod;
+    private static Field threadStatusFiled;
 
     static {
         try {
@@ -34,6 +38,9 @@ public final class Unsafe {
             method = ClassLoader.class.getDeclaredMethod("findLoadedClass", String.class);
             method.setAccessible(true);
             findLoadedClassMethod = method;
+
+            threadStatusFiled = Thread.class.getDeclaredField("threadStatus");
+            threadStatusFiled.setAccessible(true);
         } catch (Throwable e) {
             logger.error("Init Unsafe failed: " + e.getMessage(), e);
         }
@@ -43,10 +50,14 @@ public final class Unsafe {
      * 获取所有线程对象
      *
      * @return Thread[]
-     * @throws Exception 调用异常
+     * @throws ExecutionException 调用异常
      */
-    public static Thread[] getThreads() throws Exception {
-        return (Thread[]) threadsMethod.invoke(null);
+    public static Thread[] getThreads() throws ExecutionException {
+        try {
+            return (Thread[]) threadsMethod.invoke(null);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new ExecutionException(e);
+        }
     }
 
     /**
@@ -54,9 +65,9 @@ public final class Unsafe {
      *
      * @param threadId 线程tid
      * @return Thread实例
-     * @throws Exception 调用异常
+     * @throws ExecutionException 调用异常
      */
-    public static Thread getThread(long threadId) throws Exception {
+    public static Thread getThread(long threadId) throws ExecutionException {
         for (Thread thread : getThreads()) {
             if (thread.getId() == threadId) {
                 return thread;
@@ -65,12 +76,20 @@ public final class Unsafe {
         return null;
     }
 
+    public static int getThreadNativeStatus(Thread thread) throws ExecutionException {
+        try {
+            return (int) threadStatusFiled.get(thread);
+        } catch (IllegalAccessException e) {
+            throw new ExecutionException(e);
+        }
+    }
+
     /**
      * 查看某一个类被哪些ClassLoader加载过
      *
      * @param className 类名
      * @return List of {@link ClassLoader}
-     * @throws Exception 调用异常
+     * @throws ExecutionException 调用异常
      */
     public static List<ClassLoader> findLoadedClassLoader(String className) throws Exception {
         List<ClassLoader> classLoaders = new ArrayList<>();
@@ -95,7 +114,7 @@ public final class Unsafe {
      *
      * @param className 类路径
      * @return Class对象列表
-     * @throws Exception 调用异常
+     * @throws ExecutionException 调用异常
      */
     public static List<Class<?>> findLoadedClasses(String className) throws Exception {
         List<Class<?>> classes = new ArrayList<>();
@@ -118,8 +137,8 @@ public final class Unsafe {
     /**
      * 判断一个ClassLoader是否已经加载了类
      *
-     * @param classLoaderHash   ClassLoader的hashCode
-     * @param className         类路径
+     * @param classLoaderHash ClassLoader的hashCode
+     * @param className       类路径
      * @return Class实例
      * @throws Exception 调用异常
      */
@@ -142,8 +161,8 @@ public final class Unsafe {
     /**
      * 判断一个ClassLoader是否已经加载了类
      *
-     * @param classLoader  ClassLoader实例
-     * @param className    类路径
+     * @param classLoader ClassLoader实例
+     * @param className   类路径
      * @return 如果已加载返回Class对象，否则返回null
      * @throws Exception 调用失败
      */
