@@ -8,7 +8,7 @@ import org.beifengtz.jvmm.server.ServerContext;
 import org.beifengtz.jvmm.server.entity.conf.AuthOptionConf;
 import org.beifengtz.jvmm.server.entity.conf.SentinelConf;
 import org.beifengtz.jvmm.server.entity.conf.SentinelSubscriberConf;
-import org.beifengtz.jvmm.server.entity.dto.JvmmDataDTO;
+import org.beifengtz.jvmm.core.entity.JvmmData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -179,7 +179,7 @@ public class JvmmSentinelService implements JvmmService {
             }
             executor.execute(() -> JvmmService.collectByOptions(conf.getTasks(), pair -> {
                 if (pair.getLeft().get() <= 0) {
-                    JvmmDataDTO data = pair.getRight().setNode(ServerContext.getConfiguration().getName());
+                    JvmmData data = pair.getRight().setNode(ServerContext.getConfiguration().getName());
                     String body = data.toJsonStr();
                     for (SentinelSubscriberConf subscriber : conf.getSubscribers()) {
                         executor.submit(() -> publish(subscriber, body, conf.getInterval()));

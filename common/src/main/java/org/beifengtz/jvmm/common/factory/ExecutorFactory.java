@@ -11,11 +11,8 @@ import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * <p>
- * Description: TODO
- * </p>
- * <p>
- * Created in 10:23 2021/5/11
+ * description: 线程池工厂
+ * date 10:23 2021/5/11
  *
  * @author beifengtz
  */

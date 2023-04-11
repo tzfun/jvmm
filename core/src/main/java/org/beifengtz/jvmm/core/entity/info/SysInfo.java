@@ -3,8 +3,8 @@ package org.beifengtz.jvmm.core.entity.info;
 import org.beifengtz.jvmm.common.JsonParsable;
 
 /**
- * @description: 宿主机信息
- * @date 15:05 2021/5/11
+ * description: 宿主机信息
+ * date 15:05 2021/5/11
  * @author beifengtz
  */
 public class SysInfo implements JsonParsable {

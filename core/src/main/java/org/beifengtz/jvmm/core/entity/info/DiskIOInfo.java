@@ -3,9 +3,9 @@ package org.beifengtz.jvmm.core.entity.info;
 import org.beifengtz.jvmm.common.JsonParsable;
 
 /**
+ * description: 磁盘IO信息
+ * date 14:42 2023/2/1
  * @author beifengtz
- * @description: 磁盘IO信息
- * @date 14:42 2023/2/1
  */
 public class DiskIOInfo implements JsonParsable {
 

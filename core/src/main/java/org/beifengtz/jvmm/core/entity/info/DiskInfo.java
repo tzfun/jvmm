@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * description: 磁盘信息类
+ * date 11:23 2023/1/31
  * @author beifengtz
- * @description: 磁盘信息类
- * @date 11:23 2023/1/31
  */
 public class DiskInfo implements JsonParsable {
     /**

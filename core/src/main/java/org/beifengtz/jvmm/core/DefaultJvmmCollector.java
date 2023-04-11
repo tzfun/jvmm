@@ -192,9 +192,9 @@ class DefaultJvmmCollector implements JvmmCollector {
             info.setValid(b.isValid());
             info.setManagerNames(b.getMemoryManagerNames());
             info.setType(b.getType());
-            info.setUsage(b.getUsage());
-            info.setPeakUsage(b.getPeakUsage());
-            info.setCollectionUsage(b.getCollectionUsage());
+            info.setUsage(MemoryUsageInfo.parseFrom(b.getUsage()));
+            info.setPeakUsage(MemoryUsageInfo.parseFrom(b.getPeakUsage()));
+            info.setCollectionUsage(MemoryUsageInfo.parseFrom(b.getCollectionUsage()));
 
             boolean collectionUsageThresholdSupported = b.isCollectionUsageThresholdSupported();
             if (collectionUsageThresholdSupported) {
@@ -222,9 +222,9 @@ class DefaultJvmmCollector implements JvmmCollector {
         MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
         JvmMemoryInfo info = JvmMemoryInfo.create();
         info.setVerbose(memoryMXBean.isVerbose());
-        info.setHeapUsage(memoryMXBean.getHeapMemoryUsage());
+        info.setHeapUsage(MemoryUsageInfo.parseFrom(memoryMXBean.getHeapMemoryUsage()));
         info.setPendingCount(memoryMXBean.getObjectPendingFinalizationCount());
-        info.setNonHeapUsage(memoryMXBean.getNonHeapMemoryUsage());
+        info.setNonHeapUsage(MemoryUsageInfo.parseFrom(memoryMXBean.getNonHeapMemoryUsage()));
         return info;
     }
 
