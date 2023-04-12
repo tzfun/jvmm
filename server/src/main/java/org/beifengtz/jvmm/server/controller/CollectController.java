@@ -1,7 +1,6 @@
 package org.beifengtz.jvmm.server.controller;
 
 import com.google.gson.JsonArray;
-import org.beifengtz.jvmm.common.factory.ExecutorFactory;
 import org.beifengtz.jvmm.convey.annotation.HttpController;
 import org.beifengtz.jvmm.convey.annotation.HttpRequest;
 import org.beifengtz.jvmm.convey.annotation.JvmmController;
@@ -144,13 +143,25 @@ public class CollectController {
         return new ArrayList<>(Arrays.asList(infos));
     }
 
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_DETAIL)
+    @HttpRequest("/collect/jvm/thread_detail")
+    public JvmThreadDetailInfo[] getJvmThreadDetail(@RequestBody ThreadInfoDTO data) {
+        if (data == null || data.getIdArr() == null) {
+            return JvmmFactory.getCollector().getAllJvmThreadDetailInfo();
+        } else {
+            return JvmmFactory.getCollector().getJvmThreadDetailInfo(data.getIdArr());
+        }
+    }
+
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_DUMP_THREAD)
     @HttpRequest("/collect/jvm/dump_thread")
     public JsonArray jvmDumpThread() {
         String[] dump = JvmmFactory.getCollector().dumpAllThreads();
-        JsonArray result = new JsonArray(dump.length);
+        JsonArray result = new JsonArray();
         for (String info : dump) {
-            result.add(info);
+            if (info != null) {
+                result.add(info);
+            }
         }
         return result;
     }
