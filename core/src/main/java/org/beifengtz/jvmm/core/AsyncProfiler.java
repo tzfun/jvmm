@@ -1,5 +1,6 @@
 package org.beifengtz.jvmm.core;
 
+import org.beifengtz.jvmm.common.exception.ExecutionException;
 import org.beifengtz.jvmm.common.factory.ExecutorFactory;
 import org.beifengtz.jvmm.common.util.CommonUtil;
 import org.beifengtz.jvmm.common.util.FileUtil;
@@ -80,7 +81,7 @@ public class AsyncProfiler {
         try {
             return getInstance(null);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ExecutionException(e);
         }
     }
 

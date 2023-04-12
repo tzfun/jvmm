@@ -43,8 +43,9 @@ public class ServerServiceImpl extends ServerService {
                     hasArg = true,
                     required = true,
                     argName = "type",
-                    desc = "Required *. Info type, optional values: \n<process|disk|diskio|cpu|net|sys|sysMem|sysFile|cLoading|cLoader|" +
-                            "comp|gc|jvmMem|memManager|memPool|thread|threadStack>"
+                    desc = "Required info type, optional values: \n\t- process\n\t- disk\n\t- diskio\n\t- cpu\n\t- net" +
+                            "\n\t- sys\n\t- sysMem\n\t- sysFile\n\t- cLoading\n\t- cLoader\n\t- comp\n\t- gc\n\t- jvmMem" +
+                            "\n\t- memManager\n\t- memPool\n\t- thread\n\t- threadDetail\n\t- threadStack"
             ),
             @JvmmOption(
                     name = "f",
@@ -56,7 +57,7 @@ public class ServerServiceImpl extends ServerService {
                     name = "tid",
                     hasArg = true,
                     argName = "threadId",
-                    desc = "When querying info 'threadStack', you can specify a thread id, multiple ids use ',' separate them"
+                    desc = "When querying info 'threadStack' or 'threadDetail', you can specify a thread id, multiple ids use ',' separate them"
             ),
             @JvmmOption(
                     name = "tdeep",
@@ -65,7 +66,7 @@ public class ServerServiceImpl extends ServerService {
                     desc = "When querying info 'threadStack', this option is used to specify the stack depth, default 5"
             )
     })
-    @JvmmCmdDesc(desc = "Get information about the target server")
+    @JvmmCmdDesc(desc = "Get information about the target server. \neg. info -t threadDetail")
     public static void info(JvmmConnector connector, CommandLine cmd) throws Exception {
         String type = cmd.getOptionValue("t");
 
@@ -136,8 +137,20 @@ public class ServerServiceImpl extends ServerService {
                 } else {
                     request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_DUMP_THREAD);
                 }
+                break;
             }
-            break;
+            case "threadDetail": {
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_DETAIL);
+                if (cmd.hasOption("tid")) {
+                    JsonArray idArr = new JsonArray();
+                    String[] ids = cmd.getOptionValue("tid").split(",");
+                    for (String id : ids) {
+                        idArr.add(Long.parseLong(id));
+                    }
+                    request.setData(idArr);
+                }
+                break;
+            }
             default:
                 printErr("Invalid info type: " + type);
                 return;

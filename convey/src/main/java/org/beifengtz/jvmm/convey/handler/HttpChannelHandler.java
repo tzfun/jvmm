@@ -220,7 +220,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                             } else if (parameterType.isAssignableFrom(Enum.class)) {
                                 parameter[i] = Enum.valueOf((Class<? extends Enum>) parameterType, value);
                             } else {
-                                throw new IllegalArgumentException("Can not resolve param " + key);
+                                parameter[i] = new Gson().fromJson(value, parameterType);
                             }
                         }
                     }
