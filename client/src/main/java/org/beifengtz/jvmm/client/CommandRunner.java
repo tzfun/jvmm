@@ -11,12 +11,12 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.beifengtz.jvmm.common.util.FileUtil;
 import org.beifengtz.jvmm.common.util.IOUtil;
+import org.beifengtz.jvmm.common.util.IPUtil;
 import org.beifengtz.jvmm.common.util.PidUtil;
 import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.common.util.meta.PairKey;
 import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
-import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.driver.VMDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -294,14 +294,14 @@ public class CommandRunner {
         String address = null, username = null, password = null;
         if (cmd.hasOption("h")) {
             address = cmd.getOptionValue("h");
-            username = cmd.getOptionValue("user");
-            password = cmd.getOptionValue("pass");
+            if (cmd.hasOption("user")) {
+                username = cmd.getOptionValue("user");
+            }
+            if (cmd.hasOption("pass")) {
+                password = cmd.getOptionValue("pass");
+            }
         } else {
             address = GuidedRunner.askServerAddress();
-            if (GuidedRunner.askServerAuthEnable()) {
-                username = GuidedRunner.askServerAuthUsername();
-                password = GuidedRunner.askServerAuthPassword();
-            }
         }
 
         String[] split = address.split(":");
@@ -314,20 +314,7 @@ public class CommandRunner {
 
         EventLoopGroup group = ChannelInitializers.newEventLoopGroup(1);
 
-        logger.info("Start to connect jvmm agent server...");
-        JvmmConnector connector = JvmmConnector.newInstance(host, port, group, true, username, password);
-        Future<Boolean> connectF = connector.connect();
-        if (connectF.await(3, TimeUnit.SECONDS)) {
-            if (connectF.getNow()) {
-                logger.info("Connect successful! You can use the 'help' command to learn how to use. Enter 'exit' to safely exit the connection.");
-            } else {
-                return;
-            }
-        } else {
-            logger.error("Connect server failed! case: time out");
-            System.exit(-1);
-            return;
-        }
+        JvmmConnector connector = tryConnect(host, port, group, username, password);
 
         connector.registerCloseListener(() -> {
             System.out.println();
@@ -359,6 +346,28 @@ public class CommandRunner {
             System.out.print("> ");
         }
         sc.close();
+    }
+
+    private static JvmmConnector tryConnect(String host, int port, EventLoopGroup group, String username, String password) throws InterruptedException {
+        JvmmConnector connector = JvmmConnector.newInstance(host, port, group, true, username, password);
+        Future<Boolean> authFuture = connector.connect();
+        if (authFuture.await(3, TimeUnit.SECONDS)) {
+            if (authFuture.getNow()) {
+                logger.info("Connect successful! You can use the 'help' command to learn how to use. Enter 'exit' to safely exit the connection.");
+                return connector;
+            } else {
+                if (username != null && password != null) {
+                    logger.error("Auth failed");
+                }
+                username = GuidedRunner.askServerAuthUsername();
+                password = GuidedRunner.askServerAuthPassword();
+                return tryConnect(host, port, group, username, password);
+            }
+        } else {
+            logger.error("Connect server failed! case: time out");
+            System.exit(-1);
+        }
+        return null;
     }
 
     private static void handleAttach(CommandLine cmd) throws Throwable {

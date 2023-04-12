@@ -132,7 +132,6 @@ public class JvmmConnector implements Closeable {
         private void handleResponse(ChannelHandlerContext ctx, JvmmResponse response) throws Exception {
             String type = response.getType();
             if (Objects.equals(response.getStatus(), GlobalStatus.JVMM_STATUS_AUTHENTICATION_FAILED.name())) {
-                logger.error("Authentication failed.");
                 openPromise.trySuccess(false);
                 close();
                 return;
