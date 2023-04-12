@@ -41,6 +41,8 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
@@ -165,7 +167,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) throws Exception {
         PairKey<URI, String> pair = filterUri(ctx, msg);
         if (pair == null) {
@@ -220,6 +222,14 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                                     Array.set(array, j, ReflexUtil.parseValueFromStr(componentType, valueArr.get(j)));
                                 }
                                 parameter[i] = array;
+                            } else if (parameterType.isAssignableFrom(List.class)) {
+                                List<String> valueArr = (List<String>) params.get(key + "[]");
+                                Type componentType = ((ParameterizedType) method.getGenericParameterTypes()[0]).getActualTypeArguments()[0];
+                                List list = new ArrayList(valueArr.size());
+                                for (String s : valueArr) {
+                                    list.add(ReflexUtil.parseValueFromStr((Class<?>) componentType, s));
+                                }
+                                parameter[i] = list;
                             } else {
                                 parameter[i] = ReflexUtil.parseValueFromStr(parameterType, (String) value);
                                 if (parameter[i] == null) {
@@ -287,7 +297,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
             if (kv.length <= 1) {
                 continue;
             }
-            String key = kv[0];
+            String key = URLDecoder.decode(kv[0], "UTF-8");
             String value = URLDecoder.decode(kv[1], "UTF-8");
             if (key.endsWith("[]")) {
                 List<String> array = (List<String>) params.computeIfAbsent(key, o -> new ArrayList<>());
