@@ -145,11 +145,11 @@ public class CollectController {
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_DETAIL)
     @HttpRequest("/collect/jvm/thread_detail")
-    public JvmThreadDetailInfo[] getJvmThreadDetail(@RequestBody ThreadInfoDTO data) {
-        if (data == null || data.getIdArr() == null) {
+    public JvmThreadDetailInfo[] getJvmThreadDetail(@RequestBody long[] idList) {
+        if (idList == null || idList.length == 0) {
             return JvmmFactory.getCollector().getAllJvmThreadDetailInfo();
         } else {
-            return JvmmFactory.getCollector().getJvmThreadDetailInfo(data.getIdArr());
+            return JvmmFactory.getCollector().getJvmThreadDetailInfo(idList);
         }
     }
 
