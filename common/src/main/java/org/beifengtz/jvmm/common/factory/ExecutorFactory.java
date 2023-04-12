@@ -54,7 +54,7 @@ public class ExecutorFactory {
         private final String namePrefix;
 
         DefaultThreadFactory(String name) {
-            group = new ThreadGroup("group-" + name);
+            group = new ThreadGroup(name);
             namePrefix = name + "-" + poolNumber.getAndIncrement() + "-thread-";
         }
 

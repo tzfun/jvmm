@@ -122,7 +122,7 @@ public class ServerContext {
         if (workerGroup == null) {
             synchronized (ServerContext.class) {
                 if (workerGroup == null) {
-                    workerGroup = ChannelInitializers.newEventLoopGroup(ServerContext.getConfiguration().getWorkThread(), ExecutorFactory.getThreadPool());
+                    workerGroup = ChannelInitializers.newEventLoopGroup(1, ExecutorFactory.getThreadPool());
                 }
             }
         }
