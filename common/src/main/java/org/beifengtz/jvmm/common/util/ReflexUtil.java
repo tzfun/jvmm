@@ -28,7 +28,7 @@ public class ReflexUtil {
     /**
      * 从包package中获取所有的Class
      *
-     * @param pack 包地址
+     * @param pack      包地址
      * @param recursive 是否递归搜索
      * @return Class集合
      */
@@ -88,8 +88,8 @@ public class ReflexUtil {
      *
      * @param packageName 包名
      * @param packagePath 包路径
-     * @param recursive 是否递归搜索
-     * @param classes 类集合，搜索后会存进此集合
+     * @param recursive   是否递归搜索
+     * @param classes     类集合，搜索后会存进此集合
      */
     public static void findAndAddClassesInPackageByFile(String packageName, String packagePath, final boolean recursive,
                                                         Set<Class<?>> classes) {
@@ -150,7 +150,7 @@ public class ReflexUtil {
     /**
      * 从某个类中扫描被注解有 annotation 的方法
      *
-     * @param clazz 类
+     * @param clazz      类
      * @param annotation 注解类
      * @return 方法集合
      */
@@ -176,5 +176,42 @@ public class ReflexUtil {
             }
         }
         return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Object parseValueFromStr(Class<?> type, String source) {
+        if (source == null) {
+            return null;
+        }
+        if (type.isAssignableFrom(String.class)) {
+            return source;
+        } else if (type.isAssignableFrom(short.class)) {
+            return Short.parseShort(source);
+        } else if (type.isAssignableFrom(Short.class)) {
+            return Short.valueOf(source);
+        } else if (type.isAssignableFrom(int.class)) {
+            return Integer.parseInt(source);
+        } else if (type.isAssignableFrom(Integer.class)) {
+            return Integer.valueOf(source);
+        } else if (type.isAssignableFrom(float.class)) {
+            return Float.parseFloat(source);
+        } else if (type.isAssignableFrom(Float.class)) {
+            return Float.valueOf(source);
+        } else if (type.isAssignableFrom(double.class)) {
+            return Double.parseDouble(source);
+        } else if (type.isAssignableFrom(Double.class)) {
+            return Double.valueOf(source);
+        } else if (type.isAssignableFrom(boolean.class)) {
+            return Boolean.parseBoolean(source);
+        } else if (type.isAssignableFrom(Boolean.class)) {
+            return Boolean.valueOf(source);
+        } else if (type.isAssignableFrom(long.class)) {
+            return Long.parseLong(source);
+        } else if (type.isAssignableFrom(Long.class)) {
+            return Long.valueOf(source);
+        } else if (type.isAssignableFrom(Enum.class)) {
+            return Enum.valueOf((Class<? extends Enum>) type, source);
+        }
+        return null;
     }
 }
