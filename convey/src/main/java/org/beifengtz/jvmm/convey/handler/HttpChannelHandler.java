@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -44,7 +45,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.sql.Ref;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -168,7 +172,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
             return;
         }
         try {
-            Map<String, String> params = loadParam(pair.getLeft());
+            Map<String, Object> params = loadParam(pair.getLeft());
 
             boolean keepHandle = handleBefore(ctx, pair.getRight(), msg);
             if (!keepHandle) {
@@ -206,21 +210,21 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                         } else if (anno.annotationType() == RequestParam.class) {
                             RequestParam rp = (RequestParam) anno;
                             String key = "".equals(rp.value()) ? method.getParameters()[i].getName() : rp.value();
-                            String value = params.get(key);
-                            if (parameterType.isAssignableFrom(String.class)) {
-                                parameter[i] = value;
-                            } else if (parameterType.isAssignableFrom(int.class)) {
-                                parameter[i] = Integer.parseInt(value);
-                            } else if (parameterType.isAssignableFrom(double.class)) {
-                                parameter[i] = Double.parseDouble(value);
-                            } else if (parameterType.isAssignableFrom(boolean.class)) {
-                                parameter[i] = Boolean.parseBoolean(value);
-                            } else if (parameterType.isAssignableFrom(long.class)) {
-                                parameter[i] = Long.parseLong(value);
-                            } else if (parameterType.isAssignableFrom(Enum.class)) {
-                                parameter[i] = Enum.valueOf((Class<? extends Enum>) parameterType, value);
+                            Object value = params.get(key);
+
+                            if (parameterType.isArray()) {
+                                List<String> valueArr = (List<String>) params.get(key + "[]");
+                                Class<?> componentType = parameterType.getComponentType();
+                                Object array = Array.newInstance(componentType, valueArr.size());
+                                for (int j = 0; j < valueArr.size(); j++) {
+                                    Array.set(array, j, ReflexUtil.parseValueFromStr(componentType, valueArr.get(j)));
+                                }
+                                parameter[i] = array;
                             } else {
-                                parameter[i] = new Gson().fromJson(value, parameterType);
+                                parameter[i] = ReflexUtil.parseValueFromStr(parameterType, (String) value);
+                                if (parameter[i] == null) {
+                                    parameter[i] = new Gson().fromJson(value.toString(), parameterType);
+                                }
                             }
                         }
                     }
@@ -267,9 +271,10 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
         }
     }
 
-    private Map<String, String> loadParam(URI uri) throws UnsupportedEncodingException {
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> loadParam(URI uri) throws UnsupportedEncodingException {
         String query = uri.getQuery();
-        Map<String, String> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         if (query == null) {
             return params;
         }
@@ -279,10 +284,16 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                 continue;
             }
             String[] kv = str.split("=");
-            if (kv.length > 1) {
-                params.put(kv[0], URLDecoder.decode(kv[1], "UTF-8"));
+            if (kv.length <= 1) {
+                continue;
+            }
+            String key = kv[0];
+            String value = URLDecoder.decode(kv[1], "UTF-8");
+            if (key.endsWith("[]")) {
+                List<String> array = (List<String>) params.computeIfAbsent(key, o -> new ArrayList<>());
+                array.add(value);
             } else {
-                params.put(kv[0], "");
+                params.put(key, value);
             }
         }
         return params;

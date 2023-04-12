@@ -6,6 +6,7 @@ import org.beifengtz.jvmm.convey.annotation.HttpRequest;
 import org.beifengtz.jvmm.convey.annotation.JvmmController;
 import org.beifengtz.jvmm.convey.annotation.JvmmMapping;
 import org.beifengtz.jvmm.convey.annotation.RequestBody;
+import org.beifengtz.jvmm.convey.annotation.RequestParam;
 import org.beifengtz.jvmm.convey.entity.ResponseFuture;
 import org.beifengtz.jvmm.convey.enums.GlobalType;
 import org.beifengtz.jvmm.convey.enums.Method;
@@ -145,11 +146,11 @@ public class CollectController {
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_DETAIL)
     @HttpRequest("/collect/jvm/thread_detail")
-    public JvmThreadDetailInfo[] getJvmThreadDetail(@RequestBody long[] idList) {
-        if (idList == null || idList.length == 0) {
+    public JvmThreadDetailInfo[] getJvmThreadDetail(@RequestParam long[] id) {
+        if (id == null || id.length == 0) {
             return JvmmFactory.getCollector().getAllJvmThreadDetailInfo();
         } else {
-            return JvmmFactory.getCollector().getJvmThreadDetailInfo(idList);
+            return JvmmFactory.getCollector().getJvmThreadDetailInfo(id);
         }
     }
 
