@@ -12,7 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.management.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -255,23 +257,23 @@ class DefaultJvmmCollector implements JvmmCollector {
     }
 
     @Override
-    public JvmThreadStatisticInfo getJvmThreadStatisticInfo(long id) {
-        return getJvmThreadStatisticInfo(ManagementFactory.getThreadMXBean(), id);
+    public JvmThreadDetailInfo getJvmThreadDetailInfo(long id) {
+        return getJvmThreadDetailInfo(ManagementFactory.getThreadMXBean(), id);
     }
 
     @Override
-    public JvmThreadStatisticInfo[] getJvmThreadStatisticInfo(long... ids) {
+    public JvmThreadDetailInfo[] getJvmThreadDetailInfo(long... ids) {
         ThreadMXBean mx = ManagementFactory.getThreadMXBean();
-        JvmThreadStatisticInfo[] res = new JvmThreadStatisticInfo[ids.length];
+        JvmThreadDetailInfo[] res = new JvmThreadDetailInfo[ids.length];
         for (int i = 0; i < ids.length; i++) {
-            res[i] = getJvmThreadStatisticInfo(mx, ids[i]);
+            res[i] = getJvmThreadDetailInfo(mx, ids[i]);
         }
         return res;
     }
 
     @Override
-    public JvmThreadStatisticInfo[] getAllJvmThreadStatisticInfo() {
-        return getJvmThreadStatisticInfo(ManagementFactory.getThreadMXBean().getAllThreadIds());
+    public JvmThreadDetailInfo[] getAllJvmThreadDetailInfo() {
+        return getJvmThreadDetailInfo(ManagementFactory.getThreadMXBean().getAllThreadIds());
     }
 
     @Override
@@ -321,19 +323,27 @@ class DefaultJvmmCollector implements JvmmCollector {
         ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
         ThreadInfo[] threadInfo = threadMXBean.dumpAllThreads(true, true);
         long[] deadlockedThreads = threadMXBean.findDeadlockedThreads();
-        if (deadlockedThreads == null) {
-            deadlockedThreads = new long[0];
+        int len = 1 + threadInfo.length;
+        if (deadlockedThreads != null) {
+            len += deadlockedThreads.length + 1;
         }
-        String[] res = new String[threadInfo.length + deadlockedThreads.length + 1];
+
+        String[] res = new String[len];
         int i = 0;
-        for (; i < threadInfo.length; i++) {
-            res[i] = threadInfo2Str(threadMXBean, threadInfo[i]);
+        RuntimeMXBean runtime = ManagementFactory.getRuntimeMXBean();
+        res[i++] = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z").format(new Date()) + "\r\n" + "Full thread dump "
+                + runtime.getVmName() + " " + runtime.getVmVendor() + " (" + runtime.getVmVersion() + "):\r\n";
+
+        for (ThreadInfo info : threadInfo) {
+            res[i++] = threadInfo2Str(threadMXBean, info);
         }
 
-        res[i++] = "\r\nDeadlock found between the following threads: \r\n";
+        if (deadlockedThreads != null) {
+            res[i++] = "\r\nDeadlock found between the following threads: \r\n";
 
-        for (long deadlockedThread : deadlockedThreads) {
-            res[i++] = threadInfo2Str(threadMXBean, threadMXBean.getThreadInfo(deadlockedThread, 10));
+            for (long deadlockedThread : deadlockedThreads) {
+                res[i++] = threadInfo2Str(threadMXBean, threadMXBean.getThreadInfo(deadlockedThread, 10));
+            }
         }
 
         return res;
@@ -342,13 +352,12 @@ class DefaultJvmmCollector implements JvmmCollector {
     private static String threadInfo2Str(ThreadMXBean threadMXBean, ThreadInfo ti) {
         if (ti == null) return null;
 
-        StringBuilder sb = new StringBuilder("\"" + ti.getThreadName() + "\"");
+        StringBuilder sb = new StringBuilder("\r\n\"" + ti.getThreadName() + "\"");
         Thread thread = Unsafe.getThread(ti.getThreadId());
         if (thread != null) {
             if (thread.isDaemon()) {
                 sb.append(" daemon");
             }
-
         }
         sb.append(" Id=").append(ti.getThreadId());
         if (thread != null) {
@@ -370,16 +379,14 @@ class DefaultJvmmCollector implements JvmmCollector {
             sb.append(" (in native)");
         }
         sb.append("\r\n");
-        sb.append("   state: ").append(ti.getThreadState());
+        sb.append("   vm_state: ").append(ti.getThreadState());
         if (thread != null) {
-            sb.append("(")
-                    .append(Unsafe.getThreadNativeStatus(thread))
-                    .append(")");
+            sb.append(", os_state: ").append(Unsafe.getThreadNativeStatus(thread));
         }
         sb.append("\r\n");
 
         for (LockInfo li : ti.getLockedSynchronizers()) {
-            sb.append("\r\n\tlocks ").append(li.toString()).append("\r\n\r\n");
+            sb.append("\tlocks ").append(li.toString()).append("\r\n");
         }
         boolean start = true;
         StackTraceElement[] stes = ti.getStackTrace();
@@ -416,8 +423,8 @@ class DefaultJvmmCollector implements JvmmCollector {
         return sb.toString();
     }
 
-    private static JvmThreadStatisticInfo getJvmThreadStatisticInfo(ThreadMXBean threadMXBean, long id) {
-        JvmThreadStatisticInfo info = JvmThreadStatisticInfo.create();
+    private static JvmThreadDetailInfo getJvmThreadDetailInfo(ThreadMXBean threadMXBean, long id) {
+        JvmThreadDetailInfo info = JvmThreadDetailInfo.create();
         ThreadInfo ti = threadMXBean.getThreadInfo(id);
         info.setId(id)
                 .setName(ti.getThreadName())
@@ -428,6 +435,17 @@ class DefaultJvmmCollector implements JvmmCollector {
                 .setBlockedTime(ti.getBlockedTime())
                 .setWaitedCount(ti.getWaitedCount())
                 .setWaitedTime(ti.getWaitedTime());
+
+        Thread thread = Unsafe.getThread(ti.getThreadId());
+        if (thread != null) {
+            ThreadGroup group = thread.getThreadGroup();
+            if (group != null) {
+                info.setGroup(group.getName());
+            }
+            info.setDaemon(thread.isDaemon());
+            info.setPriority(thread.getPriority());
+            info.setOsState(Unsafe.getThreadNativeStatus(thread));
+        }
 
         LockInfo[] lockedSynchronizers = ti.getLockedSynchronizers();
         String[] locks = new String[lockedSynchronizers.length];

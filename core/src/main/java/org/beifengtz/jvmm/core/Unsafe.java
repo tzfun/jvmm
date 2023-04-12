@@ -50,13 +50,13 @@ public final class Unsafe {
      * 获取所有线程对象
      *
      * @return Thread[]
-     * @throws ExecutionException 调用异常
      */
-    public static Thread[] getThreads() throws ExecutionException {
+    public static Thread[] getThreads() {
         try {
             return (Thread[]) threadsMethod.invoke(null);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new ExecutionException(e);
+            logger.error("Invoke Unsafe method 'getThreads()' error: " + e.getMessage(), e);
+            return new Thread[0];
         }
     }
 
@@ -67,7 +67,7 @@ public final class Unsafe {
      * @return Thread实例
      * @throws ExecutionException 调用异常
      */
-    public static Thread getThread(long threadId) throws ExecutionException {
+    public static Thread getThread(long threadId) {
         for (Thread thread : getThreads()) {
             if (thread.getId() == threadId) {
                 return thread;
@@ -76,7 +76,7 @@ public final class Unsafe {
         return null;
     }
 
-    public static int getThreadNativeStatus(Thread thread) throws ExecutionException {
+    public static int getThreadNativeStatus(Thread thread) {
         try {
             return (int) threadStatusFiled.get(thread);
         } catch (IllegalAccessException e) {
@@ -174,9 +174,8 @@ public final class Unsafe {
      * 获取所有 ClassLoader信息
      *
      * @return list of {@link JvmClassLoaderInfo}
-     * @throws Exception 调用失败
      */
-    public static List<JvmClassLoaderInfo> getClassLoaders() throws Exception {
+    public static List<JvmClassLoaderInfo> getClassLoaders() {
         List<JvmClassLoaderInfo> list = new ArrayList<>();
         Set<ClassLoader> scannedClassLoader = new HashSet<>();
         for (Thread thread : getThreads()) {

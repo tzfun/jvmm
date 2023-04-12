@@ -8,10 +8,14 @@ import java.lang.Thread.State;
  *
  * @author beifengtz
  */
-public class JvmThreadStatisticInfo {
+public class JvmThreadDetailInfo {
     long id;
     String name;
+    String group;
     State state;
+    Integer osState;
+    Boolean daemon;
+    Integer priority;
     long userTime;
     long cpuTime;
     long blockedCount;
@@ -20,17 +24,17 @@ public class JvmThreadStatisticInfo {
     long waitedTime;
     String[] locks;
 
-    private JvmThreadStatisticInfo(){}
+    private JvmThreadDetailInfo(){}
 
-    public static JvmThreadStatisticInfo create() {
-        return new JvmThreadStatisticInfo();
+    public static JvmThreadDetailInfo create() {
+        return new JvmThreadDetailInfo();
     }
 
     public long getId() {
         return id;
     }
 
-    public JvmThreadStatisticInfo setId(long id) {
+    public JvmThreadDetailInfo setId(long id) {
         this.id = id;
         return this;
     }
@@ -39,8 +43,17 @@ public class JvmThreadStatisticInfo {
         return name;
     }
 
-    public JvmThreadStatisticInfo setName(String name) {
+    public JvmThreadDetailInfo setName(String name) {
         this.name = name;
+        return this;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public JvmThreadDetailInfo setGroup(String group) {
+        this.group = group;
         return this;
     }
 
@@ -48,8 +61,35 @@ public class JvmThreadStatisticInfo {
         return state;
     }
 
-    public JvmThreadStatisticInfo setState(State state) {
+    public JvmThreadDetailInfo setState(State state) {
         this.state = state;
+        return this;
+    }
+
+    public Integer getOsState() {
+        return osState;
+    }
+
+    public JvmThreadDetailInfo setOsState(Integer osState) {
+        this.osState = osState;
+        return this;
+    }
+
+    public Boolean getDaemon() {
+        return daemon;
+    }
+
+    public JvmThreadDetailInfo setDaemon(Boolean daemon) {
+        this.daemon = daemon;
+        return this;
+    }
+
+    public Integer getPriority() {
+        return priority;
+    }
+
+    public JvmThreadDetailInfo setPriority(Integer priority) {
+        this.priority = priority;
         return this;
     }
 
@@ -57,7 +97,7 @@ public class JvmThreadStatisticInfo {
         return userTime;
     }
 
-    public JvmThreadStatisticInfo setUserTime(long userTime) {
+    public JvmThreadDetailInfo setUserTime(long userTime) {
         this.userTime = userTime;
         return this;
     }
@@ -66,7 +106,7 @@ public class JvmThreadStatisticInfo {
         return cpuTime;
     }
 
-    public JvmThreadStatisticInfo setCpuTime(long cpuTime) {
+    public JvmThreadDetailInfo setCpuTime(long cpuTime) {
         this.cpuTime = cpuTime;
         return this;
     }
@@ -75,7 +115,7 @@ public class JvmThreadStatisticInfo {
         return blockedCount;
     }
 
-    public JvmThreadStatisticInfo setBlockedCount(long blockedCount) {
+    public JvmThreadDetailInfo setBlockedCount(long blockedCount) {
         this.blockedCount = blockedCount;
         return this;
     }
@@ -84,7 +124,7 @@ public class JvmThreadStatisticInfo {
         return blockedTime;
     }
 
-    public JvmThreadStatisticInfo setBlockedTime(long blockedTime) {
+    public JvmThreadDetailInfo setBlockedTime(long blockedTime) {
         this.blockedTime = blockedTime;
         return this;
     }
@@ -93,7 +133,7 @@ public class JvmThreadStatisticInfo {
         return waitedCount;
     }
 
-    public JvmThreadStatisticInfo setWaitedCount(long waitedCount) {
+    public JvmThreadDetailInfo setWaitedCount(long waitedCount) {
         this.waitedCount = waitedCount;
         return this;
     }
@@ -102,7 +142,7 @@ public class JvmThreadStatisticInfo {
         return waitedTime;
     }
 
-    public JvmThreadStatisticInfo setWaitedTime(long waitedTime) {
+    public JvmThreadDetailInfo setWaitedTime(long waitedTime) {
         this.waitedTime = waitedTime;
         return this;
     }
@@ -111,7 +151,7 @@ public class JvmThreadStatisticInfo {
         return locks;
     }
 
-    public JvmThreadStatisticInfo setLocks(String[] locks) {
+    public JvmThreadDetailInfo setLocks(String[] locks) {
         this.locks = locks;
         return this;
     }

@@ -141,13 +141,13 @@ public interface JvmmCollector {
      * {@link JvmmExecutor#setThreadContentionMonitoringEnabled(boolean)}
      *
      * @param id 线程id
-     * @return {@link JvmThreadStatisticInfo}
+     * @return {@link JvmThreadDetailInfo}
      */
-    JvmThreadStatisticInfo getJvmThreadStatisticInfo(long id);
+    JvmThreadDetailInfo getJvmThreadDetailInfo(long id);
 
-    JvmThreadStatisticInfo[] getJvmThreadStatisticInfo(long... ids);
+    JvmThreadDetailInfo[] getJvmThreadDetailInfo(long... ids);
 
-    JvmThreadStatisticInfo[] getAllJvmThreadStatisticInfo();
+    JvmThreadDetailInfo[] getAllJvmThreadDetailInfo();
 
     /**
      * 获取指定线程ID的堆栈

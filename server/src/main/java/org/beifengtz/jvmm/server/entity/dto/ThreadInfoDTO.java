@@ -1,7 +1,5 @@
 package org.beifengtz.jvmm.server.entity.dto;
 
-import java.util.List;
-
 /**
  * <p>
  * Description: TODO
