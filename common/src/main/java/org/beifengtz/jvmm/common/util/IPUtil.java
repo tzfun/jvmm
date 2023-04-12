@@ -26,7 +26,8 @@ public class IPUtil {
      * 内网ip过滤列表
      */
     private static final List<Pattern> innerIpFilter = new ArrayList<>();
-    private static final Pattern hostPattern = Pattern.compile("(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})((:\\d+)?)(/?)");
+    private static final Pattern ipPattern = Pattern.compile("(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})((:\\d+)?)(/?)");
+    private static final Pattern hostPattern = Pattern.compile("^(((\\d{1,3}\\.){3}\\d{1,3})|((([\\w\\\\-_]+)(\\.[\\w\\\\-_]+))+)):\\d{1,5}$");
 
     static {
         Set<String> ipFilter = new HashSet<String>();
@@ -96,10 +97,10 @@ public class IPUtil {
     }
 
     public static boolean isIpv4(String source) {
-        if (StringUtil.isEmpty(source)){
+        if (StringUtil.isEmpty(source)) {
             return false;
         }
-        return hostPattern.matcher(source).matches();
+        return ipPattern.matcher(source).matches();
     }
 
     /**
@@ -123,5 +124,12 @@ public class IPUtil {
             }
         }
         return isInnerIp;
+    }
+
+    public static boolean isHost(String source) {
+        if (StringUtil.isEmpty(source)) {
+            return false;
+        }
+        return hostPattern.matcher(source).matches();
     }
 }

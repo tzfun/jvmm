@@ -1,10 +1,12 @@
 package org.beifengtz.jvmm.client;
 
+import org.beifengtz.jvmm.common.util.IPUtil;
 import org.beifengtz.jvmm.common.util.PidUtil;
 import org.beifengtz.jvmm.common.util.meta.PairKey;
 import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.entity.result.JpsResult;
 
+import java.io.Console;
 import java.io.File;
 import java.util.List;
 import java.util.Scanner;
@@ -164,13 +166,12 @@ public class GuidedRunner {
 
     public static String askServerAddress() {
         System.out.print("Enter the Jvmm server address (eg. 127.0.0.1:5010): ");
-        return scanner.nextLine();
-    }
-
-    public static boolean askServerAuthEnable() {
-        System.out.print("Does the jvmm server require authentication?(y/n): ");
-        String result = scanner.nextLine();
-        return "y".equalsIgnoreCase(result);
+        String address = scanner.nextLine();
+        if (IPUtil.isHost(address)) {
+            return address;
+        }
+        System.out.println("Wrong address format");
+        return askServerAddress();
     }
 
     public static String askServerAuthUsername() {
@@ -180,6 +181,11 @@ public class GuidedRunner {
 
     public static String askServerAuthPassword() {
         System.out.print("Please enter password:");
-        return scanner.nextLine();
+        Console console = System.console();
+        if (console == null) {
+            return scanner.nextLine();
+        } else {
+            return String.copyValueOf(console.readPassword());
+        }
     }
 }

@@ -1,6 +1,7 @@
 package org.beifengtz.jvmm.demo;
 
 import org.beifengtz.jvmm.common.logger.LoggerLevel;
+import org.beifengtz.jvmm.common.util.IPUtil;
 import org.beifengtz.jvmm.server.ServerBootstrap;
 import org.beifengtz.jvmm.server.entity.conf.AuthOptionConf;
 import org.beifengtz.jvmm.server.entity.conf.Configuration;
@@ -74,15 +75,15 @@ public class ServerBootDemo {
             String[] split = content.split(":");
             if ("new".equals(split[1])) {
                 if ("sentinel".equals(split[2])) {
-                    logger.info("New service started: [sentinel]");
+                    logger.info("New service started => [sentinel]");
                 } else {
-                    logger.info("New service started on {}: [{}]", split[3], split[2]);
+                    logger.info("New service started on {}:{} => [{}]", IPUtil.getLocalIP(), split[3], split[2]);
                 }
             } else if ("ready".equals(split[1])) {
                 if ("sentinel".equals(split[2])) {
-                    logger.info("Service already started: [sentinel]");
+                    logger.info("Service already started => [sentinel]");
                 } else {
-                    logger.info("Service already started on {}: [{}]", split[3], split[2]);
+                    logger.info("Service already started on {}:{} => [{}]", IPUtil.getLocalIP(), split[3], split[2]);
                 }
             } else {
                 logger.info("==> {}", content);

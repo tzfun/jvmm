@@ -39,8 +39,11 @@ class DefaultJvmmProfiler implements JvmmProfiler {
             profiler = AsyncProfiler.getInstance();
         } catch (IllegalStateException e) {
             profiler = null;
-            log.warn(e.getMessage());
-            log.debug(e.getMessage(), e);
+            if (log.isDebugEnabled()) {
+                log.debug(e.getMessage(), e);
+            } else {
+                log.warn(e.getMessage());
+            }
         }
     }
 
