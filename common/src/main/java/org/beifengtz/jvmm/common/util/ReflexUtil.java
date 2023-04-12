@@ -178,13 +178,17 @@ public class ReflexUtil {
         return result;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static Object parseValueFromStr(Class<?> type, String source) {
         if (source == null) {
             return null;
         }
         if (type.isAssignableFrom(String.class)) {
             return source;
+        } else if (type.isAssignableFrom(byte.class)) {
+            return Byte.parseByte(source);
+        } else if (type.isAssignableFrom(Byte.class)) {
+            return Byte.valueOf(source);
         } else if (type.isAssignableFrom(short.class)) {
             return Short.parseShort(source);
         } else if (type.isAssignableFrom(Short.class)) {
@@ -209,7 +213,7 @@ public class ReflexUtil {
             return Long.parseLong(source);
         } else if (type.isAssignableFrom(Long.class)) {
             return Long.valueOf(source);
-        } else if (type.isAssignableFrom(Enum.class)) {
+        } else if (type.isEnum()) {
             return Enum.valueOf((Class<? extends Enum>) type, source);
         }
         return null;
