@@ -47,7 +47,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.sql.Ref;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -167,7 +166,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
     }
 
     @Override
-    @SuppressWarnings({"unchecked","rawtypes"})
+    @SuppressWarnings({"unchecked", "rawtypes"})
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) throws Exception {
         PairKey<URI, String> pair = filterUri(ctx, msg);
         if (pair == null) {
@@ -216,6 +215,9 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
 
                             if (parameterType.isArray()) {
                                 List<String> valueArr = (List<String>) params.get(key + "[]");
+                                if (valueArr == null) {
+                                    continue;
+                                }
                                 Class<?> componentType = parameterType.getComponentType();
                                 Object array = Array.newInstance(componentType, valueArr.size());
                                 for (int j = 0; j < valueArr.size(); j++) {
@@ -224,6 +226,9 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                                 parameter[i] = array;
                             } else if (parameterType.isAssignableFrom(List.class)) {
                                 List<String> valueArr = (List<String>) params.get(key + "[]");
+                                if (valueArr == null) {
+                                    continue;
+                                }
                                 Type componentType = ((ParameterizedType) method.getGenericParameterTypes()[0]).getActualTypeArguments()[0];
                                 List list = new ArrayList(valueArr.size());
                                 for (String s : valueArr) {
@@ -233,7 +238,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                             } else {
                                 parameter[i] = ReflexUtil.parseValueFromStr(parameterType, (String) value);
                                 if (parameter[i] == null) {
-                                    parameter[i] = new Gson().fromJson(value.toString(), parameterType);
+                                    parameter[i] = new Gson().fromJson((String) value, parameterType);
                                 }
                             }
                         }
