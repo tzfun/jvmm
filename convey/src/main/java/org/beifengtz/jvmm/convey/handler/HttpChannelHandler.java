@@ -274,6 +274,8 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
 
             if (result instanceof HttpResponse) {
                 ctx.writeAndFlush(result).addListener(ChannelFutureListener.CLOSE);
+            } else if (result instanceof JvmmResponse) {
+                response(ctx, HttpResponseStatus.OK, ((JvmmResponse) result).getData().toString());
             } else if (result != null) {
                 response(ctx, HttpResponseStatus.OK, HandlerProvider.parseResult2Json(result).toString());
             }

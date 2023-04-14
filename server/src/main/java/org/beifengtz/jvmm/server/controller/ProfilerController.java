@@ -114,7 +114,7 @@ public class ProfilerController {
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_PROFILER_SAMPLE_STOP)
     @HttpRequest(value = "/profiler/stop", method = Method.POST)
     public JvmmResponse stop(@RequestParam String format) throws IOException {
-        JvmmResponse response = JvmmResponse.create().setType(GlobalType.JVMM_TYPE_PROFILER_SAMPLE.name());
+        JvmmResponse response = JvmmResponse.create().setType(GlobalType.JVMM_TYPE_PROFILER_SAMPLE_STOP.name());
         if (!PROFILER_STARTED) {
             return response.setStatus(GlobalStatus.JVMM_STATUS_PROFILER_FAILED).setMessage("Profiler not start");
         }
@@ -137,7 +137,7 @@ public class ProfilerController {
         } finally {
             PROFILER_STARTED = false;
             if (to.exists()) {
-                to.exists();
+                to.delete();
             }
         }
     }
