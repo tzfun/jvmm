@@ -5,9 +5,9 @@ import org.beifengtz.jvmm.common.logger.LoggerEvent;
 import java.util.Map;
 
 /**
+ * description: TODO
+ * date 15:15 2023/2/3
  * @author beifengtz
- * @description: TODO
- * @date 15:15 2023/2/3
  */
 public class AgentProxyPrinter implements Printer {
 

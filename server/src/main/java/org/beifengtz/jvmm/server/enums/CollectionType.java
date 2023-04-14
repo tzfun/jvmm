@@ -1,8 +1,8 @@
 package org.beifengtz.jvmm.server.enums;
 
 /**
- * @description: Server提供的采集项
- * @date 11:02 2023/2/2
+ * description: Server提供的采集项
+ * date 11:02 2023/2/2
  * @author beifengtz
  */
 public enum CollectionType {

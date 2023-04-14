@@ -3,9 +3,9 @@ package org.beifengtz.jvmm.log;
 import org.beifengtz.jvmm.common.logger.LoggerLevel;
 
 /**
+ * description: TODO
+ * date 10:18 2023/2/3
  * @author beifengtz
- * @description: TODO
- * @date 10:18 2023/2/3
  */
 public class JvmmLogConfiguration {
 

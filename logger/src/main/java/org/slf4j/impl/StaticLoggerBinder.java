@@ -6,9 +6,9 @@ import org.slf4j.ILoggerFactory;
 import org.slf4j.spi.LoggerFactoryBinder;
 
 /**
+ * description: SLF4J的Logger绑定类
+ * date 9:53 2023/2/3
  * @author beifengtz
- * @description: SLF4J的Logger绑定类
- * @date 9:53 2023/2/3
  */
 public class StaticLoggerBinder implements LoggerFactoryBinder {
     private static final StaticLoggerBinder SINGLETON = new StaticLoggerBinder();
