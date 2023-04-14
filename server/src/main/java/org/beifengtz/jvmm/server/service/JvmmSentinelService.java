@@ -78,7 +78,7 @@ public class JvmmSentinelService implements JvmmService {
             for (SentinelConf conf : sentinels) {
                 SentinelTask task = new SentinelTask();
                 task.conf = conf;
-                task.execTime = now + conf.getInterval() * 1000L;
+                task.execTime = now;
                 minInterval = Math.min(minInterval, conf.getInterval());
                 taskList.add(task);
             }

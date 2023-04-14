@@ -31,6 +31,7 @@ public class JvmmData implements JsonParsable {
     private List<JvmMemoryManagerInfo> jvmMemoryManager;
     private List<JvmMemoryPoolInfo> jvmMemoryPool;
     private JvmThreadInfo jvmThread;
+    private JvmThreadDetailInfo[] jvmThreadDetail;
 
     public String getNode() {
         return node;
@@ -188,5 +189,14 @@ public class JvmmData implements JsonParsable {
     @Override
     public String toString() {
         return toJsonStr();
+    }
+
+    public JvmThreadDetailInfo[] getJvmThreadDetail() {
+        return jvmThreadDetail;
+    }
+
+    public JvmmData setJvmThreadDetail(JvmThreadDetailInfo[] jvmThreadDetail) {
+        this.jvmThreadDetail = jvmThreadDetail;
+        return this;
     }
 }

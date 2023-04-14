@@ -118,6 +118,9 @@ public interface JvmmService {
                 case jvm_thread:
                     res.setJvmThread(collector.getJvmThread());
                     break;
+                case jvm_thread_detail:
+                    res.setJvmThreadDetail(collector.getAllJvmThreadDetailInfo());
+                    break;
             }
         }
         if (asyncNum.get() <= 0) {

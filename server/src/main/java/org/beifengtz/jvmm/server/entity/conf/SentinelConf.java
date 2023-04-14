@@ -77,7 +77,7 @@ public class SentinelConf {
     }
 
     public int getInterval() {
-        return interval;
+        return Math.max(1, interval);
     }
 
     public SentinelConf setInterval(int interval) {

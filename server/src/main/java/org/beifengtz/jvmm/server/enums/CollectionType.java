@@ -21,5 +21,7 @@ public enum CollectionType {
     jvm_memory,
     jvm_memory_manager,
     jvm_memory_pool,
-    jvm_thread;
+    jvm_thread,
+    jvm_thread_detail
+    ;
 }
