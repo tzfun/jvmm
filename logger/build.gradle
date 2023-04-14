@@ -16,13 +16,12 @@ jar {
     archiveName("jvmm-logger.jar")
 }
 
-
 task sourcesJar(type: Jar) {
     from sourceSets.main.allSource
     getArchiveClassifier().set('sources')
 }
 
-task javadocJar(type:Jar) {
+task javadocJar(type: Jar) {
     from javadoc
     getArchiveClassifier().set('javadoc')
 }

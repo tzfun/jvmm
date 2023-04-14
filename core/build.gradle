@@ -28,7 +28,7 @@ task sourcesJar(type: Jar) {
     getArchiveClassifier().set('sources')
 }
 
-task javadocJar(type:Jar) {
+task javadocJar(type: Jar) {
     from javadoc
     getArchiveClassifier().set('javadoc')
 }
