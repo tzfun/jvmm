@@ -50,3 +50,4 @@ web/src/main/resources/application*.yml
 /server/src/main/resources/jvmm-logger.jar
 /log/
 /.jvmm/
+/logs/
