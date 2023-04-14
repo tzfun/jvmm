@@ -9,9 +9,9 @@ import java.io.PrintWriter;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * description: 文件输出实现
+ * date 10:25 2023/2/3
  * @author beifengtz
- * @description: 文件输出实现
- * @date 10:25 2023/2/3
  */
 public class FilePrinter implements Printer {
 

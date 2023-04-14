@@ -4,9 +4,9 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 /**
+ * description: 标准输出实现
+ * date 10:24 2023/2/3
  * @author beifengtz
- * @description: 标准输出实现
- * @date 10:24 2023/2/3
  */
 public class StdPrinter implements Printer {
 
