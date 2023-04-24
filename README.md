@@ -66,14 +66,9 @@ public class JvmmServerBootDemo {
 }
 ```
 
-## 使用文档
-
-* [Jvmm工具使用文档](client/README.md)
-* [Server组件使用及三种服务模式说明文档](server/README.md)
-* [两种Java Agent方式使用Jvmm](agent/README.md)
-* [Core模块提供的API接口](core/README.md)
-
 ## 示例
+
+[采集数据样例](EXAMPLE.md)
 
 在这里提供了一些简单的代码调用示例
 
@@ -88,6 +83,13 @@ public class JvmmServerBootDemo {
 Dashboard应用示例
 
 ![dashboard](doc/dashboard.jpg)
+
+## 使用文档
+
+* [Jvmm工具使用文档](client/README.md)
+* [Server组件使用及三种服务模式说明文档](server/README.md)
+* [两种Java Agent方式使用Jvmm](agent/README.md)
+* [Core模块提供的API接口](core/README.md)
 
 ## 联系作者
 
