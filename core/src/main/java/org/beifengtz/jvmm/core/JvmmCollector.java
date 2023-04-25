@@ -3,6 +3,7 @@ package org.beifengtz.jvmm.core;
 import org.beifengtz.jvmm.core.entity.info.*;
 
 import java.util.List;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.function.Consumer;
 
 /**
@@ -46,7 +47,7 @@ public interface JvmmCollector {
     /**
      * 获取所有磁盘信息
      *
-     * @return  {@link DiskInfo}列表
+     * @return {@link DiskInfo}列表
      */
     List<DiskInfo> getDisk();
 
@@ -185,6 +186,7 @@ public interface JvmmCollector {
 
     /**
      * 获取死锁线程堆栈
+     *
      * @return {@link String}[] 线程堆栈
      */
     String[] getJvmDeadlockThreadStack();
@@ -195,4 +197,42 @@ public interface JvmmCollector {
      * @return {@link String}[] 线程堆栈
      */
     String[] dumpAllThreads();
+
+    /**
+     * 获取线程池信息
+     *
+     * @param threadPool {@link ThreadPoolExecutor}
+     * @return {@link ThreadPoolInfo}，如果 threadPool 为 null 将返回 null
+     */
+    ThreadPoolInfo getThreadPoolInfo(ThreadPoolExecutor threadPool);
+
+    /**
+     * 根据提供的类加载器、类路径、变量信息反射获取 {@link ThreadPoolExecutor} 对象并采集其信息，仅支持静态属性！
+     *
+     * @param classLoader 类加载器
+     * @param clazz       类全路径，比如 org.beifengtz.jvmm.common.factory.ExecutorFactory
+     * @param filed       属性名，仅支持静态属性！比如 SCHEDULE_THREAD_POOL
+     * @return {@link ThreadPoolInfo}，如果反射未找到相应的 threadPool 或其值为 null 将返回 null
+     */
+    ThreadPoolInfo getThreadPoolInfo(ClassLoader classLoader, String clazz, String filed);
+
+    /**
+     * 根据提供的类加载器、类路径、变量信息反射获取 {@link ThreadPoolExecutor} 对象并采集其信息
+     *
+     * @param classLoader   类加载器
+     * @param clazz         类全路径，比如 org.beifengtz.jvmm.common.factory.ExecutorFactory
+     * @param instanceField 指定类实例对象的属性名，比如单例模式中的 INSTANCE
+     * @param filed         实例对象中的属性名
+     * @return {@link ThreadPoolInfo}，如果反射未找到相应的 threadPool 或其值为 null 将返回 null
+     */
+    ThreadPoolInfo getThreadPoolInfo(ClassLoader classLoader, String clazz, String instanceField, String filed);
+
+    /**
+     * 根据提供的类、变量信息反射获取 {@link ThreadPoolExecutor} 对象并采集其信息
+     *
+     * @param clazz 类全路径，比如 org.beifengtz.jvmm.common.factory.ExecutorFactory
+     * @param filed 属性名，仅支持静态属性！比如 SCHEDULE_THREAD_POOL
+     * @return {@link ThreadPoolInfo}，如果反射未找到相应的 threadPool 或其值为 null 将返回 null
+     */
+    ThreadPoolInfo getThreadPoolInfo(String clazz, String filed);
 }

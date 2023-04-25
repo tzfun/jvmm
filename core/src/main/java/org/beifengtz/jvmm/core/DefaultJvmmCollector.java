@@ -12,10 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.management.*;
+import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /**
@@ -347,6 +350,95 @@ class DefaultJvmmCollector implements JvmmCollector {
         }
 
         return res;
+    }
+
+    @Override
+    public ThreadPoolInfo getThreadPoolInfo(ThreadPoolExecutor threadPool) {
+        if (threadPool == null) {
+            return null;
+        }
+        ThreadPoolInfo info = ThreadPoolInfo.create()
+                .setThreadFactory(threadPool.getThreadFactory().getClass().getName())
+                .setRejectHandler(threadPool.getRejectedExecutionHandler().getClass().getName())
+                .setCorePoolSize(threadPool.getCorePoolSize())
+                .setMaximumPoolSize(threadPool.getMaximumPoolSize())
+                .setKeepAliveMillis(threadPool.getKeepAliveTime(TimeUnit.MILLISECONDS))
+                .setQueue(threadPool.getQueue().getClass().getName())
+                .setAllowsCoreThreadTimeOut(threadPool.allowsCoreThreadTimeOut())
+                .setQueueSize(threadPool.getQueue().size())
+                .setThreadCount(threadPool.getPoolSize())
+                .setActiveThreadCount(threadPool.getActiveCount())
+                .setLargestThreadCount(threadPool.getLargestPoolSize())
+                .setTaskCount(threadPool.getTaskCount())
+                .setCompletedTaskCount(threadPool.getCompletedTaskCount());
+
+        String state = threadPool.isTerminating() ? "Shutting down" :
+                threadPool.isTerminated() ? "Terminated" :
+                        threadPool.isShutdown() ? "Shutdown" : "Running";
+
+        info.setState(state);
+
+        return info;
+    }
+
+    @Override
+    public ThreadPoolInfo getThreadPoolInfo(ClassLoader classLoader, String clazz, String filed) {
+        try {
+            Class<?> aClass = Class.forName(clazz, false, classLoader);
+            Field f = aClass.getDeclaredField(filed);
+            f.setAccessible(true);
+            try {
+                return getThreadPoolInfo((ThreadPoolExecutor) f.get(null));
+            } finally {
+                f.setAccessible(false);
+            }
+        } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException | ClassCastException e) {
+            log.debug("Invoke getThreadPoolInfo failed: " + e.getMessage(), e);
+        }
+        return null;
+    }
+
+    @Override
+    public ThreadPoolInfo getThreadPoolInfo(ClassLoader classLoader, String clazz, String instanceField, String filed) {
+        try {
+            Class<?> aClass = Class.forName(clazz, false, classLoader);
+            Field instanceF = aClass.getDeclaredField(instanceField);
+            Field f = aClass.getDeclaredField(filed);
+            if (aClass.isAssignableFrom(instanceF.getType())) {
+                instanceF.setAccessible(true);
+                try {
+                    Object instance = instanceF.get(null);
+                    f.setAccessible(true);
+                    try {
+                        return getThreadPoolInfo((ThreadPoolExecutor) f.get(instance));
+                    } finally {
+                        f.setAccessible(false);
+                    }
+                } finally {
+                    instanceF.setAccessible(false);
+                }
+            }
+        } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException| ClassCastException e) {
+            log.debug("Invoke getThreadPoolInfo failed: " + e.getMessage(), e);
+        }
+        return null;
+    }
+
+    @Override
+    public ThreadPoolInfo getThreadPoolInfo(String clazz, String filed) {
+        try {
+            Class<?> aClass = Class.forName(clazz);
+            Field f = aClass.getDeclaredField(filed);
+            f.setAccessible(true);
+            try {
+                return getThreadPoolInfo((ThreadPoolExecutor) f.get(null));
+            } finally {
+                f.setAccessible(false);
+            }
+        } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException| ClassCastException e) {
+            log.debug("Invoke getThreadPoolInfo failed: " + e.getMessage(), e);
+        }
+        return null;
     }
 
     private static String threadInfo2Str(ThreadMXBean threadMXBean, ThreadInfo ti) {
