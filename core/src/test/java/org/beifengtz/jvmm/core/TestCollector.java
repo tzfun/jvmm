@@ -1,11 +1,14 @@
 package org.beifengtz.jvmm.core;
 
+import org.beifengtz.jvmm.common.factory.ExecutorFactory;
 import org.beifengtz.jvmm.common.util.IPUtil;
 import org.beifengtz.jvmm.core.driver.OSDriver;
 import org.beifengtz.jvmm.core.entity.info.JvmMemoryInfo;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * <p>
@@ -26,7 +29,7 @@ public class TestCollector {
     }
 
     @Test
-    public void testParseFree(){
+    public void testParseFree() {
         String output = "Mem:        8170260     5654384      598400       12160     1917476     2198144";
         String[] split = output.split("\\s+");
         System.out.println(Arrays.toString(split));
@@ -49,5 +52,16 @@ public class TestCollector {
         osDriver.getDiskIOInfo(System.out::println);
 
         Thread.sleep(2000);
+    }
+
+    @Test
+    public void testThreadPool() {
+        JvmmCollector collector = JvmmFactory.getCollector();
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
+        System.out.println(collector.getThreadPoolInfo(executor));
+
+        System.out.println(collector.getThreadPoolInfo(ExecutorFactory.class.getName(), "SCHEDULE_THREAD_POOL"));
+        ExecutorFactory.getThreadPool();
+        System.out.println(collector.getThreadPoolInfo(ExecutorFactory.class.getName(), "SCHEDULE_THREAD_POOL"));
     }
 }
