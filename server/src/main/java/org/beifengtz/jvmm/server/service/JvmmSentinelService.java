@@ -4,11 +4,11 @@ import io.netty.util.concurrent.Promise;
 import org.beifengtz.jvmm.common.factory.ExecutorFactory;
 import org.beifengtz.jvmm.common.util.CommonUtil;
 import org.beifengtz.jvmm.common.util.HttpUtil;
+import org.beifengtz.jvmm.core.entity.JvmmData;
 import org.beifengtz.jvmm.server.ServerContext;
 import org.beifengtz.jvmm.server.entity.conf.AuthOptionConf;
 import org.beifengtz.jvmm.server.entity.conf.SentinelConf;
 import org.beifengtz.jvmm.server.entity.conf.SentinelSubscriberConf;
-import org.beifengtz.jvmm.core.entity.JvmmData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +51,6 @@ public class JvmmSentinelService implements JvmmService {
      * 连续失败次数，如果超过10次后按 interval的n倍 次重试
      */
     protected final Map<String, AtomicInteger> failTimes = new ConcurrentHashMap<>();
-    protected final Map<String, AtomicInteger> failStepCounter = new ConcurrentHashMap<>();
     protected Set<ShutdownListener> shutdownListeners = new HashSet<>();
 
     protected Queue<SentinelTask> taskList = new ConcurrentLinkedQueue<>();
@@ -127,11 +126,9 @@ public class JvmmSentinelService implements JvmmService {
     protected void publish(SentinelSubscriberConf subscriber, String body, int interval) {
         String url = subscriber.getUrl();
         AtomicInteger failCounter = failTimes.computeIfAbsent(url, o -> new AtomicInteger(0));
-        failStepCounter.computeIfAbsent(url, o -> new AtomicInteger(0));
         try {
             if (failCounter.get() >= 10) {
-                int step = failStepCounter.get(url).incrementAndGet();
-                if (step % interval != 0) {
+                if (failCounter.get() % interval != 0) {
                     return;
                 }
             }
@@ -147,7 +144,6 @@ public class JvmmSentinelService implements JvmmService {
 
             HttpUtil.post(url, body, headers);
             failCounter.set(0);
-            failStepCounter.get(url).set(0);
         } catch (IOException e) {
             logger.warn("Can not connect monitor subscriber '{}': {}", url, e.getMessage());
             failCounter.incrementAndGet();
