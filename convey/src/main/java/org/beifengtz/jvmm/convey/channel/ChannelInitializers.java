@@ -78,6 +78,8 @@ public class ChannelInitializers {
                 return new EpollEventLoopGroup(nThreads, executor);
             }
         } catch (Throwable e) {
+            //  为了减少包体，JVMM不主动引入 Epoll 相关环境依赖，如果运行环境中没有 Epoll 相关支持，则默认使用 Nio
+            //  Nio 虽然性能相比 Epoll 较差但在JVMM的应用场景中几乎无差别
             logger.debug("New event loop group failed, try to use NioEventLoopGroup, platform: {}, case: {}", PlatformUtil.arch(), e.getMessage());
         }
         return new NioEventLoopGroup(nThreads, executor);
