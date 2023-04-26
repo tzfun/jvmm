@@ -142,4 +142,12 @@ public class StringUtil {
         sb.deleteCharAt(sb.length() - 1);
         return sb.toString();
     }
+
+    public static String repeat(String item, int num) {
+        StringBuilder str = new StringBuilder();
+        for (int i = 0; i < num; i++) {
+            str.append(item);
+        }
+        return str.toString();
+    }
 }
