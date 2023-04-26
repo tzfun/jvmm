@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.WeakHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -33,6 +34,8 @@ import java.util.function.Consumer;
 class DefaultJvmmCollector implements JvmmCollector {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultJvmmCollector.class);
+
+    private final WeakHashMap<String, ThreadPoolExecutor> threadPoolCache = new WeakHashMap<>();
 
     DefaultJvmmCollector() {
     }
@@ -357,6 +360,7 @@ class DefaultJvmmCollector implements JvmmCollector {
         if (threadPool == null) {
             return null;
         }
+
         ThreadPoolInfo info = ThreadPoolInfo.create()
                 .setThreadFactory(threadPool.getThreadFactory().getClass().getName())
                 .setRejectHandler(threadPool.getRejectedExecutionHandler().getClass().getName())
@@ -383,62 +387,83 @@ class DefaultJvmmCollector implements JvmmCollector {
 
     @Override
     public ThreadPoolInfo getThreadPoolInfo(ClassLoader classLoader, String clazz, String filed) {
-        try {
-            Class<?> aClass = Class.forName(clazz, false, classLoader);
-            Field f = aClass.getDeclaredField(filed);
-            f.setAccessible(true);
-            try {
-                return getThreadPoolInfo((ThreadPoolExecutor) f.get(null));
-            } finally {
-                f.setAccessible(false);
-            }
-        } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException | ClassCastException e) {
-            log.debug("Invoke getThreadPoolInfo failed: " + e.getMessage(), e);
+        if (classLoader == null) {
+            classLoader = getClass().getClassLoader();
         }
-        return null;
+        String cacheKey = classLoader.hashCode() + "#" + clazz + "#" + filed;
+        ThreadPoolExecutor pool;
+        synchronized (threadPoolCache) {
+            pool = threadPoolCache.get(cacheKey);
+        }
+        if (pool == null) {
+            try {
+                Class<?> aClass = Class.forName(clazz, false, classLoader);
+                Field f = aClass.getDeclaredField(filed);
+                f.setAccessible(true);
+                try {
+                    pool = (ThreadPoolExecutor) f.get(null);
+                    synchronized (threadPoolCache) {
+                        threadPoolCache.put(cacheKey, pool);
+                    }
+                } finally {
+                    f.setAccessible(false);
+                }
+            } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException | ClassCastException e) {
+                log.debug("Invoke getThreadPoolInfo failed: " + e.getMessage(), e);
+            }
+        }
+
+        return getThreadPoolInfo(pool);
     }
 
     @Override
     public ThreadPoolInfo getThreadPoolInfo(ClassLoader classLoader, String clazz, String instanceField, String filed) {
-        try {
-            Class<?> aClass = Class.forName(clazz, false, classLoader);
-            Field instanceF = aClass.getDeclaredField(instanceField);
-            Field f = aClass.getDeclaredField(filed);
-            if (aClass.isAssignableFrom(instanceF.getType())) {
-                instanceF.setAccessible(true);
-                try {
-                    Object instance = instanceF.get(null);
-                    f.setAccessible(true);
-                    try {
-                        return getThreadPoolInfo((ThreadPoolExecutor) f.get(instance));
-                    } finally {
-                        f.setAccessible(false);
-                    }
-                } finally {
-                    instanceF.setAccessible(false);
-                }
-            }
-        } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException| ClassCastException e) {
-            log.debug("Invoke getThreadPoolInfo failed: " + e.getMessage(), e);
+        if (classLoader == null) {
+            classLoader = getClass().getClassLoader();
         }
-        return null;
+        String cacheKey = classLoader.hashCode() + "#" + clazz + "#" + instanceField + "#" + filed;
+        ThreadPoolExecutor pool;
+        synchronized (threadPoolCache) {
+            pool = threadPoolCache.get(cacheKey);
+        }
+        if (pool == null) {
+            try {
+                Class<?> aClass = Class.forName(clazz, false, classLoader);
+                Field instanceF = aClass.getDeclaredField(instanceField);
+                Field f = aClass.getDeclaredField(filed);
+                if (aClass.isAssignableFrom(instanceF.getType())) {
+                    instanceF.setAccessible(true);
+                    try {
+                        Object instance = instanceF.get(null);
+                        f.setAccessible(true);
+                        try {
+                            pool = (ThreadPoolExecutor) f.get(instance);
+                            synchronized (threadPoolCache) {
+                                threadPoolCache.put(cacheKey, pool);
+                            }
+                        } finally {
+                            f.setAccessible(false);
+                        }
+                    } finally {
+                        instanceF.setAccessible(false);
+                    }
+                }
+            } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException | ClassCastException e) {
+                log.debug("Invoke getThreadPoolInfo failed: " + e.getMessage(), e);
+            }
+        }
+
+        return getThreadPoolInfo(pool);
     }
 
     @Override
     public ThreadPoolInfo getThreadPoolInfo(String clazz, String filed) {
-        try {
-            Class<?> aClass = Class.forName(clazz);
-            Field f = aClass.getDeclaredField(filed);
-            f.setAccessible(true);
-            try {
-                return getThreadPoolInfo((ThreadPoolExecutor) f.get(null));
-            } finally {
-                f.setAccessible(false);
-            }
-        } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException| ClassCastException e) {
-            log.debug("Invoke getThreadPoolInfo failed: " + e.getMessage(), e);
-        }
-        return null;
+        return getThreadPoolInfo(getClass().getClassLoader(), clazz, filed);
+    }
+
+    @Override
+    public ThreadPoolInfo getThreadPoolInfo(String clazz, String instanceField, String filed) {
+        return getThreadPoolInfo(getClass().getClassLoader(), clazz, instanceField, filed);
     }
 
     private static String threadInfo2Str(ThreadMXBean threadMXBean, ThreadInfo ti) {

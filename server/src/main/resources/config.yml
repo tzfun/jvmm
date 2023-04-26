@@ -72,7 +72,9 @@ server:
       count: 20
       # The collection items executed by the sentinel, the sentinel will collect the data and send it to subscribers.
       # Optional values: process|disk|disk_io|cpu|network|sys|sys_memory|sys_file|jvm_classloading|jvm_classloader|
-      #                  jvm_compilation|jvm_gc|jvm_memory|jvm_memory_manager|jvm_memory_pool|jvm_thread|jvm_thread_detail
+      #                  jvm_compilation|jvm_gc|jvm_memory|jvm_memory_manager|jvm_memory_pool|jvm_thread|jvm_thread_stack|
+      #                  jvm_thread_detail
+      #
       tasks:
         - process
         - disk

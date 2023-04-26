@@ -18,6 +18,7 @@ import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.enums.GlobalType;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
+import org.beifengtz.jvmm.core.CollectionType;
 import org.beifengtz.jvmm.core.entity.result.JpsResult;
 
 import java.io.File;
@@ -43,9 +44,10 @@ public class ServerServiceImpl extends ServerService {
                     hasArg = true,
                     required = true,
                     argName = "type",
-                    desc = "Required info type, optional values: \n\t- process\n\t- disk\n\t- diskio\n\t- cpu\n\t- net" +
-                            "\n\t- sys\n\t- sysMem\n\t- sysFile\n\t- cLoading\n\t- cLoader\n\t- comp\n\t- gc\n\t- jvmMem" +
-                            "\n\t- memManager\n\t- memPool\n\t- thread\n\t- threadDetail\n\t- threadStack"
+                    desc = "Required info type, optional values: \n\t- process\n\t- disk\n\t- disk_io\n\t- cpu" +
+                            "\n\t- network\n\t- sys\n\t- sys_memory\n\t- sys_file\n\t- jvm_classloading\n\t- jvm_classloader" +
+                            "\n\t- jvm_compilation\n\t- jvm_gc\n\t- jvm_memory\n\t- jvm_memory_manager\n\t- jvm_memory_pool" +
+                            "\n\t- jvm_thread\n\t- jvm_thread_stack\n\t- jvm_thread_detail\n\t- jvm_thread_pool"
             ),
             @JvmmOption(
                     name = "f",
@@ -57,70 +59,107 @@ public class ServerServiceImpl extends ServerService {
                     name = "tid",
                     hasArg = true,
                     argName = "threadId",
-                    desc = "When querying info 'threadStack' or 'threadDetail', you can specify a thread id, multiple ids use ',' separate them"
+                    desc = "When querying info 'jvm_thread_stack' or 'jvm_thread_detail', you can specify a thread id, multiple ids use ',' separate them"
             ),
             @JvmmOption(
                     name = "tdeep",
                     hasArg = true,
                     argName = "threadDepp",
-                    desc = "When querying info 'threadStack', this option is used to specify the stack depth, default 5"
+                    desc = "When querying info 'jvm_thread_stack', this option is used to specify the stack depth, default 5"
+            ),
+            @JvmmOption(
+                    name = "clazz",
+                    hasArg = true,
+                    argName = "class",
+                    desc = "When querying info 'jvm_thread_pool'(required), this option is used to specify the class full path. " +
+                            "JVMM will get instance of the thread pool through reflection, you need to use it with `loader`, `ifield` and `field` parameters"
+            ),
+            @JvmmOption(
+                    name = "loader",
+                    hasArg = true,
+                    argName = "classloader",
+                    desc = "When querying info 'jvm_thread_pool', this option is used to specify the classloader hashcode. " +
+                            "You can execute `info -t jvm_classloader` to get classloader hashcode, if not filled, " +
+                            "the default classloader will be used, You need to use it with `clazz`, `ifield` and `field` parameters"
+            ),
+            @JvmmOption(
+                    name = "ifield",
+                    hasArg = true,
+                    argName = "instanceField",
+                    desc = "When querying info 'jvm_thread_pool', this option is used to specify the instance field. " +
+                            "If not filled, the static `field` of `clazz` will be read"
+            ),
+            @JvmmOption(
+                    name = "field",
+                    hasArg = true,
+                    argName = "field",
+                    desc = "When querying info 'jvm_thread_pool'(required), this option is used to specify the thread pool. " +
+                            "If `ifield` is not filled, `field` will represent the static variable name of the thread " +
+                            "pool stored in `clazz`, and if `ifeld` is filled in, `field` will represent the property " +
+                            "variable name of the thread pool stored in the instance"
             )
     })
-    @JvmmCmdDesc(desc = "Get information about the target server. \neg. info -t threadDetail")
+    @JvmmCmdDesc(desc = "Get information about the target server. \neg. info -t process")
     public static void info(JvmmConnector connector, CommandLine cmd) throws Exception {
-        String type = cmd.getOptionValue("t");
+        CollectionType type;
+        try {
+            type = CollectionType.valueOf(cmd.getOptionValue("t"));
+        } catch (Exception e) {
+            printErr("Invalid info type: " + cmd.getOptionValue("t"));
+            return;
+        }
 
         JvmmRequest request = JvmmRequest.create();
         switch (type) {
-            case "process":
+            case process:
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_PROCESS_INFO);
                 break;
-            case "disk":
+            case disk:
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_DISK_INFO);
                 break;
-            case "diskio":
+            case disk_io:
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_DISK_IO_INFO);
                 break;
-            case "cpu":
+            case cpu:
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_CPU_INFO);
                 break;
-            case "net":
+            case network:
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_NETWORK_INFO);
                 break;
-            case "sys":
+            case sys:
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_SYS_INFO);
                 break;
-            case "sysMem":
+            case sys_memory:
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_SYS_MEMORY_INFO);
                 break;
-            case "sysFile":
+            case sys_file:
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_SYS_FILE_INFO);
                 break;
-            case "cLoading":
+            case jvm_classloading:
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_CLASSLOADING_INFO);
                 break;
-            case "cLoader":
+            case jvm_classloader:
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_CLASSLOADER_INFO);
                 break;
-            case "comp":
+            case jvm_compilation:
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_COMPILATION_INFO);
                 break;
-            case "gc":
+            case jvm_gc:
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_GC_INFO);
                 break;
-            case "jvmMem":
+            case jvm_memory:
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_MEMORY_INFO);
                 break;
-            case "memManager":
+            case jvm_memory_manager:
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_MEMORY_MANAGER_INFO);
                 break;
-            case "memPool":
+            case jvm_memory_pool:
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_MEMORY_POOL_INFO);
                 break;
-            case "thread":
+            case jvm_thread:
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_INFO);
                 break;
-            case "threadStack": {
+            case jvm_thread_stack: {
                 if (cmd.hasOption("tid")) {
                     request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_STACK);
                     JsonObject data = new JsonObject();
@@ -139,7 +178,7 @@ public class ServerServiceImpl extends ServerService {
                 }
                 break;
             }
-            case "threadDetail": {
+            case jvm_thread_detail: {
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_DETAIL);
                 if (cmd.hasOption("tid")) {
                     JsonArray idArr = new JsonArray();
@@ -149,6 +188,32 @@ public class ServerServiceImpl extends ServerService {
                     }
                     request.setData(idArr);
                 }
+                break;
+            }
+            case jvm_thread_pool: {
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_POOL);
+                String clazz = cmd.getOptionValue("clazz");
+                if (clazz == null) {
+                    printErr("Missing required param `clazz`");
+                    return;
+                }
+                String loader = cmd.getOptionValue("loader");
+                String ifield = cmd.getOptionValue("ifield");
+                String field = cmd.getOptionValue("field");
+                if (field == null) {
+                    printErr("Missing required param `field`");
+                    return;
+                }
+                JsonObject data = new JsonObject();
+                data.addProperty("clazz", clazz);
+                data.addProperty("field", field);
+                if (loader != null) {
+                    data.addProperty("classLoaderHash", Integer.parseInt(loader));
+                }
+                if (ifield != null) {
+                    data.addProperty("instanceField", ifield);
+                }
+                request.setData(data);
                 break;
             }
             default:
@@ -185,7 +250,7 @@ public class ServerServiceImpl extends ServerService {
                 printErr("Write failed, " + e.getMessage());
             }
         } else {
-            if (Objects.equals(type, "threadStack")) {
+            if (Objects.equals(type, CollectionType.jvm_thread_stack)) {
                 JsonArray stack = response.getData().getAsJsonArray();
                 StringBuilder str = new StringBuilder();
                 for (JsonElement ele : stack) {

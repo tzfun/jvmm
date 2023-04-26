@@ -1,6 +1,7 @@
 package org.beifengtz.jvmm.server.controller;
 
 import com.google.gson.JsonArray;
+import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.convey.annotation.HttpController;
 import org.beifengtz.jvmm.convey.annotation.HttpRequest;
 import org.beifengtz.jvmm.convey.annotation.JvmmController;
@@ -10,11 +11,14 @@ import org.beifengtz.jvmm.convey.annotation.RequestParam;
 import org.beifengtz.jvmm.convey.entity.ResponseFuture;
 import org.beifengtz.jvmm.convey.enums.GlobalType;
 import org.beifengtz.jvmm.convey.enums.Method;
+import org.beifengtz.jvmm.core.CollectionType;
 import org.beifengtz.jvmm.core.JvmmFactory;
+import org.beifengtz.jvmm.core.Unsafe;
 import org.beifengtz.jvmm.core.entity.info.*;
 import org.beifengtz.jvmm.server.entity.dto.ThreadInfoDTO;
-import org.beifengtz.jvmm.server.enums.CollectionType;
 import org.beifengtz.jvmm.server.service.JvmmService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +36,8 @@ import java.util.List;
 @JvmmController
 @HttpController
 public class CollectController {
+
+    private static final Logger logger = LoggerFactory.getLogger(CollectController.class);
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_PROCESS_INFO)
     @HttpRequest("/collect/process")
@@ -165,6 +171,22 @@ public class CollectController {
             }
         }
         return result;
+    }
+
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_POOL)
+    @HttpRequest("/collect/jvm/thread_pool")
+    public ThreadPoolInfo getThreadPoolInfo(@RequestParam int classLoaderHash, @RequestParam String clazz,
+                                            @RequestParam String instanceField, @RequestParam String field) {
+
+        ClassLoader classLoader = Unsafe.getClassLoader(classLoaderHash);
+        if (classLoader == null) {
+            logger.debug("Can not found target ClassLoader by hashcode: {}", classLoaderHash);
+        }
+        if (StringUtil.isEmpty(instanceField)) {
+            return JvmmFactory.getCollector().getThreadPoolInfo(classLoader, clazz, field);
+        } else {
+            return JvmmFactory.getCollector().getThreadPoolInfo(classLoader, clazz, instanceField, field);
+        }
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_BATCH)

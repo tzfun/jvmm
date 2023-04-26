@@ -1,6 +1,6 @@
 package org.beifengtz.jvmm.server.entity.conf;
 
-import org.beifengtz.jvmm.server.enums.CollectionType;
+import org.beifengtz.jvmm.core.CollectionType;
 
 import java.util.ArrayList;
 import java.util.List;

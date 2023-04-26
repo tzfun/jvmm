@@ -240,6 +240,9 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                                 if (parameter[i] == null) {
                                     parameter[i] = new Gson().fromJson((String) value, parameterType);
                                 }
+                                if (ReflexUtil.isBaseType(parameterType) && parameter[i] == null) {
+                                    parameter[i] = ReflexUtil.getBaseTypeDefault(parameterType);
+                                }
                             }
                         }
                     }

@@ -80,10 +80,10 @@ info -t disk
 ]
 ```
 
-### diskio
+### disk_io
 
 ```shell
-info -t diskio
+info -t disk_io
 ```
 
 ```json
@@ -123,10 +123,10 @@ info -t cpu
 }
 ```
 
-### net
+### network
 
 ```shell
-info -t net
+info -t network
 ```
 
 ```json
@@ -248,10 +248,10 @@ info -t sys
 }
 ```
 
-### sysMem
+### sys_memory
 
 ```shell
-info -t sysMem
+info -t sys_memory
 ```
 
 ```json
@@ -266,10 +266,10 @@ info -t sysMem
 }
 ```
 
-### sysFile
+### sys_file
 
 ```shell
-info -t sysFile
+info -t sys_file
 ```
 
 ```json
@@ -309,10 +309,10 @@ info -t sysFile
 
 下面是 Java 虚拟机相关的采集示例
 
-### cLoading
+### jvm_classloading
 
 ```shell
-info -t cLoading
+info -t jvm_classloading
 ```
 
 ```json
@@ -324,10 +324,10 @@ info -t cLoading
 }
 ```
 
-### cLoader
+### jvm_classloader
 
 ```shell
-info -t cLoader
+info -t jvm_classloader
 ```
 
 ```json
@@ -350,10 +350,10 @@ info -t cLoader
 ]
 ```
 
-### comp
+### jvm_compilation
 
 ```shell
-info -t comp
+info -t jvm_compilation
 ```
 
 ```json
@@ -364,10 +364,10 @@ info -t comp
 }
 ```
 
-### gc
+### jvm_gc
 
 ```shell
-info -t gc
+info -t jvm_gc
 ```
 
 ```json
@@ -397,10 +397,10 @@ info -t gc
 ]
 ```
 
-### jvmMem
+### jvm_memory
 
 ```shell
-info -t jvmMem
+info -t jvm_memory
 ```
 
 ```json
@@ -422,10 +422,10 @@ info -t jvmMem
 }
 ```
 
-### memManager
+### jvm_memory_manager
 
 ```shell
-info -t memManager
+info -t jvm_memory_manager
 ```
 
 ```json
@@ -468,10 +468,10 @@ info -t memManager
 ]
 ```
 
-### memPool
+### jvm_memory_pool
 
 ```shell
-info -t memPool
+info -t jvm_memory_pool
 ```
 
 ```json
@@ -754,10 +754,10 @@ info -t memPool
 ]
 ```
 
-### thread
+### jvm_thread
 
 ```shell
-info -t thread
+info -t jvm_thread
 ```
 
 ```json
@@ -776,10 +776,10 @@ info -t thread
 }
 ```
 
-### threadDetail
+### jvm_thread_detail
 
 ```shell
-info -t threadDetail
+info -t jvm_thread_detail
 ```
 
 ```json
@@ -931,10 +931,10 @@ info -t threadDetail
 ]
 ```
 
-### threadStack
+### jvm_thread_stack
 
 ```shell
-info -t threadStack
+info -t jvm_thread_stack
 ```
 
 ```text
@@ -1078,4 +1078,29 @@ Full thread dump Java HotSpot(TM) 64-Bit Server VM Oracle Corporation (11.0.13+1
         at java.base@11.0.13/java.util.concurrent.locks.LockSupport.park(LockSupport.java:194)
         at java.base@11.0.13/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1628)
         at java.base@11.0.13/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:183)
+```
+
+### jvm_thread_pool
+
+```shell
+info -t jvm_thread_pool -clazz org.beifengtz.jvmm.common.factory.ExecutorFactory -field SCHEDULE_THREAD_POOL
+```
+
+```json
+{
+  "threadFactory": "org.beifengtz.jvmm.common.factory.ExecutorFactory$DefaultThreadFactory",
+  "rejectHandler": "java.util.concurrent.ThreadPoolExecutor$CallerRunsPolicy",
+  "corePoolSize": 2,
+  "maximumPoolSize": 2147483647,
+  "keepAliveMillis": 0,
+  "queue": "java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue",
+  "state": "Running",
+  "allowsCoreThreadTimeOut": false,
+  "queueSize": 0,
+  "threadCount": 1,
+  "activeThreadCount": 1,
+  "largestThreadCount": 1,
+  "taskCount": 1,
+  "completedTaskCount": 0
+}
 ```

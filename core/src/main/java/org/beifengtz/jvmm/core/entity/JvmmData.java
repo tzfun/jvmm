@@ -31,6 +31,7 @@ public class JvmmData implements JsonParsable {
     private List<JvmMemoryManagerInfo> jvmMemoryManager;
     private List<JvmMemoryPoolInfo> jvmMemoryPool;
     private JvmThreadInfo jvmThread;
+    private String[] jvmStack;
     private JvmThreadDetailInfo[] jvmThreadDetail;
 
     public String getNode() {
@@ -186,9 +187,13 @@ public class JvmmData implements JsonParsable {
         return this;
     }
 
-    @Override
-    public String toString() {
-        return toJsonStr();
+    public String[] getJvmStack() {
+        return jvmStack;
+    }
+
+    public JvmmData setJvmStack(String[] jvmStack) {
+        this.jvmStack = jvmStack;
+        return this;
     }
 
     public JvmThreadDetailInfo[] getJvmThreadDetail() {
@@ -198,5 +203,10 @@ public class JvmmData implements JsonParsable {
     public JvmmData setJvmThreadDetail(JvmThreadDetailInfo[] jvmThreadDetail) {
         this.jvmThreadDetail = jvmThreadDetail;
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return toJsonStr();
     }
 }

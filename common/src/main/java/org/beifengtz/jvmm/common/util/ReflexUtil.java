@@ -218,4 +218,45 @@ public class ReflexUtil {
         }
         return null;
     }
+
+    /**
+     * 是否是基础数据类型，包含装箱类
+     *
+     * @param type 目标类型
+     * @return true or false
+     */
+    public static boolean isBaseType(Class<?> type) {
+        if (type == null) {
+            return false;
+        }
+        return type.isAssignableFrom(byte.class) || type.isAssignableFrom(Byte.class)
+                || type.isAssignableFrom(short.class) || type.isAssignableFrom(Short.class)
+                || type.isAssignableFrom(int.class) || type.isAssignableFrom(Integer.class)
+                || type.isAssignableFrom(float.class) || type.isAssignableFrom(Float.class)
+                || type.isAssignableFrom(double.class) || type.isAssignableFrom(Double.class)
+                || type.isAssignableFrom(boolean.class) || type.isAssignableFrom(Boolean.class)
+                || type.isAssignableFrom(long.class) || type.isAssignableFrom(Long.class);
+    }
+
+    /**
+     * 获取基础数据类型的默认值
+     *
+     * @param type 目标类型
+     * @return 默认值
+     */
+    public static Object getBaseTypeDefault(Class<?> type) {
+        if (type == null) {
+            return null;
+        }
+        if (type.isAssignableFrom(byte.class)
+                || type.isAssignableFrom(short.class)
+                || type.isAssignableFrom(int.class)
+                || type.isAssignableFrom(float.class)
+                || type.isAssignableFrom(double.class)
+                || type.isAssignableFrom(boolean.class)
+                || type.isAssignableFrom(long.class)) {
+            return 0;
+        }
+        return null;
+    }
 }

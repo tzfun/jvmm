@@ -5,7 +5,7 @@ import org.beifengtz.jvmm.common.util.meta.PairKey;
 import org.beifengtz.jvmm.core.JvmmCollector;
 import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.entity.JvmmData;
-import org.beifengtz.jvmm.server.enums.CollectionType;
+import org.beifengtz.jvmm.core.CollectionType;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -117,6 +117,9 @@ public interface JvmmService {
                     break;
                 case jvm_thread:
                     res.setJvmThread(collector.getJvmThread());
+                    break;
+                case jvm_thread_stack:
+                    res.setJvmStack(collector.dumpAllThreads());
                     break;
                 case jvm_thread_detail:
                     res.setJvmThreadDetail(collector.getAllJvmThreadDetailInfo());
