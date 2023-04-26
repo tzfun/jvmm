@@ -1,5 +1,6 @@
 package org.beifengtz.jvmm.client.cli;
 
+import java.text.ParseException;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
@@ -17,7 +18,8 @@ public class CmdLineGroup {
     /**
      * 窗口宽度，用于控制 Help 折行显示
      */
-    private int windowWidth = 126;
+    private int windowWidth = 130;
+    private int maxPrefix = 0;
 
     private final Set<CmdLine> commands = new TreeSet<>();
 
@@ -59,6 +61,7 @@ public class CmdLineGroup {
 
     public CmdLineGroup addCommand(CmdLine command) {
         commands.add(command);
+        maxPrefix = Math.max(maxPrefix, command.scanHelpMaxPrefix());
         return this;
     }
 
@@ -75,10 +78,6 @@ public class CmdLineGroup {
         if (headDesc != null) {
             System.out.println(CmdLine.breakLine(headDesc, getWindowWidth()));
         }
-        int maxPrefix = 0;
-        for (CmdLine command : commands) {
-            maxPrefix = Math.max(maxPrefix, command.scanHelpMaxPrefix());
-        }
 
         for (CmdLine command : commands) {
             command.printHelp(windowWidth, maxPrefix);
@@ -94,11 +93,11 @@ public class CmdLineGroup {
         if (cmd == null) {
             System.out.println("Can not found command '" + key + "'");
         } else {
-            cmd.printHelp(getWindowWidth(), -1);
+            cmd.printHelp(getWindowWidth(), maxPrefix);
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParseException {
         CmdLineGroup group = CmdLineGroup.create()
                 .addCommand(CmdLine.create().setKey("info").setArgPrefix("-")
                         .addOption(CmdOption.create().setName("t").setArgName("type").setOrder(1)
@@ -118,7 +117,7 @@ public class CmdLineGroup {
                                         "\n- jvm_thread\n- jvm_thread_stack\n- jvm_thread_detail\n- jvm_thread_pool")));
         group.printHelp();
 
-        CmdParser parser = CmdParser.create(group.getCommand("info"), "info -t jvmm -b -i interval -m \"hello world\" -q");
+        CmdParser parser = CmdParser.parse(group.getCommand("info"), "info -t jvmm -b -i interval -m \"hello world\" -q");
         System.out.println(parser.getArg("t"));
         System.out.println(parser.getArg("i"));
         System.out.println(parser.hasArg("b"));

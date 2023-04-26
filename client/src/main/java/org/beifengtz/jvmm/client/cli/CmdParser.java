@@ -1,5 +1,7 @@
 package org.beifengtz.jvmm.client.cli;
 
+import java.text.ParseException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,46 +15,57 @@ public class CmdParser {
 
     private final Map<String, String> kv = new HashMap<>();
 
-    private CmdParser(CmdLine cmdLine, String command) {
-        String[] split = command.split(" ");
-        String key = null, tmpValue = null;
-        for (String s : split) {
-            if (s.startsWith(cmdLine.getArgPrefix())) {
-                if (key != null) {
-                    if (tmpValue == null) {
-                        kv.put(key, "");
-                    } else {
-                        kv.put(key, tmpValue);
+    private CmdParser(CmdLine cmdLine, String command) throws ParseException {
+        this(cmdLine, command.split(" "));
+    }
+
+    private CmdParser(CmdLine cmdLine, String[] args) throws ParseException {
+        try {
+            String key = null, tmpValue = null;
+            for (String s : args) {
+                if (s.startsWith(cmdLine.getArgPrefix())) {
+                    if (key != null) {
+                        if (tmpValue == null) {
+                            kv.put(key, "");
+                        } else {
+                            kv.put(key, tmpValue);
+                        }
                     }
-                }
-                key = s.substring(cmdLine.getArgPrefix().length());
-            } else {
-                if (tmpValue == null) {
-                    if (s.startsWith("\"") && !s.endsWith("\"")) {
-                        tmpValue = s;
-                    } else {
-                        kv.put(key, s);
-                        key = null;
-                    }
+                    key = s.substring(cmdLine.getArgPrefix().length());
                 } else {
-                    if (!s.startsWith("\"") && s.endsWith("\"")) {
-                        tmpValue += " " + s;
-                        kv.put(key, tmpValue.substring(1, tmpValue.length() - 1));
-                        key = null;
-                        tmpValue = null;
+                    if (tmpValue == null) {
+                        if (s.startsWith("\"") && !s.endsWith("\"")) {
+                            tmpValue = s;
+                        } else {
+                            kv.put(key, s);
+                            key = null;
+                        }
                     } else {
-                        tmpValue += " " + s;
+                        if (!s.startsWith("\"") && s.endsWith("\"")) {
+                            tmpValue += " " + s;
+                            kv.put(key, tmpValue.substring(1, tmpValue.length() - 1));
+                            key = null;
+                            tmpValue = null;
+                        } else {
+                            tmpValue += " " + s;
+                        }
                     }
                 }
             }
-        }
-        if (key != null) {
-            kv.put(key, tmpValue);
+            if (key != null) {
+                kv.put(key, tmpValue);
+            }
+        } catch (Exception e) {
+            throw new ParseException("Parse command failed: " + Arrays.toString(args), 0);
         }
     }
 
-    public static CmdParser create(CmdLine cmdLine, String command) {
+    public static CmdParser parse(CmdLine cmdLine, String command) throws ParseException {
         return new CmdParser(cmdLine, command);
+    }
+
+    public static CmdParser parse(CmdLine cmdLine, String[] args) throws ParseException {
+        return new CmdParser(cmdLine, args);
     }
 
     public boolean hasArg(String arg) {

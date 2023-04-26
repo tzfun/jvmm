@@ -20,11 +20,9 @@ public @interface JvmmOption {
 
     String name();
 
-    boolean hasArg() default false;
+    int order() default 1;
 
     String argName() default "";
-
-    boolean required() default false;
 
     String desc() default "";
 
