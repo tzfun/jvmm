@@ -1,18 +1,16 @@
 package org.beifengtz.jvmm.client;
 
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 import org.beifengtz.jvmm.client.annotation.IgnoreCmdParse;
 import org.beifengtz.jvmm.client.annotation.JvmmCmdDesc;
 import org.beifengtz.jvmm.client.annotation.JvmmOption;
 import org.beifengtz.jvmm.client.annotation.JvmmOptions;
+import org.beifengtz.jvmm.client.annotation.Order;
+import org.beifengtz.jvmm.client.cli.CmdLine;
+import org.beifengtz.jvmm.client.cli.CmdLineGroup;
+import org.beifengtz.jvmm.client.cli.CmdOption;
+import org.beifengtz.jvmm.client.cli.CmdParser;
 import org.beifengtz.jvmm.common.exception.ErrorStatusException;
 import org.beifengtz.jvmm.common.util.CommonUtil;
-import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
@@ -21,6 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,53 +42,50 @@ public class ServerService {
 
     protected static final Map<String, Method> methodMap = new HashMap<>();
     protected static final Set<String> ignoreParseMap = new HashSet<>();
-    protected static final Map<String, Options> optionsMap = new HashMap<>();
-    protected static final Map<String, String> descMap = new HashMap<>();
-    protected static final CommandLineParser commandParser = DefaultParser.builder().build();
     protected static final String HELP_KEY = "help";
+    protected static CmdLineGroup cmdGroup;
 
     static {
         init();
     }
 
     protected static void init() {
+        cmdGroup = CmdLineGroup.create();
+
         Method[] methods = ServerServiceImpl.class.getMethods();
         for (Method method : methods) {
             String name = method.getName();
-            JvmmOption[] arr;
+
+            CmdLine cmdLine = CmdLine.create().setKey(name);
+
+            JvmmOption[] arr = null;
             if (method.isAnnotationPresent(JvmmOptions.class)) {
                 JvmmOptions ops = method.getAnnotation(JvmmOptions.class);
                 arr = ops.value();
             } else if (method.isAnnotationPresent(JvmmOption.class)) {
                 arr = new JvmmOption[]{method.getAnnotation(JvmmOption.class)};
             } else if (method.isAnnotationPresent(JvmmCmdDesc.class)) {
-                arr = new JvmmOption[0];
-                descMap.put(name, method.getAnnotation(JvmmCmdDesc.class).desc());
-            } else {
-                continue;
+                JvmmCmdDesc cmdDesc = method.getAnnotation(JvmmCmdDesc.class);
+                cmdLine.setHeadDesc(cmdDesc.headDesc())
+                        .setTailDesc(cmdDesc.tailDesc());
+            } else if (method.isAnnotationPresent(Order.class)) {
+                cmdLine.setOrder(method.getAnnotation(Order.class).value());
             }
 
             methodMap.put(name, method);
-            if (method.isAnnotationPresent(JvmmCmdDesc.class)) {
-                descMap.put(name, method.getAnnotation(JvmmCmdDesc.class).desc());
-            }
             if (method.isAnnotationPresent(IgnoreCmdParse.class)) {
                 ignoreParseMap.add(name);
             }
-
-            Options options = new Options();
-            for (JvmmOption op : arr) {
-                Option.Builder builder = Option.builder(op.name()).hasArg(op.hasArg()).required(op.required());
-                if (op.hasArg() && StringUtil.nonEmpty(op.argName())) {
-                    builder.argName(op.argName());
+            if (arr != null) {
+                for (JvmmOption op : arr) {
+                    cmdLine.addOption(CmdOption.create()
+                            .setName(op.name())
+                            .setArgName(op.argName())
+                            .setOrder(op.order())
+                            .setDesc(op.desc()));
                 }
-                if (StringUtil.nonEmpty(op.desc())) {
-                    builder.desc(op.desc());
-                }
-                options.addOption(builder.build());
             }
-
-            optionsMap.put(name, options);
+            cmdGroup.addCommand(cmdLine);
         }
     }
 
@@ -127,7 +123,7 @@ public class ServerService {
             if (ignoreParseMap.contains(key)) {
                 arg = CommonUtil.join(" ", Arrays.stream(args).collect(Collectors.toList()));
             } else {
-                arg = commandParser.parse(optionsMap.get(key), args);
+                arg = CmdParser.parse(cmdGroup.getCommand(key), command);
             }
             methodMap.get(key).invoke(null, connector, arg);
             Thread.sleep(50);
@@ -139,9 +135,6 @@ public class ServerService {
     }
 
     protected static void printHelp(String... names) {
-        final int width = 130;
-        HelpFormatter helper = new HelpFormatter();
-
         //  打印全部
         if (names == null || names.length == 0) {
             names = methodMap.keySet().toArray(new String[0]);
@@ -149,10 +142,7 @@ public class ServerService {
 
         System.out.println("You can use the following command in client mode.\n");
         for (String name : names) {
-            helper.setSyntaxPrefix(name + ": ");
-            Options options = optionsMap.get(name);
-            int optionNum = options.getOptions().size();
-            helper.printHelp(width, HelpFormatter.DEFAULT_OPT_PREFIX, descMap.get(name), options, optionNum == 0 ? null : "\n");
+            cmdGroup.printHelp(name);
         }
     }
 

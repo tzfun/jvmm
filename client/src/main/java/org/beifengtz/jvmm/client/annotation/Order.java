@@ -6,17 +6,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p>
- * Description: TODO
- * </p>
- * <p>
- * Created in 8:42 下午 2021/12/13
+ * description: TODO
+ * date: 18:04 2023/4/26
  *
  * @author beifengtz
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface JvmmCmdDesc {
-    String headDesc() default "";
-    String tailDesc() default "";
+public @interface Order {
+    int value() default 1;
 }

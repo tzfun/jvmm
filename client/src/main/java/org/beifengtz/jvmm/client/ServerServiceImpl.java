@@ -6,11 +6,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import org.apache.commons.cli.CommandLine;
 import org.beifengtz.jvmm.client.annotation.IgnoreCmdParse;
 import org.beifengtz.jvmm.client.annotation.JvmmCmdDesc;
 import org.beifengtz.jvmm.client.annotation.JvmmOption;
 import org.beifengtz.jvmm.client.annotation.JvmmOptions;
+import org.beifengtz.jvmm.client.cli.CmdParser;
 import org.beifengtz.jvmm.common.util.CodingUtil;
 import org.beifengtz.jvmm.common.util.FileUtil;
 import org.beifengtz.jvmm.common.util.StringUtil;
@@ -38,8 +38,6 @@ public class ServerServiceImpl extends ServerService {
     @JvmmOptions({
             @JvmmOption(
                     name = "t",
-                    hasArg = true,
-                    required = true,
                     argName = "type",
                     desc = "Required info type, optional values: \n\t- process\n\t- disk\n\t- disk_io\n\t- cpu" +
                             "\n\t- network\n\t- sys\n\t- sys_memory\n\t- sys_file\n\t- jvm_classloading\n\t- jvm_classloader" +
@@ -48,32 +46,27 @@ public class ServerServiceImpl extends ServerService {
             ),
             @JvmmOption(
                     name = "f",
-                    hasArg = true,
                     argName = "output",
                     desc = "File path (optional), output info to file."
             ),
             @JvmmOption(
                     name = "tid",
-                    hasArg = true,
                     argName = "threadId",
                     desc = "When querying info 'jvm_thread_stack' or 'jvm_thread_detail', you can specify a thread id, multiple ids use ',' separate them"
             ),
             @JvmmOption(
                     name = "tdeep",
-                    hasArg = true,
                     argName = "threadDepp",
                     desc = "When querying info 'jvm_thread_stack', this option is used to specify the stack depth, default 5"
             ),
             @JvmmOption(
                     name = "clazz",
-                    hasArg = true,
                     argName = "class",
                     desc = "When querying info 'jvm_thread_pool'(required), this option is used to specify the class full path. " +
                             "JVMM will get instance of the thread pool through reflection, you need to use it with `loader`, `ifield` and `field` parameters"
             ),
             @JvmmOption(
                     name = "loader",
-                    hasArg = true,
                     argName = "classloader",
                     desc = "When querying info 'jvm_thread_pool', this option is used to specify the classloader hashcode. " +
                             "You can execute `info -t jvm_classloader` to get classloader hashcode, if not filled, " +
@@ -81,14 +74,12 @@ public class ServerServiceImpl extends ServerService {
             ),
             @JvmmOption(
                     name = "ifield",
-                    hasArg = true,
                     argName = "instanceField",
                     desc = "When querying info 'jvm_thread_pool', this option is used to specify the instance field. " +
                             "If not filled, the static `field` of `clazz` will be read"
             ),
             @JvmmOption(
                     name = "field",
-                    hasArg = true,
                     argName = "field",
                     desc = "When querying info 'jvm_thread_pool'(required), this option is used to specify the thread pool. " +
                             "If `ifield` is not filled, `field` will represent the static variable name of the thread " +
@@ -96,13 +87,13 @@ public class ServerServiceImpl extends ServerService {
                             "variable name of the thread pool stored in the instance"
             )
     })
-    @JvmmCmdDesc(desc = "Get information about the target server. \neg. info -t process")
-    public static void info(JvmmConnector connector, CommandLine cmd) throws Exception {
+    @JvmmCmdDesc(headDesc =  "Get information about the target server. \neg. info -t process")
+    public static void info(JvmmConnector connector, CmdParser cmd) throws Exception {
         CollectionType type;
         try {
-            type = CollectionType.valueOf(cmd.getOptionValue("t"));
+            type = CollectionType.valueOf(cmd.getArg("t"));
         } catch (Exception e) {
-            printErr("Invalid info type: " + cmd.getOptionValue("t"));
+            printErr("Invalid info type: " + cmd.getArg("t"));
             return;
         }
 
@@ -157,14 +148,14 @@ public class ServerServiceImpl extends ServerService {
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_INFO);
                 break;
             case jvm_thread_stack: {
-                if (cmd.hasOption("tid")) {
+                if (cmd.hasArg("tid")) {
                     request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_STACK);
                     JsonObject data = new JsonObject();
-                    if (cmd.hasOption("tdeep")) {
-                        data.addProperty("depth", Integer.parseInt(cmd.getOptionValue("tdeep")));
+                    if (cmd.hasArg("tdeep")) {
+                        data.addProperty("depth", Integer.parseInt(cmd.getArg("tdeep")));
                     }
                     JsonArray idArr = new JsonArray();
-                    String[] ids = cmd.getOptionValue("tid").split(",");
+                    String[] ids = cmd.getArg("tid").split(",");
                     for (String id : ids) {
                         idArr.add(Long.parseLong(id));
                     }
@@ -177,9 +168,9 @@ public class ServerServiceImpl extends ServerService {
             }
             case jvm_thread_detail: {
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_DETAIL);
-                if (cmd.hasOption("tid")) {
+                if (cmd.hasArg("tid")) {
                     JsonArray idArr = new JsonArray();
-                    String[] ids = cmd.getOptionValue("tid").split(",");
+                    String[] ids = cmd.getArg("tid").split(",");
                     for (String id : ids) {
                         idArr.add(Long.parseLong(id));
                     }
@@ -189,14 +180,14 @@ public class ServerServiceImpl extends ServerService {
             }
             case jvm_thread_pool: {
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_POOL);
-                String clazz = cmd.getOptionValue("clazz");
+                String clazz = cmd.getArg("clazz");
                 if (clazz == null) {
                     printErr("Missing required param `clazz`");
                     return;
                 }
-                String loader = cmd.getOptionValue("loader");
-                String ifield = cmd.getOptionValue("ifield");
-                String field = cmd.getOptionValue("field");
+                String loader = cmd.getArg("loader");
+                String ifield = cmd.getArg("ifield");
+                String field = cmd.getArg("field");
                 if (field == null) {
                     printErr("Missing required param `field`");
                     return;
@@ -222,9 +213,9 @@ public class ServerServiceImpl extends ServerService {
         if (response == null) {
             return;
         }
-        if (cmd.hasOption("f")) {
+        if (cmd.hasArg("f")) {
             try {
-                File file = new File(cmd.getOptionValue("f"));
+                File file = new File(cmd.getArg("f"));
                 String str;
                 if (response.getData().isJsonArray()) {
                     StringBuilder sb = new StringBuilder();
@@ -260,8 +251,8 @@ public class ServerServiceImpl extends ServerService {
         }
     }
 
-    @JvmmCmdDesc(desc = "Execute gc, no arguments.")
-    public static void gc(JvmmConnector connector, CommandLine cmd) {
+    @JvmmCmdDesc(headDesc =  "Execute gc, no arguments.")
+    public static void gc(JvmmConnector connector, CmdParser cmd) {
         JvmmRequest request = JvmmRequest.create().setType(GlobalType.JVMM_TYPE_EXECUTE_GC);
         JvmmResponse response = request(connector, request);
         if (response == null) {
@@ -272,16 +263,14 @@ public class ServerServiceImpl extends ServerService {
 
     @JvmmOption(
             name = "t",
-            required = true,
-            hasArg = true,
             argName = "type",
             desc = "Required *. The type of service to be closed, allowed values: jvmm, http, sentinel"
     )
-    @JvmmCmdDesc(desc = "Shutdown service.")
-    public static void shutdown(JvmmConnector connector, CommandLine cmd) {
+    @JvmmCmdDesc(headDesc =  "Shutdown service.")
+    public static void shutdown(JvmmConnector connector, CmdParser cmd) {
         JvmmRequest request = JvmmRequest.create()
                 .setType(GlobalType.JVMM_TYPE_SERVER_SHUTDOWN)
-                .setData(new JsonPrimitive(cmd.getOptionValue("t")));
+                .setData(new JsonPrimitive(cmd.getArg("t")));
         JvmmResponse response = request(connector, request);
         if (response == null) {
             return;
@@ -289,8 +278,8 @@ public class ServerServiceImpl extends ServerService {
         System.out.println("ok");
     }
 
-    @JvmmCmdDesc(desc = "View all java processes running on this physical machine.")
-    public static void jps(JvmmConnector connector, CommandLine cmd) {
+    @JvmmCmdDesc(headDesc =  "View all java processes running on this physical machine.")
+    public static void jps(JvmmConnector connector, CmdParser cmd) {
         JvmmRequest request = JvmmRequest.create().setType(GlobalType.JVMM_TYPE_EXECUTE_JAVA_PROCESS);
         JvmmResponse response = request(connector, request);
         if (response == null) {
@@ -307,61 +296,56 @@ public class ServerServiceImpl extends ServerService {
     @JvmmOptions({
             @JvmmOption(
                     name = "e",
-                    hasArg = true,
                     argName = "event",
                     desc = "Sample event, optional values: cpu, alloc, lock, wall, itimer. Default value: cpu."
             ),
             @JvmmOption(
                     name = "c",
-                    hasArg = true,
                     argName = "counter",
                     desc = "Sample counter type, optional values: samples, total. Default value: samples."
             ),
             @JvmmOption(
                     name = "t",
-                    hasArg = true,
                     argName = "time",
                     desc = "Sampling interval time, the unit is second. Default value: 10 s."
             ),
             @JvmmOption(
                     name = "i",
-                    hasArg = true,
                     argName = "interval",
                     desc = "The time interval of the unit to collect samples, the unit is nanosecond. Default value: 10000000 ns."
             ),
             @JvmmOption(
                     name = "f",
-                    hasArg = true,
                     argName = "file",
                     desc = "Output file path, supported file type: html, txt, jfr. If not filled, will output text content"
             )
     })
-    @JvmmCmdDesc(desc = "Get server sampling report. Only supported on MacOS and Linux.")
-    public static void profiler(JvmmConnector connector, CommandLine cmd) {
+    @JvmmCmdDesc(headDesc =  "Get server sampling report. Only supported on MacOS and Linux.")
+    public static void profiler(JvmmConnector connector, CmdParser cmd) {
         JvmmRequest request = JvmmRequest.create().setType(GlobalType.JVMM_TYPE_PROFILER_SAMPLE);
         JsonObject data = new JsonObject();
-        if (cmd.hasOption("e")) {
-            data.addProperty("event", cmd.getOptionValue("e"));
+        if (cmd.hasArg("e")) {
+            data.addProperty("event", cmd.getArg("e"));
         }
 
-        if (cmd.hasOption("c")) {
-            data.addProperty("counter", cmd.getOptionValue("c"));
+        if (cmd.hasArg("c")) {
+            data.addProperty("counter", cmd.getArg("c"));
         }
 
         long waitSecs = 20;
-        if (cmd.hasOption("t")) {
-            long time = Long.parseLong(cmd.getOptionValue("t"));
+        if (cmd.hasArg("t")) {
+            long time = Long.parseLong(cmd.getArg("t"));
             data.addProperty("time", time);
             waitSecs = time + 10;
         }
 
-        if (cmd.hasOption("i")) {
-            data.addProperty("interval", Long.parseLong(cmd.getOptionValue("i")));
+        if (cmd.hasArg("i")) {
+            data.addProperty("interval", Long.parseLong(cmd.getArg("i")));
         }
 
         String filePath = null;
-        if (cmd.hasOption("f")) {
-            filePath = cmd.getOptionValue("f");
+        if (cmd.hasArg("f")) {
+            filePath = cmd.getArg("f");
             int dotIdx = filePath.lastIndexOf(".");
             if (dotIdx >= 0 && dotIdx < filePath.length() - 1) {
                 data.addProperty("format", filePath.substring(dotIdx + 1));
@@ -394,7 +378,7 @@ public class ServerServiceImpl extends ServerService {
     }
 
     @IgnoreCmdParse
-    @JvmmCmdDesc(desc = "Execute java tools(if these commands are supported on your machine). jtool <jps|jinfo|jstat|jstack|jamp|jcmd> [params...]")
+    @JvmmCmdDesc(headDesc =  "Execute java tools(if these commands are supported on your machine). jtool <jps|jinfo|jstat|jstack|jamp|jcmd> [params...]")
     public static void jtool(JvmmConnector connector, String command) {
         if (command.trim().length() == 0) {
             printErr("Can not execute empty command");
@@ -419,31 +403,26 @@ public class ServerServiceImpl extends ServerService {
     @JvmmOptions({
             @JvmmOption(
                     name = "c",
-                    required = true,
-                    hasArg = true,
                     argName = "class",
                     desc = "Required *. The java class to be decompiled"
             ),
             @JvmmOption(
                     name = "m",
-                    hasArg = true,
                     argName = "method",
                     desc = "Specify the method name in the decompiled class"
             ),
             @JvmmOption(
                     name = "f",
-                    hasArg = true,
                     argName = "file",
                     desc = "Output file path"
             ),
     })
-
-    @JvmmCmdDesc(desc = "Decompile class files at runtime.")
-    public static void jad(JvmmConnector connector, CommandLine cmd) throws IOException {
+    @JvmmCmdDesc(headDesc =  "Decompile class files at runtime.")
+    public static void jad(JvmmConnector connector, CmdParser cmd) throws IOException {
         JsonObject json = new JsonObject();
-        json.addProperty("className", cmd.getOptionValue("c"));
-        if (cmd.hasOption("m")) {
-            json.addProperty("methodName", cmd.getOptionValue("m"));
+        json.addProperty("className", cmd.getArg("c"));
+        if (cmd.hasArg("m")) {
+            json.addProperty("methodName", cmd.getArg("m"));
         }
         JvmmRequest request = JvmmRequest.create()
                 .setType(GlobalType.JVMM_TYPE_EXECUTE_JAD)
@@ -453,13 +432,13 @@ public class ServerServiceImpl extends ServerService {
             return;
         }
         String result = response.getData().getAsString();
-        if (cmd.hasOption("f")) {
-            File file = new File(cmd.getOptionValue("f"));
+        if (cmd.hasArg("f")) {
+            File file = new File(cmd.getArg("f"));
             if (file.getParentFile() != null && !file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
             FileUtil.writeByteArrayToFile(file, result.getBytes(StandardCharsets.UTF_8));
-            System.out.println("The decompilation result of the '" + cmd.getOptionValue("c") + "' class has been output to the file " + file.getAbsolutePath());
+            System.out.println("The decompilation result of the '" + cmd.getArg("c") + "' class has been output to the file " + file.getAbsolutePath());
         } else {
             System.out.println(result);
         }

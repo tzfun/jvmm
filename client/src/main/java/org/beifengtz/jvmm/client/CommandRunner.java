@@ -2,16 +2,12 @@ package org.beifengtz.jvmm.client;
 
 import io.netty.channel.EventLoopGroup;
 import io.netty.util.concurrent.Future;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import org.beifengtz.jvmm.client.cli.CmdLine;
+import org.beifengtz.jvmm.client.cli.CmdLineGroup;
+import org.beifengtz.jvmm.client.cli.CmdOption;
+import org.beifengtz.jvmm.client.cli.CmdParser;
 import org.beifengtz.jvmm.common.util.FileUtil;
 import org.beifengtz.jvmm.common.util.IOUtil;
-import org.beifengtz.jvmm.common.util.IPUtil;
 import org.beifengtz.jvmm.common.util.PidUtil;
 import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.common.util.meta.PairKey;
@@ -29,6 +25,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URLDecoder;
 import java.nio.file.Files;
+import java.text.ParseException;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.concurrent.CountDownLatch;
@@ -50,126 +47,102 @@ public class CommandRunner {
     private static final Logger logger = LoggerFactory.getLogger(CommandRunner.class);
     private static final String SLF4J_API_REGEX = "org/slf4j/(?!impl).*";
 
-    private static final Options options;
-    private static final Options rootOptions;
-    private static final Options attachOptions;
-    private static final Options clientOptions;
+    private static final CmdLineGroup cmdGroup;
 
     static {
-        options = new Options();
-        rootOptions = new Options();
-        attachOptions = new Options();
+        cmdGroup = CmdLineGroup.create()
+                .setHeadDesc("Below will list all of parameters. You need choose running mode firstly.")
+                .addCommand(CmdLine.create()
+                        .setKey("")
+                        .setOrder(1)
+                        .addOption(CmdOption.create()
+                                .setName("m")
+                                .setArgName("mode")
+                                .setOrder(1)
+                                .setDesc("* Choose running mode: client, attach, jar"))
+                        .addOption(CmdOption.create()
+                                .setName("h")
+                                .setArgName("help")
+                                .setOrder(2)
+                                .setDesc("Help for usage."))
+                        .setTailDesc("After you select the running mode, the next parameters will continue to be used, " +
+                                "for example: executing `-m client` will enter client mode, or you can directly bring " +
+                                "the parameters of the mode, eg. `-m client -a 127.0.0.1:5010`"));
 
-        options.addOption("help", false, "Help information.");
-        rootOptions.addOption("help", false, "Help information.");
+        cmdGroup.addCommand(CmdLine.create()
+                .setKey("client")
+                .setHeadDesc("Connect to jvmm server and execute some commands.")
+                .setOrder(2)
+                .addOption(CmdOption.create()
+                        .setName("a")
+                        .setArgName("address")
+                        .setOrder(1)
+                        .setDesc("The address that will connect to the Jvmm server, like '127.0.0.1:5010'."))
+                .addOption(CmdOption.create()
+                        .setName("u")
+                        .setArgName("username")
+                        .setOrder(2)
+                        .setDesc("Jvmm server authentication account. If the target jvmm server is auth enable."))
+                .addOption(CmdOption.create()
+                        .setName("p")
+                        .setArgName("password")
+                        .setOrder(3)
+                        .setDesc("Jvmm server authentication password. If the target jvmm server is auth enable.")));
 
-        Option mode = Option.builder("m")
-                .required(false)
-                .hasArg()
-                .argName("mode")
-                .desc("* Choose action mode: client, attach, jar")
-                .build();
-        options.addOption(mode);
-        rootOptions.addOption(mode);
-
-        Option a = Option.builder("a")
-                .required(false)
-                .hasArg()
-                .argName("agentJarFile")
-                .desc("The path of the 'jvmm-agent.jar' file, support relative path, absolute path and network address. Required in attach mode.")
-                .build();
-        options.addOption(a);
-        attachOptions.addOption(a);
-
-        Option s = Option.builder("s")
-                .required(false)
-                .hasArg()
-                .argName("serverJarFile")
-                .desc("The path of the 'jvmm-server.jar' file, support relative path, absolute path and network address. Required in attach mode.")
-                .build();
-        options.addOption(s);
-        attachOptions.addOption(s);
-
-        Option c = Option.builder("c")
-                .required(false)
-                .hasArg()
-                .argName("config")
-                .desc("The path of the config file, support relative path, absolute path and http(s) address. Required in attach mode.")
-                .build();
-        options.addOption(c);
-        attachOptions.addOption(c);
-
-        Option p = Option.builder("p")
-                .required(false)
-                .hasArg()
-                .argName("port")
-                .desc("Target java program listening port. If pid is not filled in, this parameter is required.")
-                .build();
-        options.addOption(p);
-        attachOptions.addOption(p);
-
-        Option pid = Option.builder("pid")
-                .required(false)
-                .hasArg()
-                .argName("pid")
-                .desc("The pid of target java program. If port is not filled in, this parameter is required.")
-                .build();
-        options.addOption(pid);
-        attachOptions.addOption(pid);
-
-        clientOptions = new Options();
-
-        Option host = Option.builder("h")
-                .required(false)
-                .hasArg()
-                .argName("address")
-                .desc("The address that will connect to the Jvmm server, like '127.0.0.1:5010'.")
-                .build();
-        options.addOption(host);
-        clientOptions.addOption(host);
-
-        Option username = Option.builder("user")
-                .required(false)
-                .hasArg()
-                .argName("username")
-                .desc("Jvmm server authentication account. If the target jvmm server is auth enable.")
-                .build();
-        options.addOption(username);
-        clientOptions.addOption(username);
-
-        Option password = Option.builder("pass")
-                .required(false)
-                .hasArg()
-                .argName("password")
-                .desc("Jvmm server authentication password. If the target jvmm server is auth enable.")
-                .build();
-        options.addOption(password);
-        clientOptions.addOption(password);
+        cmdGroup.addCommand(CmdLine.create()
+                .setKey("attach")
+                .setHeadDesc("Attach jvmm server to another java program in this computer.")
+                .setOrder(3)
+                .addOption(CmdOption.create()
+                        .setName("c")
+                        .setArgName("config")
+                        .setOrder(1)
+                        .setDesc("The path of the config file, support relative path, absolute path and http(s) address. Required in attach mode."))
+                .addOption(CmdOption.create()
+                        .setName("p")
+                        .setArgName("port")
+                        .setOrder(2)
+                        .setDesc("Target java program listening port. If pid is not filled in, this parameter is required."))
+                .addOption(CmdOption.create()
+                        .setName("pid")
+                        .setArgName("pid")
+                        .setOrder(3)
+                        .setDesc("The pid of target java program. If port is not filled in, this parameter is required."))
+                .addOption(CmdOption.create()
+                        .setName("a")
+                        .setArgName("agentJarFile")
+                        .setOrder(4)
+                        .setDesc("The path of the 'jvmm-agent.jar' file, support relative path, absolute path and network address. Required in attach mode."))
+                .addOption(CmdOption.create()
+                        .setName("s")
+                        .setArgName("serverJarFile")
+                        .setOrder(5)
+                        .setDesc("The path of the 'jvmm-server.jar' file, support relative path, absolute path and network address. Required in attach mode."))
+        );
     }
 
     public static void run(String[] args) throws Throwable {
-        //parser
-        CommandLineParser parser = DefaultParser.builder().build();
+
         try {
-            CommandLine cmd = parser.parse(options, args);
-            if (cmd.hasOption("help")) {
+            CmdParser cmd = CmdParser.parse(cmdGroup.getCommand(""), args);
+            if (cmd.hasArg("h")) {
                 printHelp();
                 return;
             }
 
             String mode = null;
-            if (cmd.hasOption("m")) {
-                mode = cmd.getOptionValue("m");
+            if (cmd.hasArg("m")) {
+                mode = cmd.getArg("m");
             } else {
                 mode = GuidedRunner.askMode();
             }
 
             if ("attach".equalsIgnoreCase(mode)) {
-                handleAttach(cmd);
+                handleAttach(CmdParser.parse(cmdGroup.getCommand("attach"), args));
             } else if ("client".equalsIgnoreCase(mode)) {
-                handleClient(cmd);
+                handleClient(CmdParser.parse(cmdGroup.getCommand("client"), args));
             } else if ("jar".equalsIgnoreCase(mode)) {
-                handleGenerateJar(cmd);
+                handleGenerateJar();
             } else {
                 logger.error("Only allow model types: client, attach");
             }
@@ -179,7 +152,7 @@ public class CommandRunner {
         System.exit(0);
     }
 
-    private static void handleGenerateJar(CommandLine cmd) throws IOException {
+    private static void handleGenerateJar() throws IOException {
         if (canGenerateAgentJar() && canGenerateServerJar()) {
             generateServerJar(null, true);
             generateAgentJar(null);
@@ -290,15 +263,15 @@ public class CommandRunner {
         }
     }
 
-    private static void handleClient(CommandLine cmd) throws Throwable {
+    private static void handleClient(CmdParser cmd) throws Throwable {
         String address = null, username = null, password = null;
-        if (cmd.hasOption("h")) {
-            address = cmd.getOptionValue("h");
-            if (cmd.hasOption("user")) {
-                username = cmd.getOptionValue("user");
+        if (cmd.hasArg("a")) {
+            address = cmd.getArg("a");
+            if (cmd.hasArg("u")) {
+                username = cmd.getArg("u");
             }
-            if (cmd.hasOption("pass")) {
-                password = cmd.getOptionValue("pass");
+            if (cmd.hasArg("p")) {
+                password = cmd.getArg("p");
             }
         } else {
             address = GuidedRunner.askServerAddress();
@@ -370,12 +343,12 @@ public class CommandRunner {
         return null;
     }
 
-    private static void handleAttach(CommandLine cmd) throws Throwable {
+    private static void handleAttach(CmdParser cmd) throws Throwable {
         String agentFilePath = null, serverFilePath = null, configFilePath = null;
         int pid = -1;
 
-        if (cmd.hasOption("a")) {
-            agentFilePath = cmd.getOptionValue("a");
+        if (cmd.hasArg("a")) {
+            agentFilePath = cmd.getArg("a");
         } else if (canGenerateAgentJar()) {
             generateAgentJar(FileUtil.getTempPath());
             agentFilePath = new File(FileUtil.getTempPath(), "jvmm-agent.jar").getAbsolutePath();
@@ -383,8 +356,8 @@ public class CommandRunner {
             agentFilePath = GuidedRunner.askAgentFilePath();
         }
 
-        if (cmd.hasOption("s")) {
-            serverFilePath = cmd.getOptionValue("s");
+        if (cmd.hasArg("s")) {
+            serverFilePath = cmd.getArg("s");
             FileUtil.delFromJar(serverFilePath, SLF4J_API_REGEX);
         } else if (canGenerateServerJar()) {
             //  通过agent载入的server包不需要包含slf4j依赖，否则可能会导致LinkageError
@@ -395,8 +368,8 @@ public class CommandRunner {
             FileUtil.delFromJar(serverFilePath, SLF4J_API_REGEX);
         }
 
-        if (cmd.hasOption("c")) {
-            configFilePath = cmd.getOptionValue("c");
+        if (cmd.hasArg("c")) {
+            configFilePath = cmd.getArg("c");
             File file = new File(configFilePath);
             if (file.exists()) {
                 configFilePath = file.getAbsolutePath();
@@ -408,10 +381,10 @@ public class CommandRunner {
             configFilePath = GuidedRunner.askConfigFilePath();
         }
 
-        if (cmd.hasOption("p")) {
-            pid = (int) PidUtil.findProcessByPort(Integer.parseInt(cmd.getOptionValue("p")));
-        } else if (cmd.hasOption("pid")) {
-            pid = Integer.parseInt(cmd.getOptionValue("pid"));
+        if (cmd.hasArg("p")) {
+            pid = (int) PidUtil.findProcessByPort(Integer.parseInt(cmd.getArg("p")));
+        } else if (cmd.hasArg("pid")) {
+            pid = Integer.parseInt(cmd.getArg("pid"));
         } else {
             pid = GuidedRunner.askAttachPid();
         }
@@ -531,14 +504,6 @@ public class CommandRunner {
     }
 
     private static void printHelp() {
-        final int width = 130;
-        HelpFormatter helper = new HelpFormatter();
-
-        helper.setSyntaxPrefix("Command usage");
-        helper.printHelp(width, HelpFormatter.DEFAULT_OPT_PREFIX, "Below will list all of parameters. You need choose running mode firstly.\n\n", rootOptions, "\n");
-        helper.setSyntaxPrefix("Attach mode");
-        helper.printHelp(width, HelpFormatter.DEFAULT_OPT_PREFIX, "Attach jvmm server to another java program in this computer.\n\n", attachOptions, "\n");
-        helper.setSyntaxPrefix("Client mode");
-        helper.printHelp(width, HelpFormatter.DEFAULT_OPT_PREFIX, "Connect to jvmm server and execute some commands.\n\n", clientOptions, "\n");
+        cmdGroup.printHelp();
     }
 }

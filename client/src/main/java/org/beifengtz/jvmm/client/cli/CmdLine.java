@@ -48,7 +48,7 @@ public class CmdLine implements Comparable<CmdLine> {
                 if (count == width) {
                     while (idx >= 0) {
                         char c = line.charAt(idx);
-                        if (c == '-' || c == ' ' || c == ',' || c == '.' || c == '!') {
+                        if (c == '-' || c == ' ' || c == ',' || c == '.' || c == '!' || c == '?') {
                             break;
                         }
                         idx--;
@@ -95,10 +95,19 @@ public class CmdLine implements Comparable<CmdLine> {
      *
      * @param consoleWidth 终端宽度
      */
-    void printHelp(int consoleWidth, int maxPrefix) {
-        System.out.println(getKey() + ":");
+    public void printHelp(int consoleWidth, int maxPrefix) {
         if (headDesc != null) {
-            System.out.println(breakLine(headDesc, consoleWidth));
+            if (StringUtil.isEmpty(key)) {
+                System.out.println(breakLine(headDesc, consoleWidth));
+            } else {
+                System.out.println(key + ":\t" + breakLine(headDesc, consoleWidth));
+            }
+        } else {
+            if (StringUtil.isEmpty(key)) {
+                System.out.println();
+            } else {
+                System.out.println(key + ":");
+            }
         }
 
         int maxPreCharNum = maxPrefix > 0 ? maxPrefix : scanHelpMaxPrefix();
@@ -118,7 +127,7 @@ public class CmdLine implements Comparable<CmdLine> {
             line += StringUtil.repeat(" ", maxPreCharNum - preCharNum);
             String desc = option.getDesc();
             if (desc != null) {
-                desc = breakLine(desc, consoleWidth);
+                desc = breakLine(desc, consoleWidth - maxPreCharNum);
                 line += desc.replaceAll("\n", "\n" + StringUtil.repeat(" ", maxPreCharNum));
             }
             System.out.println(line);
@@ -128,6 +137,7 @@ public class CmdLine implements Comparable<CmdLine> {
         if (tailDesc != null) {
             System.out.println(breakLine(tailDesc, consoleWidth));
         }
+        System.out.println();
     }
 
     public CmdLine setKey(String key) {
@@ -171,7 +181,9 @@ public class CmdLine implements Comparable<CmdLine> {
     }
 
     public CmdLine setHeadDesc(String headDesc) {
-        this.headDesc = headDesc;
+        if (StringUtil.nonEmpty(headDesc)) {
+            this.headDesc = headDesc;
+        }
         return this;
     }
 
@@ -180,7 +192,9 @@ public class CmdLine implements Comparable<CmdLine> {
     }
 
     public CmdLine setTailDesc(String tailDesc) {
-        this.tailDesc = tailDesc;
+        if (StringUtil.nonEmpty(tailDesc)) {
+            this.tailDesc = tailDesc;
+        }
         return this;
     }
 

@@ -1,5 +1,7 @@
 package org.beifengtz.jvmm.client.cli;
 
+import org.beifengtz.jvmm.common.util.StringUtil;
+
 /**
  * description: TODO
  * date: 15:00 2023/4/26
@@ -33,7 +35,9 @@ public class CmdOption implements Comparable<CmdOption>{
     }
 
     public CmdOption setArgName(String argName) {
-        this.argName = argName;
+        if (StringUtil.nonEmpty(argName)) {
+            this.argName = argName;
+        }
         return this;
     }
 
@@ -42,7 +46,9 @@ public class CmdOption implements Comparable<CmdOption>{
     }
 
     public CmdOption setDesc(String desc) {
-        this.desc = desc;
+        if (StringUtil.nonEmpty(desc)) {
+            this.desc = desc;
+        }
         return this;
     }
 
