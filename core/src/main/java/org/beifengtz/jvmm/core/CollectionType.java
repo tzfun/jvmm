@@ -1,4 +1,4 @@
-package org.beifengtz.jvmm.server.enums;
+package org.beifengtz.jvmm.core;
 
 /**
  * description: Server提供的采集项
@@ -22,6 +22,7 @@ public enum CollectionType {
     jvm_memory_manager,
     jvm_memory_pool,
     jvm_thread,
-    jvm_thread_detail
-    ;
+    jvm_thread_stack,
+    jvm_thread_detail,
+    jvm_thread_pool;
 }

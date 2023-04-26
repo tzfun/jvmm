@@ -198,4 +198,25 @@ public final class Unsafe {
         return list;
     }
 
+    /**
+     * 根据 hashcode 查找对应的 ClassLoader
+     *
+     * @param hash ClassLoader的 hashcode
+     * @return {@link ClassLoader}实例
+     */
+    public static ClassLoader getClassLoader(int hash) {
+        if (hash == 0) {
+            return null;
+        }
+        for (Thread thread : getThreads()) {
+            ClassLoader classLoader = thread.getContextClassLoader();
+            if (classLoader == null) {
+                continue;
+            }
+            if (classLoader.hashCode() == hash) {
+                return classLoader;
+            }
+        }
+        return null;
+    }
 }

@@ -235,4 +235,14 @@ public interface JvmmCollector {
      * @return {@link ThreadPoolInfo}，如果反射未找到相应的 threadPool 或其值为 null 将返回 null
      */
     ThreadPoolInfo getThreadPoolInfo(String clazz, String filed);
+
+    /**
+     * 根据提供的类路径、变量信息反射获取 {@link ThreadPoolExecutor} 对象并采集其信息
+     *
+     * @param clazz         类全路径，比如 org.beifengtz.jvmm.common.factory.ExecutorFactory
+     * @param instanceField 指定类实例对象的属性名，比如单例模式中的 INSTANCE
+     * @param filed         实例对象中的属性名
+     * @return {@link ThreadPoolInfo}，如果反射未找到相应的 threadPool 或其值为 null 将返回 null
+     */
+    ThreadPoolInfo getThreadPoolInfo(String clazz, String instanceField, String filed);
 }

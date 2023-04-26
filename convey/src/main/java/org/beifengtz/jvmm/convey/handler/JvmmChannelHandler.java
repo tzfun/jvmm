@@ -275,6 +275,22 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
                     });
                 } else if (parameterType.isEnum()) {
                     parameter[i] = Enum.valueOf((Class<? extends Enum>) parameterType, reqMsg.getData().toString());
+                } else if (ReflexUtil.isBaseType(parameterType)) {
+                    JsonElement data = reqMsg.getData();
+                    if (data != null) {
+                        if (data.isJsonPrimitive()) {
+                            parameter[i] = ReflexUtil.parseValueFromStr(parameterType, data.getAsString());
+                        } else if (data.isJsonObject()) {
+                            String paramName = method.getParameters()[i].getName();
+                            JsonElement value = data.getAsJsonObject().get(paramName);
+                            if (value != null) {
+                                parameter[i] = ReflexUtil.parseValueFromStr(parameterType, value.getAsString());
+                            }
+                        }
+                    }
+                    if (parameter[i] == null) {
+                        parameter[i] = ReflexUtil.getBaseTypeDefault(parameterType);
+                    }
                 } else {
                     parameter[i] = new Gson().fromJson(reqMsg.getData(), method.getGenericParameterTypes()[i]);
                 }
