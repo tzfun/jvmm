@@ -272,76 +272,126 @@ public class ServerServiceImpl extends ServerService {
 
     @JvmmOptions({
             @JvmmOption(
+                    name = "start",
+                    order = 1,
+                    desc = "To start a profiler task, you need to use it with `event`, `counter`, and `interval` parameters." +
+                            " Only one profiler task can run at a time, to end the profiler task, use the `stop` parameter"
+            ),
+            @JvmmOption(
+                    name = "stop",
+                    order = 2,
+                    desc = "Stop a running profiler task, you need to use it with `file` parameter."
+            ),
+            @JvmmOption(
+                    name = "status",
+                    order = 3,
+                    desc = "View the current profiler status"
+            ),
+            @JvmmOption(
+                    name = "list",
+                    order = 4,
+                    desc = "List supported events"
+            ),
+            @JvmmOption(
                     name = "f",
                     argName = "file",
-                    order = 1,
+                    order = 5,
                     desc = "Output file path, supported file type: html, txt, jfr. If not filled, will output text content"
             ),
             @JvmmOption(
                     name = "e",
                     argName = "event",
-                    order = 2,
-                    desc = "Sample event, optional values: cpu, alloc, lock, wall, itimer. Default value: cpu."
+                    order = 6,
+                    desc = "Sample event, default is cpu. Not all events are supported in the current environment, " +
+                            "you can see which events are supported by the `list` parameter. " +
+                            "Optional values: \n- cpu\n- alloc\n- lock\n- wall\n- itimer\n" +
+                            "- `ClassName.javaMethodName`, instruments the given Java method in order to record all " +
+                            "invocations of this method with the stack traces. Just for non-native methods, example: java.util.Properties.getProperty\n" +
+                            "- `Java_nativeMethodName`, instruments the given native method in order to record all " +
+                            "invocations of this method with the stack traces. Just for native methods, example: Java_java_lang_Throwable_fillInStackTrace"
             ),
             @JvmmOption(
                     name = "c",
                     argName = "counter",
-                    order = 3,
+                    order = 7,
                     desc = "Sample counter type, optional values: samples, total. Default value: samples."
             ),
             @JvmmOption(
                     name = "t",
                     argName = "time",
-                    order = 4,
+                    order = 8,
                     desc = "Sampling interval time, the unit is second. Default value: 10 s."
             ),
             @JvmmOption(
                     name = "i",
                     argName = "interval",
-                    order = 5,
+                    order = 9,
                     desc = "The time interval of the unit to collect samples, the unit is nanosecond. Default value: 10000000 ns."
             )
     })
     @JvmmCmdDesc(
             headDesc = "Get server sampling report. Only supported on MacOS and Linux.",
-            tailDesc = "eg 1: `profiler -f profiler.html`\neg 2: `profiler -f profiler.html -e wall -t 20`"
+            tailDesc = "eg 1: `profiler -status\n" +
+                    "eg 2: profiler -start -e wall`\n" +
+                    "eg 3: profiler -stop -f wall.html`\n" +
+                    "eg 4: profiler -list\n" +
+                    "eg 5: `profiler -e cpu -t 5`\n" +
+                    "eg 6: `profiler -f java_method.html -e java.lang.Object.wait -t 20`\n" +
+                    "eg 7: `profiler -f java_method.html -e Java_java_lang_Object_hashcode -t 20`"
     )
     @Order(2)
     public static void profiler(JvmmConnector connector, CmdParser cmd) {
-        JvmmRequest request = JvmmRequest.create().setType(GlobalType.JVMM_TYPE_PROFILER_SAMPLE);
-        JsonObject data = new JsonObject();
-        if (cmd.hasArg("e")) {
-            data.addProperty("event", cmd.getArg("e"));
-        }
-
-        if (cmd.hasArg("c")) {
-            data.addProperty("counter", cmd.getArg("c"));
+        JvmmRequest request = JvmmRequest.create();
+        boolean needArg = false;
+        if (cmd.hasArg("start")) {
+            request.setType(GlobalType.JVMM_TYPE_PROFILER_SAMPLE_START);
+            needArg = true;
+        } else if (cmd.hasArg("stop")) {
+            request.setType(GlobalType.JVMM_TYPE_PROFILER_SAMPLE_STOP);
+            needArg = true;
+        } else if (cmd.hasArg("status")) {
+            request.setType(GlobalType.JVMM_TYPE_PROFILER_STATUS);
+        } else if (cmd.hasArg("list")) {
+            request.setType(GlobalType.JVMM_TYPE_PROFILER_LIST_EVENTS);
+        } else {
+            request.setType(GlobalType.JVMM_TYPE_PROFILER_SAMPLE);
+            needArg = true;
         }
 
         long waitSecs = 20;
-        if (cmd.hasArg("t")) {
-            long time = Long.parseLong(cmd.getArg("t"));
-            data.addProperty("time", time);
-            waitSecs = time + 10;
-        }
-
-        if (cmd.hasArg("i")) {
-            data.addProperty("interval", Long.parseLong(cmd.getArg("i")));
-        }
-
         String filePath = null;
-        if (cmd.hasArg("f")) {
-            filePath = cmd.getArg("f");
-            int dotIdx = filePath.lastIndexOf(".");
-            if (dotIdx >= 0 && dotIdx < filePath.length() - 1) {
-                data.addProperty("format", filePath.substring(dotIdx + 1));
+        if (needArg) {
+            JsonObject data = new JsonObject();
+            if (cmd.hasArg("e")) {
+                data.addProperty("event", cmd.getArg("e"));
             }
-        } else {
-            data.addProperty("format", "txt");
+
+            if (cmd.hasArg("c")) {
+                data.addProperty("counter", cmd.getArg("c"));
+            }
+
+            if (cmd.hasArg("t")) {
+                long time = Long.parseLong(cmd.getArg("t"));
+                data.addProperty("time", time);
+                waitSecs = time + 10;
+            }
+
+            if (cmd.hasArg("i")) {
+                data.addProperty("interval", Long.parseLong(cmd.getArg("i")));
+            }
+
+            if (cmd.hasArg("f")) {
+                filePath = cmd.getArg("f");
+                int dotIdx = filePath.lastIndexOf(".");
+                if (dotIdx >= 0 && dotIdx < filePath.length() - 1) {
+                    data.addProperty("format", filePath.substring(dotIdx + 1));
+                }
+            } else {
+                data.addProperty("format", "txt");
+            }
+
+            request.setData(data);
         }
-
-        request.setData(data);
-
 
         JvmmResponse response = request(connector, request, waitSecs, TimeUnit.SECONDS);
         if (response == null) {
@@ -386,8 +436,9 @@ public class ServerServiceImpl extends ServerService {
     })
     @Order(3)
     @JvmmCmdDesc(
-            headDesc = "Decompile class files at runtime.",
-            tailDesc = "eg 1: `jad -c java.lang.String`\neg 2: `jad -c java.lang.String -m equals`"
+            headDesc = "Decompile the class source code",
+            tailDesc = "eg 1: `jad -c java.lang.String`\n" +
+                    "eg 2: `jad -c java.lang.String -m equals`"
     )
     public static void jad(JvmmConnector connector, CmdParser cmd) throws IOException {
         JsonObject json = new JsonObject();
@@ -427,7 +478,21 @@ public class ServerServiceImpl extends ServerService {
         Gson gson = new Gson();
         for (JsonElement ele : processes) {
             JpsResult jps = gson.fromJson(ele, JpsResult.class);
-            System.out.printf("%d\t%s\t%s\n", jps.getPid(), jps.getMainClass(), jps.getArguments());
+
+            int prefixNum = String.valueOf(jps.getPid()).length() + jps.getMainClass().length();
+            String prefix = StringUtil.repeat("", prefixNum);
+            StringBuilder arguments = new StringBuilder();
+            boolean firstLine = true;
+            for (String argument : jps.getArguments()) {
+                if (firstLine) {
+                    arguments.append("\t").append(argument);
+                    firstLine = false;
+                } else {
+                    arguments.append(prefix).append("\t\t\t").append(argument);
+                }
+                arguments.append("\n");
+            }
+            System.out.printf("%d\t%s\t%s", jps.getPid(), jps.getMainClass(), arguments);
         }
     }
 
@@ -456,7 +521,7 @@ public class ServerServiceImpl extends ServerService {
             System.out.println(response.getData().getAsString());
         }
     }
-    
+
     @Order(6)
     @JvmmCmdDesc(headDesc = "Execute gc, no arguments.")
     public static void gc(JvmmConnector connector, CmdParser cmd) {
@@ -479,13 +544,17 @@ public class ServerServiceImpl extends ServerService {
             tailDesc = "eg. `shutdown -t http`"
     )
     public static void shutdown(JvmmConnector connector, CmdParser cmd) {
-        JvmmRequest request = JvmmRequest.create()
-                .setType(GlobalType.JVMM_TYPE_SERVER_SHUTDOWN)
-                .setData(new JsonPrimitive(cmd.getArg("t")));
-        JvmmResponse response = request(connector, request);
-        if (response == null) {
-            return;
+        if (cmd.hasArg("t")) {
+            JvmmRequest request = JvmmRequest.create()
+                    .setType(GlobalType.JVMM_TYPE_SERVER_SHUTDOWN)
+                    .setData(new JsonPrimitive(cmd.getArg("t")));
+            JvmmResponse response = request(connector, request);
+            if (response == null) {
+                return;
+            }
+            System.out.println("ok");
+        } else {
+            printErr("Missing required param `t`");
         }
-        System.out.println("ok");
     }
 }

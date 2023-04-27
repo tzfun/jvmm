@@ -141,4 +141,16 @@ public class ProfilerController {
             }
         }
     }
+
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_PROFILER_STATUS)
+    @HttpRequest(value = "/profiler/status")
+    public String status() {
+        return JvmmFactory.getProfiler().status();
+    }
+
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_PROFILER_LIST_EVENTS)
+    @HttpRequest(value = "/profiler/list_events")
+    public String listEvents() {
+        return JvmmFactory.getProfiler().enabledEvents();
+    }
 }
