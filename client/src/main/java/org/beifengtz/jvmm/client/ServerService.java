@@ -64,11 +64,17 @@ public class ServerService {
                 arr = ops.value();
             } else if (method.isAnnotationPresent(JvmmOption.class)) {
                 arr = new JvmmOption[]{method.getAnnotation(JvmmOption.class)};
-            } else if (method.isAnnotationPresent(JvmmCmdDesc.class)) {
+            }
+
+            if (method.isAnnotationPresent(JvmmCmdDesc.class)) {
                 JvmmCmdDesc cmdDesc = method.getAnnotation(JvmmCmdDesc.class);
                 cmdLine.setHeadDesc(cmdDesc.headDesc())
                         .setTailDesc(cmdDesc.tailDesc());
-            } else if (method.isAnnotationPresent(Order.class)) {
+            } else if (arr == null) {
+                continue;
+            }
+
+            if (method.isAnnotationPresent(Order.class)) {
                 cmdLine.setOrder(method.getAnnotation(Order.class).value());
             }
 
@@ -137,12 +143,11 @@ public class ServerService {
     protected static void printHelp(String... names) {
         //  打印全部
         if (names == null || names.length == 0) {
-            names = methodMap.keySet().toArray(new String[0]);
-        }
-
-        System.out.println("You can use the following command in client mode.\n");
-        for (String name : names) {
-            cmdGroup.printHelp(name);
+            cmdGroup.printHelp();
+        } else {
+            for (String name : names) {
+                cmdGroup.printHelp(name);
+            }
         }
     }
 

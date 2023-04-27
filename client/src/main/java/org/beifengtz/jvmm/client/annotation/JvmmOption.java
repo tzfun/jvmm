@@ -20,7 +20,7 @@ public @interface JvmmOption {
 
     String name();
 
-    int order() default 1;
+    int order() default 0;
 
     String argName() default "";
 
