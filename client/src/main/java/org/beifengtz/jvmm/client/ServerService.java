@@ -50,7 +50,9 @@ public class ServerService {
     }
 
     protected static void init() {
-        cmdGroup = CmdLineGroup.create();
+        cmdGroup = CmdLineGroup.create()
+                .setUseSplitter(true)
+                .setHeadDesc("You can use `help <key>` to view single command helper like `help info`");
 
         Method[] methods = ServerServiceImpl.class.getMethods();
         for (Method method : methods) {

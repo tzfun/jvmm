@@ -374,12 +374,13 @@ public class CommandRunner {
             if (file.exists()) {
                 configFilePath = file.getAbsolutePath();
             } else {
-                logger.error("Can not find config file from '" + configFilePath + "'");
+                logger.error("Can not find config file from '{}'", configFilePath);
                 configFilePath = GuidedRunner.askConfigFilePath();
             }
         } else {
             configFilePath = GuidedRunner.askConfigFilePath();
         }
+        logger.info("Using config file: {}", configFilePath);
 
         if (cmd.hasArg("p")) {
             pid = (int) PidUtil.findProcessByPort(Integer.parseInt(cmd.getArg("p")));
@@ -397,7 +398,7 @@ public class CommandRunner {
         File agentFile;
         //  支持从网络下载jar包
         if (agentFilePath.startsWith("http://") || agentFilePath.startsWith("https://")) {
-            logger.info("Start downloading jar file from " + agentFilePath);
+            logger.info("Start downloading jar file from {}", agentFilePath);
             boolean loaded = FileUtil.readFileFromNet(agentFilePath, FileUtil.getTempPath(), "jvmm-agent.jar");
             if (loaded) {
                 agentFile = new File(FileUtil.getTempPath(), "jvmm-agent.jar");
@@ -408,14 +409,14 @@ public class CommandRunner {
         } else {
             agentFile = new File(agentFilePath);
             if (!agentFile.exists()) {
-                logger.error("Agent jar file not exists! " + agentFile.getAbsolutePath());
+                logger.error("Agent jar file not exists! {}", agentFile.getAbsolutePath());
                 return;
             }
         }
 
         File serverFile;
         if (serverFilePath.startsWith("http://") || serverFilePath.startsWith("https://")) {
-            logger.info("Start downloading jar file from " + serverFilePath);
+            logger.info("Start downloading jar file from {}", serverFilePath);
             boolean loaded = FileUtil.readFileFromNet(serverFilePath, FileUtil.getTempPath(), "jvmm-server.jar");
             if (loaded) {
                 serverFile = new File(FileUtil.getTempPath(), "jvmm-server.jar");
