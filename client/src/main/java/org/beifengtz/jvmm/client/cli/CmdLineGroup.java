@@ -1,5 +1,7 @@
 package org.beifengtz.jvmm.client.cli;
 
+import org.beifengtz.jvmm.common.util.StringUtil;
+
 import java.text.ParseException;
 import java.util.Objects;
 import java.util.Set;
@@ -20,6 +22,7 @@ public class CmdLineGroup {
      */
     private int windowWidth = 130;
     private int maxPrefix = 0;
+    private boolean useSplitter = false;
 
     private final Set<CmdLine> commands = new TreeSet<>();
 
@@ -46,6 +49,15 @@ public class CmdLineGroup {
 
     public CmdLineGroup setTailDesc(String tailDesc) {
         this.tailDesc = tailDesc;
+        return this;
+    }
+
+    public boolean isUseSplitter() {
+        return useSplitter;
+    }
+
+    public CmdLineGroup setUseSplitter(boolean useSplitter) {
+        this.useSplitter = useSplitter;
         return this;
     }
 
@@ -79,7 +91,12 @@ public class CmdLineGroup {
             System.out.println(CmdLine.breakLine(headDesc, getWindowWidth()));
         }
 
+        int seq = commands.size();
         for (CmdLine command : commands) {
+            if (useSplitter && seq-- > 0) {
+                int splitterWidth = (windowWidth - command.getKey().length() - 2) / 2;
+                System.out.println(StringUtil.repeat("#", splitterWidth) + "[ " + command.getKey() + " ]" + StringUtil.repeat("#", splitterWidth));
+            }
             command.printHelp(windowWidth, maxPrefix);
         }
 
@@ -93,12 +110,12 @@ public class CmdLineGroup {
         if (cmd == null) {
             System.out.println("Can not found command '" + key + "'");
         } else {
-            cmd.printHelp(getWindowWidth(), maxPrefix);
+            cmd.printHelp(getWindowWidth(), 0);
         }
     }
 
     public static void main(String[] args) throws ParseException {
-        CmdLineGroup group = CmdLineGroup.create()
+        CmdLineGroup group = CmdLineGroup.create().setUseSplitter(true)
                 .addCommand(CmdLine.create().setKey("info").setArgPrefix("-")
                         .addOption(CmdOption.create().setName("t").setArgName("type").setOrder(1)
                                 .setDesc("Sampling interval time, the unit is second. Default value: 10 s."))

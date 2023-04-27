@@ -41,7 +41,7 @@ public class ServerServiceImpl extends ServerService {
                     name = "t",
                     argName = "type",
                     order = 1,
-                    desc = "Required info type, optional values: \n- process\n- disk\n- disk_io\n- cpu" +
+                    desc = "Collection type, optional values: \n- process\n- disk\n- disk_io\n- cpu" +
                             "\n- network\n- sys\n- sys_memory\n- sys_file\n- jvm_classloading\n- jvm_classloader" +
                             "\n- jvm_compilation\n- jvm_gc\n- jvm_memory\n- jvm_memory_manager\n- jvm_memory_pool" +
                             "\n- jvm_thread\n- jvm_thread_stack\n- jvm_thread_detail\n- jvm_thread_pool"
@@ -97,10 +97,11 @@ public class ServerServiceImpl extends ServerService {
             )
     })
     @JvmmCmdDesc(
-            headDesc = "Collect information about the target service. eg. `info -t process`",
-            tailDesc = "eg 1: `info -t process`\neg 2: `info -t jvm_thread_pool -clazz " +
-                    "org.beifengtz.jvmm.common.factory.ExecutorFactory -field SCHEDULE_THREAD_POOL\n" +
-                    "eg 3: `info -t jvm_thread_detail -tid 2`"
+            headDesc = "Collect information about the target service.",
+            tailDesc = "eg 1: `info -t process`\n" +
+                    "eg 2: `info -t jvm_thread_pool -clazz org.beifengtz.jvmm.common.factory.ExecutorFactory -field SCHEDULE_THREAD_POOL\n" +
+                    "eg 3: `info -t jvm_thread_detail -tid 2`\n" +
+                    "eg 4: `info -t jvm_thread_stack -f thread_dump.txt`"
     )
     @Order(1)
     public static void info(JvmmConnector connector, CmdParser cmd) throws Exception {
@@ -326,18 +327,18 @@ public class ServerServiceImpl extends ServerService {
                     name = "i",
                     argName = "interval",
                     order = 9,
-                    desc = "The time interval of the unit to collect samples, the unit is nanosecond. Default value: 10000000 ns."
+                    desc = "The time interval of the unit to collect samples, the unit is nanosecond, default: 10000000 ns."
             )
     })
     @JvmmCmdDesc(
             headDesc = "Get server sampling report. Only supported on MacOS and Linux.",
-            tailDesc = "eg 1: `profiler -status\n" +
-                    "eg 2: profiler -start -e wall`\n" +
-                    "eg 3: profiler -stop -f wall.html`\n" +
-                    "eg 4: profiler -list\n" +
+            tailDesc = "eg 1: `profiler -status`\n" +
+                    "eg 2: `profiler -start -e wall`\n" +
+                    "eg 3: `profiler -stop -f wall.html`\n" +
+                    "eg 4: `profiler -list`\n" +
                     "eg 5: `profiler -e cpu -t 5`\n" +
                     "eg 6: `profiler -f java_method.html -e java.lang.Object.wait -t 20`\n" +
-                    "eg 7: `profiler -f java_method.html -e Java_java_lang_Object_hashcode -t 20`"
+                    "eg 7: `profiler -f java_method.html -e Java_java_lang_Object_hashCode -t 20`"
     )
     @Order(2)
     public static void profiler(JvmmConnector connector, CmdParser cmd) {
@@ -499,7 +500,7 @@ public class ServerServiceImpl extends ServerService {
     @Order(5)
     @IgnoreCmdParse
     @JvmmCmdDesc(
-            headDesc = "Execute java tools(if these commands are supported on your machine). Usage: `jtool <jps|jinfo|jstat|jstack|jamp|jcmd> [params...]`"
+            headDesc = "Execute java tools(if these commands are supported on your machine). Usage: `jtool <jinfo|jstat|jstack|jamp|jcmd> [params]`"
     )
     public static void jtool(JvmmConnector connector, String command) {
         if (command.trim().length() == 0) {

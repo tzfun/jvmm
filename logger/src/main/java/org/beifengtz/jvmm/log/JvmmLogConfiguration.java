@@ -17,7 +17,7 @@ public class JvmmLogConfiguration {
     /**
      * 日志文件输出目录
      */
-    private String file = "log";
+    private String file = "logs";
     /**
      * 日志文件名
      */

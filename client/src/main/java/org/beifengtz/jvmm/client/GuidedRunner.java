@@ -88,11 +88,7 @@ public class GuidedRunner {
         String path = null;
         File f = new File("config.yml");
         if (f.exists()) {
-            System.out.print("A configuration file config.yml was found in the current directory, do you want to use it?(y/n): ");
-            String res = scanner.nextLine();
-            if ("y".equalsIgnoreCase(res)) {
-                return f.getAbsolutePath();
-            }
+            return f.getAbsolutePath();
         }
 
         System.out.print("Enter the yaml config file path, local file path and http(s) are supported: ");
