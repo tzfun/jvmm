@@ -344,12 +344,14 @@ public class ServerServiceImpl extends ServerService {
     public static void profiler(JvmmConnector connector, CmdParser cmd) {
         JvmmRequest request = JvmmRequest.create();
         boolean needArg = false;
+        boolean responseForHex = false;
         if (cmd.hasArg("start")) {
             request.setType(GlobalType.JVMM_TYPE_PROFILER_SAMPLE_START);
             needArg = true;
         } else if (cmd.hasArg("stop")) {
             request.setType(GlobalType.JVMM_TYPE_PROFILER_SAMPLE_STOP);
             needArg = true;
+            responseForHex = true;
         } else if (cmd.hasArg("status")) {
             request.setType(GlobalType.JVMM_TYPE_PROFILER_STATUS);
         } else if (cmd.hasArg("list")) {
@@ -357,6 +359,7 @@ public class ServerServiceImpl extends ServerService {
         } else {
             request.setType(GlobalType.JVMM_TYPE_PROFILER_SAMPLE);
             needArg = true;
+            responseForHex = true;
         }
 
         long waitSecs = 20;
@@ -399,11 +402,18 @@ public class ServerServiceImpl extends ServerService {
             return;
         }
 
-        String hexStr = response.getData().getAsString();
-        byte[] bytes = CodingUtil.hexStr2Bytes(hexStr);
+        String content = response.getData().getAsString();
+        byte[] bytes;
+        if (responseForHex) {
+            bytes = CodingUtil.hexStr2Bytes(content);
+            content = new String(bytes, StandardCharsets.UTF_8);
+        } else {
+            bytes = content.getBytes(StandardCharsets.UTF_8);
+        }
+
         try {
             if (filePath == null) {
-                System.out.println(new String(bytes, StandardCharsets.UTF_8));
+                System.out.println(content);
             } else {
                 File file = new File(filePath);
                 FileUtil.writeByteArrayToFile(file, bytes);
@@ -538,7 +548,7 @@ public class ServerServiceImpl extends ServerService {
     @JvmmOption(
             name = "t",
             argName = "type",
-            desc = "Required *. The type of service to be closed, allowed values: jvmm, http, sentinel"
+            desc = "Required *. The type of service to be closed, allowed values: \n- jvmm\n- http\n- sentinel"
     )
     @JvmmCmdDesc(
             headDesc = "Shutdown service.",
