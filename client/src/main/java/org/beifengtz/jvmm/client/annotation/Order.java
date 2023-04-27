@@ -14,5 +14,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Order {
-    int value() default 1;
+    int value() default 0;
 }

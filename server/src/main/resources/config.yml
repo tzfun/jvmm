@@ -99,7 +99,7 @@ log:
   # Log level: error, warn, info, debug, trace
   level: INFO
   # Log file output directory
-  file: log
+  file: logs
   # Log file prefix
   fileName: jvmm
   # If the current log file size exceeds this value, a new log file will be generated, in MB.

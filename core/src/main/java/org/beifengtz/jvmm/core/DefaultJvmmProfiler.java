@@ -6,6 +6,7 @@ import org.beifengtz.jvmm.common.util.meta.ListenableFuture;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerAction;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerCommander;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerCounter;
+import org.beifengtz.jvmm.core.ext.profiler.AsyncProfiler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

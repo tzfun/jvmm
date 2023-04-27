@@ -10,6 +10,7 @@ import org.beifengtz.jvmm.client.annotation.IgnoreCmdParse;
 import org.beifengtz.jvmm.client.annotation.JvmmCmdDesc;
 import org.beifengtz.jvmm.client.annotation.JvmmOption;
 import org.beifengtz.jvmm.client.annotation.JvmmOptions;
+import org.beifengtz.jvmm.client.annotation.Order;
 import org.beifengtz.jvmm.client.cli.CmdParser;
 import org.beifengtz.jvmm.common.util.CodingUtil;
 import org.beifengtz.jvmm.common.util.FileUtil;
@@ -39,35 +40,41 @@ public class ServerServiceImpl extends ServerService {
             @JvmmOption(
                     name = "t",
                     argName = "type",
-                    desc = "Required info type, optional values: \n\t- process\n\t- disk\n\t- disk_io\n\t- cpu" +
-                            "\n\t- network\n\t- sys\n\t- sys_memory\n\t- sys_file\n\t- jvm_classloading\n\t- jvm_classloader" +
-                            "\n\t- jvm_compilation\n\t- jvm_gc\n\t- jvm_memory\n\t- jvm_memory_manager\n\t- jvm_memory_pool" +
-                            "\n\t- jvm_thread\n\t- jvm_thread_stack\n\t- jvm_thread_detail\n\t- jvm_thread_pool"
+                    order = 1,
+                    desc = "Required info type, optional values: \n- process\n- disk\n- disk_io\n- cpu" +
+                            "\n- network\n- sys\n- sys_memory\n- sys_file\n- jvm_classloading\n- jvm_classloader" +
+                            "\n- jvm_compilation\n- jvm_gc\n- jvm_memory\n- jvm_memory_manager\n- jvm_memory_pool" +
+                            "\n- jvm_thread\n- jvm_thread_stack\n- jvm_thread_detail\n- jvm_thread_pool"
             ),
             @JvmmOption(
                     name = "f",
-                    argName = "output",
-                    desc = "File path (optional), output info to file."
+                    argName = "file",
+                    order = 2,
+                    desc = "Output file. If the output file is specified, the output content is saved to the file, otherwise output on the screen"
             ),
             @JvmmOption(
                     name = "tid",
                     argName = "threadId",
+                    order = 3,
                     desc = "When querying info 'jvm_thread_stack' or 'jvm_thread_detail', you can specify a thread id, multiple ids use ',' separate them"
             ),
             @JvmmOption(
                     name = "tdeep",
                     argName = "threadDepp",
+                    order = 4,
                     desc = "When querying info 'jvm_thread_stack', this option is used to specify the stack depth, default 5"
             ),
             @JvmmOption(
                     name = "clazz",
                     argName = "class",
+                    order = 4,
                     desc = "When querying info 'jvm_thread_pool'(required), this option is used to specify the class full path. " +
                             "JVMM will get instance of the thread pool through reflection, you need to use it with `loader`, `ifield` and `field` parameters"
             ),
             @JvmmOption(
                     name = "loader",
                     argName = "classloader",
+                    order = 5,
                     desc = "When querying info 'jvm_thread_pool', this option is used to specify the classloader hashcode. " +
                             "You can execute `info -t jvm_classloader` to get classloader hashcode, if not filled, " +
                             "the default classloader will be used, You need to use it with `clazz`, `ifield` and `field` parameters"
@@ -75,20 +82,32 @@ public class ServerServiceImpl extends ServerService {
             @JvmmOption(
                     name = "ifield",
                     argName = "instanceField",
+                    order = 6,
                     desc = "When querying info 'jvm_thread_pool', this option is used to specify the instance field. " +
                             "If not filled, the static `field` of `clazz` will be read"
             ),
             @JvmmOption(
                     name = "field",
                     argName = "field",
+                    order = 7,
                     desc = "When querying info 'jvm_thread_pool'(required), this option is used to specify the thread pool. " +
                             "If `ifield` is not filled, `field` will represent the static variable name of the thread " +
                             "pool stored in `clazz`, and if `ifeld` is filled in, `field` will represent the property " +
                             "variable name of the thread pool stored in the instance"
             )
     })
-    @JvmmCmdDesc(headDesc =  "Get information about the target server. \neg. info -t process")
+    @JvmmCmdDesc(
+            headDesc = "Collect information about the target service. eg. `info -t process`",
+            tailDesc = "eg 1: `info -t process`\neg 2: `info -t jvm_thread_pool -clazz " +
+                    "org.beifengtz.jvmm.common.factory.ExecutorFactory -field SCHEDULE_THREAD_POOL\n" +
+                    "eg 3: `info -t jvm_thread_detail -tid 2`"
+    )
+    @Order(1)
     public static void info(JvmmConnector connector, CmdParser cmd) throws Exception {
+        if (!cmd.hasArg("t")) {
+            printErr("Missing required argument 't'");
+            return;
+        }
         CollectionType type;
         try {
             type = CollectionType.valueOf(cmd.getArg("t"));
@@ -251,76 +270,43 @@ public class ServerServiceImpl extends ServerService {
         }
     }
 
-    @JvmmCmdDesc(headDesc =  "Execute gc, no arguments.")
-    public static void gc(JvmmConnector connector, CmdParser cmd) {
-        JvmmRequest request = JvmmRequest.create().setType(GlobalType.JVMM_TYPE_EXECUTE_GC);
-        JvmmResponse response = request(connector, request);
-        if (response == null) {
-            return;
-        }
-        System.out.println("ok");
-    }
-
-    @JvmmOption(
-            name = "t",
-            argName = "type",
-            desc = "Required *. The type of service to be closed, allowed values: jvmm, http, sentinel"
-    )
-    @JvmmCmdDesc(headDesc =  "Shutdown service.")
-    public static void shutdown(JvmmConnector connector, CmdParser cmd) {
-        JvmmRequest request = JvmmRequest.create()
-                .setType(GlobalType.JVMM_TYPE_SERVER_SHUTDOWN)
-                .setData(new JsonPrimitive(cmd.getArg("t")));
-        JvmmResponse response = request(connector, request);
-        if (response == null) {
-            return;
-        }
-        System.out.println("ok");
-    }
-
-    @JvmmCmdDesc(headDesc =  "View all java processes running on this physical machine.")
-    public static void jps(JvmmConnector connector, CmdParser cmd) {
-        JvmmRequest request = JvmmRequest.create().setType(GlobalType.JVMM_TYPE_EXECUTE_JAVA_PROCESS);
-        JvmmResponse response = request(connector, request);
-        if (response == null) {
-            return;
-        }
-        JsonArray processes = response.getData().getAsJsonArray();
-        Gson gson = new Gson();
-        for (JsonElement ele : processes) {
-            JpsResult jps = gson.fromJson(ele, JpsResult.class);
-            System.out.printf("%d\t%s\t%s\n", jps.getPid(), jps.getMainClass(), jps.getArguments());
-        }
-    }
-
     @JvmmOptions({
+            @JvmmOption(
+                    name = "f",
+                    argName = "file",
+                    order = 1,
+                    desc = "Output file path, supported file type: html, txt, jfr. If not filled, will output text content"
+            ),
             @JvmmOption(
                     name = "e",
                     argName = "event",
+                    order = 2,
                     desc = "Sample event, optional values: cpu, alloc, lock, wall, itimer. Default value: cpu."
             ),
             @JvmmOption(
                     name = "c",
                     argName = "counter",
+                    order = 3,
                     desc = "Sample counter type, optional values: samples, total. Default value: samples."
             ),
             @JvmmOption(
                     name = "t",
                     argName = "time",
+                    order = 4,
                     desc = "Sampling interval time, the unit is second. Default value: 10 s."
             ),
             @JvmmOption(
                     name = "i",
                     argName = "interval",
+                    order = 5,
                     desc = "The time interval of the unit to collect samples, the unit is nanosecond. Default value: 10000000 ns."
-            ),
-            @JvmmOption(
-                    name = "f",
-                    argName = "file",
-                    desc = "Output file path, supported file type: html, txt, jfr. If not filled, will output text content"
             )
     })
-    @JvmmCmdDesc(headDesc =  "Get server sampling report. Only supported on MacOS and Linux.")
+    @JvmmCmdDesc(
+            headDesc = "Get server sampling report. Only supported on MacOS and Linux.",
+            tailDesc = "eg 1: `profiler -f profiler.html`\neg 2: `profiler -f profiler.html -e wall -t 20`"
+    )
+    @Order(2)
     public static void profiler(JvmmConnector connector, CmdParser cmd) {
         JvmmRequest request = JvmmRequest.create().setType(GlobalType.JVMM_TYPE_PROFILER_SAMPLE);
         JsonObject data = new JsonObject();
@@ -377,47 +363,32 @@ public class ServerServiceImpl extends ServerService {
         }
     }
 
-    @IgnoreCmdParse
-    @JvmmCmdDesc(headDesc =  "Execute java tools(if these commands are supported on your machine). jtool <jps|jinfo|jstat|jstack|jamp|jcmd> [params...]")
-    public static void jtool(JvmmConnector connector, String command) {
-        if (command.trim().length() == 0) {
-            printErr("Can not execute empty command");
-            return;
-        }
-        JvmmRequest request = JvmmRequest.create().setType(GlobalType.JVMM_TYPE_EXECUTE_JVM_TOOL)
-                .setData(new JsonPrimitive(command));
-        JvmmResponse response = request(connector, request);
-        if (response == null) {
-            return;
-        }
-        JsonElement data = response.getData();
-        if (data.isJsonArray()) {
-            for (JsonElement ele : data.getAsJsonArray()) {
-                System.out.println(ele.getAsString());
-            }
-        } else {
-            System.out.println(response.getData().getAsString());
-        }
-    }
 
     @JvmmOptions({
             @JvmmOption(
                     name = "c",
                     argName = "class",
+                    order = 1,
                     desc = "Required *. The java class to be decompiled"
             ),
             @JvmmOption(
                     name = "m",
                     argName = "method",
+                    order = 2,
                     desc = "Specify the method name in the decompiled class"
             ),
             @JvmmOption(
                     name = "f",
                     argName = "file",
-                    desc = "Output file path"
+                    order = 3,
+                    desc = "Output file name or path"
             ),
     })
-    @JvmmCmdDesc(headDesc =  "Decompile class files at runtime.")
+    @Order(3)
+    @JvmmCmdDesc(
+            headDesc = "Decompile class files at runtime.",
+            tailDesc = "eg 1: `jad -c java.lang.String`\neg 2: `jad -c java.lang.String -m equals`"
+    )
     public static void jad(JvmmConnector connector, CmdParser cmd) throws IOException {
         JsonObject json = new JsonObject();
         json.addProperty("className", cmd.getArg("c"));
@@ -442,5 +413,79 @@ public class ServerServiceImpl extends ServerService {
         } else {
             System.out.println(result);
         }
+    }
+
+    @Order(4)
+    @JvmmCmdDesc(headDesc = "View all java processes running on this physical machine.")
+    public static void jps(JvmmConnector connector, CmdParser cmd) {
+        JvmmRequest request = JvmmRequest.create().setType(GlobalType.JVMM_TYPE_EXECUTE_JAVA_PROCESS);
+        JvmmResponse response = request(connector, request);
+        if (response == null) {
+            return;
+        }
+        JsonArray processes = response.getData().getAsJsonArray();
+        Gson gson = new Gson();
+        for (JsonElement ele : processes) {
+            JpsResult jps = gson.fromJson(ele, JpsResult.class);
+            System.out.printf("%d\t%s\t%s\n", jps.getPid(), jps.getMainClass(), jps.getArguments());
+        }
+    }
+
+    @Order(5)
+    @IgnoreCmdParse
+    @JvmmCmdDesc(
+            headDesc = "Execute java tools(if these commands are supported on your machine). Usage: `jtool <jps|jinfo|jstat|jstack|jamp|jcmd> [params...]`"
+    )
+    public static void jtool(JvmmConnector connector, String command) {
+        if (command.trim().length() == 0) {
+            printErr("Can not execute empty command");
+            return;
+        }
+        JvmmRequest request = JvmmRequest.create().setType(GlobalType.JVMM_TYPE_EXECUTE_JVM_TOOL)
+                .setData(new JsonPrimitive(command));
+        JvmmResponse response = request(connector, request);
+        if (response == null) {
+            return;
+        }
+        JsonElement data = response.getData();
+        if (data.isJsonArray()) {
+            for (JsonElement ele : data.getAsJsonArray()) {
+                System.out.println(ele.getAsString());
+            }
+        } else {
+            System.out.println(response.getData().getAsString());
+        }
+    }
+    
+    @Order(6)
+    @JvmmCmdDesc(headDesc = "Execute gc, no arguments.")
+    public static void gc(JvmmConnector connector, CmdParser cmd) {
+        JvmmRequest request = JvmmRequest.create().setType(GlobalType.JVMM_TYPE_EXECUTE_GC);
+        JvmmResponse response = request(connector, request);
+        if (response == null) {
+            return;
+        }
+        System.out.println("ok");
+    }
+
+    @Order(7)
+    @JvmmOption(
+            name = "t",
+            argName = "type",
+            desc = "Required *. The type of service to be closed, allowed values: jvmm, http, sentinel"
+    )
+    @JvmmCmdDesc(
+            headDesc = "Shutdown service.",
+            tailDesc = "eg. `shutdown -t http`"
+    )
+    public static void shutdown(JvmmConnector connector, CmdParser cmd) {
+        JvmmRequest request = JvmmRequest.create()
+                .setType(GlobalType.JVMM_TYPE_SERVER_SHUTDOWN)
+                .setData(new JsonPrimitive(cmd.getArg("t")));
+        JvmmResponse response = request(connector, request);
+        if (response == null) {
+            return;
+        }
+        System.out.println("ok");
     }
 }
