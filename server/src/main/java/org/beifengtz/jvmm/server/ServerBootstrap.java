@@ -89,7 +89,7 @@ public class ServerBootstrap {
         try {
             ServerContext.loadLoggerLib();
         } catch (Throwable t) {
-            System.err.println("The implementation of SLF4J was not found in the startup environment, and the Jvmm log dependency failed to load:" + t.getMessage());
+            System.err.println("The implementation of SLF4J was not found in the startup environment, and the Jvmm log dependency failed to load: " + t.getMessage());
             t.printStackTrace();
         }
 

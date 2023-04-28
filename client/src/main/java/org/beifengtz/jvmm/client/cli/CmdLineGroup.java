@@ -23,6 +23,7 @@ public class CmdLineGroup {
     private int windowWidth = 130;
     private int maxPrefix = 0;
     private boolean useSplitter = false;
+    private static final String splitChar = "-";
 
     private final Set<CmdLine> commands = new TreeSet<>();
 
@@ -95,7 +96,12 @@ public class CmdLineGroup {
         for (CmdLine command : commands) {
             if (useSplitter && seq-- > 0) {
                 int splitterWidth = (windowWidth - command.getKey().length() - 2) / 2;
-                System.out.println(StringUtil.repeat("#", splitterWidth) + "[ " + command.getKey() + " ]" + StringUtil.repeat("#", splitterWidth));
+                String splitLine = StringUtil.repeat(splitChar, splitterWidth) + "[ " + command.getKey() + " ]" +
+                        StringUtil.repeat(splitChar, splitterWidth);
+                if ((command.getKey().length() & 1) == 1) {
+                    splitLine += splitChar;
+                }
+                System.out.println(splitLine);
             }
             command.printHelp(windowWidth, maxPrefix);
         }

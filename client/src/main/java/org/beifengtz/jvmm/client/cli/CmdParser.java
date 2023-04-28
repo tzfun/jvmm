@@ -1,8 +1,12 @@
 package org.beifengtz.jvmm.client.cli;
 
+import org.beifengtz.jvmm.common.util.StringUtil;
+
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,7 +17,7 @@ import java.util.Map;
  */
 public class CmdParser {
 
-    private final Map<String, String> kv = new HashMap<>();
+    private final Map<String, List<String>> kv = new HashMap<>();
 
     private CmdParser(CmdLine cmdLine, String command) throws ParseException {
         this(cmdLine, command.split(" "));
@@ -25,11 +29,7 @@ public class CmdParser {
             for (String s : args) {
                 if (s.startsWith(cmdLine.getArgPrefix())) {
                     if (key != null) {
-                        if (tmpValue == null) {
-                            kv.put(key, "");
-                        } else {
-                            kv.put(key, tmpValue);
-                        }
+                        push(key, tmpValue);
                     }
                     key = s.substring(cmdLine.getArgPrefix().length());
                 } else {
@@ -37,13 +37,13 @@ public class CmdParser {
                         if (s.startsWith("\"") && !s.endsWith("\"")) {
                             tmpValue = s;
                         } else {
-                            kv.put(key, s);
+                            push(key, s);
                             key = null;
                         }
                     } else {
                         if (!s.startsWith("\"") && s.endsWith("\"")) {
                             tmpValue += " " + s;
-                            kv.put(key, tmpValue.substring(1, tmpValue.length() - 1));
+                            push(key, tmpValue.substring(1, tmpValue.length() - 1));
                             key = null;
                             tmpValue = null;
                         } else {
@@ -53,10 +53,17 @@ public class CmdParser {
                 }
             }
             if (key != null) {
-                kv.put(key, tmpValue);
+                push(key, tmpValue);
             }
         } catch (Exception e) {
             throw new ParseException("Parse command failed: " + Arrays.toString(args), 0);
+        }
+    }
+
+    private void push(String key, String value) {
+        List<String> values = kv.computeIfAbsent(key, o -> new ArrayList<>(1));
+        if (StringUtil.nonEmpty(value)) {
+            values.add(value);
         }
     }
 
@@ -73,6 +80,10 @@ public class CmdParser {
     }
 
     public String getArg(String arg) {
+        return kv.get(arg).get(0);
+    }
+
+    public List<String> getArgList(String arg) {
         return kv.get(arg);
     }
 

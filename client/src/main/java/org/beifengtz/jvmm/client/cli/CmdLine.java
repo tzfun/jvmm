@@ -100,7 +100,7 @@ public class CmdLine implements Comparable<CmdLine> {
             if (StringUtil.isEmpty(key)) {
                 System.out.println(breakLine(headDesc, consoleWidth));
             } else {
-                System.out.println(key + ":\t" + breakLine(headDesc, consoleWidth));
+                System.out.println(key + ":\n" + breakLine(headDesc, consoleWidth));
             }
         } else {
             if (StringUtil.isEmpty(key)) {

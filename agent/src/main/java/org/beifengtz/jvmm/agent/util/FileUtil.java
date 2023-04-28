@@ -1,8 +1,5 @@
 package org.beifengtz.jvmm.agent.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,8 +26,6 @@ import java.util.jar.JarFile;
  * @author beifengtz
  */
 public class FileUtil {
-
-    private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
     private static final int SAFE_BYTE_LENGTH = 2048;
 
@@ -121,14 +116,14 @@ public class FileUtil {
                 file.delete();
             }
 
-            logger.info("Start download file from {}", url);
+            LoggerUtil.info(FileUtil.class, "Start download file from " + url);
             HttpURLConnection conn = (HttpURLConnection) httpUrl.openConnection();
             conn.setConnectTimeout(3000);
             conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
 
             long totalSize = 0;
             try (InputStream inputStream = conn.getInputStream(); FileOutputStream fos = new FileOutputStream(file)) {
-                logger.debug("Start save file to local path...");
+                LoggerUtil.debug(FileUtil.class, "Start save file to local path...");
                 int temp = 0;
                 byte[] bytes = new byte[SAFE_BYTE_LENGTH];
                 while ((temp = inputStream.read(bytes)) != -1) {
@@ -136,12 +131,12 @@ public class FileUtil {
                     totalSize += temp;
                 }
             }
-            logger.info("Save file from network successful. use: {} ms, totalSize: {}.",
-                    System.currentTimeMillis() - start, parseByteSize(totalSize, 2));
+            LoggerUtil.info(FileUtil.class, "Save file from network successful. use: " +
+                    (System.currentTimeMillis() - start) + " ms, totalSize: " + parseByteSize(totalSize, 2));
 
             return true;
         } catch (Exception e) {
-            logger.error(String.format("Download file form network filed. url:'%s'. %s", url, e.getMessage()), e);
+            LoggerUtil.error(FileUtil.class, String.format("Download file form network filed. url:'%s'. %s", url, e.getMessage()), e);
 
             if (file != null && file.exists()) {
                 file.delete();

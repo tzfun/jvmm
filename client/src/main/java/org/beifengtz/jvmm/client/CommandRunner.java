@@ -119,6 +119,16 @@ public class CommandRunner {
                         .setOrder(5)
                         .setDesc("The path of the 'jvmm-server.jar' file, support relative path, absolute path and network address. Required in attach mode."))
         );
+
+        cmdGroup.addCommand(CmdLine.create()
+                .setKey("jar")
+                .setHeadDesc("Generate jvmm-agent.jar and jvmm-server.jar")
+                .setOrder(4)
+                .addOption(CmdOption.create()
+                        .setName("e")
+                        .setArgName("exclude")
+                        .setDesc("Specifies the name of the dependency to be excluded in the generated jar. Optional value: logger"))
+        );
     }
 
     public static void run(String[] args) throws Throwable {
@@ -142,7 +152,7 @@ public class CommandRunner {
             } else if ("client".equalsIgnoreCase(mode)) {
                 handleClient(CmdParser.parse(cmdGroup.getCommand("client"), args));
             } else if ("jar".equalsIgnoreCase(mode)) {
-                handleGenerateJar();
+                handleGenerateJar(CmdParser.parse(cmdGroup.getCommand("jar"), args));
             } else {
                 logger.error("Only allow model types: client, attach");
             }
@@ -152,9 +162,9 @@ public class CommandRunner {
         System.exit(0);
     }
 
-    private static void handleGenerateJar() throws IOException {
+    private static void handleGenerateJar(CmdParser cmd) throws IOException {
         if (canGenerateAgentJar() && canGenerateServerJar()) {
-            generateServerJar(null, true);
+            generateServerJar(null, !cmd.hasArg("e") || !cmd.getArg("e").contains("logger"));
             generateAgentJar(null);
             logger.info("Generate jar finished.");
         } else {
