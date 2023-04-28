@@ -1,8 +1,5 @@
 package org.beifengtz.jvmm.agent;
 
-import org.slf4j.Logger;
-import org.slf4j.Marker;
-
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -13,7 +10,7 @@ import java.nio.charset.StandardCharsets;
  *
  * @author beifengtz
  */
-public class DefaultImplLogger implements Logger {
+public class DefaultImplLogger {
 
     protected static String TRACE_PATTERN = "[\33[36;1mJvmm\33[30;0m] [\33[35;1mTrace\33[30;0m] %s%n";
     protected static String DEBUG_PATTERN = "[\33[36;1mJvmm\33[30;0m] [\33[34;1mDebug\33[30;0m] %s%n";
@@ -31,24 +28,16 @@ public class DefaultImplLogger implements Logger {
         }
     }
 
-    @Override
-    public String getName() {
-        return null;
-    }
-
-    @Override
     public boolean isTraceEnabled() {
         return false;
     }
 
-    @Override
     public void trace(String msg) {
         if (isTraceEnabled()) {
             System.out.format(TRACE_PATTERN, msg);
         }
     }
 
-    @Override
     public void trace(String format, Object arg) {
         if (isTraceEnabled()) {
             String f = format.replaceAll("\\{}", "%s");
@@ -56,7 +45,6 @@ public class DefaultImplLogger implements Logger {
         }
     }
 
-    @Override
     public void trace(String format, Object arg1, Object arg2) {
         if (isTraceEnabled()) {
             String f = format.replaceAll("\\{}", "%s");
@@ -64,7 +52,6 @@ public class DefaultImplLogger implements Logger {
         }
     }
 
-    @Override
     public void trace(String format, Object... arguments) {
         if (isTraceEnabled()) {
             String f = format.replaceAll("\\{}", "%s");
@@ -72,7 +59,6 @@ public class DefaultImplLogger implements Logger {
         }
     }
 
-    @Override
     public void trace(String msg, Throwable t) {
         if (isTraceEnabled()) {
             System.out.format(TRACE_PATTERN, msg);
@@ -80,49 +66,16 @@ public class DefaultImplLogger implements Logger {
         }
     }
 
-    @Override
-    public boolean isTraceEnabled(Marker marker) {
-        return false;
-    }
-
-    @Override
-    public void trace(Marker marker, String msg) {
-
-    }
-
-    @Override
-    public void trace(Marker marker, String format, Object arg) {
-
-    }
-
-    @Override
-    public void trace(Marker marker, String format, Object arg1, Object arg2) {
-
-    }
-
-    @Override
-    public void trace(Marker marker, String format, Object... argArray) {
-
-    }
-
-    @Override
-    public void trace(Marker marker, String msg, Throwable t) {
-
-    }
-
-    @Override
     public boolean isDebugEnabled() {
         return false;
     }
 
-    @Override
     public void debug(String msg) {
         if (isDebugEnabled()) {
             System.out.format(DEBUG_PATTERN, msg);
         }
     }
 
-    @Override
     public void debug(String format, Object arg) {
         if (isDebugEnabled()) {
             String f = format.replaceAll("\\{}", "%s");
@@ -130,7 +83,6 @@ public class DefaultImplLogger implements Logger {
         }
     }
 
-    @Override
     public void debug(String format, Object arg1, Object arg2) {
         if (isDebugEnabled()) {
             String f = format.replaceAll("\\{}", "%s");
@@ -138,7 +90,6 @@ public class DefaultImplLogger implements Logger {
         }
     }
 
-    @Override
     public void debug(String format, Object... arguments) {
         if (isDebugEnabled()) {
             String f = format.replaceAll("\\{}", "%s");
@@ -146,7 +97,6 @@ public class DefaultImplLogger implements Logger {
         }
     }
 
-    @Override
     public void debug(String msg, Throwable t) {
         if (isDebugEnabled()) {
             System.out.format(DEBUG_PATTERN, msg);
@@ -154,49 +104,18 @@ public class DefaultImplLogger implements Logger {
         }
     }
 
-    @Override
-    public boolean isDebugEnabled(Marker marker) {
-        return false;
-    }
-
-    @Override
-    public void debug(Marker marker, String msg) {
-
-    }
-
-    @Override
-    public void debug(Marker marker, String format, Object arg) {
-
-    }
-
-    @Override
-    public void debug(Marker marker, String format, Object arg1, Object arg2) {
-
-    }
-
-    @Override
-    public void debug(Marker marker, String format, Object... arguments) {
-
-    }
-
-    @Override
-    public void debug(Marker marker, String msg, Throwable t) {
-
-    }
-
-    @Override
     public boolean isInfoEnabled() {
         return true;
     }
 
-    @Override
+
     public void info(String msg) {
         if (isInfoEnabled()) {
             System.out.format(INFO_PATTERN, msg);
         }
     }
 
-    @Override
+
     public void info(String format, Object arg) {
         if (isInfoEnabled()) {
             String f = format.replaceAll("\\{}", "%s");
@@ -204,7 +123,7 @@ public class DefaultImplLogger implements Logger {
         }
     }
 
-    @Override
+
     public void info(String format, Object arg1, Object arg2) {
         if (isInfoEnabled()) {
             String f = format.replaceAll("\\{}", "%s");
@@ -212,7 +131,7 @@ public class DefaultImplLogger implements Logger {
         }
     }
 
-    @Override
+
     public void info(String format, Object... arguments) {
         if (isInfoEnabled()) {
             String f = format.replaceAll("\\{}", "%s");
@@ -220,7 +139,7 @@ public class DefaultImplLogger implements Logger {
         }
     }
 
-    @Override
+
     public void info(String msg, Throwable t) {
         if (isInfoEnabled()) {
             System.out.format(INFO_PATTERN, msg);
@@ -228,49 +147,18 @@ public class DefaultImplLogger implements Logger {
         }
     }
 
-    @Override
-    public boolean isInfoEnabled(Marker marker) {
-        return false;
-    }
-
-    @Override
-    public void info(Marker marker, String msg) {
-
-    }
-
-    @Override
-    public void info(Marker marker, String format, Object arg) {
-
-    }
-
-    @Override
-    public void info(Marker marker, String format, Object arg1, Object arg2) {
-
-    }
-
-    @Override
-    public void info(Marker marker, String format, Object... arguments) {
-
-    }
-
-    @Override
-    public void info(Marker marker, String msg, Throwable t) {
-
-    }
-
-    @Override
     public boolean isWarnEnabled() {
         return true;
     }
 
-    @Override
+
     public void warn(String msg) {
         if (isWarnEnabled()) {
             System.out.format(WARN_PATTERN, msg);
         }
     }
 
-    @Override
+
     public void warn(String format, Object arg) {
         if (isWarnEnabled()) {
             String f = format.replaceAll("\\{}", "%s");
@@ -278,7 +166,7 @@ public class DefaultImplLogger implements Logger {
         }
     }
 
-    @Override
+
     public void warn(String format, Object... arguments) {
         if (isWarnEnabled()) {
             String f = format.replaceAll("\\{}", "%s");
@@ -286,7 +174,7 @@ public class DefaultImplLogger implements Logger {
         }
     }
 
-    @Override
+
     public void warn(String format, Object arg1, Object arg2) {
         if (isWarnEnabled()) {
             String f = format.replaceAll("\\{}", "%s");
@@ -294,57 +182,18 @@ public class DefaultImplLogger implements Logger {
         }
     }
 
-    @Override
-    public void warn(String msg, Throwable t) {
-        if (isWarnEnabled()) {
-            System.out.format(WARN_PATTERN, msg);
-            t.printStackTrace();
-        }
-    }
-
-    @Override
-    public boolean isWarnEnabled(Marker marker) {
-        return false;
-    }
-
-    @Override
-    public void warn(Marker marker, String msg) {
-
-    }
-
-    @Override
-    public void warn(Marker marker, String format, Object arg) {
-
-    }
-
-    @Override
-    public void warn(Marker marker, String format, Object arg1, Object arg2) {
-
-    }
-
-    @Override
-    public void warn(Marker marker, String format, Object... arguments) {
-
-    }
-
-    @Override
-    public void warn(Marker marker, String msg, Throwable t) {
-
-    }
-
-    @Override
     public boolean isErrorEnabled() {
         return true;
     }
 
-    @Override
+
     public void error(String msg) {
         if (isErrorEnabled()) {
             System.out.format(ERROR_PATTERN, msg);
         }
     }
 
-    @Override
+
     public void error(String format, Object arg) {
         if (isErrorEnabled()) {
             String f = format.replaceAll("\\{}", "%s");
@@ -352,7 +201,7 @@ public class DefaultImplLogger implements Logger {
         }
     }
 
-    @Override
+
     public void error(String format, Object arg1, Object arg2) {
         if (isErrorEnabled()) {
             String f = format.replaceAll("\\{}", "%s");
@@ -360,7 +209,7 @@ public class DefaultImplLogger implements Logger {
         }
     }
 
-    @Override
+
     public void error(String format, Object... arguments) {
         if (isErrorEnabled()) {
             String f = format.replaceAll("\\{}", "%s");
@@ -368,42 +217,12 @@ public class DefaultImplLogger implements Logger {
         }
     }
 
-    @Override
+
     public void error(String msg, Throwable t) {
         if (isErrorEnabled()) {
             System.out.format(ERROR_PATTERN, msg);
             t.printStackTrace();
         }
-    }
-
-    @Override
-    public boolean isErrorEnabled(Marker marker) {
-        return false;
-    }
-
-    @Override
-    public void error(Marker marker, String msg) {
-
-    }
-
-    @Override
-    public void error(Marker marker, String format, Object arg) {
-
-    }
-
-    @Override
-    public void error(Marker marker, String format, Object arg1, Object arg2) {
-
-    }
-
-    @Override
-    public void error(Marker marker, String format, Object... arguments) {
-
-    }
-
-    @Override
-    public void error(Marker marker, String msg, Throwable t) {
-
     }
 
 }

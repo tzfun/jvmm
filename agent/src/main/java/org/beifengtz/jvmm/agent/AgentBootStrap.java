@@ -3,8 +3,7 @@ package org.beifengtz.jvmm.agent;
 import org.beifengtz.jvmm.agent.util.AppUtil;
 import org.beifengtz.jvmm.agent.util.ClassLoaderUtil;
 import org.beifengtz.jvmm.agent.util.FileUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.beifengtz.jvmm.agent.util.LoggerUtil;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -36,7 +35,6 @@ import java.util.jar.JarFile;
  * @author beifengtz
  */
 public class AgentBootStrap {
-    private static volatile Logger log = null;
     private static final String JVMM_SERVER_JAR = "jvmm-server.jar";
     private static final String SERVER_MAIN_CLASS = "org.beifengtz.jvmm.server.ServerBootstrap";
     private static volatile Instrumentation instrumentation;
@@ -80,8 +78,7 @@ public class AgentBootStrap {
      */
     private static synchronized void main(String args, final Instrumentation inst, String type) {
         instrumentation = inst;
-        initLogger(type);
-        log.info("Jvm monitor Agent attached by {}.", type);
+        LoggerUtil.info(AgentBootStrap.class, "Jvm monitor Agent attached by " + type);
 
         if (Objects.isNull(args)) {
             args = "";
@@ -100,10 +97,10 @@ public class AgentBootStrap {
         if ("agentmain".equals(type)) {
             if (agentAttached) {
                 try {
-                    log.info("The jvmm agent has been loaded once and enters the server startup phase...");
+                    LoggerUtil.info(AgentBootStrap.class, "The jvmm agent has been loaded once and enters the server startup phase...");
                     bootServer(inst, null, agentArgs);
                 } catch (InterruptedException e) {
-                    log.error(e.getMessage(), e);
+                    LoggerUtil.error(AgentBootStrap.class, e.getMessage(), e);
                     throw new RuntimeException(e);
                 }
                 return;
@@ -126,28 +123,28 @@ public class AgentBootStrap {
         }
 
         if (!serverJarFile.exists()) {
-            log.warn("Can not found jvmm-server.jar file from args: {}", serverJar);
+            LoggerUtil.warn(AgentBootStrap.class, "Can not found jvmm-server.jar file from args: " + serverJar);
 
             //  如果从参数中未成功读取jar包，依次按以下路径去寻找jar包
             //  1. 目标程序根目录下的 jvmm-server.jar 包
             //  2. agent的资源目录下的 jvmm-server.jar 包
 
-            log.info("Try to find jvmm-server.jar file from target program directory.");
+            LoggerUtil.info(AgentBootStrap.class, "Try to find jvmm-server.jar file from target program directory.");
             serverJarFile = new File(AppUtil.getHomePath(), JVMM_SERVER_JAR);
             if (!serverJarFile.exists()) {
-                log.warn("Can not found jvmm-server.jar file from target program directory.");
+                LoggerUtil.warn(LoggerUtil.class, "Can not found jvmm-server.jar file from target program directory.");
 
-                log.info("Try to find jvmm-server.jar file from agent jar directory.");
+                LoggerUtil.info(LoggerUtil.class, "Try to find jvmm-server.jar file from agent jar directory.");
                 CodeSource codeSource = AgentBootStrap.class.getProtectionDomain().getCodeSource();
                 if (codeSource != null) {
                     try {
                         File agentJarFile = new File(codeSource.getLocation().toURI().getSchemeSpecificPart());
                         serverJarFile = new File(agentJarFile.getParentFile(), JVMM_SERVER_JAR);
                         if (!serverJarFile.exists()) {
-                            log.error("Can not found jvmm-server.jar file from agent jar directory.");
+                            LoggerUtil.error(AgentBootStrap.class, "Can not found jvmm-server.jar file from agent jar directory.");
                         }
                     } catch (Throwable e) {
-                        log.error(String.format("Can not found jvmm-server.jar file from %s. %s", codeSource.getLocation(), e.getMessage()), e);
+                        LoggerUtil.error(AgentBootStrap.class, String.format("Can not found jvmm-server.jar file from %s. %s", codeSource.getLocation(), e.getMessage()), e);
                     }
                 }
             }
@@ -173,22 +170,9 @@ public class AgentBootStrap {
             bootServer(inst, needPreLoad, agentArgs);
 
         } catch (Throwable e) {
-            log.error(e.getMessage(), e);
+            LoggerUtil.error(AgentBootStrap.class, e.getMessage(), e);
             notifyListener(findListenerPortArg(agentArgs), e.getMessage());
             throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * 为了不破坏宿主程序内的logger初始化流程，如果这里使用premain方式执行就默认使用jvmm logger
-     */
-    private static synchronized void initLogger(String agentType) {
-        if (log == null) {
-            if ("premain".equals(agentType)) {
-                log = new DefaultImplLogger();
-            } else {
-                log = LoggerFactory.getLogger(AgentBootStrap.class);
-            }
         }
     }
 
@@ -201,11 +185,11 @@ public class AgentBootStrap {
             Class<?> springLauncher = null;
             try {
                 springLauncher = Class.forName("org.springframework.boot.loader.JarLauncher", false, systemClassLoader);
-                log.debug("The target program is a spring application and is started as a jar.");
+                LoggerUtil.debug(AgentBootStrap.class, "The target program is a spring application and is started as a jar.");
             } catch (NoClassDefFoundError | ClassNotFoundException ignored1) {
                 try {
                     springLauncher = Class.forName("org.springframework.boot.loader.WarLauncher", false, systemClassLoader);
-                    log.debug("The target program is a spring application and is started as a war.");
+                    LoggerUtil.debug(AgentBootStrap.class, "The target program is a spring application and is started as a war.");
                 } catch (NoClassDefFoundError | ClassNotFoundException ignored2) {
                 }
             }
@@ -260,7 +244,7 @@ public class AgentBootStrap {
 
                 URL jarFile = new File(finalJarPath).toURI().toURL();
                 ClassLoaderUtil.loadJar(loader, jarFile);
-                log.info("Load jar file from " + finalJarPath);
+                LoggerUtil.info(AgentBootStrap.class, "Load jar file from " + finalJarPath);
                 return true;
             }
         }
@@ -291,7 +275,7 @@ public class AgentBootStrap {
                 writer.write(message);
             }
         } catch (Exception e) {
-            log.error("Notify listener failed: " + e.getMessage(), e);
+            LoggerUtil.error(AgentBootStrap.class, "Notify listener failed: " + e.getMessage(), e);
         }
     }
 
@@ -326,7 +310,7 @@ public class AgentBootStrap {
                     }
                 }
                 running = false;
-                log.error(throwable.getMessage(), throwable);
+                LoggerUtil.error(AgentBootStrap.class, throwable.getMessage(), throwable);
                 notifyListener(listenerPort, e.getClass().getName() + ":" + throwable.getMessage());
             }
         });
@@ -348,77 +332,25 @@ public class AgentBootStrap {
             while (running) {
                 try {
                     LoggerEvent info = logQueue.take();
-                    Logger logger = LoggerFactory.getLogger(info.getName());
-                    switch (info.getType()) {
-                        case "TRACE": {
-                            if (info.getArgs() == null) {
-                                if (info.getThrowable() == null) {
-                                    logger.trace(info.getMsg());
-                                } else {
-                                    logger.trace(info.getMsg(), info.getThrowable());
-                                }
-                            } else {
-                                logger.trace(info.getMsg(), info.getArgs());
-                            }
+
+                    String type = info.getType().toLowerCase();
+                    if (info.getArgs() == null) {
+                        if (info.getThrowable() == null) {
+                            LoggerUtil.logger(info.getName(), type, info.getMsg());
+                        } else {
+                            LoggerUtil.logger(info.getName(), type, info.getMsg(), info.getThrowable());
                         }
-                        break;
-                        case "INFO": {
-                            if (info.getArgs() == null) {
-                                if (info.getThrowable() == null) {
-                                    logger.info(info.getMsg());
-                                } else {
-                                    logger.info(info.getMsg(), info.getThrowable());
-                                }
-                            } else {
-                                logger.info(info.getMsg(), info.getArgs());
-                            }
-                        }
-                        break;
-                        case "DEBUG": {
-                            if (info.getArgs() == null) {
-                                if (info.getThrowable() == null) {
-                                    logger.debug(info.getMsg());
-                                } else {
-                                    logger.debug(info.getMsg(), info.getThrowable());
-                                }
-                            } else {
-                                logger.debug(info.getMsg(), info.getArgs());
-                            }
-                        }
-                        break;
-                        case "WARN": {
-                            if (info.getArgs() == null) {
-                                if (info.getThrowable() == null) {
-                                    logger.warn(info.getMsg());
-                                } else {
-                                    logger.warn(info.getMsg(), info.getThrowable());
-                                }
-                            } else {
-                                logger.warn(info.getMsg(), info.getArgs());
-                            }
-                        }
-                        break;
-                        case "ERROR": {
-                            if (info.getArgs() == null) {
-                                if (info.getThrowable() == null) {
-                                    logger.error(info.getMsg());
-                                } else {
-                                    logger.error(info.getMsg(), info.getThrowable());
-                                }
-                            } else {
-                                logger.error(info.getMsg(), info.getArgs());
-                            }
-                        }
-                        break;
+                    } else {
+                        LoggerUtil.logger(info.getName(), type, info.getMsg(), info.getArgs());
                     }
                 } catch (Throwable e) {
-                    log.error("Consume log failed", e);
+                    LoggerUtil.error(AgentBootStrap.class, "Consume log failed", e);
                 }
             }
         });
         thread.setName("jvmm-logger");
         thread.start();
-        log.info("Log agent thread started successfully.");
+        LoggerUtil.info(AgentBootStrap.class, "Log agent thread started successfully.");
     }
 
     /**
