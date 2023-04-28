@@ -70,16 +70,16 @@ info -t process
 
 [这里](EXAMPLE.md)提供了Jvmm client模式下采集的数据样例，Jvmm提供的功能远不止如此，更多功能请阅读 Jvmm [使用文档](#使用文档)。
 
-## 使用文档
+# 使用文档
 
 Jvmm的核心数据采集功能在 `core` 模块，提供的服务式功能在 `server` 模块，根据你的使用场景可选择下面两种使用方式：
 
 - 直接使用 Jvmm server
-- 基于 `core` 二次开发（功能更全）
+- 基于 `core` 模块二次开发（功能更全）
 
 ## Server使用
 
-### Server服务
+### 一、Server服务
 
 首先你需要了解 server 能干嘛？server提供了三种服务模式，在使用之前你需要选择哪种模式更适合你，下面简单介绍一下三种服务模式：
 
@@ -100,7 +100,7 @@ server:
     # ...
 ```
 
-### Server配置
+### 二、Server配置
 
 默认配置 [config.yml](server/src/main/resources/config.yml)内容如下：
 
@@ -221,16 +221,16 @@ log:
 workThread: 2
 ```
 
-### 启动Server
+### 三、启动Server
 
 Jvmm提供了四种方式来启动你的 server：
 
-1. 使用客户端工具本地 attach 到目标 Java 进程
-2. 目标Java进程启动时以 Java Agent 的方式
+1. Attach方式启动：使用客户端工具本地 attach 到目标 Java 进程
+2. Java Agent方式启动：目标Java进程启动时以 Java Agent 的方式
 3. 直接启动（不支持反编译和代码热更功能）
-4. 在你的项目中引入 jvmm-server 依赖，一行代码即可启动
+4. 项目中启动：在你的项目中引入 jvmm-server 依赖，一行代码即可启动
 
-#### Attach方式启动
+#### I. Attach方式启动
 
 运行 jvmm.jar， `-m`选择attach模式
 
@@ -245,7 +245,7 @@ java -jar jvmm.jar -m attach -c ./config
 java -jar jvmm.jar -m attach -c ./config -pid 80080
 ```
 
-#### Java Agent方式启动
+#### II. Java Agent方式启动
 
 Agent方式你需要先生成所需的jar包，执行：
 ```shell
@@ -269,7 +269,7 @@ java -javaagent:/path/jvmm-agent.jar=/path/jvmm-server.jar;config=/path/config.y
 
 当你的程序启动之后Jvmm server就会随之启动
 
-#### 直接启动
+#### III. 直接启动
 
 如果你不想依附于任何宿主程序，可以选择单独启动一个 Jvmm server，比如在监控物理机器的场景下。
 
@@ -288,7 +288,7 @@ java -jar jvmm-server.jar
 java -jar --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens jdk.zipfs/jdk.nio.zipfs=ALL-UNNAMED jvmm-server.jar
 ```
 
-#### 引入项目工程启动
+#### IV. 引入项目工程启动
 
 如果你想在自己的项目工程中使用server，需要先引入maven依赖
 
@@ -412,7 +412,7 @@ public class ServerConveyDemo {
 }
 ```
 
-### Server接口文档
+### 四、Server接口文档
 
 当Server以`jvmm`或`http`模式启动之后，你可以远程调用内置的接口。
 
