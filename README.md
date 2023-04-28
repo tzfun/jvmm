@@ -416,7 +416,7 @@ public class ServerConveyDemo {
 
 当Server以`jvmm`或`http`模式启动之后，你可以远程调用内置的接口。
 
-#### Jvmm接口
+#### I. Jvmm接口
 
 Jvmm Service提供了以下API接口：
 
@@ -456,7 +456,7 @@ Jvmm Service提供了以下API接口：
 | JVMM_TYPE_PROFILER_LIST_EVENTS            | /                                                                                                                                         | 获取当前环境支持的profiler events                                                              |
 | JVMM_TYPE_SERVER_SHUTDOWN                 | String                                                                                                                                    | 关闭服务，data为服务类型                                                                        |
 
-#### Http接口
+#### II. Http接口
 
 Http Service提供了以下API接口：
 
@@ -496,7 +496,7 @@ Http Service提供了以下API接口：
 | /profiler/execute           | POST | /                                                                                           | command(String)                                                                                                                           | 执行profiler命令，见[async-profiler](https://github.com/jvm-profiling-tools/async-profiler) |
 | /server/shutdown            | GET  | target(String)                                                                              | /                                                                                                                                         | 关闭服务，data为服务类型                                                                        |
 
-#### 哨兵模式
+#### III. 哨兵模式
 
 哨兵模式的运作逻辑是**定期采集指定数据项然后向订阅者推送**，你需要提供一个可接收数据的订阅服务（http接口），如果接口访问需要进行身份认证， 订阅者Http接口目前仅支持**Basic**方式认证。
 
