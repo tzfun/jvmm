@@ -88,7 +88,7 @@ Jvmm的核心数据采集功能在 `core` 模块，提供的服务式功能在 `
 3. Sentinel server：哨兵模式，定时采集指定的数据项并通过 Http 接口传输给第三方
 
 任何一种服务模式都离不开配置文件 [config.yml](server/src/main/resources/config.yml)，通过`server.type`来配置你选择了哪个模式或哪几个模式，
-因为它们可以**同时运行**，各个模式的具体配置分别对应 `server.jvmm`，`server.http`，`server.sentinel`。
+它们可以**同时运行**，各个模式的具体配置分别对应 `server.jvmm`，`server.http`，`server.sentinel`。
 ```yaml
 server:
   type: jvmm,http,sentinel  # 同时开启三种模式
@@ -561,8 +561,7 @@ java -jar jvmm.jar -h
 
 # 示例
 
-客户端工具采集数据示例
-[采集数据样例](EXAMPLE.md)
+客户端工具[采集数据示例](EXAMPLE.md)
 
 生成火焰图示例
 
