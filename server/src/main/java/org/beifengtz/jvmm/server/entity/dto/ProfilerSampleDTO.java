@@ -12,11 +12,11 @@ import org.beifengtz.jvmm.core.entity.profiler.ProfilerEvent;
  *
  * @author beifengtz
  */
-public class ProfilerSampleDTO{
+public class ProfilerSampleDTO {
     private String format = "html";
     private String event = ProfilerEvent.cpu.name();
     private ProfilerCounter counter = ProfilerCounter.samples;
-    private int time =  10; //  单位秒
+    private int time = 10; //  单位秒
     private Long interval = 10000000L;
 
     public String getFormat() {

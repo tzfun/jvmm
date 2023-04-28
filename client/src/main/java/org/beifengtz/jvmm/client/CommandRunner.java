@@ -125,7 +125,16 @@ public class CommandRunner {
                 .setHeadDesc("Generate jvmm-agent.jar and jvmm-server.jar")
                 .setOrder(4)
                 .addOption(CmdOption.create()
+                        .setName("a")
+                        .setOrder(1)
+                        .setDesc("Generate jvmm-agent.jar"))
+                .addOption(CmdOption.create()
+                        .setName("s")
+                        .setOrder(2)
+                        .setDesc("Generate jvmm-server.jar"))
+                .addOption(CmdOption.create()
                         .setName("e")
+                        .setOrder(3)
                         .setArgName("exclude")
                         .setDesc("Specifies the name of the dependency to be excluded in the generated jar. Optional value: logger"))
         );
@@ -163,13 +172,25 @@ public class CommandRunner {
     }
 
     private static void handleGenerateJar(CmdParser cmd) throws IOException {
-        if (canGenerateAgentJar() && canGenerateServerJar()) {
-            generateServerJar(null, !cmd.hasArg("e") || !cmd.getArg("e").contains("logger"));
-            generateAgentJar(null);
-            logger.info("Generate jar finished.");
-        } else {
-            logger.error("Can not generate jar file. You can try the following: 1. select the appropriate jvmm version, 2. run in jar mode");
+        boolean generateAll = !cmd.hasArg("a") && !cmd.hasArg("s");
+
+        if (generateAll || cmd.hasArg("a")) {
+            if (canGenerateAgentJar()) {
+                generateAgentJar(null);
+            } else {
+                logger.error("Can not generate agent jar file, case: no runtime source.");
+            }
         }
+
+        if (generateAll || cmd.hasArg("s")) {
+            if (canGenerateServerJar()) {
+                generateServerJar(null, !cmd.hasArg("e") || !cmd.getArg("e").contains("logger"));
+            } else {
+                logger.error("Can not generate server jar file, case: no runtime source.");
+            }
+        }
+
+        logger.info("Generate jar finished.");
     }
 
     private static boolean canGenerateServerJar() {
