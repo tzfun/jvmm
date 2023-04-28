@@ -19,12 +19,8 @@ repositories {
 }
 
 dependencies {
-    compile(project(':convey')) {
-        exclude group: 'io.netty'
-    }
+    compile(project(':convey'))
     compile(project(':core'))
-    //  netty版本会被parent依赖替换
-    compile "io.netty:netty-all:${nettyVersion}"
     implementation 'org.springframework.boot:spring-boot-starter'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
