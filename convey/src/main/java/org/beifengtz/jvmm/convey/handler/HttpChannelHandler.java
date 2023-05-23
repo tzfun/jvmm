@@ -24,6 +24,7 @@ import org.beifengtz.jvmm.common.exception.InvalidJvmmMappingException;
 import org.beifengtz.jvmm.common.util.CommonUtil;
 import org.beifengtz.jvmm.common.util.ReflexUtil;
 import org.beifengtz.jvmm.common.util.StringUtil;
+import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
 import org.beifengtz.jvmm.common.util.meta.PairKey;
 import org.beifengtz.jvmm.convey.annotation.HttpController;
 import org.beifengtz.jvmm.convey.annotation.HttpRequest;
@@ -72,7 +73,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
     private static final ChannelGroup channels = new DefaultChannelGroup(ImmediateEventExecutor.INSTANCE);
 
     static {
-        controllers = ReflexUtil.scanAnnotation(getScanPack(), HttpController.class);
+        controllers = ReflexUtil.scanAnnotation(SystemPropertyUtil.get("jvmm.scanPack", "org.beifengtz.jvmm"), HttpController.class);
         mappings = new HashMap<>(controllers.size() * 5);
         methodMappings = new HashMap<>(controllers.size() * 5);
 
@@ -104,10 +105,6 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
 
     public static ChannelGroupFuture closeAllChannels() {
         return channels.close();
-    }
-
-    public static String getScanPack() {
-        return "org.beifengtz.jvmm";
     }
 
     protected void response(ChannelHandlerContext ctx, HttpResponseStatus status) {

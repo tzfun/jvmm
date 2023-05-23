@@ -46,7 +46,7 @@ public class JvmmHttpServerService extends AbstractListenerServerService {
         EventLoopGroup group = ServerContext.getWorkerGroup();
         ChannelFuture future = new ServerBootstrap()
                 .group(group)
-                .channel(ChannelInitializers.serverChannelClass(ServerContext.getWorkerGroup()))
+                .channel(ChannelInitializers.serverChannelClass(group))
                 .childHandler(new HttpServerChannelInitializer(new HttpServerHandlerProvider(10, group)))
                 .bind(runningPort.get())
                 .syncUninterruptibly();
