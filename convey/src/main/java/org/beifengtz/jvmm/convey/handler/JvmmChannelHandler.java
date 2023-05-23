@@ -20,6 +20,7 @@ import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
 import org.beifengtz.jvmm.common.exception.InvalidJvmmMappingException;
 import org.beifengtz.jvmm.common.exception.InvalidMsgException;
 import org.beifengtz.jvmm.common.util.ReflexUtil;
+import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
 import org.beifengtz.jvmm.convey.annotation.JvmmController;
 import org.beifengtz.jvmm.convey.annotation.JvmmMapping;
 import org.beifengtz.jvmm.convey.auth.JvmmBubble;
@@ -63,7 +64,7 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
     private static final ChannelGroup channels = new DefaultChannelGroup(ImmediateEventExecutor.INSTANCE);
 
     static {
-        controllers = ReflexUtil.scanAnnotation(getScanPack(), JvmmController.class);
+        controllers = ReflexUtil.scanAnnotation(SystemPropertyUtil.get("jvmm.scanPack", "org.beifengtz.jvmm"), JvmmController.class);
         mappings = new HashMap<>(controllers.size() * 5);
 
         for (Class<?> controller : controllers) {
@@ -84,10 +85,6 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
                 mappings.put(type, method);
             }
         }
-    }
-
-    public static String getScanPack() {
-        return "org.beifengtz.jvmm";
     }
 
     public static ChannelGroupFuture closeAllChannels() {
