@@ -55,7 +55,7 @@ java -jar jvmm.jar -m jar -s
 java -jar jvmm-server.jar
 
 # jdk 9+ 请使用下面命令
-java -jar --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens jdk.zipfs/jdk.nio.zipfs=ALL-UNNAMED jvmm-server.jar
+java -jar --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens jdk.zipfs/jdk.nio.zipfs=ALL-UNNAMED --add-opens java.management/sun.management=ALL-UNNAMED jvmm-server.jar
 ```
 
 如果启动成功 Jvmm Server 将会默认运行在 5010 端口，然后你需要在当前目录新起一个窗口执行：
@@ -230,6 +230,15 @@ Jvmm提供了四种方式来启动你的 server：
 3. 直接启动（不支持反编译和代码热更功能）
 4. 项目中启动：在你的项目中引入 jvmm-server 依赖，一行代码即可启动
 
+> 注意！！！
+>
+> 无论是你用哪种方式启动Server，如果你的运行环境是jdk 9+以上，需要在你的应用启动时添加以下三个JVM参数
+```shell
+--add-opens java.base/jdk.internal.loader=ALL-UNNAMED 
+--add-opens jdk.zipfs/jdk.nio.zipfs=ALL-UNNAMED
+--add-opens java.management/sun.management=ALL-UNNAMED
+```
+
 #### I. Attach方式启动
 
 运行 jvmm.jar， `-m`选择attach模式
@@ -285,7 +294,7 @@ java -jar jvmm.jar -s
 java -jar jvmm-server.jar
 
 # jdk 9+ 请使用下面命令
-java -jar --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens jdk.zipfs/jdk.nio.zipfs=ALL-UNNAMED jvmm-server.jar
+java -jar --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens jdk.zipfs/jdk.nio.zipfs=ALL-UNNAMED --add-opens java.management/sun.management=ALL-UNNAMED jvmm-server.jar
 ```
 
 #### IV. 引入项目工程启动
