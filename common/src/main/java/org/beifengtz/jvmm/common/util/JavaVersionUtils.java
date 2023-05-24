@@ -62,4 +62,16 @@ public class JavaVersionUtils {
     public static boolean isGreaterThanJava11() {
         return JAVA_VERSION > 11.0f;
     }
+
+    public static boolean isGreaterThanJava15() {
+        return JAVA_VERSION > 15.0f;
+    }
+
+    public static boolean isGreaterThanJava17() {
+        return JAVA_VERSION > 17.0f;
+    }
+
+    public static boolean isGreaterThanJava20() {
+        return JAVA_VERSION > 20.0f;
+    }
 }

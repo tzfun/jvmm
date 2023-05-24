@@ -1,6 +1,5 @@
 package org.beifengtz.jvmm.common.util;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -21,17 +20,12 @@ public class ClassLoaderUtil {
             urlClassloaderLoadJar((URLClassLoader) classLoader, jar);
         } else {
             try {
-                Field field = classLoader.getClass().getDeclaredField("ucp");
-                field.setAccessible(true);
-                Object ucp = field.get(classLoader);
-
-                Method method = ucp.getClass().getDeclaredMethod("addURL", URL.class);
+                Method method = classLoader.getClass().getDeclaredMethod("appendToClassPathForInstrumentation", String.class);
                 method.setAccessible(true);
-
-                method.invoke(ucp, jar);
-            } catch (Exception exception) {
-                exception.printStackTrace();
-                throw new IllegalStateException(exception.getMessage(), exception);
+                method.invoke(classLoader, jar.getFile());
+            } catch (Throwable e) {
+                e.printStackTrace();
+                throw e;
             }
         }
     }
