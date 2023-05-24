@@ -349,7 +349,9 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                     return null;
                 }
             } else {
-                response404(ctx);
+                if (!handleUnmapping(ctx, path, msg)) {
+                    response404(ctx);
+                }
                 return null;
             }
 
@@ -375,5 +377,17 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
             logger().error(e.getMessage(), e);
             response500(ctx, e.getClass().getName() + ": " + e.getMessage());
         }
+    }
+
+    /**
+     * 未匹配到映射路径，调用此方法，一般用于静态文件处理
+     *
+     * @param ctx  ctx
+     * @param path uri
+     * @param msg  HttpRequest
+     * @return true - 已处理
+     */
+    protected boolean handleUnmapping(ChannelHandlerContext ctx, String path, FullHttpRequest msg) {
+        return false;
     }
 }
