@@ -17,14 +17,15 @@ import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
+import io.netty.util.AsciiString;
 import io.netty.util.concurrent.EventExecutor;
 import io.netty.util.concurrent.ImmediateEventExecutor;
 import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
 import org.beifengtz.jvmm.common.exception.InvalidJvmmMappingException;
-import org.beifengtz.jvmm.common.util.CommonUtil;
 import org.beifengtz.jvmm.common.util.ReflexUtil;
 import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
+import org.beifengtz.jvmm.common.util.meta.MultiMap;
 import org.beifengtz.jvmm.common.util.meta.PairKey;
 import org.beifengtz.jvmm.convey.annotation.HttpController;
 import org.beifengtz.jvmm.convey.annotation.HttpRequest;
@@ -49,9 +50,11 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -71,11 +74,19 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
     private static final Map<String, Method> mappings;
     private static final Map<String, HttpMethod> methodMappings;
     private static final ChannelGroup channels = new DefaultChannelGroup(ImmediateEventExecutor.INSTANCE);
+    protected static final MultiMap<AsciiString, String> globalHeaders;
 
     static {
         controllers = ReflexUtil.scanAnnotation(SystemPropertyUtil.get("jvmm.scanPack", "org.beifengtz.jvmm"), HttpController.class);
         mappings = new HashMap<>(controllers.size() * 5);
         methodMappings = new HashMap<>(controllers.size() * 5);
+        globalHeaders = new MultiMap<>();
+        globalHeaders.put(HttpHeaderNames.ACCESS_CONTROL_ALLOW_HEADERS, "content-type,token");
+        globalHeaders.put(HttpHeaderNames.ACCESS_CONTROL_ALLOW_METHODS, "GET,HEAD,POST");
+        globalHeaders.put(HttpHeaderNames.ALLOW, "GET,POST,OPTIONS");
+        globalHeaders.put(HttpHeaderNames.VARY, "Access-Control-Request-Headers");
+        globalHeaders.put(HttpHeaderNames.VARY, "Access-Control-Request-Method");
+        globalHeaders.put(HttpHeaderNames.VARY, "Origin");
 
         Logger logger = LoggerFactory.getLogger(HttpChannelHandler.class);
 
@@ -99,6 +110,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
         }
     }
 
+
     public HttpChannelHandler() {
         super(false);
     }
@@ -115,7 +127,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
         response(ctx, status, data == null ? null : data.getBytes(StandardCharsets.UTF_8), null);
     }
 
-    protected void response(ChannelHandlerContext ctx, HttpResponseStatus status, byte[] data, Map<String, Object> headers) {
+    protected void response(ChannelHandlerContext ctx, HttpResponseStatus status, byte[] data, MultiMap<String, Object> headers) {
         HttpResponse resp;
         if (data == null) {
             resp = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, status);
@@ -125,15 +137,22 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
             resp.headers().set(HttpHeaderNames.CONTENT_ENCODING, "UTF-8");
             resp.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/json;charset=utf-8");
         }
+        resp.headers().set(HttpHeaderNames.DATE, new Date().toString());
+
+        for (Entry<AsciiString, List<String>> entry : globalHeaders.entrySet()) {
+            resp.headers().set(entry.getKey(), entry.getValue());
+        }
 
         if (headers != null && !headers.isEmpty()) {
-            headers.forEach((k, v) -> resp.headers().set(k, v));
+            for (Entry<String, List<Object>> en : headers.entrySet()) {
+                resp.headers().set(en.getKey(), en.getValue());
+            }
         }
         ctx.writeAndFlush(resp).addListener(ChannelFutureListener.CLOSE);
     }
 
     protected void response401(ChannelHandlerContext ctx) {
-        response(ctx, HttpResponseStatus.UNAUTHORIZED, null, CommonUtil.hasMapOf("WWW-Authenticate", "Basic realm=\"Restricted Access\""));
+        response(ctx, HttpResponseStatus.UNAUTHORIZED, null, MultiMap.of("WWW-Authenticate", "Basic realm=\"Restricted Access\""));
     }
 
     protected void response400(ChannelHandlerContext ctx, String msg) {
@@ -329,6 +348,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
         try {
             URI uri = new URI(msg.uri());
             String path = uri.getPath();
+            logger().debug("Http request {}, method: {}", path, msg.method());
             String apiPrefix = getApiPrefix();
             if (StringUtil.nonEmpty(apiPrefix)) {
                 if (path.startsWith(apiPrefix)) {
@@ -341,7 +361,19 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
 
             if (mappings.containsKey(path)) {
                 if (msg.method().equals(HttpMethod.OPTIONS)) {
-                    response(ctx, HttpResponseStatus.OK);
+                    String connection = msg.headers().get("Connection");
+                    if ("keep-alive".equalsIgnoreCase(connection)) {
+                        HttpResponse resp = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
+                        for (Entry<AsciiString, List<String>> en : globalHeaders.entrySet()) {
+                            resp.headers().set(en.getKey(), en.getValue());
+                        }
+                        resp.headers().set(HttpHeaderNames.DATE, new Date().toString());
+                        resp.headers().set(HttpHeaderNames.CONTENT_LENGTH, 0);
+                        resp.headers().set("Keep-Alive", "timeout=60");
+                        ctx.writeAndFlush(resp);
+                    } else {
+                        response(ctx, HttpResponseStatus.OK);
+                    }
                     return null;
                 }
                 if (!msg.method().equals(methodMappings.get(path))) {
@@ -358,8 +390,8 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
             return PairKey.of(uri, path);
         } catch (URISyntaxException e) {
             response404(ctx);
-            return null;
         }
+        return null;
     }
 
     public String getApiPrefix() {
