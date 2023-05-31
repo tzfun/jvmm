@@ -4,6 +4,7 @@ import org.beifengtz.jvmm.common.exception.ExecutionException;
 import org.beifengtz.jvmm.common.util.CommonUtil;
 import org.beifengtz.jvmm.common.util.FileUtil;
 import org.beifengtz.jvmm.common.util.PlatformUtil;
+import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
 import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.JvmmProfiler;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerCounter;
@@ -100,7 +101,11 @@ public class AsyncProfiler {
             throw new IllegalStateException("Can not found libasyncProfiler.so, Only support Linux & Mac.");
         }
 
-        System.load(libPath);
+        //  不可重复加载
+        if (!SystemPropertyUtil.getBoolean("jvmm.profiler.loaded", false)) {
+            System.load(libPath);
+            System.setProperty("jvmm.profiler.loaded", "true");
+        }
 
         instance = new AsyncProfiler();
         return instance;

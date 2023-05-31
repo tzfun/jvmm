@@ -47,13 +47,13 @@ public abstract class AbstractListenerServerService implements JvmmService {
         retry.incrementAndGet();
         if (PlatformUtil.portAvailable(runningPort.get())) {
             try {
-                if (retry.get() > BIND_LIMIT_TIMES) {
-                    throw new BindException("The number of port monitoring retries exceeds the limit: " + BIND_LIMIT_TIMES);
+                if (retry.get() > conf.getAdaptivePortLimit()) {
+                    throw new BindException("The number of port monitoring retries exceeds the limit: " + conf.getAdaptivePortLimit());
                 }
 
                 startUp(promise);
             } catch (Errors.NativeIoException | BindException e) {
-                if (retry.get() <= BIND_LIMIT_TIMES && conf.isAdaptivePort()) {
+                if (conf.isAdaptivePort() && retry.get() <= conf.getAdaptivePortLimit()) {
                     logger().warn("Port {} is not available, trying to find available ports by auto-incrementing ports.", runningPort.get());
                     runningPort.incrementAndGet();
                     start0(conf, promise);

@@ -13,6 +13,7 @@ package org.beifengtz.jvmm.server.entity.conf;
 public class JvmmServerConf {
     private int port = 5010;
     private boolean adaptivePort = true;
+    private int adaptivePortLimit = 5;
     private AuthOptionConf auth = new AuthOptionConf();
     private int maxChunkSize = 52428800;
 
@@ -32,6 +33,15 @@ public class JvmmServerConf {
     public <T extends JvmmServerConf> T setAdaptivePort(boolean adaptivePort) {
         this.adaptivePort = adaptivePort;
         return (T)this;
+    }
+
+    public int getAdaptivePortLimit() {
+        return adaptivePortLimit;
+    }
+
+    public JvmmServerConf setAdaptivePortLimit(int adaptivePortLimit) {
+        this.adaptivePortLimit = adaptivePortLimit;
+        return this;
     }
 
     public AuthOptionConf getAuth() {
