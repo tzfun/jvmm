@@ -16,6 +16,7 @@ server:
     # Whether to allow adaptive search for available ports, if the port you configured is already occupied, after enabling this option,
     # it will automatically increase the search for available ports, but this operation can be performed up to 5 times.
     adaptivePort: true
+    adaptivePortLimit: 5
     # Communication authentication related configuration
     auth:
       enable: false
@@ -32,6 +33,7 @@ server:
     # Whether to allow adaptive search for available ports, if the port you configured is already occupied, after enabling this option,
     # it will automatically increase the search for available ports, but this operation can be performed up to 5 times.
     adaptivePort: true
+    adaptivePortLimit: 5
     # Configure Basic authentication for http server
     auth:
       enable: true

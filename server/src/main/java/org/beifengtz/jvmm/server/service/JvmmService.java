@@ -26,8 +26,6 @@ public interface JvmmService {
         void onShutdown();
     }
 
-    int BIND_LIMIT_TIMES = 5;
-
     void start(Promise<Integer> promise);
 
     void shutdown();
