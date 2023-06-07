@@ -1,8 +1,3 @@
-plugins {
-    id 'java'
-    id 'application'
-}
-
 group = 'io.github.tzfun.jvmm'
 version = '2.1.3'
 
