@@ -37,4 +37,5 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
 }
 
+tasks.install.enabled = false
 tasks.uploadArchives.enabled = false
