@@ -44,14 +44,14 @@ public class CodingUtil {
     /**
      * 将hex字符串转为byte数组
      *
-     * @param src hex string
+     * @param hexStr hex string
      * @return byte array
      */
-    public static byte[] hexStr2Bytes(String src) {
-        int l = src.length() / 2;
+    public static byte[] hexStr2Bytes(String hexStr) {
+        int l = hexStr.length() / 2;
         byte[] ret = new byte[l];
         for (int i = 0; i < l; i++) {
-            ret[i] = Integer.valueOf(src.substring(i * 2, i * 2 + 2), 16).byteValue();
+            ret[i] = Integer.valueOf(hexStr.substring(i * 2, i * 2 + 2), 16).byteValue();
         }
         return ret;
     }
@@ -59,14 +59,14 @@ public class CodingUtil {
     /**
      * 将byte数组转为hex字符串
      *
-     * @param b byte array
+     * @param bytes byte array
      * @return hex string
      * @deprecated 改用 {@link CodingUtil#bytes2HexString(byte[])}
      */
     @Deprecated
-    public static String bytes2HexStr(byte[] b) {
+    public static String bytes2HexStr(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
-        for (byte value : b) {
+        for (byte value : bytes) {
             sb.append(String.format("%02X", value));
         }
         return sb.toString();
