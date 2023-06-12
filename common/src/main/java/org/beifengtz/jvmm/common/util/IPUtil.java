@@ -30,7 +30,7 @@ public class IPUtil {
     private static final Pattern hostPattern = Pattern.compile("^(((\\d{1,3}\\.){3}\\d{1,3})|((([\\w\\\\-_]+)(\\.[\\w\\\\-_]+))+)):\\d{1,5}$");
 
     static {
-        Set<String> ipFilter = new HashSet<String>();
+        Set<String> ipFilter = new HashSet<>();
         ipFilter.add("^10\\.(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|[0-9])"
                 + "\\.(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|[0-9])" + "\\.(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|[0-9])$");
         // B类地址范围: 172.16.0.0---172.31.255.255
