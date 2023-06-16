@@ -341,6 +341,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
 
         byte[] bytes = new byte[content.readableBytes()];
         content.readBytes(bytes);
+        content.release();
         return bytes;
     }
 
