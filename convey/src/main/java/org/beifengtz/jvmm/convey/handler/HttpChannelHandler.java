@@ -134,7 +134,6 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
         } else {
             resp = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, status, Unpooled.copiedBuffer(data));
             resp.headers().set(HttpHeaderNames.CONTENT_LENGTH, data.length);
-            resp.headers().set(HttpHeaderNames.CONTENT_ENCODING, "UTF-8");
             resp.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/json;charset=utf-8");
         }
         resp.headers().set(HttpHeaderNames.DATE, new Date().toString());
