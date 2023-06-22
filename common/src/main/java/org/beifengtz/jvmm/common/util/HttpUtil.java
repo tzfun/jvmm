@@ -25,6 +25,8 @@ public class HttpUtil {
         URL requestUrl = new URL(url);
         HttpURLConnection conn = (HttpURLConnection) requestUrl.openConnection();
         conn.setRequestMethod("GET");
+        conn.setConnectTimeout(3000);
+        conn.setReadTimeout(10000);
         try {
             return IOUtil.toByteArray(conn.getInputStream());
         } finally {
@@ -46,7 +48,7 @@ public class HttpUtil {
         conn.setRequestMethod("POST");
         conn.setDoInput(true);
         conn.setDoOutput(true);
-        conn.setConnectTimeout(10000);
+        conn.setConnectTimeout(3000);
         conn.setReadTimeout(10000);
 
         if (heads != null)

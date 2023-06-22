@@ -23,6 +23,7 @@ public class JvmmData implements JsonParsable {
     private SysInfo sys;
     private SysMemInfo sysMem;
     private List<SysFileInfo> sysFile;
+    private List<Integer> invalidPort;
     private JvmClassLoadingInfo jvmClassLoading;
     private List<JvmClassLoaderInfo> jvmClassLoader;
     private JvmCompilationInfo jvmCompilation;
@@ -33,6 +34,7 @@ public class JvmmData implements JsonParsable {
     private JvmThreadInfo jvmThread;
     private String[] jvmStack;
     private JvmThreadDetailInfo[] jvmThreadDetail;
+    private List<ThreadPoolInfo> threadPool;
 
     public String getNode() {
         return node;
@@ -112,6 +114,15 @@ public class JvmmData implements JsonParsable {
 
     public JvmmData setSysFile(List<SysFileInfo> sysFile) {
         this.sysFile = sysFile;
+        return this;
+    }
+
+    public List<Integer> getInvalidPort() {
+        return invalidPort;
+    }
+
+    public JvmmData setInvalidPort(List<Integer> invalidPort) {
+        this.invalidPort = invalidPort;
         return this;
     }
 
@@ -202,6 +213,15 @@ public class JvmmData implements JsonParsable {
 
     public JvmmData setJvmThreadDetail(JvmThreadDetailInfo[] jvmThreadDetail) {
         this.jvmThreadDetail = jvmThreadDetail;
+        return this;
+    }
+
+    public List<ThreadPoolInfo> getThreadPool() {
+        return threadPool;
+    }
+
+    public JvmmData setThreadPool(List<ThreadPoolInfo> threadPool) {
+        this.threadPool = threadPool;
         return this;
     }
 

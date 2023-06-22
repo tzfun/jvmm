@@ -134,7 +134,6 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
         } else {
             resp = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, status, Unpooled.copiedBuffer(data));
             resp.headers().set(HttpHeaderNames.CONTENT_LENGTH, data.length);
-            resp.headers().set(HttpHeaderNames.CONTENT_ENCODING, "UTF-8");
             resp.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/json;charset=utf-8");
         }
         resp.headers().set(HttpHeaderNames.DATE, new Date().toString());
@@ -191,8 +190,8 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
         try {
             Map<String, Object> params = loadParam(pair.getLeft());
 
-            boolean keepHandle = handleBefore(ctx, pair.getRight(), msg);
-            if (!keepHandle) {
+            boolean pass = handleBefore(ctx, pair.getRight(), msg);
+            if (!pass) {
                 ctx.close();
                 return;
             }
@@ -341,6 +340,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
 
         byte[] bytes = new byte[content.readableBytes()];
         content.readBytes(bytes);
+        content.release();
         return bytes;
     }
 

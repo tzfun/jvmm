@@ -3,7 +3,7 @@ name: jvmm_server
 
 server:
   # Config server type, jvmm is the default type. You can enable multiple options like this: http,sentinel,jvmm
-  type: jvmm,http
+  type: jvmm,http,sentinel
 
   # Jvmm server config options
   # The difference between jvmm server and http server is that jvmm server provides the encryption function of communication messages,
@@ -61,12 +61,11 @@ server:
       # Subscriber list, if this item is not configured or the list is empty, the sentry mode cannot be started
       # The subscriber's push interface only supports Basic authentication, which is configured through the auth segment
     - subscribers:
-      - url: http://127.0.0.1:9999/monitor/subscriber
+      - url: http://127.0.0.1:8081/monitor/subscriber
         auth:
           enable: true
           username: 123456
           password: 123456
-      - url: http://monitor.example.com:9999/monitor/subscriber
       # The interval between sentinels executing tasks, unit is second.
       # Notice! Some collection items take time, it is recommended that the interval be greater than 1 second.
       interval: 15
@@ -89,7 +88,7 @@ server:
         - 3306
     # You can define multiple sentinels, which perform different tasks
     - subscribers:
-      - url: http://monitor.example.com:9999/monitor/subscriber
+      - url: http://127.0.0.1:8081/monitor/subscriber
       interval: 15
       count: -1
       tasks:
@@ -137,7 +136,7 @@ server:
 # The default Jvmm log configuration, if no SLF4J log implementation is found in the startup environment, use this configuration.
 log:
   # Log level: ERROR, WARN, INFO, DEBUG, TRACE
-  level: INFO
+  level: DEBUG
   # Log file output directory
   file: logs
   # Log file prefix

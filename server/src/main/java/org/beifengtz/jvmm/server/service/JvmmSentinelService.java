@@ -27,7 +27,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -41,16 +40,19 @@ import java.util.stream.Collectors;
  */
 public class JvmmSentinelService implements JvmmService {
 
-    private static final Logger logger = LoggerFactory.getLogger(JvmmHttpServerService.class);
+    private static final Logger logger = LoggerFactory.getLogger(JvmmSentinelService.class);
     protected static final Map<String, String> globalHeaders = CommonUtil.hasMapOf("Content-Type", "application/json;charset=UTF-8");
 
+    protected static final int QUICK_FAIL_TIMES = 3;
+    protected static final long QUICK_FAIL_CD = TimeUnit.MINUTES.toMillis(2);
     protected ScheduledExecutorService executor;
     protected ScheduledFuture<?> scheduledFuture;
 
     /**
-     * 连续失败次数，如果超过10次后按 interval的n倍 次重试
+     * 连续失败超过{@link #QUICK_FAIL_TIMES}后进入快失败冷却时间{@link #QUICK_FAIL_CD}
      */
-    protected final Map<String, AtomicInteger> failTimes = new ConcurrentHashMap<>();
+    protected final Map<String, FailedInfo> failedInfoMap = new ConcurrentHashMap<>();
+
     protected Set<ShutdownListener> shutdownListeners = new HashSet<>();
 
     protected Queue<SentinelTask> taskList = new ConcurrentLinkedQueue<>();
@@ -123,15 +125,22 @@ public class JvmmSentinelService implements JvmmService {
         return (T) this;
     }
 
-    protected void publish(SentinelSubscriberConf subscriber, String body, int interval) {
+    protected void publish(SentinelSubscriberConf subscriber, String body) {
         String url = subscriber.getUrl();
-        AtomicInteger failCounter = failTimes.computeIfAbsent(url, o -> new AtomicInteger(0));
-        try {
-            if (failCounter.get() >= 10) {
-                if (failCounter.get() % interval != 0) {
-                    return;
-                }
+        FailedInfo failedInfo = failedInfoMap.get(url);
+        //  一个接口如果连续出现 3 此无响应，则进入 2 分钟的冷却，在冷却时间内将快失败。可避免线程大批量阻塞
+        if (failedInfo != null && failedInfo.times >= QUICK_FAIL_TIMES) {
+            if (System.currentTimeMillis() - failedInfo.startTime >= QUICK_FAIL_CD) {
+                failedInfoMap.remove(url);
+                failedInfo = null;
+                logger.debug("Release quick failed by cd timeout: {}", url);
+            } else {
+                logger.debug("Sentinel quick failed {}", url);
+                return;
             }
+        }
+        boolean failed = false;
+        try {
             Map<String, String> headers;
             AuthOptionConf auth = subscriber.getAuth();
             if (auth != null && auth.isEnable()) {
@@ -143,13 +152,27 @@ public class JvmmSentinelService implements JvmmService {
             }
 
             HttpUtil.post(url, body, headers);
-            failCounter.set(0);
         } catch (IOException e) {
             logger.warn("Can not connect monitor subscriber '{}': {}", url, e.getMessage());
-            failCounter.incrementAndGet();
-        } catch (Exception e) {
+            failed = true;
+        } catch (Throwable e) {
             logger.error("Monitor publish to " + url + " failed: " + e.getMessage(), e);
-            failCounter.incrementAndGet();
+            failed = true;
+        } finally {
+            if (failed) {
+                failedInfoMap.compute(url, (s, failedInfo1) -> {
+                    if (failedInfo1 == null) {
+                        return new FailedInfo();
+                    }
+                    if (++failedInfo1.times > QUICK_FAIL_TIMES) {
+                        logger.debug("New quick failed: {}", url);
+                    }
+                    return failedInfo1;
+                });
+            } else {
+                logger.debug("Release quick failed: {}", url);
+                failedInfoMap.remove(url);
+            }
         }
     }
 
@@ -175,12 +198,12 @@ public class JvmmSentinelService implements JvmmService {
             }
             executor.execute(() -> {
                 try {
-                    JvmmService.collectByOptions(conf.getTasks(), pair -> {
+                    JvmmService.collectByOptions(conf.getTasks(), conf.getListenedPorts(), conf.getListenedThreadPools(), pair -> {
                         if (pair.getLeft().get() <= 0) {
                             JvmmData data = pair.getRight().setNode(ServerContext.getConfiguration().getName());
                             String body = data.toJsonStr();
                             for (SentinelSubscriberConf subscriber : conf.getSubscribers()) {
-                                executor.submit(() -> publish(subscriber, body, conf.getInterval()));
+                                executor.submit(() -> publish(subscriber, body));
                             }
                             execTime = System.currentTimeMillis() + conf.getInterval() * 1000L;
                         }
@@ -190,6 +213,16 @@ public class JvmmSentinelService implements JvmmService {
                 }
             });
             return false;
+        }
+    }
+
+    static class FailedInfo {
+        private int times;
+        private final long startTime;
+
+        public FailedInfo() {
+            times = 1;
+            startTime = System.currentTimeMillis();
         }
     }
 }

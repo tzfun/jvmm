@@ -1,6 +1,7 @@
 package org.beifengtz.jvmm.demo;
 
 import org.beifengtz.jvmm.common.logger.LoggerLevel;
+import org.beifengtz.jvmm.common.util.IOUtil;
 import org.beifengtz.jvmm.common.util.IPUtil;
 import org.beifengtz.jvmm.server.ServerBootstrap;
 import org.beifengtz.jvmm.server.entity.conf.AuthOptionConf;
@@ -14,6 +15,9 @@ import org.beifengtz.jvmm.server.entity.conf.ServerConf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 /**
  * Description: TODO
  * <p>
@@ -23,8 +27,17 @@ import org.slf4j.LoggerFactory;
  */
 public class ServerBootDemo {
     public static void main(String[] args) throws Throwable {
-        ServerBootstrap server = ServerBootstrap.getInstance();
+        ServerBootstrap server = ServerBootstrap.getInstance(readConfigFromClassPath());
         server.start(msg -> transformServerCallback(msg.toString()));
+    }
+
+    private static Configuration readConfigFromClassPath() throws IOException  {
+        InputStream is = ServerBootDemo.class.getResourceAsStream("/config.yml");
+        if (is != null) {
+            String yml = IOUtil.toString(is);
+            return Configuration.parseFromYamlStr(yml);
+        }
+        return new Configuration();
     }
 
     private static Configuration constructConfig() {

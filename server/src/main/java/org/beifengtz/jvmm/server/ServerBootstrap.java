@@ -5,6 +5,7 @@ import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.Promise;
 import org.beifengtz.jvmm.common.util.IPUtil;
+import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.server.entity.conf.Configuration;
 import org.beifengtz.jvmm.server.entity.conf.ServerConf;
 import org.beifengtz.jvmm.server.enums.ServerType;
@@ -156,6 +157,11 @@ public class ServerBootstrap {
                 //  如果服务类型不同，先关闭现有服务
                 Set<ServerType> serverSet = ServerContext.getServerSet();
                 ServerConf serverConf = ServerContext.getConfiguration().getServer();
+                if (StringUtil.isEmpty(serverConf.getType())) {
+                    callback.apply("warn:No new jvmm service need start");
+                    callback.apply("end");
+                    return;
+                }
                 String[] split = serverConf.getType().split(",");
 
                 Set<ServerType> argServers = new HashSet<>(split.length);
