@@ -82,6 +82,11 @@ server:
         - disk
         - disk_io
         - cpu
+        - port
+      # If the 'port' task is configured, you need configure listened port list.
+      listenedPorts:
+        - 6379
+        - 3306
     # You can define multiple sentinels, which perform different tasks
     - subscribers:
       - url: http://monitor.example.com:9999/monitor/subscriber
@@ -95,6 +100,39 @@ server:
         - jvm_thread
         - jvm_classloader
         - jvm_classloading
+        - jvm_thread_pool
+      # If the 'jvm_thread_pool' task is configured, configure the thread pool information to be monitored here.
+      # Jvmm obtains the thread pool instance object through reflection, you need to specify the static attribute
+      # of the class where the monitoring target is located or the field name in an object instance
+      #
+      # Example 1:
+      #
+      # class com.example.demo.Singleton {
+      #   public static final Singleton INSTANCE = new Singleton();
+      #   public final ExecutorService THREAD_POOL = Executors.newSingleThreadExecutor();
+      # }
+      #
+      # You need to config like this
+      #
+      # name: singleton-pool
+      # classPath: com.example.demo.Singleton
+      # instanceField: INSTANCE
+      # field:  THREAD_POOL
+      #
+      #
+      #
+      # Example 2:
+      #
+      # If your thread pool is defined with a static field (like 'ExecutorFactory' in jvmm), you just config like this:
+      #
+      # name: jvmm-thread-pool
+      # classPath: org.beifengtz.jvmm.common.factory.ExecutorFactory
+      # filed: SCHEDULE_THREAD_POOL
+      #
+      listenedThreadPools:
+        - name: jvmm-thread-pool
+          classPath: org.beifengtz.jvmm.common.factory.ExecutorFactory
+          filed: SCHEDULE_THREAD_POOL
 
 # The default Jvmm log configuration, if no SLF4J log implementation is found in the startup environment, use this configuration.
 log:

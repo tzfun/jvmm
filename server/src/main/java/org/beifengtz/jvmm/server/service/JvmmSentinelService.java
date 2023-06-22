@@ -130,6 +130,7 @@ public class JvmmSentinelService implements JvmmService {
     protected void publish(SentinelSubscriberConf subscriber, String body) {
         String url = subscriber.getUrl();
         FailedInfo failedInfo = failedInfoMap.get(url);
+        //  一个接口如果连续出现 3 此无响应，则进入 2 分钟的冷却，在冷却时间内将快失败。可避免线程大批量阻塞
         if (failedInfo != null && failedInfo.times >= QUICK_FAIL_TIMES) {
             if (System.currentTimeMillis() - failedInfo.startTime >= QUICK_FAIL_CD) {
                 failedInfoMap.remove(url);
@@ -195,7 +196,7 @@ public class JvmmSentinelService implements JvmmService {
             }
             executor.execute(() -> {
                 try {
-                    JvmmService.collectByOptions(conf.getTasks(), pair -> {
+                    JvmmService.collectByOptions(conf.getTasks(), conf.getListenedPorts(), conf.getListenedThreadPools(), pair -> {
                         if (pair.getLeft().get() <= 0) {
                             JvmmData data = pair.getRight().setNode(ServerContext.getConfiguration().getName());
                             String body = data.toJsonStr();

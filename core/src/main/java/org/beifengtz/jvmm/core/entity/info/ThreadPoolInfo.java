@@ -9,6 +9,7 @@ import org.beifengtz.jvmm.common.JsonParsable;
  * @author beifengtz
  */
 public class ThreadPoolInfo implements JsonParsable {
+    private String name;
     //  配置信息
     private String threadFactory;
     private String rejectHandler;
@@ -39,6 +40,15 @@ public class ThreadPoolInfo implements JsonParsable {
 
     public static ThreadPoolInfo create() {
         return new ThreadPoolInfo();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public ThreadPoolInfo setName(String name) {
+        this.name = name;
+        return this;
     }
 
     public String getState() {

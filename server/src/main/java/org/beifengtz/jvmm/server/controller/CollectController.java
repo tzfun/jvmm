@@ -192,7 +192,7 @@ public class CollectController {
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_BATCH)
     @HttpRequest(value = "/collect/by_options")
     public void collectBatch(@RequestParam List<CollectionType> options, ResponseFuture future) {
-        JvmmService.collectByOptions(options, pair -> {
+        JvmmService.collectByOptions(options, null, null, pair -> {
             if (pair.getLeft().get() <= 0) {
                 future.apply(pair.getRight());
             }

@@ -28,6 +28,8 @@ public class SentinelConf {
      * 采集周期，秒
      */
     private int interval = 10;
+    private List<Integer> listenedPorts;
+    private List<ThreadPoolConf> listenedThreadPools;
 
     public List<SentinelSubscriberConf> getSubscribers() {
         return subscribers;
@@ -82,6 +84,24 @@ public class SentinelConf {
 
     public SentinelConf setInterval(int interval) {
         this.interval = interval;
+        return this;
+    }
+
+    public List<Integer> getListenedPorts() {
+        return listenedPorts;
+    }
+
+    public SentinelConf setListenedPorts(List<Integer> listenedPorts) {
+        this.listenedPorts = listenedPorts;
+        return this;
+    }
+
+    public List<ThreadPoolConf> getListenedThreadPools() {
+        return listenedThreadPools;
+    }
+
+    public SentinelConf setListenedThreadPools(List<ThreadPoolConf> listenedThreadPools) {
+        this.listenedThreadPools = listenedThreadPools;
         return this;
     }
 }

@@ -123,6 +123,7 @@ server:
     # Whether to allow adaptive search for available ports, if the port you configured is already occupied, after enabling this option,
     # it will automatically increase the search for available ports, but this operation can be performed up to 5 times.
     adaptivePort: true
+    adaptivePortLimit: 5
     # Communication authentication related configuration
     auth:
       enable: false
@@ -139,6 +140,7 @@ server:
     # Whether to allow adaptive search for available ports, if the port you configured is already occupied, after enabling this option,
     # it will automatically increase the search for available ports, but this operation can be performed up to 5 times.
     adaptivePort: true
+    adaptivePortLimit: 5
     # Configure Basic authentication for http server
     auth:
       enable: true
@@ -163,15 +165,15 @@ server:
   # Enabling the sentinel segment configuration will start the Jvmm sentinel mode, and the sentinel will regularly push monitoring data to subscribers
   # --------------------------------------------------------------------------------------------------------------------------------------------------------
   sentinel:
-      # Subscriber list, if this item is not configured or the list is empty, the sentry mode cannot be started
-      # The subscriber's push interface only supports Basic authentication, which is configured through the auth segment
+    # Subscriber list, if this item is not configured or the list is empty, the sentry mode cannot be started
+    # The subscriber's push interface only supports Basic authentication, which is configured through the auth segment
     - subscribers:
-      - url: http://127.0.0.1:9999/monitor/subscriber
-        auth:
-          enable: true
-          username: 123456
-          password: 123456
-      - url: http://monitor.example.com:9999/monitor/subscriber
+        - url: http://127.0.0.1:9999/monitor/subscriber
+          auth:
+            enable: true
+            username: 123456
+            password: 123456
+        - url: http://monitor.example.com:9999/monitor/subscriber
       # The interval between sentinels executing tasks, unit is second.
       # Notice! Some collection items take time, it is recommended that the interval be greater than 1 second.
       interval: 15
@@ -187,9 +189,14 @@ server:
         - disk
         - disk_io
         - cpu
+        - port
+      # If the 'port' task is configured, you need configure listened port list.
+      listenedPorts:
+        - 6379
+        - 3306
     # You can define multiple sentinels, which perform different tasks
     - subscribers:
-      - url: http://monitor.example.com:9999/monitor/subscriber
+        - url: http://monitor.example.com:9999/monitor/subscriber
       interval: 15
       count: -1
       tasks:
@@ -200,6 +207,39 @@ server:
         - jvm_thread
         - jvm_classloader
         - jvm_classloading
+        - jvm_thread_pool
+      # If the 'jvm_thread_pool' task is configured, configure the thread pool information to be monitored here.
+      # Jvmm obtains the thread pool instance object through reflection, you need to specify the static attribute
+      # of the class where the monitoring target is located or the field name in an object instance
+      #
+      # Example 1:
+      #
+      # class com.example.demo.Singleton {
+      #   public static final Singleton INSTANCE = new Singleton();
+      #   public final ExecutorService THREAD_POOL = Executors.newSingleThreadExecutor();
+      # }
+      #
+      # You need to config like this
+      #
+      # name: singleton-pool
+      # classPath: com.example.demo.Singleton
+      # instanceField: INSTANCE
+      # field:  THREAD_POOL
+      #
+      #
+      #
+      # Example 2:
+      #
+      # If your thread pool is defined with a static field (like 'ExecutorFactory' in jvmm), you just config like this:
+      #
+      # name: jvmm-thread-pool
+      # classPath: org.beifengtz.jvmm.common.factory.ExecutorFactory
+      # filed: SCHEDULE_THREAD_POOL
+      #
+      listenedThreadPools:
+        - name: jvmm-thread-pool
+          classPath: org.beifengtz.jvmm.common.factory.ExecutorFactory
+          filed: SCHEDULE_THREAD_POOL
 
 # The default Jvmm log configuration, if no SLF4J log implementation is found in the startup environment, use this configuration.
 log:
