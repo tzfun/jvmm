@@ -147,7 +147,12 @@ public interface JvmmService {
                     if (listenedThreadPools != null && !listenedThreadPools.isEmpty()) {
                         List<ThreadPoolInfo> infos = new ArrayList<>(listenedThreadPools.size());
                         for (ThreadPoolConf tp : listenedThreadPools) {
-                            ThreadPoolInfo info = collector.getThreadPoolInfo(tp.getClassPath(), tp.getInstanceFiled(), tp.getFiled());
+                            ThreadPoolInfo info;
+                            if (tp.getInstanceFiled() == null) {
+                                info = collector.getThreadPoolInfo(tp.getClassPath(), tp.getFiled());
+                            } else {
+                                info = collector.getThreadPoolInfo(tp.getClassPath(), tp.getInstanceFiled(), tp.getFiled());
+                            }
                             info.setName(tp.getName());
                             infos.add(info);
                         }

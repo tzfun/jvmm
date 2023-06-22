@@ -190,8 +190,8 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
         try {
             Map<String, Object> params = loadParam(pair.getLeft());
 
-            boolean keepHandle = handleBefore(ctx, pair.getRight(), msg);
-            if (!keepHandle) {
+            boolean pass = handleBefore(ctx, pair.getRight(), msg);
+            if (!pass) {
                 ctx.close();
                 return;
             }

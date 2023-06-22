@@ -27,8 +27,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 /**
@@ -42,11 +40,11 @@ import java.util.stream.Collectors;
  */
 public class JvmmSentinelService implements JvmmService {
 
-    private static final Logger logger = LoggerFactory.getLogger(JvmmHttpServerService.class);
+    private static final Logger logger = LoggerFactory.getLogger(JvmmSentinelService.class);
     protected static final Map<String, String> globalHeaders = CommonUtil.hasMapOf("Content-Type", "application/json;charset=UTF-8");
 
     protected static final int QUICK_FAIL_TIMES = 3;
-    protected static final long QUICK_FAIL_CD = TimeUnit.MINUTES.toMinutes(2);
+    protected static final long QUICK_FAIL_CD = TimeUnit.MINUTES.toMillis(2);
     protected ScheduledExecutorService executor;
     protected ScheduledFuture<?> scheduledFuture;
 
@@ -135,6 +133,7 @@ public class JvmmSentinelService implements JvmmService {
             if (System.currentTimeMillis() - failedInfo.startTime >= QUICK_FAIL_CD) {
                 failedInfoMap.remove(url);
                 failedInfo = null;
+                logger.debug("Release quick failed by cd timeout: {}", url);
             } else {
                 logger.debug("Sentinel quick failed {}", url);
                 return;
@@ -165,10 +164,13 @@ public class JvmmSentinelService implements JvmmService {
                     if (failedInfo1 == null) {
                         return new FailedInfo();
                     }
-                    failedInfo1.times++;
+                    if (++failedInfo1.times > QUICK_FAIL_TIMES) {
+                        logger.debug("New quick failed: {}", url);
+                    }
                     return failedInfo1;
                 });
             } else {
+                logger.debug("Release quick failed: {}", url);
                 failedInfoMap.remove(url);
             }
         }
