@@ -23,7 +23,7 @@ JVM（内存、线程、线程池、内存池、GC、类加载器等），还提
   * 线程池信息：配置参数、状态、任务统计等
   * GC信息：分代收集器信息、GC次数、GC耗时等
   * 类加载信息：类加载统计、类加载器、JIT
-* 支持操作系统数据采集：内存状态、CPU负载、磁盘状态及IO吞吐率、网卡状态及IO吞吐率
+* 支持操作系统数据采集：内存状态、CPU负载、磁盘状态及IO吞吐率、网卡状态及IO吞吐率、端口检测
 * 支持火焰图生成，采样事件包括CPU、内存分配、线程栈、Java方法及native方法调用栈等
 * 支持Java代码反编译生成
 * 支持Java代码热更新（可指定ClassLoader）
@@ -243,7 +243,7 @@ server:
 
 # The default Jvmm log configuration, if no SLF4J log implementation is found in the startup environment, use this configuration.
 log:
-  # Log level: error, warn, info, debug, trace
+  # Log level: ERROR, WARN, INFO, DEBUG, TRACE
   level: INFO
   # Log file output directory
   file: logs
@@ -643,13 +643,14 @@ Dashboard应用示例
 java.lang.reflect.InaccessibleObjectException: Unable to make field final jdk.internal.loader.URLClassPath jdk.internal.loader.ClassLoaders$AppClassLoader.ucp accessible: module java.base does not "opens jdk.internal.loader" to unnamed module @2d127a61
 ```
 
-解决办法：添加下面两个虚拟机参数
+解决办法：添加下面几个虚拟机参数
 
 ```shell
-# JDK 9+开始不允许动态加载依赖，需要设置以下两个虚拟机参数
-# --add-opens java.base/jdk.internal.loader=ALL-UNNAMED
-# --add-opens jdk.zipfs/jdk.nio.zipfs=ALL-UNNAMED
-java -jar --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens jdk.zipfs/jdk.nio.zipfs=ALL-UNNAMED jvmm-server.jar ./config.yml
+# JDK 9+开始不允许动态加载依赖，需要设置以下几个虚拟机参数
+# --add-opens java.base/jdk.internal.loader=ALL-UNNAMED 
+# --add-opens jdk.zipfs/jdk.nio.zipfs=ALL-UNNAMED 
+# --add-opens java.management/sun.management=ALL-UNNAMED
+java -jar --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens jdk.zipfs/jdk.nio.zipfs=ALL-UNNAMED --add-opens java.management/sun.management=ALL-UNNAMED jvmm-server.jar ./config.yml
 ```
 
 ## kernel.perf_event_paranoid权限开关
