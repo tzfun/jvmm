@@ -18,7 +18,6 @@ dependencies {
     compile("com.github.oshi:oshi-core:${oshiVersion}") {
         exclude group: 'org.slf4j'
     }
-//    compile "org.ow2.asm:asm:9.2"
 }
 
 jar {

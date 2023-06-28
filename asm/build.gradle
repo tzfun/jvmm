@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+ext.projectName = 'jvmm-asm'
+archivesBaseName = "jvmm-asm"
+
+group = rootProject.group
+version = rootProject.version
+
+apply plugin: 'application'
+
+dependencies {
+    compile "org.ow2.asm:asm:${asmVersion}"
+    compile "org.ow2.asm:asm-commons:${asmVersion}"
+}
+
+jar {
+    manifestContentCharset 'utf-8'
+    metadataCharset 'utf-8'
+
+    archiveName("jvmm-asm.jar")
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    getArchiveClassifier().set('sources')
+}
+
+task javadocJar(type:Jar) {
+    from javadoc
+    getArchiveClassifier().set('javadoc')
+}
+
+javadoc {
+    options.addStringOption("charset", "UTF-8")
+}
