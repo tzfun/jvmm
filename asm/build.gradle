@@ -3,28 +3,24 @@ plugins {
     id 'application'
 }
 
-import javax.tools.ToolProvider
-
-ext.projectName = 'jvmm-core'
-archivesBaseName = "jvmm-core"
+ext.projectName = 'jvmm-asm'
+archivesBaseName = "jvmm-asm"
 
 group = rootProject.group
 version = rootProject.version
 
+apply plugin: 'application'
+
 dependencies {
-    compile(project(':common'))
-    compileOnly(files(((URLClassLoader) ToolProvider.getSystemToolClassLoader()).getURLs()))
-    compile "org.benf:cfr:${cfrVersion}"
-    compile("com.github.oshi:oshi-core:${oshiVersion}") {
-        exclude group: 'org.slf4j'
-    }
+    compile "org.ow2.asm:asm:${asmVersion}"
+    compile "org.ow2.asm:asm-commons:${asmVersion}"
 }
 
 jar {
     manifestContentCharset 'utf-8'
     metadataCharset 'utf-8'
 
-    archiveName("jvmm-core.jar")
+    archiveName("jvmm-asm.jar")
 }
 
 task sourcesJar(type: Jar) {
@@ -32,7 +28,7 @@ task sourcesJar(type: Jar) {
     getArchiveClassifier().set('sources')
 }
 
-task javadocJar(type: Jar) {
+task javadocJar(type:Jar) {
     from javadoc
     getArchiveClassifier().set('javadoc')
 }

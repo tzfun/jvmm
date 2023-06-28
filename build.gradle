@@ -6,12 +6,11 @@ ext {
     nettyNativeSslVersion = "2.0.41.Final"
     junitJupiterVersion = "5.7.0"
     slf4jVersion = "1.7.30"
-    logbackVersion = "1.4.5"
-    gsonVersoion = "2.8.9"
-    commonsCli = "1.5.0"
+    gsonVersoion = "2.10.1"
     cfrVersion = "0.152"
     oshiVersion = "6.4.0"
     snakeyamlVersion = "2.0"
+    asmVersion = "9.5"
 }
 
 subprojects {
