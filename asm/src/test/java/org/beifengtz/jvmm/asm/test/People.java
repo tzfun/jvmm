@@ -1,7 +1,5 @@
 package org.beifengtz.jvmm.asm.test;
 
-import java.util.Random;
-
 /**
  * description: TODO
  * date: 18:14 2023/6/28
@@ -11,8 +9,19 @@ import java.util.Random;
 public class People {
     int counter;
 
-    public void say() throws Exception {
-        System.out.println("Say number " + counter++);
-        Thread.sleep(new Random().nextInt(3) * 1000);
+    public void say() {
+        System.out.println("Say " + counter++);
+    }
+
+    public void run() {
+        System.out.println("Run " + counter++);
+    }
+
+    public void sayHello() {
+        System.out.println("Say Hello " + counter++);
+    }
+
+    public void sayHelloWorld() {
+        System.out.println("Say Hello World! " + counter++);
     }
 }
