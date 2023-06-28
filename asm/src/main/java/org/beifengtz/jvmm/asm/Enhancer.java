@@ -23,7 +23,7 @@ public class Enhancer {
         // 字节码增强
         final ClassWriter cw = new ClassWriter(cr, COMPUTE_FRAMES | COMPUTE_MAXS);
 
-        cr.accept(new MethodWeaver(ID_GENERATOR.getAndIncrement(), methodListener, targetClass, cw), ClassReader.EXPAND_FRAMES);
+        cr.accept(new MethodEnhancer(ID_GENERATOR.getAndIncrement(), methodListener, targetClass, cw), ClassReader.EXPAND_FRAMES);
         return cw.toByteArray();
     }
 
