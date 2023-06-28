@@ -8,6 +8,7 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * description: TODO
@@ -17,6 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class MethodEnhancer extends ClassVisitor implements Opcodes {
 
+    private static final AtomicInteger LISTENER_ID_GENERATOR = new AtomicInteger(0);
     private static final Map<Integer, MethodListener> LISTENER_MAP = new ConcurrentHashMap<>();
     private static final ThreadLocal<Boolean> selfCalled = ThreadLocal.withInitial(() -> false);
     /**
@@ -135,13 +137,18 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
     }
 
     private final String className;
-    private final int adviceId;
+    private final String methodRegex;
+    private final MethodListenerConstructor methodListenerConstructor;
 
-    public MethodEnhancer(int adviceId, MethodListener adviceListener, Class<?> targetClass, ClassVisitor cv) {
+    public MethodEnhancer(MethodListenerConstructor methodListenerConstructor, String className, ClassVisitor cv) {
+        this(methodListenerConstructor, className, cv, ".*");
+    }
+
+    public MethodEnhancer(MethodListenerConstructor methodListenerConstructor, String className, ClassVisitor cv, String methodRegex) {
         super(ASM5, cv);
-        this.adviceId = adviceId;
-        this.className = targetClass.getName();
-        LISTENER_MAP.put(adviceId, adviceListener);
+        this.methodListenerConstructor = methodListenerConstructor;
+        this.className = className;
+        this.methodRegex = methodRegex == null ? ".*" : methodRegex;
     }
 
     @Override
@@ -152,11 +159,20 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
     @Override
     public MethodVisitor visitMethod(int access, final String name, final String desc, String signature, String[] exceptions) {
         final MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-
         if (isIgnore(mv, access, name)) {
             return mv;
         }
+        MethodListener listener = null;
+        if (methodListenerConstructor != null) {
+            listener = methodListenerConstructor.create(className, name);
+        }
 
+        if (listener == null) {
+            return mv;
+        }
+
+        int adviceId = LISTENER_ID_GENERATOR.getAndIncrement();
+        LISTENER_MAP.put(adviceId, listener);
         return new MethodWeaver(adviceId, className, mv, access, name, desc, signature, exceptions);
     }
 
@@ -166,6 +182,7 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
                 || isAbstract(access)
                 || isFinal(access)
                 || "<clinit>".equals(methodName)
-                || "<init>".equals(methodName);
+                || "<init>".equals(methodName)
+                || !methodName.matches(methodRegex);
     }
 }
