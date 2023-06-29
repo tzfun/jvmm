@@ -12,12 +12,14 @@ import io.netty.channel.group.ChannelGroupFuture;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.util.AsciiString;
+import io.netty.util.ReferenceCountUtil;
 import io.netty.util.concurrent.EventExecutor;
 import io.netty.util.concurrent.ImmediateEventExecutor;
 import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
@@ -112,7 +114,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
 
 
     public HttpChannelHandler() {
-        super(false);
+        super(true);
     }
 
     public static ChannelGroupFuture closeAllChannels() {
@@ -128,7 +130,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
     }
 
     protected void response(ChannelHandlerContext ctx, HttpResponseStatus status, byte[] data, MultiMap<String, Object> headers) {
-        HttpResponse resp;
+        FullHttpResponse resp;
         if (data == null) {
             resp = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, status);
         } else {
@@ -297,7 +299,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
 
         } catch (Exception e) {
             if (e instanceof AuthenticationFailedException) {
-                throw (AuthenticationFailedException) e;
+                throw e;
             } else if (e instanceof InvocationTargetException) {
                 handleException(ctx, msg, ((InvocationTargetException) e).getTargetException());
             } else {
@@ -340,7 +342,6 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
 
         byte[] bytes = new byte[content.readableBytes()];
         content.readBytes(bytes);
-        content.release();
         return bytes;
     }
 

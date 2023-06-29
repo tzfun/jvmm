@@ -14,6 +14,7 @@ import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.handler.codec.TooLongFrameException;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
+import io.netty.util.ReferenceCountUtil;
 import io.netty.util.concurrent.EventExecutor;
 import io.netty.util.concurrent.ImmediateEventExecutor;
 import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
@@ -92,7 +93,7 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
     }
 
     public JvmmChannelHandler() {
-        super(false);
+        super(true);
     }
 
     @Override
