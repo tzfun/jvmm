@@ -106,7 +106,7 @@ public interface JvmmService {
                     if (listenedPorts != null && !listenedPorts.isEmpty()) {
                         List<Integer> invalidPorts = new ArrayList<>();
                         for (Integer port : listenedPorts) {
-                            if (!PlatformUtil.portAvailable(port)) {
+                            if (PlatformUtil.portAvailable(port)) {
                                 invalidPorts.add(port);
                             }
                         }

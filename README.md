@@ -180,9 +180,9 @@ server:
       # Total sending times, -1 means unlimited
       count: 20
       # The collection items executed by the sentinel, the sentinel will collect the data and send it to subscribers.
-      # Optional values: process|disk|disk_io|cpu|network|sys|sys_memory|sys_file|jvm_classloading|jvm_classloader|
+      # Optional values: process|disk|disk_io|cpu|network|sys|sys_memory|sys_file|port|jvm_classloading|jvm_classloader|
       #                  jvm_compilation|jvm_gc|jvm_memory|jvm_memory_manager|jvm_memory_pool|jvm_thread|jvm_thread_stack|
-      #                  jvm_thread_detail
+      #                  jvm_thread_detail|jvm_thread_pool
       #
       tasks:
         - process
@@ -240,6 +240,11 @@ server:
         - name: jvmm-thread-pool
           classPath: org.beifengtz.jvmm.common.factory.ExecutorFactory
           filed: SCHEDULE_THREAD_POOL
+  # If the third-party interface fails 'requestFastFailStart' times in a row, it will enter the fast-failure logic, and the request will not actually be requested again,
+  # but will directly return failure, and the actual request will not be made until 'requestFastFailTimeout' time later.
+  requestFastFailStart: 5
+  # Exit this logic after entering the 'requestFastFailTimeout' time of the fast-failure logic. Unit milliseconds.
+  requestFastFailTimeout: 120000
 
 # The default Jvmm log configuration, if no SLF4J log implementation is found in the startup environment, use this configuration.
 log:
@@ -259,6 +264,7 @@ log:
 
 # The number of worker threads for the service
 workThread: 2
+
 ```
 
 ### 三、启动Server
