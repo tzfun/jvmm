@@ -5,10 +5,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static com.google.gson.internal.$Gson$Preconditions.checkNotNull;
 
 /**
  * <p>
@@ -47,7 +46,7 @@ public class ServiceManager {
     }
 
     public void remove(JvmmService service) {
-        int hash  = service.hashCode();
+        int hash = service.hashCode();
         uniqueServices.remove(hash);
         Thread thread = threadPool.remove(hash);
         if (thread != null && thread.isAlive()) {
@@ -82,8 +81,8 @@ public class ServiceManager {
     }
 
     Thread newThread(String name, Runnable runnable) {
-        checkNotNull(name);
-        checkNotNull(runnable);
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(runnable);
         Thread thread = new Thread(runnable);
         thread.setName(name);
         return thread;
