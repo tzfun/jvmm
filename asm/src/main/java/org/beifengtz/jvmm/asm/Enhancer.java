@@ -119,6 +119,7 @@ public class Enhancer implements ClassFileTransformer {
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
                             byte[] classfileBuffer) {
+        className = className.replaceAll("/",".");
         if (className.matches(classPattern) && (classIgnorePattern == null || !className.matches(classIgnorePattern))) {
             try {
                 return enhanceMethod(classfileBuffer, className, methodListenerFactory,
