@@ -55,4 +55,14 @@ public class TestInvoke {
         System.out.println("sayHelloWorld1".matches(methodRegex));
     }
 
+    @Test
+    public void testPattern() {
+        String classPattern = "org.beifengtz.jvmm.asm.*";
+        classPattern = classPattern.replaceAll("\\.", "\\\\.").replaceAll("\\*", ".*");
+        System.out.println(classPattern);
+        System.out.println("org.beifengtz.jvmm.asm.Enhancer".matches(classPattern));
+        System.out.println("org.beifengtz.jvmm.asm.util.EnhancerUtil".matches(classPattern));
+        System.out.println("org.beifengtz.jvmm.util.asm.EnhancerUtil".matches(classPattern));
+    }
+
 }
