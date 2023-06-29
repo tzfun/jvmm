@@ -138,17 +138,28 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
 
     private final String className;
     private final String methodRegex;
-    private final MethodListenerConstructor methodListenerConstructor;
+    private final String methodIgnoreRegex;
+    private final MethodListenerFactory methodListenerFactory;
 
-    public MethodEnhancer(MethodListenerConstructor methodListenerConstructor, String className, ClassVisitor cv) {
-        this(methodListenerConstructor, className, cv, ".*");
+    public MethodEnhancer(MethodListenerFactory methodListenerFactory, String className, ClassVisitor cv) {
+        this(methodListenerFactory, className, cv, ".*", null);
     }
 
-    public MethodEnhancer(MethodListenerConstructor methodListenerConstructor, String className, ClassVisitor cv, String methodRegex) {
+    /**
+     * {@link MethodEnhancer}构造函数
+     *
+     * @param methodListenerFactory 方法切面监听构造器，用于构造{@link MethodListener}
+     * @param className                 监听的类全限名，例如：org.beifengtz.jvmm.asm.Enhancer
+     * @param cv                        ASM {@link ClassVisitor}
+     * @param methodRegex               正则表达式，针对于该类下满足匹配的方法进行增强。如果为 null 则默认为 .* 全匹配
+     * @param methodIgnoreRegex         正则表达式，针对于该类下满足匹配的方法忽略，无需增强。如果为 null 则默认不忽略
+     */
+    public MethodEnhancer(MethodListenerFactory methodListenerFactory, String className, ClassVisitor cv, String methodRegex, String methodIgnoreRegex) {
         super(ASM5, cv);
-        this.methodListenerConstructor = methodListenerConstructor;
+        this.methodListenerFactory = methodListenerFactory;
         this.className = className;
         this.methodRegex = methodRegex == null ? ".*" : methodRegex;
+        this.methodIgnoreRegex = methodIgnoreRegex;
     }
 
     @Override
@@ -163,8 +174,8 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
             return mv;
         }
         MethodListener listener = null;
-        if (methodListenerConstructor != null) {
-            listener = methodListenerConstructor.create(className, name);
+        if (methodListenerFactory != null) {
+            listener = methodListenerFactory.create(className, name);
         }
 
         if (listener == null) {
@@ -183,6 +194,7 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
                 || isFinal(access)
                 || "<clinit>".equals(methodName)
                 || "<init>".equals(methodName)
+                || (methodIgnoreRegex != null && methodName.matches(methodIgnoreRegex))
                 || !methodName.matches(methodRegex);
     }
 }
