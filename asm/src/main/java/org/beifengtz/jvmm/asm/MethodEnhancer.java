@@ -79,16 +79,18 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
             MethodListener adviceListener = methodAttach.getListener();
 
             methodAttach.setListener(null);
+
             if (isThrowing) {
                 doAfterThrowing(adviceListener, methodAttach, (Throwable) returnTarget);
             } else {
                 doAfterReturning(adviceListener, methodAttach, returnTarget);
             }
-
+            doAfter(adviceListener, methodAttach, isThrowing ? null : returnTarget, isThrowing ? (Throwable) returnTarget : null);
         } finally {
             selfCalled.set(false);
         }
     }
+
 
     private static void doBefore(MethodListener adviceListener, MethodInfo info) {
         if (adviceListener != null) {
@@ -100,10 +102,10 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
         }
     }
 
-    private static void doAfterReturning(MethodListener adviceListener, MethodInfo info, Object returnObj) {
+    private static void doAfterReturning(MethodListener adviceListener, MethodInfo info, Object returnVal) {
         if (adviceListener != null) {
             try {
-                adviceListener.after(info, returnObj);
+                adviceListener.afterReturning(info, returnVal);
             } catch (Throwable t) {
                 t.printStackTrace();
             }
@@ -113,7 +115,17 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
     private static void doAfterThrowing(MethodListener adviceListener, MethodInfo info, Throwable throwable) {
         if (adviceListener != null) {
             try {
-                adviceListener.error(info, throwable);
+                adviceListener.afterThrowing(info, throwable);
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        }
+    }
+
+    private static void doAfter(MethodListener adviceListener, MethodAttach info, Object returnVal, Throwable throwable) {
+        if (adviceListener != null) {
+            try {
+                adviceListener.after(info, returnVal, throwable);
             } catch (Throwable t) {
                 t.printStackTrace();
             }
@@ -149,10 +161,10 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
      * {@link MethodEnhancer}构造函数
      *
      * @param methodListenerFactory 方法切面监听构造器，用于构造{@link MethodListener}
-     * @param className                 监听的类全限名，例如：org.beifengtz.jvmm.asm.Enhancer
-     * @param cv                        ASM {@link ClassVisitor}
-     * @param methodRegex               正则表达式，针对于该类下满足匹配的方法进行增强。如果为 null 则默认为 .* 全匹配
-     * @param methodIgnoreRegex         正则表达式，针对于该类下满足匹配的方法忽略，无需增强。如果为 null 则默认不忽略
+     * @param className             监听的类全限名，例如：org.beifengtz.jvmm.asm.Enhancer
+     * @param cv                    ASM {@link ClassVisitor}
+     * @param methodRegex           正则表达式，针对于该类下满足匹配的方法进行增强。如果为 null 则默认为 .* 全匹配
+     * @param methodIgnoreRegex     正则表达式，针对于该类下满足匹配的方法忽略，无需增强。如果为 null 则默认不忽略
      */
     public MethodEnhancer(MethodListenerFactory methodListenerFactory, String className, ClassVisitor cv, String methodRegex, String methodIgnoreRegex) {
         super(ASM5, cv);
@@ -175,7 +187,7 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
         }
         MethodListener listener = null;
         if (methodListenerFactory != null) {
-            listener = methodListenerFactory.create(className, name);
+            listener = methodListenerFactory.getListener(className, name);
         }
 
         if (listener == null) {
