@@ -30,7 +30,7 @@ public class TestInvoke {
             public void error(MethodInfo info, Throwable throwable) throws Throwable {
                 System.out.println("method error: " + info.getClassName() + "#" + info.getMethodName() + " " + throwable);
             }
-        }, "say.*");
+        }, "say.*", "sayHelloWorld");
 
         TestASMClassLoader classLoader = new TestASMClassLoader(People.class.getName(), classBytes, Thread.currentThread().getContextClassLoader());
         Class<?> clazz = classLoader.defineClass();
@@ -45,11 +45,14 @@ public class TestInvoke {
     @Test
     public void testMethodMatch() {
         String excludeRegex = "^((?!<init>|<clinit>).)*$";
-        String filter = "s*y";
+        String filter = "s*y*";
         String methodRegex = filter.replaceAll("\\*", ".*");
-        System.out.println("say".matches(methodRegex));;
+        System.out.println("say".matches(methodRegex));
+        ;
         System.out.println("<init>".matches(methodRegex));
-        System.out.println("sayhello".matches(methodRegex));
+        System.out.println("sayHello".matches(methodRegex));
+        System.out.println("sayHelloWorld".matches(methodRegex));
+        System.out.println("sayHelloWorld1".matches(methodRegex));
     }
 
 }

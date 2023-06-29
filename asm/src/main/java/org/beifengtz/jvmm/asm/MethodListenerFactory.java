@@ -6,6 +6,6 @@ package org.beifengtz.jvmm.asm;
  *
  * @author beifengtz
  */
-public interface MethodListenerConstructor {
+public interface MethodListenerFactory {
     MethodListener create(String className, String methodName);
 }
