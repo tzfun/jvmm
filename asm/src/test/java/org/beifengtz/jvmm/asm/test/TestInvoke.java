@@ -22,13 +22,18 @@ public class TestInvoke {
             }
 
             @Override
-            public void after(MethodInfo info, Object returnValue) throws Throwable {
+            public void afterReturning(MethodInfo info, Object returnValue) throws Throwable {
                 System.out.println("method after: " + info.getClassName() + "#" + info.getMethodName());
             }
 
             @Override
-            public void error(MethodInfo info, Throwable throwable) throws Throwable {
+            public void afterThrowing(MethodInfo info, Throwable throwable) throws Throwable {
                 System.out.println("method error: " + info.getClassName() + "#" + info.getMethodName() + " " + throwable);
+            }
+
+            @Override
+            public void after(MethodInfo info, Object returnVal, Throwable throwable) throws Throwable {
+                System.out.println("method round: " + info.getClassName() + "#" + info.getMethodName());
             }
         }, "say.*", "sayHelloWorld");
 
