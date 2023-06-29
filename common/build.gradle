@@ -23,9 +23,18 @@ jar {
     archiveName("jvmm-common.jar")
 }
 
-task sourcesJar(type: Jar) {
-    from sourceSets.main.allSource
+task sourcesJar(type: Jar, dependsOn: classes) {
+    archiveName("jvmm-common-sources.jar")
     getArchiveClassifier().set('sources')
+    from sourceSets.main.allSource
+}
+
+tasks.jar.configure {
+    dependsOn sourcesJar
+}
+
+artifacts {
+    archives sourcesJar
 }
 
 task javadocJar(type:Jar) {
