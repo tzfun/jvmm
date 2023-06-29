@@ -17,6 +17,8 @@ public class ServerConf {
     private JvmmServerConf jvmm = new JvmmServerConf();
     private HttpServerConf http;
     private List<SentinelConf> sentinel = new ArrayList<>();
+    private int requestFastFailStart = 5;
+    private long requestFastFailTimeout = 120000;
 
     public String getType() {
         return type;
@@ -61,6 +63,24 @@ public class ServerConf {
 
     public ServerConf clearSentinel() {
         this.sentinel.clear();
+        return this;
+    }
+
+    public int getRequestFastFailStart() {
+        return requestFastFailStart;
+    }
+
+    public ServerConf setRequestFastFailStart(int requestFastFailStart) {
+        this.requestFastFailStart = requestFastFailStart;
+        return this;
+    }
+
+    public long getRequestFastFailTimeout() {
+        return requestFastFailTimeout;
+    }
+
+    public ServerConf setRequestFastFailTimeout(long requestFastFailTimeout) {
+        this.requestFastFailTimeout = requestFastFailTimeout;
         return this;
     }
 }

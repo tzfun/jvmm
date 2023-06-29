@@ -9,6 +9,7 @@ import org.beifengtz.jvmm.server.ServerContext;
 import org.beifengtz.jvmm.server.entity.conf.AuthOptionConf;
 import org.beifengtz.jvmm.server.entity.conf.SentinelConf;
 import org.beifengtz.jvmm.server.entity.conf.SentinelSubscriberConf;
+import org.beifengtz.jvmm.server.entity.conf.ServerConf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,13 +44,11 @@ public class JvmmSentinelService implements JvmmService {
     private static final Logger logger = LoggerFactory.getLogger(JvmmSentinelService.class);
     protected static final Map<String, String> globalHeaders = CommonUtil.hasMapOf("Content-Type", "application/json;charset=UTF-8");
 
-    protected static final int QUICK_FAIL_TIMES = 3;
-    protected static final long QUICK_FAIL_CD = TimeUnit.MINUTES.toMillis(2);
     protected ScheduledExecutorService executor;
     protected ScheduledFuture<?> scheduledFuture;
 
     /**
-     * 连续失败超过{@link #QUICK_FAIL_TIMES}后进入快失败冷却时间{@link #QUICK_FAIL_CD}
+     * 连续失败超过{@link ServerConf#getRequestFastFailStart()}次数后进入快失败冷却时间{@link ServerConf#getRequestFastFailTimeout()}
      */
     protected final Map<String, FailedInfo> failedInfoMap = new ConcurrentHashMap<>();
 
@@ -126,11 +125,12 @@ public class JvmmSentinelService implements JvmmService {
     }
 
     protected void publish(SentinelSubscriberConf subscriber, String body) {
+        ServerConf serverConf = ServerContext.getConfiguration().getServer();
         String url = subscriber.getUrl();
         FailedInfo failedInfo = failedInfoMap.get(url);
         //  一个接口如果连续出现 3 此无响应，则进入 2 分钟的冷却，在冷却时间内将快失败。可避免线程大批量阻塞
-        if (failedInfo != null && failedInfo.times >= QUICK_FAIL_TIMES) {
-            if (System.currentTimeMillis() - failedInfo.startTime >= QUICK_FAIL_CD) {
+        if (failedInfo != null && failedInfo.times >= serverConf.getRequestFastFailStart()) {
+            if (System.currentTimeMillis() - failedInfo.startTime >= serverConf.getRequestFastFailTimeout()) {
                 failedInfoMap.remove(url);
                 failedInfo = null;
                 logger.debug("Release quick failed by cd timeout: {}", url);
@@ -164,7 +164,7 @@ public class JvmmSentinelService implements JvmmService {
                     if (failedInfo1 == null) {
                         return new FailedInfo();
                     }
-                    if (++failedInfo1.times > QUICK_FAIL_TIMES) {
+                    if (++failedInfo1.times > serverConf.getRequestFastFailStart()) {
                         logger.debug("New quick failed: {}", url);
                     }
                     return failedInfo1;
