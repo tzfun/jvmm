@@ -64,7 +64,7 @@ public class ReflexUtil {
                                 if (name.endsWith(".class") && !entry.isDirectory()) {
                                     String className = name.substring(packageName.length() + 1, name.length() - 6);
                                     try {
-                                        classes.add(Class.forName(packageName + '.' + className, false, null));
+                                        classes.add(Thread.currentThread().getContextClassLoader().loadClass(packageName + '.' + className));
                                     } catch (ClassNotFoundException e) {
                                         e.printStackTrace();
                                     }

@@ -168,6 +168,7 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
      */
     public MethodEnhancer(MethodListener methodListener, String className, ClassVisitor cv, String methodRegex, String methodIgnoreRegex) {
         super(ASM5, cv);
+        System.out.println("==> enhance: " + className);
         this.methodListener = methodListener;
         this.className = className;
         this.methodRegex = methodRegex == null ? ".*" : methodRegex;

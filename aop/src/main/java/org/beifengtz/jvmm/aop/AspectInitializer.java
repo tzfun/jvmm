@@ -31,6 +31,13 @@ public class AspectInitializer {
     private static final Set<String> classSet = new HashSet<>();
     private static final Map<String, Object> instanceMap = new HashMap<>();
 
+    /**
+     * 初始化并扫描AOP相关注解
+     *
+     * @param packagePrefix   扫描包前缀，例如：org.beifengtz.jvmm
+     * @param instrumentation {@link Instrumentation}实例
+     * @throws Exception 初始化失败时抛出
+     */
     public static synchronized void init(String packagePrefix, Instrumentation instrumentation) throws Exception {
         Set<Class<?>> classes = scanAnnotation(packagePrefix, AspectJoin.class);
 
@@ -46,10 +53,15 @@ public class AspectInitializer {
                 instanceMap.put(className, o = clazz.newInstance());
             }
 
-            new Enhancer(aj.classPattern(), aj.classIgnorePattern(), aj.methodPattern(), aj.methodIgnorePattern(), (MethodListener) o).enhance(instrumentation);
+            new Enhancer(
+                    aj.classPattern(),
+                    aj.classIgnorePattern().length() == 0 ? null : aj.classIgnorePattern(),
+                    aj.methodPattern(),
+                    aj.methodIgnorePattern().length() == 0 ? null : aj.methodIgnorePattern(),
+                    (MethodListener) o
+            ).enhance(instrumentation);
             classSet.add(className);
         }
-
     }
 
     /**
@@ -90,7 +102,7 @@ public class AspectInitializer {
                                 if (name.endsWith(".class") && !entry.isDirectory()) {
                                     String className = name.substring(packageName.length() + 1, name.length() - 6);
                                     try {
-                                        classes.add(Class.forName(packageName + '.' + className, false, null));
+                                        classes.add(Thread.currentThread().getContextClassLoader().loadClass(packageName + '.' + className));
                                     } catch (ClassNotFoundException e) {
                                         e.printStackTrace();
                                     }

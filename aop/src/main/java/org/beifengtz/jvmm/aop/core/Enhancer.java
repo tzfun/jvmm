@@ -1,7 +1,5 @@
 package org.beifengtz.jvmm.aop.core;
 
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 
@@ -75,6 +73,7 @@ public class Enhancer implements ClassFileTransformer {
     private final String methodRegex;
     private final String methodIgnoreRegex;
     private final MethodListener methodListener;
+    private final String ignoreListenerRegex;
 
     /**
      * 增强器构造器
@@ -85,10 +84,7 @@ public class Enhancer implements ClassFileTransformer {
      * @param methodIgnorePattern 不对满足匹配规则的方法增强，而是忽略，同 classIgnorePattern
      * @param methodListener      {@link MethodListener}
      */
-    public Enhancer(@NotNull String classPattern,
-                    @Nullable String classIgnorePattern,
-                    @Nullable String methodPattern,
-                    @Nullable String methodIgnorePattern,
+    public Enhancer(String classPattern, String classIgnorePattern, String methodPattern, String methodIgnorePattern,
                     MethodListener methodListener) {
         if (classPattern == null) {
             throw new NullPointerException("classRegex can not be null");
@@ -104,13 +100,15 @@ public class Enhancer implements ClassFileTransformer {
                 ? null
                 : methodIgnorePattern.replaceAll("\\*", ".*");
         this.methodListener = methodListener;
+        //  不对listener自己增强
+        this.ignoreListenerRegex = methodListener.getClass().getName().replaceAll("\\.", "\\\\.") + ".*";
     }
 
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
                             byte[] classfileBuffer) {
         className = className.replaceAll("/", ".");
-        if (className.matches(classRegex) && (classIgnoreRegex == null || !className.matches(classIgnoreRegex))) {
+        if (needEnhance(className)) {
             try {
                 return enhanceMethod(classfileBuffer, className, methodListener, methodRegex, methodIgnoreRegex);
             } catch (IOException e) {
@@ -124,20 +122,32 @@ public class Enhancer implements ClassFileTransformer {
      * 通过 instrumentation 接口对类进行增强
      *
      * @param instrumentation {@link Instrumentation}对象
-     * @throws UnmodifiableClassException retransform failed case
+     * @throws UnsupportedOperationException retransform failed case
      */
-    public void enhance(Instrumentation instrumentation) throws UnmodifiableClassException {
-        instrumentation.addTransformer(this);
+    public void enhance(Instrumentation instrumentation) {
+        instrumentation.addTransformer(this, true);
+        boolean retransformClassesSupported = instrumentation.isRetransformClassesSupported();
         for (Class<?> clazz : instrumentation.getAllLoadedClasses()) {
             String className = clazz.getName();
-            if (className.matches(classRegex) && (classIgnoreRegex == null || !className.matches(classIgnoreRegex))) {
-                if (instrumentation.isRetransformClassesSupported()) {
-                    instrumentation.retransformClasses(clazz);
+            if (needEnhance(className)) {
+                if (retransformClassesSupported) {
+                    try {
+                        instrumentation.retransformClasses(clazz);
+                    } catch (UnmodifiableClassException e) {
+                        throw new UnsupportedOperationException("Can not retransform class by instrumentation: " + className, e);
+                    }
                 } else {
                     throw new UnsupportedOperationException("Can not retransform class by instrumentation: retransform classes not supported. " +
                             "If you still want to use the enhancement, please enable Can-Retransform-Classes in the manifest to true.");
                 }
             }
         }
+    }
+
+    private boolean needEnhance(String className) {
+        return !className.matches(ignoreListenerRegex) &&
+                !className.matches(".*\\$\\d+.*") &&
+                className.matches(classRegex) &&
+                (classIgnoreRegex == null || !className.matches(classIgnoreRegex));
     }
 }
