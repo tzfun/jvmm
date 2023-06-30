@@ -31,10 +31,6 @@ tasks.jar.configure {
     dependsOn sourcesJar
 }
 
-artifacts {
-    archives sourcesJar
-}
-
 task javadocJar(type: Jar) {
     from javadoc
     getArchiveClassifier().set('javadoc')
