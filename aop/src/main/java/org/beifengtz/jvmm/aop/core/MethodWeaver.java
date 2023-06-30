@@ -1,4 +1,4 @@
-package org.beifengtz.jvmm.asm;
+package org.beifengtz.jvmm.aop.core;
 
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;

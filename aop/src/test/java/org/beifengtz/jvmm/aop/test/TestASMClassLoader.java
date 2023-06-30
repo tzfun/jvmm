@@ -1,4 +1,4 @@
-package org.beifengtz.jvmm.asm.test;
+package org.beifengtz.jvmm.aop.test;
 
 /**
  * description: TODO

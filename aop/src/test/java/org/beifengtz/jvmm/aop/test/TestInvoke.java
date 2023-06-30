@@ -1,8 +1,8 @@
-package org.beifengtz.jvmm.asm.test;
+package org.beifengtz.jvmm.aop.test;
 
-import org.beifengtz.jvmm.asm.Enhancer;
-import org.beifengtz.jvmm.asm.MethodInfo;
-import org.beifengtz.jvmm.asm.MethodListener;
+import org.beifengtz.jvmm.aop.core.Enhancer;
+import org.beifengtz.jvmm.aop.core.MethodInfo;
+import org.beifengtz.jvmm.aop.core.MethodListener;
 import org.junit.jupiter.api.Test;
 
 /**

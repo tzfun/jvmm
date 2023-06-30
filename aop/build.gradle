@@ -3,8 +3,8 @@ plugins {
     id 'application'
 }
 
-ext.projectName = 'jvmm-asm'
-archivesBaseName = "jvmm-asm"
+ext.projectName = 'jvmm-aop'
+archivesBaseName = "jvmm-aop"
 
 group = rootProject.group
 version = rootProject.version
@@ -20,11 +20,11 @@ jar {
     manifestContentCharset 'utf-8'
     metadataCharset 'utf-8'
 
-    archiveName("jvmm-asm.jar")
+    archiveName("jvmm-aop.jar")
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-    archiveName("jvmm-asm-sources.jar")
+    archiveName("jvmm-aop-sources.jar")
     getArchiveClassifier().set('sources')
     from sourceSets.main.allSource
 }
