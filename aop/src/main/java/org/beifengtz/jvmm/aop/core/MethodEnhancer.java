@@ -1,4 +1,4 @@
-package org.beifengtz.jvmm.asm;
+package org.beifengtz.jvmm.aop.core;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -151,24 +151,24 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
     private final String className;
     private final String methodRegex;
     private final String methodIgnoreRegex;
-    private final MethodListenerFactory methodListenerFactory;
+    private final MethodListener methodListener;
 
-    public MethodEnhancer(MethodListenerFactory methodListenerFactory, String className, ClassVisitor cv) {
-        this(methodListenerFactory, className, cv, ".*", null);
+    public MethodEnhancer(MethodListener methodListener, String className, ClassVisitor cv) {
+        this(methodListener, className, cv, ".*", null);
     }
 
     /**
      * {@link MethodEnhancer}构造函数
      *
-     * @param methodListenerFactory 方法切面监听构造器，用于构造{@link MethodListener}
-     * @param className             监听的类全限名，例如：org.beifengtz.jvmm.asm.Enhancer
-     * @param cv                    ASM {@link ClassVisitor}
-     * @param methodRegex           正则表达式，针对于该类下满足匹配的方法进行增强。如果为 null 则默认为 .* 全匹配
-     * @param methodIgnoreRegex     正则表达式，针对于该类下满足匹配的方法忽略，无需增强。如果为 null 则默认不忽略
+     * @param methodListener    方法切面监听器 {@link MethodListener}
+     * @param className         监听的类全限名，例如：org.beifengtz.jvmm.asm.Enhancer
+     * @param cv                ASM {@link ClassVisitor}
+     * @param methodRegex       正则表达式，针对于该类下满足匹配的方法进行增强。如果为 null 则默认为 .* 全匹配
+     * @param methodIgnoreRegex 正则表达式，针对于该类下满足匹配的方法忽略，无需增强。如果为 null 则默认不忽略
      */
-    public MethodEnhancer(MethodListenerFactory methodListenerFactory, String className, ClassVisitor cv, String methodRegex, String methodIgnoreRegex) {
+    public MethodEnhancer(MethodListener methodListener, String className, ClassVisitor cv, String methodRegex, String methodIgnoreRegex) {
         super(ASM5, cv);
-        this.methodListenerFactory = methodListenerFactory;
+        this.methodListener = methodListener;
         this.className = className;
         this.methodRegex = methodRegex == null ? ".*" : methodRegex;
         this.methodIgnoreRegex = methodIgnoreRegex;
@@ -186,8 +186,8 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
             return mv;
         }
         MethodListener listener = null;
-        if (methodListenerFactory != null) {
-            listener = methodListenerFactory.getListener(className, name);
+        if (methodListener != null) {
+            listener = methodListener;
         }
 
         if (listener == null) {

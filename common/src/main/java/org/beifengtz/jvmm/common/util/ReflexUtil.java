@@ -26,10 +26,10 @@ import java.util.jar.JarFile;
 public class ReflexUtil {
 
     /**
-     * 从包package中获取所有的Class
+     * 从包package中获取所有的 Class，仅载入，不对其进行初始化
      *
      * @param pack      包地址
-     * @param recursive 是否递归搜索
+     * @param recursive 是否递归搜索，例如包下面还有子包，如果为true则递归搜索子包下的所有class，如果为false仅搜索当前目录下的class，不对子包搜索
      * @return Class集合
      */
     public static Set<Class<?>> getClasses(String pack, boolean recursive) {
@@ -64,7 +64,7 @@ public class ReflexUtil {
                                 if (name.endsWith(".class") && !entry.isDirectory()) {
                                     String className = name.substring(packageName.length() + 1, name.length() - 6);
                                     try {
-                                        classes.add(Class.forName(packageName + '.' + className));
+                                        classes.add(Class.forName(packageName + '.' + className, false, null));
                                     } catch (ClassNotFoundException e) {
                                         e.printStackTrace();
                                     }
@@ -103,13 +103,12 @@ public class ReflexUtil {
         }
         for (File file : dirFiles) {
             if (file.isDirectory()) {
-                findAndAddClassesInPackageByFile(packageName + "." + file.getName(), file.getAbsolutePath(), recursive,
-                        classes);
+                findAndAddClassesInPackageByFile(packageName + "." + file.getName(), file.getAbsolutePath(),
+                        recursive, classes);
             } else {
                 String className = file.getName().substring(0, file.getName().length() - 6);
                 try {
-                    classes.add(
-                            Thread.currentThread().getContextClassLoader().loadClass(packageName + '.' + className));
+                    classes.add(Thread.currentThread().getContextClassLoader().loadClass(packageName + '.' + className));
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 }
