@@ -1,7 +1,8 @@
 package org.beifengtz.jvmm.aop.core;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * description: 方法监听器，当执行被增强方法时，会触发相应时点的方法
@@ -9,12 +10,20 @@ import java.util.List;
  *
  * @author beifengtz
  */
-public abstract class MethodListener {
+public abstract class MethodListener implements Comparable<MethodListener> {
 
-    private final List<MethodListener> listenerList = new ArrayList<>();
+    private final Set<MethodListener> listenerList = new TreeSet<>();
 
     synchronized void addListener(MethodListener methodListener) {
         listenerList.add(methodListener);
+    }
+
+    @Override
+    public int compareTo(MethodListener o) {
+        if (Objects.equals(this, o)) {
+            return 0;
+        }
+        return this.hashCode() > o.hashCode() ? 1 : -1;
     }
 
     /**
