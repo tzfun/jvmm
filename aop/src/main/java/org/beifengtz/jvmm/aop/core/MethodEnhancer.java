@@ -20,6 +20,7 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
 
     private static final AtomicInteger LISTENER_ID_GENERATOR = new AtomicInteger(0);
     private static final Map<Integer, MethodListener> LISTENER_MAP = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, MethodListener> ENHANCED_METHOD = new ConcurrentHashMap<>();
     private static final ThreadLocal<Boolean> selfCalled = ThreadLocal.withInitial(() -> false);
     /**
      * 每一个被增强的方法，在处理完 before 之后就已经拿到了上下文，存入栈中，后续的切面函数可以从栈中获取
@@ -79,7 +80,6 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
             MethodListener adviceListener = methodAttach.getListener();
 
             methodAttach.setListener(null);
-
             if (isThrowing) {
                 doAfterThrowing(adviceListener, methodAttach, (Throwable) returnTarget);
             } else {
@@ -90,7 +90,6 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
             selfCalled.set(false);
         }
     }
-
 
     private static void doBefore(MethodListener adviceListener, MethodInfo info) {
         if (adviceListener != null) {
@@ -148,6 +147,18 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
         return (ACC_INTERFACE & access) == ACC_INTERFACE;
     }
 
+    static boolean isNative(int access) {
+        return (ACC_NATIVE & access) == ACC_NATIVE;
+    }
+
+    static boolean isBridge(int access) {
+        return (ACC_BRIDGE & access) == ACC_BRIDGE;
+    }
+
+    static boolean isSynthetic(int access) {
+        return (ACC_SYNTHETIC & access) == ACC_SYNTHETIC;
+    }
+
     private final String className;
     private final String methodRegex;
     private final String methodIgnoreRegex;
@@ -167,17 +178,11 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
      * @param methodIgnoreRegex 正则表达式，针对于该类下满足匹配的方法忽略，无需增强。如果为 null 则默认不忽略
      */
     public MethodEnhancer(MethodListener methodListener, String className, ClassVisitor cv, String methodRegex, String methodIgnoreRegex) {
-        super(ASM5, cv);
-        System.out.println("==> enhance: " + className);
+        super(ASM9, cv);
         this.methodListener = methodListener;
         this.className = className;
         this.methodRegex = methodRegex == null ? ".*" : methodRegex;
         this.methodIgnoreRegex = methodIgnoreRegex;
-    }
-
-    @Override
-    public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-        super.visit(version, access, name, signature, superName, interfaces);
     }
 
     @Override
@@ -186,25 +191,31 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
         if (isIgnore(mv, access, name)) {
             return mv;
         }
-        MethodListener listener = null;
-        if (methodListener != null) {
-            listener = methodListener;
-        }
 
-        if (listener == null) {
+        if (methodListener == null) {
+            return mv;
+        }
+        String methodKey = className + "#" + name + desc;
+        MethodListener enhancedListener = ENHANCED_METHOD.get(methodKey);
+        //  已经增强过，对重复增强的监听器进行合并
+        if (enhancedListener != null) {
+            enhancedListener.addListener(methodListener);
             return mv;
         }
 
         int adviceId = LISTENER_ID_GENERATOR.getAndIncrement();
-        LISTENER_MAP.put(adviceId, listener);
+        LISTENER_MAP.put(adviceId, methodListener);
+        ENHANCED_METHOD.put(methodKey, methodListener);
         return new MethodWeaver(adviceId, className, mv, access, name, desc, signature, exceptions);
     }
 
     private boolean isIgnore(MethodVisitor mv, int access, String methodName) {
-        return null == mv
-                || isInterface(access)
+        return mv == null
                 || isAbstract(access)
                 || isFinal(access)
+                || isNative(access)
+                || isBridge(access)
+                || isSynthetic(access)
                 || "<clinit>".equals(methodName)
                 || "<init>".equals(methodName)
                 || (methodIgnoreRegex != null && methodName.matches(methodIgnoreRegex))

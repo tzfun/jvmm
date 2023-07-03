@@ -111,7 +111,7 @@ public class Enhancer implements ClassFileTransformer {
         if (needEnhance(className)) {
             try {
                 return enhanceMethod(classfileBuffer, className, methodListener, methodRegex, methodIgnoreRegex);
-            } catch (IOException e) {
+            } catch (Throwable e) {
                 e.printStackTrace();
             }
         }
@@ -147,7 +147,12 @@ public class Enhancer implements ClassFileTransformer {
     private boolean needEnhance(String className) {
         return !className.matches(ignoreListenerRegex) &&
                 !className.matches(".*\\$\\d+.*") &&
+                !isSelf(className) &&
                 className.matches(classRegex) &&
                 (classIgnoreRegex == null || !className.matches(classIgnoreRegex));
+    }
+
+    private boolean isSelf(String className) {
+        return className.startsWith("org.beifengtz.jvmm.aop");
     }
 }

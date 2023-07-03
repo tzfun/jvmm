@@ -28,7 +28,6 @@ import java.util.jar.JarFile;
  */
 public class AspectInitializer {
 
-    private static final Set<String> classSet = new HashSet<>();
     private static final Map<String, Object> instanceMap = new HashMap<>();
 
     /**
@@ -43,9 +42,6 @@ public class AspectInitializer {
 
         for (Class<?> clazz : classes) {
             String className = clazz.getName();
-            if (classSet.contains(className)) {
-                continue;
-            }
 
             AspectJoin aj = clazz.getAnnotation(AspectJoin.class);
             Object o = instanceMap.get(className);
@@ -60,7 +56,6 @@ public class AspectInitializer {
                     aj.methodIgnorePattern().length() == 0 ? null : aj.methodIgnorePattern(),
                     (MethodListener) o
             ).enhance(instrumentation);
-            classSet.add(className);
         }
     }
 

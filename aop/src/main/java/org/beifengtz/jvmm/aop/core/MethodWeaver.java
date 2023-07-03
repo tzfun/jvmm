@@ -81,7 +81,7 @@ public class MethodWeaver extends AdviceAdapter {
      */
     protected MethodWeaver(int adviceId, String className, MethodVisitor mv, int access, String name,
                            String desc, String signature, String[] exceptions) {
-        super(ASM5, new JSRInlinerAdapter(mv, access, name, desc, signature, exceptions), access, name, desc);
+        super(ASM9, new JSRInlinerAdapter(mv, access, name, desc, signature, exceptions), access, name, desc);
         this.adviceId = adviceId;
         this.className = className;
     }
@@ -142,7 +142,7 @@ public class MethodWeaver extends AdviceAdapter {
     public void visitMaxs(int maxStack, int maxLocals) {
         //  在visitEnd之前调用，构造try-catch代码块
         mark(endLabel);
-        //  beginLabel 与 endLabel 之间使用try-catch包住
+        //  beginLabel 与 endLabel 之间使用try-catch
         catchException(beginLabel, endLabel, THROWABLE_TYPE);
         //  从栈顶加载异常
         //  fill arg: throwable
@@ -189,7 +189,7 @@ public class MethodWeaver extends AdviceAdapter {
     private void loadClassLoader() {
         if (MethodEnhancer.isStatic(methodAccess)) {
             //  Class.forName(clazz);
-            visitLdcInsn(className.replace("/", "."));
+            visitLdcInsn(className);
             invokeStatic(CLASS_TYPE, ASM_METHOD_CLASS_FOR_NAME);
         } else {
             //  this.getClass();
