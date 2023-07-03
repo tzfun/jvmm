@@ -1,6 +1,7 @@
 package org.beifengtz.jvmm.server.service;
 
 import io.netty.util.concurrent.Promise;
+import org.beifengtz.jvmm.common.QuickFailManager;
 import org.beifengtz.jvmm.common.factory.ExecutorFactory;
 import org.beifengtz.jvmm.common.util.CommonUtil;
 import org.beifengtz.jvmm.common.util.HttpUtil;
@@ -23,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -50,7 +50,10 @@ public class JvmmSentinelService implements JvmmService {
     /**
      * 连续失败超过{@link ServerConf#getRequestFastFailStart()}次数后进入快失败冷却时间{@link ServerConf#getRequestFastFailTimeout()}
      */
-    protected final Map<String, FailedInfo> failedInfoMap = new ConcurrentHashMap<>();
+    protected final QuickFailManager<String> quickFailManager = new QuickFailManager<>(
+            ServerContext.getConfiguration().getServer().getRequestFastFailStart(),
+            (int) ServerContext.getConfiguration().getServer().getRequestFastFailTimeout()
+    );
 
     protected Set<ShutdownListener> shutdownListeners = new HashSet<>();
 
@@ -125,53 +128,28 @@ public class JvmmSentinelService implements JvmmService {
     }
 
     protected void publish(SentinelSubscriberConf subscriber, String body) {
-        ServerConf serverConf = ServerContext.getConfiguration().getServer();
         String url = subscriber.getUrl();
-        FailedInfo failedInfo = failedInfoMap.get(url);
-        //  一个接口如果连续出现 3 此无响应，则进入 2 分钟的冷却，在冷却时间内将快失败。可避免线程大批量阻塞
-        if (failedInfo != null && failedInfo.times >= serverConf.getRequestFastFailStart()) {
-            if (System.currentTimeMillis() - failedInfo.startTime >= serverConf.getRequestFastFailTimeout()) {
-                failedInfoMap.remove(url);
-                failedInfo = null;
-                logger.debug("Release quick failed by cd timeout: {}", url);
-            } else {
-                logger.debug("Sentinel quick failed {}", url);
-                return;
-            }
-        }
-        boolean failed = false;
-        try {
-            Map<String, String> headers;
-            AuthOptionConf auth = subscriber.getAuth();
-            if (auth != null && auth.isEnable()) {
-                headers = new HashMap<>(globalHeaders);
-                String authKey = Base64.getEncoder().encodeToString((auth.getUsername() + ":" + auth.getPassword()).getBytes(StandardCharsets.UTF_8));
-                headers.put("Authorization", "Basic " + authKey);
-            } else {
-                headers = globalHeaders;
-            }
+        if (quickFailManager.check(url)) {
+            boolean success = false;
+            try {
+                Map<String, String> headers;
+                AuthOptionConf auth = subscriber.getAuth();
+                if (auth != null && auth.isEnable()) {
+                    headers = new HashMap<>(globalHeaders);
+                    String authKey = Base64.getEncoder().encodeToString((auth.getUsername() + ":" + auth.getPassword()).getBytes(StandardCharsets.UTF_8));
+                    headers.put("Authorization", "Basic " + authKey);
+                } else {
+                    headers = globalHeaders;
+                }
 
-            HttpUtil.post(url, body, headers);
-        } catch (IOException e) {
-            logger.warn("Can not connect monitor subscriber '{}': {}", url, e.getMessage());
-            failed = true;
-        } catch (Throwable e) {
-            logger.error("Monitor publish to " + url + " failed: " + e.getMessage(), e);
-            failed = true;
-        } finally {
-            if (failed) {
-                failedInfoMap.compute(url, (s, failedInfo1) -> {
-                    if (failedInfo1 == null) {
-                        return new FailedInfo();
-                    }
-                    if (++failedInfo1.times > serverConf.getRequestFastFailStart()) {
-                        logger.debug("New quick failed: {}", url);
-                    }
-                    return failedInfo1;
-                });
-            } else {
-                logger.debug("Release quick failed: {}", url);
-                failedInfoMap.remove(url);
+                HttpUtil.post(url, body, headers);
+                success = true;
+            } catch (IOException e) {
+                logger.warn("Can not connect monitor subscriber '{}': {}", url, e.getMessage());
+            } catch (Throwable e) {
+                logger.error("Monitor publish to " + url + " failed: " + e.getMessage(), e);
+            } finally {
+                quickFailManager.result(url, success);
             }
         }
     }
@@ -213,16 +191,6 @@ public class JvmmSentinelService implements JvmmService {
                 }
             });
             return false;
-        }
-    }
-
-    static class FailedInfo {
-        private int times;
-        private final long startTime;
-
-        public FailedInfo() {
-            times = 1;
-            startTime = System.currentTimeMillis();
         }
     }
 }
