@@ -81,8 +81,9 @@ public class QuickFailManager<T> {
      */
     public void result(T t, boolean success) {
         if (success) {
-            logger.debug("Release quick fail by success: {}", t);
-            failedInfo.remove(t);
+            if (failedInfo.remove(t) != null) {
+                logger.debug("Release quick fail by success: {}", t);
+            }
         } else {
             failedInfo.compute(t, (key, info) -> {
                 if (info == null) {
@@ -94,5 +95,15 @@ public class QuickFailManager<T> {
                 return info;
             });
         }
+    }
+
+    /**
+     * 强制打破快失败
+     *
+     * @param t 检查对象，可以是url也可以是某一个接口描述对象
+     * @return 打破之前是否存在快失败
+     */
+    public boolean enforceBreak(T t) {
+        return failedInfo.remove(t) != null;
     }
 }
