@@ -15,6 +15,9 @@ public abstract class MethodListener implements Comparable<MethodListener> {
     private final Set<MethodListener> listenerList = new TreeSet<>();
 
     synchronized void addListener(MethodListener methodListener) {
+        if (methodListener == this) {
+            return;
+        }
         listenerList.add(methodListener);
     }
 

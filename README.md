@@ -485,6 +485,7 @@ Jvmm Service提供了以下API接口：
 | JVMM_TYPE_COLLECT_DISK_IO_INFO            | /                                                                                                                                         | 采集物理机磁盘IO及吞吐量数据                                                                       |
 | JVMM_TYPE_COLLECT_CPU_INFO                | /                                                                                                                                         | 采集物理机CPU负载数据                                                                          |
 | JVMM_TYPE_COLLECT_NETWORK_INFO            | /                                                                                                                                         | 采集物理机网卡信息及IO数据                                                                        |
+| JVMM_TYPE_COLLECT_PORT_STATUS             | JsonArray，其元素为端口号                                                                                                                         | 采集物理机器端口使用情况                                                                          |
 | JVMM_TYPE_COLLECT_JVM_CLASSLOADING_INFO   | /                                                                                                                                         | 采集JVM类加载信息                                                                            |
 | JVMM_TYPE_COLLECT_JVM_CLASSLOADER_INFO    | /                                                                                                                                         | 采集JVM类加载器信息                                                                           |
 | JVMM_TYPE_COLLECT_JVM_COMPILATION_INFO    | /                                                                                                                                         | 采集JVM编译信息                                                                             |
@@ -494,7 +495,7 @@ Jvmm Service提供了以下API接口：
 | JVMM_TYPE_COLLECT_JVM_MEMORY_INFO         | /                                                                                                                                         | 采集JVM内存使用情况                                                                           |
 | JVMM_TYPE_COLLECT_JVM_THREAD_INFO         | /                                                                                                                                         | 采集JVM线程统计数据                                                                           |
 | JVMM_TYPE_COLLECT_JVM_THREAD_STACK        | 见[ThreadInfoDTO](server/src/main/java/org/beifengtz/jvmm/server/entity/dto/ThreadInfoDTO.java)                                            | 采集指定JVM线程堆栈数据                                                                         |
-| JVMM_TYPE_COLLECT_JVM_THREAD_DETAIL       | long[]                                                                                                                                    | 采集JVM线程详情信息（CPU Time、Block Time、Locks等）                                               |
+| JVMM_TYPE_COLLECT_JVM_THREAD_DETAIL       | JsonArray，其元素为线程ID                                                                                                                        | 采集JVM线程详情信息（CPU Time、Block Time、Locks等）                                               |
 | JVMM_TYPE_COLLECT_JVM_THREAD_POOL         | JsonObject，其属性为：classLoaderHash(String), clazz(String), instanceField(String), field(String)                                              | 采集JVM线程池信息                                                                            |
 | JVMM_TYPE_COLLECT_JVM_DUMP_THREAD         | /                                                                                                                                         | dump所有线程堆栈数据                                                                          |
 | JVMM_TYPE_COLLECT_BATCH                   | [CollectionType](core/src/main/java/org/beifengtz/jvmm/core/CollectionType.java)[]                                                        | 根据选项批量采集数据                                                                            |
@@ -525,6 +526,7 @@ Http Service提供了以下API接口：
 | /collect/sys                | GET  | /                                                                                           | /                                                                                                                                         | 采集操作系统信息                                                                              |
 | /collect/sys/memory         | GET  | /                                                                                           | /                                                                                                                                         | 采集操作系统内存数据                                                                            |
 | /collect/sys/file           | GET  | /                                                                                           | /                                                                                                                                         | 采集操作系统磁盘分区使用情况数据                                                                      |
+| /collect/port               | GET  | ports(int[])                                                                                | /                                                                                                                                         | 采集操作系统端口占用情况                                                                          |
 | /collect/jvm/classloading   | GET  | /                                                                                           | /                                                                                                                                         | 采集JVM类加载信息                                                                            |
 | /collect/jvm/classloader    | GET  | /                                                                                           | /                                                                                                                                         | 采集JVM类加载器信息                                                                           |
 | /collect/jvm/compilation    | GET  | /                                                                                           | /                                                                                                                                         | 采集JVM编译信息                                                                             |
@@ -567,6 +569,7 @@ Http Service提供了以下API接口：
   "sys",
   "sys_memory",
   "sys_file",
+  "port",
   "jvm_classloading",
   "jvm_classloader",
   "jvm_compilation",
@@ -576,7 +579,8 @@ Http Service提供了以下API接口：
   "jvm_memory_pool",
   "jvm_thread",
   "jvm_thread_stack",
-  "jvm_thread_detail"
+  "jvm_thread_detail",
+  "jvmm_thread_pool"
 ]
 ```
 

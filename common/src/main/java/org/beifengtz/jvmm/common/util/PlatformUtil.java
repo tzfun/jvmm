@@ -169,7 +169,7 @@ public class PlatformUtil {
     }
 
     /**
-     * 检测OS端口是否可以
+     * 检测OS端口是否可用
      *
      * @param port 被检测的端口
      * @return true-可用，未被占用 false-端口被占用

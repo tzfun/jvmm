@@ -44,7 +44,7 @@ public class ServerServiceImpl extends ServerService {
                     desc = "Collection type, optional values: \n- process\n- disk\n- disk_io\n- cpu" +
                             "\n- network\n- sys\n- sys_memory\n- sys_file\n- jvm_classloading\n- jvm_classloader" +
                             "\n- jvm_compilation\n- jvm_gc\n- jvm_memory\n- jvm_memory_manager\n- jvm_memory_pool" +
-                            "\n- jvm_thread\n- jvm_thread_stack\n- jvm_thread_detail\n- jvm_thread_pool"
+                            "\n- jvm_thread\n- jvm_thread_stack\n- jvm_thread_detail\n- jvm_thread_pool\n- port"
             ),
             @JvmmOption(
                     name = "f",
@@ -94,6 +94,12 @@ public class ServerServiceImpl extends ServerService {
                             "If `ifield` is not filled, `field` will represent the static variable name of the thread " +
                             "pool stored in `clazz`, and if `ifeld` is filled in, `field` will represent the property " +
                             "variable name of the thread pool stored in the instance"
+            ),
+            @JvmmOption(
+                    name = "p",
+                    argName = "port(s)",
+                    order = 8,
+                    desc = "When querying info 'port', this option is used to specify the querying ports. Multiple ports are used ',' split."
             )
     })
     @JvmmCmdDesc(
@@ -101,7 +107,8 @@ public class ServerServiceImpl extends ServerService {
             tailDesc = "eg 1: `info -t process`\n" +
                     "eg 2: `info -t jvm_thread_pool -clazz org.beifengtz.jvmm.common.factory.ExecutorFactory -field SCHEDULE_THREAD_POOL\n" +
                     "eg 3: `info -t jvm_thread_detail -tid 2`\n" +
-                    "eg 4: `info -t jvm_thread_stack -f thread_dump.txt`"
+                    "eg 4: `info -t jvm_thread_stack -f thread_dump.txt`\n" +
+                    "eg 5: `info -t port -p 3306,6379"
     )
     @Order(1)
     public static void info(JvmmConnector connector, CmdParser cmd) throws Exception {
@@ -222,6 +229,16 @@ public class ServerServiceImpl extends ServerService {
                     data.addProperty("instanceField", ifield);
                 }
                 request.setData(data);
+                break;
+            }
+            case port: {
+                request.setType(GlobalType.JVMM_TYPE_COLLECT_PORT_STATUS);
+                String[] ports = cmd.getArg("p").split(",");
+                JsonArray queryList = new JsonArray();
+                for (String port : ports) {
+                    queryList.add(Integer.parseInt(port));
+                }
+                request.setData(queryList);
                 break;
             }
             default:

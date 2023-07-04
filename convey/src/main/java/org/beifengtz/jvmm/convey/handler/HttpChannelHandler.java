@@ -230,11 +230,19 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                             String key = "".equals(rp.value()) ? method.getParameters()[i].getName() : rp.value();
                             Object value = params.get(key);
 
+                            if (value == null) {
+                                continue;
+                            }
+
                             if (parameterType.isArray()) {
-                                List<String> valueArr = (List<String>) params.get(key + "[]");
-                                if (valueArr == null) {
-                                    continue;
+                                List<String> valueArr;
+                                if (value instanceof List) {
+                                    valueArr = (List<String>) value;
+                                } else {
+                                    valueArr = new ArrayList<>();
+                                    valueArr.add((String) value);
                                 }
+
                                 Class<?> componentType = parameterType.getComponentType();
                                 Object array = Array.newInstance(componentType, valueArr.size());
                                 for (int j = 0; j < valueArr.size(); j++) {
@@ -242,10 +250,14 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                                 }
                                 parameter[i] = array;
                             } else if (parameterType.isAssignableFrom(List.class)) {
-                                List<String> valueArr = (List<String>) params.get(key + "[]");
-                                if (valueArr == null) {
-                                    continue;
+                                List<String> valueArr;
+                                if (value instanceof List) {
+                                    valueArr = (List<String>) value;
+                                } else {
+                                    valueArr = new ArrayList<>();
+                                    valueArr.add((String) value);
                                 }
+
                                 Type componentType = ((ParameterizedType) method.getGenericParameterTypes()[0]).getActualTypeArguments()[0];
                                 List list = new ArrayList(valueArr.size());
                                 for (String s : valueArr) {
@@ -308,6 +320,17 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
         }
     }
 
+    /**
+     * 从url中获取参数键值对。支持两种数组读取方式：
+     * <url>
+     * <li>1. http://jvmm.beifengtz.com?arr=1&arr=2&arr=3</li>
+     * <li>2. http://jvmm.beifengtz.com?arr[]=1&arr[]=2&arr[]=3</li>
+     * </url>
+     *
+     * @param uri url地址
+     * @return 参数键值对，key为 String，value为 String 或者 List
+     * @throws UnsupportedEncodingException url解码失败时抛出此异常
+     */
     @SuppressWarnings("unchecked")
     private Map<String, Object> loadParam(URI uri) throws UnsupportedEncodingException {
         String query = uri.getQuery();
@@ -327,10 +350,23 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
             String key = URLDecoder.decode(kv[0], "UTF-8");
             String value = URLDecoder.decode(kv[1], "UTF-8");
             if (key.endsWith("[]")) {
-                List<String> array = (List<String>) params.computeIfAbsent(key, o -> new ArrayList<>());
+                List<String> array = (List<String>) params.computeIfAbsent(key.substring(0, key.length() - 2), o -> new ArrayList<>());
                 array.add(value);
             } else {
-                params.put(key, value);
+                if (params.containsKey(key)) {
+                    Object presentValue = params.get(key);
+                    List<String> array;
+                    if (presentValue instanceof List) {
+                        array = (List<String>) presentValue;
+                    } else {
+                        array = new ArrayList<>();
+                        array.add((String) presentValue);
+                    }
+                    array.add(value);
+                    params.put(key, array);
+                } else {
+                    params.put(key, value);
+                }
             }
         }
         return params;

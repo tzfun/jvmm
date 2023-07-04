@@ -1,6 +1,8 @@
 package org.beifengtz.jvmm.server.controller;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import org.beifengtz.jvmm.common.util.PlatformUtil;
 import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.convey.annotation.HttpController;
 import org.beifengtz.jvmm.convey.annotation.HttpRequest;
@@ -177,7 +179,6 @@ public class CollectController {
     @HttpRequest("/collect/jvm/thread_pool")
     public ThreadPoolInfo getThreadPoolInfo(@RequestParam int classLoaderHash, @RequestParam String clazz,
                                             @RequestParam String instanceField, @RequestParam String field) {
-
         ClassLoader classLoader = Unsafe.getClassLoader(classLoaderHash);
         if (classLoader == null) {
             logger.debug("Can not found target ClassLoader by hashcode: {}", classLoaderHash);
@@ -187,6 +188,27 @@ public class CollectController {
         } else {
             return JvmmFactory.getCollector().getThreadPoolInfo(classLoader, clazz, instanceField, field);
         }
+    }
+
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_PORT_STATUS)
+    @HttpRequest("/collect/port")
+    public JsonObject getPortStatus(@RequestParam int[] ports) {
+        if(ports == null) {
+            throw new IllegalArgumentException("Missing required param 'ports'");
+        }
+        JsonObject result = new JsonObject();
+        JsonArray running = new JsonArray();
+        JsonArray stopped = new JsonArray();
+        for (int port : ports) {
+            if (PlatformUtil.portAvailable(port)) {
+                stopped.add(port);
+            } else {
+                running.add(port);
+            }
+        }
+        result.add("running", running);
+        result.add("stopped", stopped);
+        return result;
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_BATCH)
