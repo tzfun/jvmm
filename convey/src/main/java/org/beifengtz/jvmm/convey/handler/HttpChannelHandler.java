@@ -19,11 +19,11 @@ import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.util.AsciiString;
-import io.netty.util.ReferenceCountUtil;
 import io.netty.util.concurrent.EventExecutor;
 import io.netty.util.concurrent.ImmediateEventExecutor;
 import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
 import org.beifengtz.jvmm.common.exception.InvalidJvmmMappingException;
+import org.beifengtz.jvmm.common.util.HttpUtil;
 import org.beifengtz.jvmm.common.util.ReflexUtil;
 import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
@@ -39,7 +39,6 @@ import org.beifengtz.jvmm.convey.enums.GlobalStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
@@ -49,7 +48,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
@@ -190,7 +188,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
             return;
         }
         try {
-            Map<String, Object> params = loadParam(pair.getLeft());
+            Map<String, Object> params = HttpUtil.parseParams(pair.getLeft());
 
             boolean pass = handleBefore(ctx, pair.getRight(), msg);
             if (!pass) {
@@ -318,58 +316,6 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                 handleException(ctx, msg, e);
             }
         }
-    }
-
-    /**
-     * 从url中获取参数键值对。支持两种数组读取方式：
-     * <url>
-     * <li>1. http://jvmm.beifengtz.com?arr=1&arr=2&arr=3</li>
-     * <li>2. http://jvmm.beifengtz.com?arr[]=1&arr[]=2&arr[]=3</li>
-     * </url>
-     *
-     * @param uri url地址
-     * @return 参数键值对，key为 String，value为 String 或者 List
-     * @throws UnsupportedEncodingException url解码失败时抛出此异常
-     */
-    @SuppressWarnings("unchecked")
-    private Map<String, Object> loadParam(URI uri) throws UnsupportedEncodingException {
-        String query = uri.getQuery();
-        Map<String, Object> params = new HashMap<>();
-        if (query == null) {
-            return params;
-        }
-        String[] split = query.split("&");
-        for (String str : split) {
-            if (!str.contains("=")) {
-                continue;
-            }
-            String[] kv = str.split("=");
-            if (kv.length <= 1) {
-                continue;
-            }
-            String key = URLDecoder.decode(kv[0], "UTF-8");
-            String value = URLDecoder.decode(kv[1], "UTF-8");
-            if (key.endsWith("[]")) {
-                List<String> array = (List<String>) params.computeIfAbsent(key.substring(0, key.length() - 2), o -> new ArrayList<>());
-                array.add(value);
-            } else {
-                if (params.containsKey(key)) {
-                    Object presentValue = params.get(key);
-                    List<String> array;
-                    if (presentValue instanceof List) {
-                        array = (List<String>) presentValue;
-                    } else {
-                        array = new ArrayList<>();
-                        array.add((String) presentValue);
-                    }
-                    array.add(value);
-                    params.put(key, array);
-                } else {
-                    params.put(key, value);
-                }
-            }
-        }
-        return params;
     }
 
     private byte[] getBody(FullHttpRequest msg) {
