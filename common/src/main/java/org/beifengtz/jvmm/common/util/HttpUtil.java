@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * <p>
@@ -131,6 +133,33 @@ public class HttpUtil {
                 } else {
                     params.put(key, value);
                 }
+            }
+        }
+        return params;
+    }
+
+    /**
+     * 解析带路径参数的url，例如 /jvmm/query/info/{type}/{id}，需解析出其中的两个参数：type和id
+     *
+     * @param mode 解析模板，例如：/jvmm/query/info/{type}/{id}
+     * @param uri  请求的路径 Path（不带参数Query），例如：/jvmm/query/info/jvm_thread/1220
+     * @return 匹配到的参数键值对
+     */
+    public static Map<String, String> parseParamsWithMode(String mode, String uri) {
+        Map<String, String> params = new HashMap<>();
+        String patternStr = mode.replaceAll("\\{[a-zA-Z0-9%_-]+}", "([a-zA-Z0-9%_-]+)");
+        Pattern pattern = Pattern.compile(patternStr);
+        String uriMode = mode.replaceAll("\\{([a-zA-Z0-9%_-]+)}", "$1");
+        Matcher modeMatcher = pattern.matcher(uriMode);
+        Matcher uriMatcher = pattern.matcher(uri);
+        if (modeMatcher.find() && uriMatcher.find()) {
+            int idx = 1;
+            int max = Math.min(modeMatcher.groupCount(), uriMatcher.groupCount());
+            while (idx <= max) {
+                String key = modeMatcher.group(idx);
+                String value = uriMatcher.group(idx);
+                params.put(key, value);
+                idx++;
             }
         }
         return params;
