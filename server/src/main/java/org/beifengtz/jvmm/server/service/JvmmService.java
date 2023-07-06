@@ -1,13 +1,12 @@
 package org.beifengtz.jvmm.server.service;
 
 import io.netty.util.concurrent.Promise;
-import org.beifengtz.jvmm.common.util.IOUtil;
-import org.beifengtz.jvmm.common.util.PlatformUtil;
 import org.beifengtz.jvmm.common.util.meta.PairKey;
+import org.beifengtz.jvmm.core.CollectionType;
 import org.beifengtz.jvmm.core.JvmmCollector;
 import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.entity.JvmmData;
-import org.beifengtz.jvmm.core.CollectionType;
+import org.beifengtz.jvmm.core.entity.info.PortInfo;
 import org.beifengtz.jvmm.core.entity.info.ThreadPoolInfo;
 import org.beifengtz.jvmm.server.entity.conf.ThreadPoolConf;
 
@@ -103,15 +102,11 @@ public interface JvmmService {
                     res.setSysFile(collector.getSysFile());
                     break;
                 case port:
+                    PortInfo portInfo = new PortInfo();
                     if (listenedPorts != null && !listenedPorts.isEmpty()) {
-                        List<Integer> invalidPorts = new ArrayList<>();
-                        for (Integer port : listenedPorts) {
-                            if (PlatformUtil.portAvailable(port)) {
-                                invalidPorts.add(port);
-                            }
-                        }
-                        res.setInvalidPort(invalidPorts);
+                        res.setPort(collector.getPortInfo(listenedPorts));
                     }
+                    res.setPort(portInfo);
                     break;
                 case jvm_classloading:
                     res.setJvmClassLoading(collector.getJvmClassLoading());

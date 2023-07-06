@@ -2,6 +2,7 @@ package org.beifengtz.jvmm.core;
 
 import org.beifengtz.jvmm.core.entity.info.*;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.function.Consumer;
@@ -245,4 +246,20 @@ public interface JvmmCollector {
      * @return {@link ThreadPoolInfo}，如果反射未找到相应的 threadPool 或其值为 null 将返回 null
      */
     ThreadPoolInfo getThreadPoolInfo(String clazz, String instanceField, String filed);
+
+    /**
+     * 获取指定端口列表的端口运行状态
+     *
+     * @param ports 端口数组
+     * @return {@link PortInfo}
+     */
+    PortInfo getPortInfo(int... ports);
+
+    /**
+     * 获取指定端口列表的端口运行状态
+     *
+     * @param portList 端口列表
+     * @return {@link PortInfo}
+     */
+    PortInfo getPortInfo(Collection<Integer> portList);
 }

@@ -23,7 +23,7 @@ public class JvmmData implements JsonParsable {
     private SysInfo sys;
     private SysMemInfo sysMem;
     private List<SysFileInfo> sysFile;
-    private List<Integer> invalidPort;
+    private PortInfo port;
     private JvmClassLoadingInfo jvmClassLoading;
     private List<JvmClassLoaderInfo> jvmClassLoader;
     private JvmCompilationInfo jvmCompilation;
@@ -117,12 +117,12 @@ public class JvmmData implements JsonParsable {
         return this;
     }
 
-    public List<Integer> getInvalidPort() {
-        return invalidPort;
+    public PortInfo getPort() {
+        return port;
     }
 
-    public JvmmData setInvalidPort(List<Integer> invalidPort) {
-        this.invalidPort = invalidPort;
+    public JvmmData setPort(PortInfo port) {
+        this.port = port;
         return this;
     }
 

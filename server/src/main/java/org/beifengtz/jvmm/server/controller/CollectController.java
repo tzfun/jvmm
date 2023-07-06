@@ -1,8 +1,6 @@
 package org.beifengtz.jvmm.server.controller;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import org.beifengtz.jvmm.common.util.PlatformUtil;
 import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.convey.annotation.HttpController;
 import org.beifengtz.jvmm.convey.annotation.HttpRequest;
@@ -192,23 +190,11 @@ public class CollectController {
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_PORT_STATUS)
     @HttpRequest("/collect/port")
-    public JsonObject getPortStatus(@RequestParam int[] ports) {
-        if(ports == null) {
+    public PortInfo getPortStatus(@RequestParam int[] ports) {
+        if (ports == null) {
             throw new IllegalArgumentException("Missing required param 'ports'");
         }
-        JsonObject result = new JsonObject();
-        JsonArray running = new JsonArray();
-        JsonArray stopped = new JsonArray();
-        for (int port : ports) {
-            if (PlatformUtil.portAvailable(port)) {
-                stopped.add(port);
-            } else {
-                running.add(port);
-            }
-        }
-        result.add("running", running);
-        result.add("stopped", stopped);
-        return result;
+        return JvmmFactory.getCollector().getPortInfo(ports);
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_BATCH)

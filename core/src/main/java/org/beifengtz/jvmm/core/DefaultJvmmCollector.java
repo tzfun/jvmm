@@ -15,6 +15,7 @@ import java.lang.management.*;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.WeakHashMap;
@@ -464,6 +465,32 @@ class DefaultJvmmCollector implements JvmmCollector {
     @Override
     public ThreadPoolInfo getThreadPoolInfo(String clazz, String instanceField, String filed) {
         return getThreadPoolInfo(getClass().getClassLoader(), clazz, instanceField, filed);
+    }
+
+    @Override
+    public PortInfo getPortInfo(int... ports) {
+        PortInfo portInfo = new PortInfo();
+        for (int port : ports) {
+            if (PlatformUtil.portAvailable(port)) {
+                portInfo.addStopped(port);
+            } else {
+                portInfo.addRunning(port);
+            }
+        }
+        return portInfo;
+    }
+
+    @Override
+    public PortInfo getPortInfo(Collection<Integer> portList) {
+        PortInfo portInfo = new PortInfo();
+        for (Integer port : portList) {
+            if (PlatformUtil.portAvailable(port)) {
+                portInfo.addStopped(port);
+            } else {
+                portInfo.addRunning(port);
+            }
+        }
+        return portInfo;
     }
 
     private static String threadInfo2Str(ThreadMXBean threadMXBean, ThreadInfo ti) {
