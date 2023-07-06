@@ -85,4 +85,11 @@ public class MethodInfo {
         this.args = args;
         return this;
     }
+
+    /**
+     * @return 生成方法唯一识别key
+     */
+    public String key() {
+        return className + "#" + methodName + methodDesc;
+    }
 }
