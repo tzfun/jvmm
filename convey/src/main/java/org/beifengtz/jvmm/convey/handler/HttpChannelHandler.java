@@ -19,6 +19,7 @@ import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.util.AsciiString;
+import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.EventExecutor;
 import io.netty.util.concurrent.ImmediateEventExecutor;
 import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
@@ -31,6 +32,7 @@ import org.beifengtz.jvmm.common.util.meta.MultiMap;
 import org.beifengtz.jvmm.common.util.meta.PairKey;
 import org.beifengtz.jvmm.convey.annotation.HttpController;
 import org.beifengtz.jvmm.convey.annotation.HttpRequest;
+import org.beifengtz.jvmm.convey.annotation.RequestAttr;
 import org.beifengtz.jvmm.convey.annotation.RequestBody;
 import org.beifengtz.jvmm.convey.annotation.RequestParam;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
@@ -271,6 +273,10 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                                     parameter[i] = ReflexUtil.getBaseTypeDefault(parameterType);
                                 }
                             }
+                        } else if (anno.annotationType() == RequestAttr.class) {
+                            RequestAttr ra = (RequestAttr) anno;
+                            String key = "".equals(ra.value()) ? method.getParameters()[i].getName() : ra.value();
+                            parameter[i] = ctx.channel().attr(AttributeKey.valueOf(key)).get();
                         }
                     }
                 } else if (EventExecutor.class.isAssignableFrom(parameterType)) {
