@@ -40,7 +40,7 @@ public class JvmmServerHandlerProvider implements HandlerProvider {
     }
 
     @Override
-    public int getReaderIdle() {
+    public int getIdleSeconds() {
         return idleTime;
     }
 

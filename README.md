@@ -636,6 +636,12 @@ Dashboard应用示例
 
 ![dashboard](doc/dashboard.jpg)
 
+# 通用工具
+
+项目内部有些组件是可以脱离项目使用的，轻量且上手简单
+* [jvmm-convey](./convey/README.md) 一个独立的、轻量的、通用的网络通信开发工具
+* [jvmm-aop](./aop/README.md)一个面向切面编程开发工具
+
 # 问题解决
 
 ## 启动jvmm时报错 java.lang.IllegalArgumentException: Can not found java program: jps

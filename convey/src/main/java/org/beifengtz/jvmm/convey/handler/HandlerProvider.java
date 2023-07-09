@@ -11,7 +11,7 @@ import org.beifengtz.jvmm.common.JsonParsable;
 
 /**
  * <p>
- * Description: TODO
+ * Description: Handler provider
  * </p>
  * <p>
  * Created in 16:35 2021/5/17
@@ -20,26 +20,41 @@ import org.beifengtz.jvmm.common.JsonParsable;
  */
 public interface HandlerProvider {
 
+    /**
+     * 每一个请求对应的逻辑处理实例
+     *
+     * @return 一个 {@link ChannelHandler}对象
+     */
     ChannelHandler getHandler();
 
-    default int getReaderIdle() {
+    /**
+     * 当一个连接在 idle 时间内未收到或发送数据时，将断开连接
+     * @return idle时间，单位秒，如果为0则用不断开，除非逻辑层面手动触发断开连接
+     */
+    default int getIdleSeconds() {
         return 10;
     }
 
+    /**
+     * @return 定义handler的名字，需唯一
+     */
     default String getName() {
         return "handler";
     }
 
+    /**
+     * handler执行的线程池，如果为null则默认使用 work group
+     * @return {@link EventExecutorGroup}
+     */
     default EventExecutorGroup getGroup() {
         return null;
     }
 
+    /**
+     * @return SSL Context，用于通信加密与认证，如果为 null 则不生效
+     */
     default SslContext getSslContext() {
         return null;
-    }
-
-    default long getChunkedSize() {
-        return 0xFFFFF;
     }
 
     static JsonElement parseResult2Json(Object result) {

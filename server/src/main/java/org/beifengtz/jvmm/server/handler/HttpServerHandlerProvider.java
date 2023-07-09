@@ -87,7 +87,7 @@ public class HttpServerHandlerProvider implements HandlerProvider {
     }
 
     @Override
-    public int getReaderIdle() {
+    public int getIdleSeconds() {
         return idleTime;
     }
 
