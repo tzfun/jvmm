@@ -51,9 +51,9 @@ public class AspectInitializer {
 
             new Enhancer(
                     aj.classPattern(),
-                    aj.classIgnorePattern().length() == 0 ? null : aj.classIgnorePattern(),
+                    aj.classIgnorePattern().isEmpty() ? null : aj.classIgnorePattern(),
                     aj.methodPattern(),
-                    aj.methodIgnorePattern().length() == 0 ? null : aj.methodIgnorePattern(),
+                    aj.methodIgnorePattern().isEmpty() ? null : aj.methodIgnorePattern(),
                     (MethodListener) o
             ).enhance(instrumentation);
         }

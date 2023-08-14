@@ -5,6 +5,7 @@ import org.beifengtz.jvmm.common.util.IPUtil;
 import org.beifengtz.jvmm.core.driver.OSDriver;
 import org.beifengtz.jvmm.core.entity.info.JvmMemoryInfo;
 import org.junit.jupiter.api.Test;
+import oshi.SystemInfo;
 
 import java.util.Arrays;
 import java.util.concurrent.Executors;
@@ -63,5 +64,11 @@ public class TestCollector {
         System.out.println(collector.getThreadPoolInfo(ExecutorFactory.class.getName(), "SCHEDULE_THREAD_POOL"));
         ExecutorFactory.getThreadPool();
         System.out.println(collector.getThreadPoolInfo(ExecutorFactory.class.getName(), "SCHEDULE_THREAD_POOL"));
+    }
+
+    @Test
+    public void testNativeThreadId() {
+        SystemInfo si = new SystemInfo();
+        System.out.println(si.getOperatingSystem().getThreadId());
     }
 }
