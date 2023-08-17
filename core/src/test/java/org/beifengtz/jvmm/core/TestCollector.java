@@ -6,10 +6,19 @@ import org.beifengtz.jvmm.core.driver.OSDriver;
 import org.beifengtz.jvmm.core.entity.info.JvmMemoryInfo;
 import org.junit.jupiter.api.Test;
 import oshi.SystemInfo;
+import oshi.driver.windows.registry.ThreadPerformanceData;
+import oshi.software.os.OSThread;
+import oshi.software.os.windows.WindowsOSThread;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -67,8 +76,87 @@ public class TestCollector {
     }
 
     @Test
-    public void testNativeThreadId() {
+    public void testNativeThread() throws InterruptedException {
         SystemInfo si = new SystemInfo();
-        System.out.println(si.getOperatingSystem().getThreadId());
+        OSThread currentThread = si.getOperatingSystem().getCurrentThread();
+        System.out.println(currentThread.getKernelTime());
+        System.out.println(currentThread.getUserTime());
+        System.out.println(currentThread.getUpTime());
+
+        Thread.sleep(3000);
+
+        new Thread(() -> {
+            System.out.println(Thread.currentThread().getId() + " --> " + si.getOperatingSystem().getCurrentThread().getThreadId());
+        }).start();
+        System.out.println(Arrays.toString(ManagementFactory.getThreadMXBean().getAllThreadIds()));
+        long startTime = System.currentTimeMillis();
+        int processId = si.getOperatingSystem().getProcessId();
+        String processName = si.getOperatingSystem().getCurrentProcess().getName();
+        Map<Integer, ThreadPerformanceData.PerfCounterBlock> threads = ThreadPerformanceData
+                .buildThreadMapFromRegistry(Collections.singleton(processId));
+        if (threads == null) {
+            threads = ThreadPerformanceData.buildThreadMapFromPerfCounters(Collections.singleton(processId));
+        }
+
+        if (threads == null) {
+            System.err.println("Can not get native threads info from windows");
+            return;
+        }
+
+        List<WindowsOSThread> threadsInfo = threads.entrySet().stream().parallel()
+                .map(entry -> new WindowsOSThread(processId, entry.getKey(), processName, entry.getValue()))
+                .collect(Collectors.toList());
+
+        for (OSThread thread : threadsInfo) {
+            System.out.println(thread);
+        }
+        System.out.println("Collect time: " + (System.currentTimeMillis() - startTime));
+    }
+
+    @Test
+    public void testThreadDetail() throws InterruptedException {
+
+        ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
+
+        System.out.println(Arrays.toString(threadMXBean.getAllThreadIds()));
+
+        createMultiThread();
+        System.out.println(Arrays.toString(threadMXBean.getAllThreadIds()));
+        OSDriver.get().getOSThreadMap().forEach((k, v) -> System.out.println(k + " ==> " + v));
+
+        createMultiThread();
+        System.out.println(Arrays.toString(threadMXBean.getAllThreadIds()));
+        OSDriver.get().getOSThreadMap().forEach((k, v) -> System.out.println(k + " ==> " + v));
+
+        createMultiThread();
+        System.out.println(Arrays.toString(threadMXBean.getAllThreadIds()));
+        OSDriver.get().getOSThreadMap().forEach((k, v) -> System.out.println(k + " ==> " + v));
+
+        createMultiThread();
+        System.out.println(Arrays.toString(threadMXBean.getAllThreadIds()));
+        OSDriver.get().getOSThreadMap().forEach((k, v) -> System.out.println(k + " ==> " + v));
+    }
+
+    private void createMultiThread() throws InterruptedException {
+        System.out.println("\n Create multi thread");
+        Thread thread = new Thread(() -> {
+            System.out.println("run thread " + Thread.currentThread().getId());
+        });
+        thread.start();
+
+        thread = new Thread(() -> {
+            System.out.println("run thread " + Thread.currentThread().getId());
+        });
+        thread.start();
+
+        thread = new Thread(() -> {
+            System.out.println("run thread " + Thread.currentThread().getId());
+        });
+        thread.start();
+
+        thread = new Thread(() -> {
+            System.out.println("run thread " + Thread.currentThread().getId());
+        });
+        thread.start();
     }
 }

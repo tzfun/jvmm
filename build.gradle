@@ -8,7 +8,7 @@ ext {
     slf4jVersion = "1.7.30"
     gsonVersoion = "2.10.1"
     cfrVersion = "0.152"
-    oshiVersion = "6.4.0"
+    oshiVersion = "6.4.4"
     snakeyamlVersion = "1.33"
     asmVersion = "9.5"
 }

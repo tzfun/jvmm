@@ -10,18 +10,26 @@ import org.beifengtz.jvmm.core.entity.info.*;
 import org.beifengtz.jvmm.core.entity.result.LinuxMemResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import oshi.driver.windows.registry.ThreadPerformanceData;
+import oshi.driver.windows.registry.ThreadPerformanceData.PerfCounterBlock;
+import oshi.software.os.OSThread;
+import oshi.software.os.windows.WindowsOSThread;
 
 import java.lang.management.*;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * <p>

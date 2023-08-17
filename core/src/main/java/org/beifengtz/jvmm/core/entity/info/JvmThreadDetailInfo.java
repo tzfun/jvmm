@@ -1,5 +1,7 @@
 package org.beifengtz.jvmm.core.entity.info;
 
+import org.beifengtz.jvmm.common.JsonParsable;
+
 import java.lang.Thread.State;
 
 /**
@@ -8,7 +10,7 @@ import java.lang.Thread.State;
  *
  * @author beifengtz
  */
-public class JvmThreadDetailInfo {
+public class JvmThreadDetailInfo implements JsonParsable {
     long id;
     String name;
     String group;
@@ -24,7 +26,8 @@ public class JvmThreadDetailInfo {
     long waitedTime;
     String[] locks;
 
-    private JvmThreadDetailInfo(){}
+    private JvmThreadDetailInfo() {
+    }
 
     public static JvmThreadDetailInfo create() {
         return new JvmThreadDetailInfo();
@@ -154,5 +157,10 @@ public class JvmThreadDetailInfo {
     public JvmThreadDetailInfo setLocks(String[] locks) {
         this.locks = locks;
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return toJsonStr();
     }
 }
