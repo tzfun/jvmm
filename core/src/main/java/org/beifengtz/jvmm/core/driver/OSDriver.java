@@ -1,8 +1,6 @@
 package org.beifengtz.jvmm.core.driver;
 
 import org.beifengtz.jvmm.common.util.ExecuteNativeUtil;
-import org.beifengtz.jvmm.common.util.PlatformUtil;
-import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.core.entity.info.CPUInfo;
 import org.beifengtz.jvmm.core.entity.info.DiskIOInfo;
 import org.beifengtz.jvmm.core.entity.info.DiskInfo;
@@ -12,8 +10,6 @@ import org.beifengtz.jvmm.core.entity.info.NetInfo.NetworkIFInfo;
 import org.beifengtz.jvmm.core.entity.info.SysFileInfo;
 import org.beifengtz.jvmm.core.entity.result.LinuxMemResult;
 import oshi.SystemInfo;
-import oshi.driver.windows.registry.ThreadPerformanceData;
-import oshi.driver.windows.registry.ThreadPerformanceData.PerfCounterBlock;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.CentralProcessor.TickType;
 import oshi.hardware.HWDiskStore;
@@ -22,14 +18,10 @@ import oshi.hardware.NetworkIF;
 import oshi.software.os.FileSystem;
 import oshi.software.os.InternetProtocolStats;
 import oshi.software.os.OSFileStore;
-import oshi.software.os.OSProcess;
-import oshi.software.os.OSThread;
 import oshi.software.os.OperatingSystem;
-import oshi.software.os.windows.WindowsOSThread;
 
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -279,50 +271,5 @@ public final class OSDriver {
             }
             consumer.accept(info);
         }, 1, TimeUnit.SECONDS);
-    }
-
-    public Map<Integer, OSThread> getOSThreadMap() {
-        Map<Integer, OSThread> threadMap = new HashMap<>();
-        OSProcess process = new SystemInfo().getOperatingSystem().getCurrentProcess();
-        System.out.println("Thread count: " + process.getThreadCount());
-        if (PlatformUtil.isWindows()) {
-            int processId = process.getProcessID();
-            String processName = process.getName();
-            //  oshi 的 windows api 有bug，这里单独实现，等待后续官方修复之后移除
-            Map<Integer, ThreadPerformanceData.PerfCounterBlock> threads = ThreadPerformanceData
-                    .buildThreadMapFromRegistry(Collections.singleton(processId));
-            if (threads == null) {
-                threads = ThreadPerformanceData.buildThreadMapFromPerfCounters(Collections.singleton(processId));
-            }
-
-            for (PerfCounterBlock block : threads.values()) {
-                String name = block.getName();
-                if (StringUtil.isEmpty(name)) {
-                    continue;
-                }
-                int jvmTid;
-                if (name.contains("/")) {
-                    jvmTid = Integer.parseInt(name.split("/")[1]);
-                } else {
-                    jvmTid = Integer.parseInt(name);
-                }
-
-                threadMap.put(jvmTid, new WindowsOSThread(processId, block.getThreadID(), processName, block));
-            }
-        } else {
-            List<OSThread> threads = process.getThreadDetails();
-            for (OSThread thread : threads) {
-                String name = thread.getName();
-                int jvmTid;
-                if (name.contains("/")) {
-                    jvmTid = Integer.parseInt(name.split("/")[1]);
-                } else {
-                    jvmTid = Integer.parseInt(name);
-                }
-
-                threadMap.put(jvmTid, thread);
-            }
-        }
-        return threadMap;
     }
 }

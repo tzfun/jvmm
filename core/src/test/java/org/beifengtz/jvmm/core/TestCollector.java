@@ -7,6 +7,7 @@ import org.beifengtz.jvmm.core.entity.info.JvmMemoryInfo;
 import org.junit.jupiter.api.Test;
 import oshi.SystemInfo;
 import oshi.driver.windows.registry.ThreadPerformanceData;
+import oshi.software.os.OSProcess;
 import oshi.software.os.OSThread;
 import oshi.software.os.windows.WindowsOSThread;
 
@@ -122,22 +123,13 @@ public class TestCollector {
 
         createMultiThread();
         System.out.println(Arrays.toString(threadMXBean.getAllThreadIds()));
-        OSDriver.get().getOSThreadMap().forEach((k, v) -> System.out.println(k + " ==> " + v));
 
-        createMultiThread();
-        System.out.println(Arrays.toString(threadMXBean.getAllThreadIds()));
-        OSDriver.get().getOSThreadMap().forEach((k, v) -> System.out.println(k + " ==> " + v));
-
-        createMultiThread();
-        System.out.println(Arrays.toString(threadMXBean.getAllThreadIds()));
-        OSDriver.get().getOSThreadMap().forEach((k, v) -> System.out.println(k + " ==> " + v));
-
-        createMultiThread();
-        System.out.println(Arrays.toString(threadMXBean.getAllThreadIds()));
-        OSDriver.get().getOSThreadMap().forEach((k, v) -> System.out.println(k + " ==> " + v));
+        OSProcess process = new SystemInfo().getOperatingSystem().getCurrentProcess();
+        List<OSThread> threads = process.getThreadDetails();
+        threads.forEach(System.out::println);
     }
 
-    private void createMultiThread() throws InterruptedException {
+    private void createMultiThread() {
         System.out.println("\n Create multi thread");
         Thread thread = new Thread(() -> {
             System.out.println("run thread " + Thread.currentThread().getId());
