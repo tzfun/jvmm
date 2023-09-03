@@ -1,35 +1,63 @@
 package org.beifengtz.jvmm.core;
 
 import org.beifengtz.jvmm.common.exception.ExecutionException;
+import org.beifengtz.jvmm.common.factory.ExecutorFactory;
 import org.beifengtz.jvmm.common.util.IPUtil;
 import org.beifengtz.jvmm.common.util.PidUtil;
 import org.beifengtz.jvmm.common.util.PlatformUtil;
 import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
 import org.beifengtz.jvmm.core.driver.OSDriver;
-import org.beifengtz.jvmm.core.entity.info.*;
+import org.beifengtz.jvmm.core.entity.info.CPUInfo;
+import org.beifengtz.jvmm.core.entity.info.DiskIOInfo;
+import org.beifengtz.jvmm.core.entity.info.DiskInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmClassLoaderInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmClassLoadingInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmCompilationInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmGCInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmMemoryInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmMemoryManagerInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmMemoryPoolInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmThreadDetailInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmThreadInfo;
+import org.beifengtz.jvmm.core.entity.info.MemoryUsageInfo;
+import org.beifengtz.jvmm.core.entity.info.NetInfo;
+import org.beifengtz.jvmm.core.entity.info.PortInfo;
+import org.beifengtz.jvmm.core.entity.info.ProcessInfo;
+import org.beifengtz.jvmm.core.entity.info.SysFileInfo;
+import org.beifengtz.jvmm.core.entity.info.SysInfo;
+import org.beifengtz.jvmm.core.entity.info.SysMemInfo;
+import org.beifengtz.jvmm.core.entity.info.ThreadPoolInfo;
+import org.beifengtz.jvmm.core.entity.info.ThreadTimedInfo;
 import org.beifengtz.jvmm.core.entity.result.LinuxMemResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import oshi.driver.windows.registry.ThreadPerformanceData;
-import oshi.driver.windows.registry.ThreadPerformanceData.PerfCounterBlock;
-import oshi.software.os.OSThread;
-import oshi.software.os.windows.WindowsOSThread;
 
-import java.lang.management.*;
+import java.lang.management.ClassLoadingMXBean;
+import java.lang.management.CompilationMXBean;
+import java.lang.management.GarbageCollectorMXBean;
+import java.lang.management.LockInfo;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryManagerMXBean;
+import java.lang.management.MemoryPoolMXBean;
+import java.lang.management.MonitorInfo;
+import java.lang.management.OperatingSystemMXBean;
+import java.lang.management.RuntimeMXBean;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -499,6 +527,107 @@ class DefaultJvmmCollector implements JvmmCollector {
             }
         }
         return portInfo;
+    }
+
+    @Override
+    public CompletableFuture<List<ThreadTimedInfo>> getOrderedThreadTimedInfo(long time, TimeUnit unit) {
+        JvmmExecutor executor = JvmmFactory.getExecutor();
+
+        boolean beforeFlag = executor.isThreadCpuTimeEnabled();
+        if (!beforeFlag) {
+            executor.setThreadCpuTimeEnabled(true);
+        }
+
+        JvmThreadDetailInfo[] threads1 = getAllJvmThreadDetailInfo();
+        Map<Long, JvmThreadDetailInfo> threadMap = new HashMap<>(threads1.length);
+        for (JvmThreadDetailInfo t : threads1) {
+            threadMap.put(t.getId(), t);
+        }
+
+        CompletableFuture<List<ThreadTimedInfo>> future = new CompletableFuture<>();
+        ExecutorFactory.getThreadPool().schedule(() -> {
+            List<ThreadTimedInfo> result = new ArrayList<>(threads1.length);
+            try {
+                for (JvmThreadDetailInfo t2 : getAllJvmThreadDetailInfo()) {
+                    JvmThreadDetailInfo t1 = threadMap.get(t2.getId());
+                    if (t1 == null) {
+                        continue;
+                    }
+                    result.add(new ThreadTimedInfo()
+                            .setId(t1.getId())
+                            .setName(t1.getName())
+                            .setGroup(t1.getGroup())
+                            .setState(t1.getState())
+                            .setDaemon(t1.getDaemon())
+                            .setPriority(t1.getPriority())
+                            .setUserTime(t2.getUserTime() - t1.getUserTime())
+                            .setCpuTime(t2.getCpuTime() - t1.getCpuTime()));
+                }
+
+                result.sort((o1, o2) -> -Long.compare(o1.getCpuTime(), o2.getCpuTime()));
+                future.complete(result);
+            } catch (Throwable t) {
+                future.completeExceptionally(t);
+            } finally {
+                if (!beforeFlag) {
+                    executor.setThreadCpuTimeEnabled(false);
+                }
+            }
+        }, time, unit);
+        return future;
+    }
+
+    @Override
+    public CompletableFuture<List<String>> getOrderedThreadTimedStack(long time, TimeUnit unit) {
+        JvmmExecutor executor = JvmmFactory.getExecutor();
+
+        boolean beforeFlag = executor.isThreadCpuTimeEnabled();
+        if (!beforeFlag) {
+            executor.setThreadCpuTimeEnabled(true);
+        }
+
+        JvmThreadDetailInfo[] threads1 = getAllJvmThreadDetailInfo();
+        Map<Long, JvmThreadDetailInfo> threadMap = new HashMap<>(threads1.length);
+        for (JvmThreadDetailInfo t : threads1) {
+            threadMap.put(t.getId(), t);
+        }
+
+        CompletableFuture<List<String>> future = new CompletableFuture<>();
+        ExecutorFactory.getThreadPool().schedule(() -> {
+            try {
+
+                List<ThreadTimedInfo> infos = new ArrayList<>(threads1.length);
+                for (JvmThreadDetailInfo t2 : getAllJvmThreadDetailInfo()) {
+                    JvmThreadDetailInfo t1 = threadMap.get(t2.getId());
+                    if (t1 == null) {
+                        continue;
+                    }
+                    infos.add(new ThreadTimedInfo()
+                            .setId(t1.getId())
+                            .setCpuTime(t2.getCpuTime() - t1.getCpuTime()));
+                }
+
+                infos.sort((o1, o2) -> -Long.compare(o1.getCpuTime(), o2.getCpuTime()));
+                List<String> result = new ArrayList<>(threads1.length);
+
+                ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
+
+                for (ThreadTimedInfo info : infos) {
+                    ThreadInfo threadInfo = threadMXBean.getThreadInfo(info.getId());
+                    if (threadInfo != null) {
+                        result.add(threadInfo2Str(threadMXBean, threadInfo));
+                    }
+                }
+                future.complete(result);
+            } catch (Throwable t) {
+                future.completeExceptionally(t);
+            } finally {
+                if (!beforeFlag) {
+                    executor.setThreadCpuTimeEnabled(false);
+                }
+            }
+        }, time, unit);
+        return future;
     }
 
     private static String threadInfo2Str(ThreadMXBean threadMXBean, ThreadInfo ti) {

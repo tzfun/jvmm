@@ -4,7 +4,9 @@ import org.beifengtz.jvmm.core.entity.info.*;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /**
@@ -262,4 +264,25 @@ public interface JvmmCollector {
      * @return {@link PortInfo}
      */
     PortInfo getPortInfo(Collection<Integer> portList);
+
+    /**
+     * 从调用时开始统计，经过指定时间间隔之后，计算每一个线程的 CPU Time 和 User Time，返回结果根据 CPU Time从大到小排序。
+     * 通常 CPU Time 越大表明此线程占用 CPU 时间越多，该线程越繁忙。
+     *
+     * @param time 间隔时间
+     * @param unit 间隔时间单位
+     * @return 根据 CPU Time 从大到小排序的 {@link ThreadTimedInfo} 列表，它将以 {@link CompletableFuture} 返回
+     */
+    CompletableFuture<List<ThreadTimedInfo>> getOrderedThreadTimedInfo(long time, TimeUnit unit);
+
+    /**
+     * 从调用时开始统计，经过指定时间间隔之后，计算每一个线程的 CPU Time 和 User Time，返回结果根据 CPU Time从大到小排序。
+     * 通常 CPU Time 越大表明此线程占用 CPU 时间越多，该线程越繁忙。
+     * 返回所有线程的堆栈信息
+     *
+     * @param time 间隔时间
+     * @param unit 间隔时间单位
+     * @return 根据 CPU Time 从大到小排序的线程堆栈列表，它将以 {@link CompletableFuture} 返回
+     */
+    CompletableFuture<List<String>> getOrderedThreadTimedStack(long time, TimeUnit unit);
 }

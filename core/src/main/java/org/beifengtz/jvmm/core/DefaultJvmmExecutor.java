@@ -56,15 +56,30 @@ class DefaultJvmmExecutor implements JvmmExecutor {
     }
 
     @Override
+    public boolean isClassLoadingVerbose() {
+        return ManagementFactory.getClassLoadingMXBean().isVerbose();
+    }
+
+    @Override
     public void setClassLoadingVerbose(boolean verbose) {
         ManagementFactory.getClassLoadingMXBean().setVerbose(verbose);
         log.info("Jvmm trigger execution of 'setClassLoadingVerbose', param:{}", verbose);
     }
 
     @Override
+    public boolean isMemoryVerbose() {
+        return ManagementFactory.getMemoryMXBean().isVerbose();
+    }
+
+    @Override
     public void setMemoryVerbose(boolean verbose) {
         ManagementFactory.getMemoryMXBean().setVerbose(verbose);
         log.info("Jvmm trigger execution of 'setMemoryVerbose', param:{}", verbose);
+    }
+
+    @Override
+    public boolean isThreadCpuTimeEnabled() {
+        return ManagementFactory.getThreadMXBean().isThreadCpuTimeEnabled();
     }
 
     @Override
@@ -78,6 +93,11 @@ class DefaultJvmmExecutor implements JvmmExecutor {
         } else {
             log.info("Jvmm trigger execution of 'setThreadCpuTimeEnabled', param:{}", enable);
         }
+    }
+
+    @Override
+    public boolean isThreadContentionMonitoringEnabled() {
+        return ManagementFactory.getThreadMXBean().isThreadContentionMonitoringEnabled();
     }
 
     @Override

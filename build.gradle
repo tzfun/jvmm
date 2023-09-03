@@ -1,5 +1,5 @@
 group = 'io.github.tzfun.jvmm'
-version = '2.1.5'
+version = '2.1.6'
 
 ext {
     nettyVersion = "4.1.92.Final"

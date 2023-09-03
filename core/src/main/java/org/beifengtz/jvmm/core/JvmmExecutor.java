@@ -22,11 +22,19 @@ public interface JvmmExecutor {
 
     void gc();
 
+    boolean isClassLoadingVerbose();
+
     void setClassLoadingVerbose(boolean verbose);
+
+    boolean isMemoryVerbose();
 
     void setMemoryVerbose(boolean verbose);
 
+    boolean isThreadCpuTimeEnabled();
+
     void setThreadCpuTimeEnabled(boolean enable);
+
+    boolean isThreadContentionMonitoringEnabled();
 
     void setThreadContentionMonitoringEnabled(boolean enable);
 

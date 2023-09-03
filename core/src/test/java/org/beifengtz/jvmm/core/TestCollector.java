@@ -4,17 +4,17 @@ import org.beifengtz.jvmm.common.factory.ExecutorFactory;
 import org.beifengtz.jvmm.common.util.IPUtil;
 import org.beifengtz.jvmm.core.driver.OSDriver;
 import org.beifengtz.jvmm.core.entity.info.JvmMemoryInfo;
+import org.beifengtz.jvmm.core.entity.info.ThreadTimedInfo;
 import org.junit.jupiter.api.Test;
-import oshi.SystemInfo;
-import oshi.software.os.OSProcess;
-import oshi.software.os.OSThread;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -72,18 +72,13 @@ public class TestCollector {
     }
 
     @Test
-    public void testThreadDetail() throws InterruptedException {
+    public void testThreadDetail() {
 
         ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
 
         System.out.println(Arrays.toString(threadMXBean.getAllThreadIds()));
-
         createMultiThread();
         System.out.println(Arrays.toString(threadMXBean.getAllThreadIds()));
-
-        OSProcess process = new SystemInfo().getOperatingSystem().getCurrentProcess();
-        List<OSThread> threads = process.getThreadDetails();
-        threads.forEach(System.out::println);
     }
 
     private void createMultiThread() {
@@ -107,5 +102,30 @@ public class TestCollector {
             System.out.println("run thread " + Thread.currentThread().getId());
         });
         thread.start();
+    }
+
+    @Test
+    public void calculateThreadInfo() throws InterruptedException, ExecutionException {
+        JvmmCollector collector = JvmmFactory.getCollector();
+
+        startLoopThread();
+        List<ThreadTimedInfo> infos = collector.getOrderedThreadTimedInfo(3, TimeUnit.SECONDS).get();
+        for (ThreadTimedInfo info : infos) {
+            System.out.println(info);
+        }
+
+        List<String> stacks = collector.getOrderedThreadTimedStack(3, TimeUnit.SECONDS).get();
+        for (String stack : stacks) {
+            System.out.println(stack);
+        }
+    }
+
+    private void startLoopThread() {
+        Thread thread = new Thread(() -> {
+            while (true) {
+            }
+        });
+        thread.start();
+        System.out.println("started loop thread " + thread.getId());
     }
 }
