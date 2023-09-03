@@ -70,7 +70,7 @@ public interface JvmmService {
                     break;
                 case disk_io:
                     asyncNum.incrementAndGet();
-                    collector.getDiskIO(info -> {
+                    collector.getDiskIO().thenAccept(info -> {
                         res.setDiskIO(info);
                         asyncNum.decrementAndGet();
                         consumer.accept(PairKey.of(asyncNum, res));
@@ -78,7 +78,7 @@ public interface JvmmService {
                     break;
                 case cpu:
                     asyncNum.incrementAndGet();
-                    collector.getCPU(info -> {
+                    collector.getCPU().thenAccept(info -> {
                         res.setCpu(info);
                         asyncNum.decrementAndGet();
                         consumer.accept(PairKey.of(asyncNum, res));
@@ -86,7 +86,7 @@ public interface JvmmService {
                     break;
                 case network:
                     asyncNum.incrementAndGet();
-                    collector.getNetwork(info -> {
+                    collector.getNetwork().thenAccept(info -> {
                         res.setNetwork(info);
                         asyncNum.decrementAndGet();
                         consumer.accept(PairKey.of(asyncNum, res));

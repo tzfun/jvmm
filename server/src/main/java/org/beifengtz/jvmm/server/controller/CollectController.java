@@ -12,9 +12,25 @@ import org.beifengtz.jvmm.convey.entity.ResponseFuture;
 import org.beifengtz.jvmm.convey.enums.GlobalType;
 import org.beifengtz.jvmm.convey.enums.Method;
 import org.beifengtz.jvmm.core.CollectionType;
+import org.beifengtz.jvmm.core.JvmmCollector;
 import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.Unsafe;
-import org.beifengtz.jvmm.core.entity.info.*;
+import org.beifengtz.jvmm.core.entity.info.DiskInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmClassLoaderInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmClassLoadingInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmCompilationInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmGCInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmMemoryInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmMemoryManagerInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmMemoryPoolInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmThreadDetailInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmThreadInfo;
+import org.beifengtz.jvmm.core.entity.info.PortInfo;
+import org.beifengtz.jvmm.core.entity.info.ProcessInfo;
+import org.beifengtz.jvmm.core.entity.info.SysFileInfo;
+import org.beifengtz.jvmm.core.entity.info.SysInfo;
+import org.beifengtz.jvmm.core.entity.info.SysMemInfo;
+import org.beifengtz.jvmm.core.entity.info.ThreadPoolInfo;
 import org.beifengtz.jvmm.server.entity.dto.ThreadInfoDTO;
 import org.beifengtz.jvmm.server.service.JvmmService;
 import org.slf4j.Logger;
@@ -23,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -54,19 +71,19 @@ public class CollectController {
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_DISK_IO_INFO)
     @HttpRequest("/collect/disk_io")
     public void getDiskIOInfo(ResponseFuture future) {
-        JvmmFactory.getCollector().getDiskIO(future::apply);
+        JvmmFactory.getCollector().getDiskIO().thenAccept(future::apply);
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_CPU_INFO)
     @HttpRequest("/collect/cpu")
     public void getCPUInfo(ResponseFuture future) {
-        JvmmFactory.getCollector().getCPU(future::apply);
+        JvmmFactory.getCollector().getCPU().thenAccept(future::apply);
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_NETWORK_INFO)
     @HttpRequest("/collect/network")
     public void getNetInfo(ResponseFuture future) {
-        JvmmFactory.getCollector().getNetwork(future::apply);
+        JvmmFactory.getCollector().getNetwork().thenAccept(future::apply);
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_SYS_INFO)
@@ -171,6 +188,20 @@ public class CollectController {
             }
         }
         return result;
+    }
+
+    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_ORDERED_CPU_TIME)
+    @HttpRequest("/collect/jvm/dump_thread")
+    public void getJvmThreadOrderedCpuTime(@RequestParam String type,
+                                           @RequestParam int durationSeconds,
+                                           ResponseFuture future) {
+        assert durationSeconds > 0;
+        JvmmCollector collector = JvmmFactory.getCollector();
+        if ("stack".equals(type)) {
+            collector.getOrderedThreadTimedStack(durationSeconds, TimeUnit.SECONDS).thenAccept(future::apply);
+        } else {
+            collector.getOrderedThreadTimedInfo(durationSeconds, TimeUnit.SECONDS).thenAccept(future::apply);
+        }
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_POOL)

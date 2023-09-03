@@ -91,8 +91,16 @@ public class CmdParser {
         return Integer.parseInt(getArg(arg));
     }
 
+    public int getArgInt(String arg, int defaultValue) {
+        return hasArg(arg) ? Integer.parseInt(getArg(arg)) : defaultValue;
+    }
+
     public long getArgLong(String arg) {
         return Long.parseLong(getArg(arg));
+    }
+
+    public long getArgLong(String arg, long defaultValue) {
+        return hasArg(arg) ? Long.parseLong(getArg(arg)) : defaultValue;
     }
 
     public boolean getArgBoolean(String arg) {

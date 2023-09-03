@@ -25,10 +25,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 /**
  * Description: TODO
@@ -86,60 +86,73 @@ public final class OSDriver {
 
     /**
      * 获取磁盘信息，包含磁盘的名字、模式、挂载分区、IO读写、大小、磁盘队列等
+     *
+     * @return {@link DiskIOInfo} list future
      */
-    public void getDiskIOInfo(Consumer<List<DiskIOInfo>> consumer) {
+    public CompletableFuture<List<DiskIOInfo>> getDiskIOInfo() {
         List<HWDiskStore> preHwDisks = si.getHardware().getDiskStores();
         Map<String, HWDiskStore> diskMap = new HashMap<>(preHwDisks.size());
         for (HWDiskStore disk : preHwDisks) {
             diskMap.put(disk.getName(), disk);
         }
+        CompletableFuture<List<DiskIOInfo>> future = new CompletableFuture<>();
         executor.schedule(() -> {
-            List<HWDiskStore> hwDisks = si.getHardware().getDiskStores();
-            List<DiskIOInfo> disks = new ArrayList<>(hwDisks.size());
-            for (HWDiskStore disk : hwDisks) {
-                HWDiskStore pre = diskMap.get(disk.getName());
-                if (pre == null) continue;
-                DiskIOInfo info = DiskIOInfo.create()
-                        .setName(disk.getName().replaceAll("\\\\|\\.", ""))
-                        .setCurrentQueueLength(disk.getCurrentQueueLength())
-                        .setReadPerSecond(disk.getReads() - pre.getReads())
-                        .setReadBytesPerSecond(disk.getReadBytes() - pre.getReadBytes())
-                        .setWritePerSecond(disk.getWrites() - pre.getWrites())
-                        .setWriteBytesPerSecond(disk.getWriteBytes() - pre.getWriteBytes());
-                disks.add(info);
+            try {
+                List<HWDiskStore> hwDisks = si.getHardware().getDiskStores();
+                List<DiskIOInfo> disks = new ArrayList<>(hwDisks.size());
+                for (HWDiskStore disk : hwDisks) {
+                    HWDiskStore pre = diskMap.get(disk.getName());
+                    if (pre == null) continue;
+                    DiskIOInfo info = DiskIOInfo.create()
+                            .setName(disk.getName().replaceAll("\\\\|\\.", ""))
+                            .setCurrentQueueLength(disk.getCurrentQueueLength())
+                            .setReadPerSecond(disk.getReads() - pre.getReads())
+                            .setReadBytesPerSecond(disk.getReadBytes() - pre.getReadBytes())
+                            .setWritePerSecond(disk.getWrites() - pre.getWrites())
+                            .setWriteBytesPerSecond(disk.getWriteBytes() - pre.getWriteBytes());
+                    disks.add(info);
+                }
+                future.complete(disks);
+            } catch (Throwable t) {
+                future.completeExceptionally(t);
             }
-            consumer.accept(disks);
         }, 1, TimeUnit.SECONDS);
+        return future;
     }
 
     /**
      * 获取指定磁盘的IO信息
      *
-     * @param name     磁盘名
-     * @param consumer 计算完成时返回{@link DiskIOInfo}信息，如果未找到对应磁盘名返回null
+     * @param name 磁盘名
+     * @return 计算完成时返回 {@link DiskIOInfo} 信息，如果未找到对应磁盘名返回null
      */
-    public void getDiskIOInfo(String name, Consumer<DiskIOInfo> consumer) {
+    public CompletableFuture<DiskIOInfo> getDiskIOInfo(String name) {
         List<HWDiskStore> hwDisks = si.getHardware().getDiskStores();
         HWDiskStore pre = hwDisks.stream().filter(o -> o.getName().contains(name)).findAny().orElse(null);
         if (pre == null) {
-            consumer.accept(null);
-            return;
+            return CompletableFuture.completedFuture(null);
         }
+        CompletableFuture<DiskIOInfo> future = new CompletableFuture<>();
         executor.schedule(() -> {
-            HWDiskStore disk = si.getHardware().getDiskStores().stream().filter(o -> o.getName().contains(name)).findAny().orElse(null);
-            if (disk == null) {
-                consumer.accept(null);
-            } else {
-                DiskIOInfo info = DiskIOInfo.create()
-                        .setName(disk.getName().replaceAll("\\\\|\\.", ""))
-                        .setCurrentQueueLength(disk.getCurrentQueueLength())
-                        .setReadPerSecond(disk.getReads() - pre.getReads())
-                        .setReadBytesPerSecond(disk.getReadBytes() - pre.getReadBytes())
-                        .setWritePerSecond(disk.getWrites() - pre.getWrites())
-                        .setWriteBytesPerSecond(disk.getWriteBytes() - pre.getWriteBytes());
-                consumer.accept(info);
+            try {
+                HWDiskStore disk = si.getHardware().getDiskStores().stream().filter(o -> o.getName().contains(name)).findAny().orElse(null);
+                if (disk == null) {
+                    future.complete(null);
+                } else {
+                    DiskIOInfo info = DiskIOInfo.create()
+                            .setName(disk.getName().replaceAll("\\\\|\\.", ""))
+                            .setCurrentQueueLength(disk.getCurrentQueueLength())
+                            .setReadPerSecond(disk.getReads() - pre.getReads())
+                            .setReadBytesPerSecond(disk.getReadBytes() - pre.getReadBytes())
+                            .setWritePerSecond(disk.getWrites() - pre.getWrites())
+                            .setWriteBytesPerSecond(disk.getWriteBytes() - pre.getWriteBytes());
+                    future.complete(info);
+                }
+            } catch (Throwable t) {
+                future.completeExceptionally(t);
             }
         }, 1, TimeUnit.SECONDS);
+        return future;
     }
 
     /**
@@ -169,34 +182,42 @@ public final class OSDriver {
 
     /**
      * 获取CPU信息，包含系统使用率、用户使用率、空闲率、IO等待率。
+     *
+     * @return {@link CPUInfo} of {@link CompletableFuture}
      */
-    public void getCPUInfo(Consumer<CPUInfo> consumer) {
+    public CompletableFuture<CPUInfo> getCPUInfo() {
         CentralProcessor processor = si.getHardware().getProcessor();
         long[] prevTicks = processor.getSystemCpuLoadTicks();
+        CompletableFuture<CPUInfo> future = new CompletableFuture<>();
         executor.schedule(() -> {
-            long[] ticks = processor.getSystemCpuLoadTicks();
+            try {
+                long[] ticks = processor.getSystemCpuLoadTicks();
 
-            long nice = ticks[TickType.NICE.getIndex()] - prevTicks[TickType.NICE.getIndex()];
-            long irq = ticks[TickType.IRQ.getIndex()] - prevTicks[TickType.IRQ.getIndex()];
-            long softIrq = ticks[TickType.SOFTIRQ.getIndex()] - prevTicks[TickType.SOFTIRQ.getIndex()];
-            long steal = ticks[TickType.STEAL.getIndex()] - prevTicks[TickType.STEAL.getIndex()];
-            long sys = ticks[TickType.SYSTEM.getIndex()] - prevTicks[TickType.SYSTEM.getIndex()];
-            long user = ticks[TickType.USER.getIndex()] - prevTicks[TickType.USER.getIndex()];
-            long ioWait = ticks[TickType.IOWAIT.getIndex()] - prevTicks[TickType.IOWAIT.getIndex()];
-            long idle = ticks[TickType.IDLE.getIndex()] - prevTicks[TickType.IDLE.getIndex()];
+                long nice = ticks[TickType.NICE.getIndex()] - prevTicks[TickType.NICE.getIndex()];
+                long irq = ticks[TickType.IRQ.getIndex()] - prevTicks[TickType.IRQ.getIndex()];
+                long softIrq = ticks[TickType.SOFTIRQ.getIndex()] - prevTicks[TickType.SOFTIRQ.getIndex()];
+                long steal = ticks[TickType.STEAL.getIndex()] - prevTicks[TickType.STEAL.getIndex()];
+                long sys = ticks[TickType.SYSTEM.getIndex()] - prevTicks[TickType.SYSTEM.getIndex()];
+                long user = ticks[TickType.USER.getIndex()] - prevTicks[TickType.USER.getIndex()];
+                long ioWait = ticks[TickType.IOWAIT.getIndex()] - prevTicks[TickType.IOWAIT.getIndex()];
+                long idle = ticks[TickType.IDLE.getIndex()] - prevTicks[TickType.IDLE.getIndex()];
 
-            long total = nice + irq + softIrq + steal + sys + user + ioWait + idle;
-            if (total == 0) {
-                total = 1;
+                long total = nice + irq + softIrq + steal + sys + user + ioWait + idle;
+                if (total == 0) {
+                    total = 1;
+                }
+
+                future.complete(CPUInfo.create()
+                        .setCpuNum(processor.getLogicalProcessorCount())
+                        .setSys((double) sys / total)
+                        .setUser((double) user / total)
+                        .setIoWait((double) ioWait / total)
+                        .setIdle((double) idle / total));
+            } catch (Throwable t) {
+                future.completeExceptionally(t);
             }
-
-            consumer.accept(CPUInfo.create()
-                    .setCpuNum(processor.getLogicalProcessorCount())
-                    .setSys((double) sys / total)
-                    .setUser((double) user / total)
-                    .setIoWait((double) ioWait / total)
-                    .setIdle((double) idle / total));
         }, 1, TimeUnit.SECONDS);
+        return future;
     }
 
     /**
@@ -232,9 +253,9 @@ public final class OSDriver {
     /**
      * 获取网卡信息，包含连接数、TCP和UDP在IPv4和IPv6连接信息、各个网卡信息（mac地址、状态、上下行速度）
      *
-     * @param consumer {@link NetInfo}
+     * @return {@link NetInfo} of {@link CompletableFuture}
      */
-    public void getNetInfo(Consumer<NetInfo> consumer) {
+    public CompletableFuture<NetInfo> getNetInfo() {
         OperatingSystem os = si.getOperatingSystem();
         InternetProtocolStats ips = os.getInternetProtocolStats();
         NetInfo info = NetInfo.create()
@@ -248,28 +269,33 @@ public final class OSDriver {
         for (NetworkIF networkIF : networkIFs) {
             networkIFMap.put(networkIF.getName(), networkIF);
         }
-
+        CompletableFuture<NetInfo> future = new CompletableFuture<>();
         executor.schedule(() -> {
-            for (NetworkIF networkIF : si.getHardware().getNetworkIFs()) {
-                NetworkIF preIF = networkIFMap.get(networkIF.getName());
-                if (preIF == null) continue;
-                NetworkIFInfo ifInfo = NetworkIFInfo.create()
-                        .setName(networkIF.getName())
-                        .setAlias(networkIF.getIfAlias())
-                        .setMtu(networkIF.getMTU())
-                        .setMac(networkIF.getMacaddr())
-                        .setStatus(networkIF.getIfOperStatus().toString())
-                        .setIpV4(networkIF.getIPv4addr())
-                        .setIpV6(networkIF.getIPv6addr())
-                        .setRecvBytes(networkIF.getBytesRecv())
-                        .setRecvCount(networkIF.getPacketsRecv())
-                        .setSentBytes(networkIF.getBytesSent())
-                        .setSentCount(networkIF.getPacketsSent())
-                        .setRecvBytesPerSecond(networkIF.getBytesRecv() - preIF.getBytesRecv())
-                        .setSentBytesPerSecond(networkIF.getBytesSent() - preIF.getBytesSent());
-                info.addNetworkIFInfo(ifInfo);
+            try {
+                for (NetworkIF networkIF : si.getHardware().getNetworkIFs()) {
+                    NetworkIF preIF = networkIFMap.get(networkIF.getName());
+                    if (preIF == null) continue;
+                    NetworkIFInfo ifInfo = NetworkIFInfo.create()
+                            .setName(networkIF.getName())
+                            .setAlias(networkIF.getIfAlias())
+                            .setMtu(networkIF.getMTU())
+                            .setMac(networkIF.getMacaddr())
+                            .setStatus(networkIF.getIfOperStatus().toString())
+                            .setIpV4(networkIF.getIPv4addr())
+                            .setIpV6(networkIF.getIPv6addr())
+                            .setRecvBytes(networkIF.getBytesRecv())
+                            .setRecvCount(networkIF.getPacketsRecv())
+                            .setSentBytes(networkIF.getBytesSent())
+                            .setSentCount(networkIF.getPacketsSent())
+                            .setRecvBytesPerSecond(networkIF.getBytesRecv() - preIF.getBytesRecv())
+                            .setSentBytesPerSecond(networkIF.getBytesSent() - preIF.getBytesSent());
+                    info.addNetworkIFInfo(ifInfo);
+                }
+                future.complete(info);
+            } catch (Throwable t) {
+                future.completeExceptionally(t);
             }
-            consumer.accept(info);
         }, 1, TimeUnit.SECONDS);
+        return future;
     }
 }

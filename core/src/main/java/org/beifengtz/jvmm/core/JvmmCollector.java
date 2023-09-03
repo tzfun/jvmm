@@ -36,16 +36,16 @@ public interface JvmmCollector {
     /**
      * 获取CPU负载信息，异步执行
      *
-     * @param consumer 计算成功时回调{@link CPUInfo}
+     * @return {@link CPUInfo} of {@link CompletableFuture}
      */
-    void getCPU(Consumer<CPUInfo> consumer);
+    CompletableFuture<CPUInfo> getCPU();
 
     /**
      * 获取网卡、网络IO信息，异步执行
      *
-     * @param consumer 计算成功时回调{@link NetInfo}
+     * @return {@link NetInfo} of {@link CompletableFuture}
      */
-    void getNetwork(Consumer<NetInfo> consumer);
+    CompletableFuture<NetInfo> getNetwork();
 
     /**
      * 获取所有磁盘信息
@@ -57,17 +57,17 @@ public interface JvmmCollector {
     /**
      * 获取所有磁盘读写次数、吞吐量，异步执行
      *
-     * @param consumer 计算成功时回调所有的磁盘信息{@link DiskIOInfo}
+     * @return {@link DiskIOInfo} List of {@link CompletableFuture}
      */
-    void getDiskIO(Consumer<List<DiskIOInfo>> consumer);
+    CompletableFuture<List<DiskIOInfo>> getDiskIO();
 
     /**
      * 获取指定磁盘读写次数、吞吐量，异步执行
      *
-     * @param name     磁盘名
-     * @param consumer 计算成功时回调该磁盘的{@link DiskIOInfo}
+     * @param name 磁盘名
+     * @return {@link DiskIOInfo} of {@link CompletableFuture}
      */
-    void getDiskIO(String name, Consumer<DiskIOInfo> consumer);
+    CompletableFuture<DiskIOInfo> getDiskIO(String name);
 
     /**
      * 获取磁盘分区信息

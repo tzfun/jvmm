@@ -20,6 +20,7 @@ import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.enums.GlobalType;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 import org.beifengtz.jvmm.core.CollectionType;
+import org.beifengtz.jvmm.core.entity.info.ThreadTimedInfo;
 import org.beifengtz.jvmm.core.entity.result.JpsResult;
 
 import java.io.File;
@@ -583,6 +584,74 @@ public class ServerServiceImpl extends ServerService {
             System.out.println("ok");
         } else {
             printErr("Missing required param `t`");
+        }
+    }
+
+    @Order(8)
+    @JvmmOptions({
+            @JvmmOption(
+                    name = "t",
+                    argName = "type",
+                    order = 1,
+                    desc = "Required *. The type of metric: \n- thread_cpu_time"
+            ),
+            @JvmmOption(
+                    name = "f",
+                    argName = "format",
+                    order = 2,
+                    desc = "Result format, allowed values: stack, info (default)."
+            ),
+            @JvmmOption(
+                    name = "d",
+                    argName = "duration",
+                    order = 3,
+                    desc = "Metric duration seconds, default 3s"
+            )
+    })
+    @JvmmCmdDesc(
+            headDesc = "Collect data for a certain period of time."
+    )
+    public static void metric(JvmmConnector connector, CmdParser cmd) {
+        String type = cmd.getArg("t");
+        if ("thread_cpu_time".equals(type)) {
+            JsonObject data = new JsonObject();
+            boolean isStack = false;
+            if (cmd.hasArg("f")) {
+                data.addProperty("type", cmd.getArg("f"));
+                isStack = "stack".equals(cmd.getArg("f"));
+            }
+
+            int durationSeconds = cmd.getArgInt("d", 3);
+            data.addProperty("durationSeconds", durationSeconds);
+
+            JvmmRequest request = JvmmRequest.create()
+                    .setType(GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_ORDERED_CPU_TIME)
+                    .setData(data);
+            JvmmResponse response = request(connector, request);
+            if (response == null) {
+                return;
+            }
+
+            if (isStack) {
+                for (JsonElement ele : response.getData().getAsJsonArray()) {
+                    System.out.println(ele.getAsString());
+                }
+            } else {
+                StringBuilder sb = new StringBuilder("ID\tName\tGroup\tState\tUser Time(ns)\tCPU Time(ns)\n");
+                Gson gson = StringUtil.getGson();
+                for (JsonElement json : response.getData().getAsJsonArray()) {
+                    ThreadTimedInfo info = gson.fromJson(json, ThreadTimedInfo.class);
+                    sb.append(info.getId()).append("\t")
+                            .append(info.getName()).append("\t")
+                            .append(info.getGroup()).append("\t")
+                            .append(info.getState()).append("\t")
+                            .append(info.getUserTime()).append("\t")
+                            .append(info.getCpuTime()).append("\t\n");
+                }
+                System.out.println(sb);
+            }
+        } else {
+            printErr("Invalid param value `t`");
         }
     }
 }

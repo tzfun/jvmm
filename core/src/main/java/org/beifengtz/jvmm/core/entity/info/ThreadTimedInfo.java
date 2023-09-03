@@ -15,8 +15,6 @@ public class ThreadTimedInfo implements JsonParsable {
     private String name;
     private String group;
     private State state;
-    private Boolean daemon;
-    private Integer priority;
     private long userTime;
     private long cpuTime;
 
@@ -58,24 +56,6 @@ public class ThreadTimedInfo implements JsonParsable {
 
     public ThreadTimedInfo setState(State state) {
         this.state = state;
-        return this;
-    }
-
-    public Boolean getDaemon() {
-        return daemon;
-    }
-
-    public ThreadTimedInfo setDaemon(Boolean daemon) {
-        this.daemon = daemon;
-        return this;
-    }
-
-    public Integer getPriority() {
-        return priority;
-    }
-
-    public ThreadTimedInfo setPriority(Integer priority) {
-        this.priority = priority;
         return this;
     }
 

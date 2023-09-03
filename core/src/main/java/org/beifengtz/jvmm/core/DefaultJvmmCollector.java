@@ -113,13 +113,13 @@ class DefaultJvmmCollector implements JvmmCollector {
     }
 
     @Override
-    public void getCPU(Consumer<CPUInfo> consumer) {
-        OSDriver.get().getCPUInfo(consumer);
+    public CompletableFuture<CPUInfo> getCPU() {
+        return OSDriver.get().getCPUInfo();
     }
 
     @Override
-    public void getNetwork(Consumer<NetInfo> consumer) {
-        OSDriver.get().getNetInfo(consumer);
+    public CompletableFuture<NetInfo> getNetwork() {
+        return OSDriver.get().getNetInfo();
     }
 
     @Override
@@ -128,13 +128,13 @@ class DefaultJvmmCollector implements JvmmCollector {
     }
 
     @Override
-    public void getDiskIO(Consumer<List<DiskIOInfo>> consumer) {
-        OSDriver.get().getDiskIOInfo(consumer);
+    public CompletableFuture<List<DiskIOInfo>> getDiskIO() {
+        return OSDriver.get().getDiskIOInfo();
     }
 
     @Override
-    public void getDiskIO(String name, Consumer<DiskIOInfo> consumer) {
-        OSDriver.get().getDiskIOInfo(name, consumer);
+    public CompletableFuture<DiskIOInfo> getDiskIO(String name) {
+        return OSDriver.get().getDiskIOInfo(name);
     }
 
     @Override
@@ -558,8 +558,6 @@ class DefaultJvmmCollector implements JvmmCollector {
                             .setName(t1.getName())
                             .setGroup(t1.getGroup())
                             .setState(t1.getState())
-                            .setDaemon(t1.getDaemon())
-                            .setPriority(t1.getPriority())
                             .setUserTime(t2.getUserTime() - t1.getUserTime())
                             .setCpuTime(t2.getCpuTime() - t1.getCpuTime()));
                 }

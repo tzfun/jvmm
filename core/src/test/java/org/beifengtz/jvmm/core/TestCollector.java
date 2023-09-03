@@ -52,10 +52,10 @@ public class TestCollector {
         OSDriver osDriver = OSDriver.get();
         System.out.println(osDriver.getDiskInfo());
         System.out.println(osDriver.getOsFileInfo());
-        osDriver.getCPUInfo(System.out::println);
+        osDriver.getCPUInfo().thenAccept(System.out::println);
         System.out.println(osDriver.getCPULoadAverage());
-        osDriver.getNetInfo(System.out::println);
-        osDriver.getDiskIOInfo(System.out::println);
+        osDriver.getNetInfo().thenAccept(System.out::println);
+        osDriver.getDiskIOInfo().thenAccept(System.out::println);
 
         Thread.sleep(2000);
     }
@@ -108,7 +108,7 @@ public class TestCollector {
     public void calculateThreadInfo() throws InterruptedException, ExecutionException {
         JvmmCollector collector = JvmmFactory.getCollector();
 
-        startLoopThread();
+        startDeadLoopThread();
         List<ThreadTimedInfo> infos = collector.getOrderedThreadTimedInfo(3, TimeUnit.SECONDS).get();
         for (ThreadTimedInfo info : infos) {
             System.out.println(info);
@@ -120,7 +120,7 @@ public class TestCollector {
         }
     }
 
-    private void startLoopThread() {
+    private void startDeadLoopThread() {
         Thread thread = new Thread(() -> {
             while (true) {
             }
