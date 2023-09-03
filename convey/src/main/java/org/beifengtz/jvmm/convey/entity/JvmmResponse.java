@@ -1,9 +1,9 @@
 package org.beifengtz.jvmm.convey.entity;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import org.beifengtz.jvmm.common.JsonParsable;
 import org.beifengtz.jvmm.common.exception.MessageSerializeException;
+import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.convey.enums.GlobalStatus;
 import org.beifengtz.jvmm.convey.enums.GlobalType;
 
@@ -30,7 +30,7 @@ public class JvmmResponse implements JsonParsable {
     }
 
     public static JvmmResponse parseFrom(String msg) {
-        return new Gson().fromJson(msg, JvmmResponse.class);
+        return StringUtil.getGson().fromJson(msg, JvmmResponse.class);
     }
 
     public String serialize() {

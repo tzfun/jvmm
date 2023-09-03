@@ -1,6 +1,7 @@
 package org.beifengtz.jvmm.core;
 
 import com.google.gson.Gson;
+import org.beifengtz.jvmm.common.util.StringUtil;
 import org.junit.jupiter.api.Test;
 
 import java.lang.management.ClassLoadingMXBean;
@@ -187,7 +188,7 @@ public class TestMXBean {
         ThreadInfo[] threadInfos = threadMXBean.dumpAllThreads(false, false);
 
         System.out.println(Arrays.toString(threadInfos));
-        System.err.println(new Gson().toJson(threadInfos));
+        System.err.println(StringUtil.getGson().toJson(threadInfos));
     }
 
     @Test

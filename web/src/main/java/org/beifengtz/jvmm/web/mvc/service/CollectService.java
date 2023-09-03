@@ -6,6 +6,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import io.netty.channel.ChannelFuture;
 import lombok.extern.slf4j.Slf4j;
+import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.enums.GlobalStatus;
@@ -231,7 +232,7 @@ public class CollectService {
 
         @Transactional
         public void storeLog(long now, JsonObject data) {
-            Gson gson = new Gson();
+            Gson gson = StringUtil.getGson();
 
             for (String key : data.keySet()) {
                 if ("classloading".equals(key)) {

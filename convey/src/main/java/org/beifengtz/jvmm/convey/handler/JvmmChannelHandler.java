@@ -1,6 +1,5 @@
 package org.beifengtz.jvmm.convey.handler;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -14,13 +13,13 @@ import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.handler.codec.TooLongFrameException;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
-import io.netty.util.ReferenceCountUtil;
 import io.netty.util.concurrent.EventExecutor;
 import io.netty.util.concurrent.ImmediateEventExecutor;
 import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
 import org.beifengtz.jvmm.common.exception.InvalidJvmmMappingException;
 import org.beifengtz.jvmm.common.exception.InvalidMsgException;
 import org.beifengtz.jvmm.common.util.ReflexUtil;
+import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
 import org.beifengtz.jvmm.convey.annotation.JvmmController;
 import org.beifengtz.jvmm.convey.annotation.JvmmMapping;
@@ -290,7 +289,7 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
                         parameter[i] = ReflexUtil.getBaseTypeDefault(parameterType);
                     }
                 } else {
-                    parameter[i] = new Gson().fromJson(reqMsg.getData(), method.getGenericParameterTypes()[i]);
+                    parameter[i] = StringUtil.getGson().fromJson(reqMsg.getData(), method.getGenericParameterTypes()[i]);
                 }
             }
 

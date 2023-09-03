@@ -1,7 +1,7 @@
 package org.beifengtz.jvmm.server.entity.conf;
 
-import com.google.gson.Gson;
 import org.beifengtz.jvmm.common.util.FileUtil;
+import org.beifengtz.jvmm.common.util.StringUtil;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.introspector.BeanAccess;
 
@@ -77,7 +77,7 @@ public final class Configuration {
 
     @Override
     public String toString() {
-        return new Gson().toJson(this);
+        return StringUtil.getGson().toJson(this);
     }
 
     public String getName() {

@@ -503,7 +503,7 @@ public class ServerServiceImpl extends ServerService {
             return;
         }
         JsonArray processes = response.getData().getAsJsonArray();
-        Gson gson = new Gson();
+        Gson gson = StringUtil.getGson();
         for (JsonElement ele : processes) {
             JpsResult jps = gson.fromJson(ele, JpsResult.class);
 

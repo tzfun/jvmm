@@ -1,5 +1,7 @@
 package org.beifengtz.jvmm.common.util;
 
+import com.google.gson.Gson;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collection;
@@ -19,6 +21,11 @@ import java.util.regex.Pattern;
  */
 public class StringUtil {
     private static final Pattern emojiPattern = Pattern.compile("[\ud83c\udc00-\ud83c\udfff]|[\ud83d\udc00-\ud83d\udfff]|[\u2600-\u27ff]");
+    private static final Gson gson = new Gson();
+
+    public static Gson getGson() {
+        return gson;
+    }
 
     public static String genUUID(boolean upper) {
         String uuid = UUID.randomUUID().toString().replaceAll("-", "");

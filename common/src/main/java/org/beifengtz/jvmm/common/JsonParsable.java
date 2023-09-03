@@ -2,6 +2,7 @@ package org.beifengtz.jvmm.common;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import org.beifengtz.jvmm.common.util.StringUtil;
 
 /**
  * <p>
@@ -15,14 +16,14 @@ import com.google.gson.JsonObject;
 public interface JsonParsable {
 
     static <T> T parseFrom(String json, Class<T> clazz) {
-        return new Gson().fromJson(json, clazz);
+        return StringUtil.getGson().fromJson(json, clazz);
     }
 
     default String toJsonStr() {
-        return new Gson().toJson(this);
+        return StringUtil.getGson().toJson(this);
     }
 
     default JsonObject toJson() {
-        return new Gson().toJsonTree(this).getAsJsonObject();
+        return StringUtil.getGson().toJsonTree(this).getAsJsonObject();
     }
 }

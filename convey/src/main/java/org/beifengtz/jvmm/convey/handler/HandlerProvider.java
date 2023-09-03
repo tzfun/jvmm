@@ -8,6 +8,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.util.concurrent.EventExecutorGroup;
 import org.beifengtz.jvmm.common.JsonParsable;
+import org.beifengtz.jvmm.common.util.StringUtil;
 
 /**
  * <p>
@@ -73,7 +74,7 @@ public interface HandlerProvider {
         } else if (result instanceof JsonParsable) {
             data = ((JsonParsable) result).toJson();
         } else {
-            data = new Gson().toJsonTree(result);
+            data = StringUtil.getGson().toJsonTree(result);
         }
         return data;
     }

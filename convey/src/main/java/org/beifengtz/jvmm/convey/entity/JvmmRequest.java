@@ -1,9 +1,9 @@
 package org.beifengtz.jvmm.convey.entity;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import org.beifengtz.jvmm.common.JsonParsable;
 import org.beifengtz.jvmm.common.exception.MessageSerializeException;
+import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.convey.enums.GlobalType;
 
 /**
@@ -27,7 +27,7 @@ public class JvmmRequest implements JsonParsable {
     }
 
     public static JvmmRequest parseFrom(String msg) {
-        return new Gson().fromJson(msg, JvmmRequest.class);
+        return StringUtil.getGson().fromJson(msg, JvmmRequest.class);
     }
 
     public boolean isHeartbeat() {

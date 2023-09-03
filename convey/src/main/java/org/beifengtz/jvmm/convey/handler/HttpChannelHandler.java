@@ -1,6 +1,5 @@
 package org.beifengtz.jvmm.convey.handler;
 
-import com.google.gson.Gson;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
@@ -223,7 +222,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                             if (String.class.isAssignableFrom(parameterType)) {
                                 parameter[i] = body == null ? null : new String(body, StandardCharsets.UTF_8);
                             } else {
-                                parameter[i] = body == null ? null : new Gson().fromJson(new String(body, StandardCharsets.UTF_8), method.getGenericParameterTypes()[i]);
+                                parameter[i] = body == null ? null : StringUtil.getGson().fromJson(new String(body, StandardCharsets.UTF_8), method.getGenericParameterTypes()[i]);
                             }
                         } else if (anno.annotationType() == RequestParam.class) {
                             RequestParam rp = (RequestParam) anno;
@@ -267,7 +266,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                             } else {
                                 parameter[i] = ReflexUtil.parseValueFromStr(parameterType, (String) value);
                                 if (parameter[i] == null) {
-                                    parameter[i] = new Gson().fromJson((String) value, parameterType);
+                                    parameter[i] = StringUtil.getGson().fromJson((String) value, parameterType);
                                 }
                                 if (ReflexUtil.isBaseType(parameterType) && parameter[i] == null) {
                                     parameter[i] = ReflexUtil.getBaseTypeDefault(parameterType);

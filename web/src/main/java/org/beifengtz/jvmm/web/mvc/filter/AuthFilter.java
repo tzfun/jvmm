@@ -1,7 +1,7 @@
 package org.beifengtz.jvmm.web.mvc.filter;
 
-import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
+import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.web.common.Constant;
 import org.beifengtz.jvmm.web.common.RestfulStatus;
 import org.beifengtz.jvmm.web.common.exception.AuthException;
@@ -66,7 +66,7 @@ public class AuthFilter implements BaseFilter {
         BaseFilter.initResponseHeaders(httpResponse);
         httpResponse.setContentType("application/json; charset=utf-8");
         httpResponse.setStatus(HttpServletResponse.SC_OK);
-        httpResponse.getWriter().write(new Gson().toJson(resultFactory.error(RestfulStatus.AUTH_ERR, "Token invalid")));
+        httpResponse.getWriter().write(StringUtil.getGson().toJson(resultFactory.error(RestfulStatus.AUTH_ERR, "Token invalid")));
     }
 
     @Override
@@ -74,6 +74,6 @@ public class AuthFilter implements BaseFilter {
         BaseFilter.initResponseHeaders(httpResponse);
         httpResponse.setContentType("application/json; charset=utf-8");
         httpResponse.setStatus(HttpServletResponse.SC_OK);
-        httpResponse.getWriter().write(new Gson().toJson(resultFactory.error(RestfulStatus.SERVER_ERR, msg)));
+        httpResponse.getWriter().write(StringUtil.getGson().toJson(resultFactory.error(RestfulStatus.SERVER_ERR, msg)));
     }
 }
