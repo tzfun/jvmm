@@ -16,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * description: TODO
  * date 10:01 2023/2/3
+ *
  * @author beifengtz
  */
 public class JvmmLoggerFactory implements ILoggerFactory {
@@ -31,12 +32,12 @@ public class JvmmLoggerFactory implements ILoggerFactory {
 
     private void loadConfig() {
         config = new JvmmLogConfiguration();
-        String level = SystemPropertyUtil.get("jvmm.log.level");
+        String level = SystemPropertyUtil.get(SystemPropertyUtil.PROPERTY_JVMM_LOG_LEVEL);
         if (level != null) {
             config.setLevel(LoggerLevel.valueOf(level.toUpperCase()));
         }
 
-        String file = SystemPropertyUtil.get("jvmm.log.file");
+        String file = SystemPropertyUtil.get(SystemPropertyUtil.PROPERTY_JVMM_LOG_FILE);
         if (file != null) {
             File f = new File(file);
             if (!f.exists()) {
@@ -45,24 +46,34 @@ public class JvmmLoggerFactory implements ILoggerFactory {
             config.setFile(f.getAbsolutePath());
         }
 
-        String fileName = SystemPropertyUtil.get("jvmm.log.fileName");
+        String fileName = SystemPropertyUtil.get(SystemPropertyUtil.PROPERTY_JVMM_LOG_FILE_NAME);
         if (fileName != null) {
             config.setFileName(fileName);
         }
 
-        String fileLimitSize = SystemPropertyUtil.get("jvmm.log.fileLimitSize");
+        String fileLimitSize = SystemPropertyUtil.get(SystemPropertyUtil.PROPERTY_JVMM_LOG_FILE_LIMIT_SIZE);
         if (fileLimitSize != null) {
             config.setFileLimitSize(Integer.parseInt(fileLimitSize));
         }
 
-        String pattern = SystemPropertyUtil.get("jvmm.log.pattern");
+        String pattern = SystemPropertyUtil.get(SystemPropertyUtil.PROPERTY_JVMM_LOG_PATTERN);
         if (pattern != null) {
             config.setPattern(pattern);
         }
 
-        String printers = SystemPropertyUtil.get("jvmm.log.printers");
+        String printers = SystemPropertyUtil.get(SystemPropertyUtil.PROPERTY_JVMM_LOG_PRINTERS);
         if (printers != null) {
             config.setPrinters(printers);
+        }
+
+        String levels = SystemPropertyUtil.get(SystemPropertyUtil.PROPERTY_JVMM_LOG_LEVELS);
+        if (levels != null) {
+            for (String kv : levels.split(",")) {
+                String[] split = kv.split(":");
+                String key = split[0];
+                LoggerLevel value = LoggerLevel.valueOf(split[1]);
+                config.getLevels().put(key, value);
+            }
         }
 
         updatePrinters();

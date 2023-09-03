@@ -25,7 +25,7 @@ public class ExecutorFactory {
     }
 
     public static int getNThreads() {
-        return Math.max(2, SystemPropertyUtil.getInt("jvmm.workThread", Runtime.getRuntime().availableProcessors()));
+        return Math.max(2, SystemPropertyUtil.getInt(SystemPropertyUtil.PROPERTY_JVMM_WORK_THREAD, Runtime.getRuntime().availableProcessors()));
     }
 
     public static ScheduledExecutorService getThreadPool() {

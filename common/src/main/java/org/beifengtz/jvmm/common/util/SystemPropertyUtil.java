@@ -16,6 +16,21 @@ import java.security.PrivilegedAction;
  * @author beifengtz
  */
 public class SystemPropertyUtil {
+
+    public static final String PROPERTY_JVMM_WORK_THREAD = "jvmm.workThread";
+    public static final String PROPERTY_JVMM_PROFILER_LOADED = "jvmm.profiler.loaded";
+    public static final String PROPERTY_JVMM_SCAN_PACKAGE = "jvmm.scanPackage";
+    public static final String PROPERTY_JVMM_HOME = "jvmm.home";
+    public static final String PROPERTY_JVMM_TEMP_PATH = "jvmm.tempPath";
+    public static final String PROPERTY_JVMM_LOG_LEVEL = "jvmm.log.level";
+    public static final String PROPERTY_JVMM_LOG_LEVELS = "jvmm.log.levels";
+    public static final String PROPERTY_JVMM_LOG_FILE = "jvmm.log.file";
+    public static final String PROPERTY_JVMM_LOG_FILE_NAME = "jvmm.log.fileName";
+    public static final String PROPERTY_JVMM_LOG_FILE_LIMIT_SIZE = "jvmm.log.fileLimitSize";
+    public static final String PROPERTY_JVMM_LOG_PATTERN = "jvmm.log.pattern";
+    public static final String PROPERTY_JVMM_LOG_PRINTERS = "jvmm.log.printers";
+
+
     private static Logger logger() {
         return LoggerFactory.getLogger(SystemPropertyUtil.class);
     }

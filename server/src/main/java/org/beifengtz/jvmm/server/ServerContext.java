@@ -6,6 +6,7 @@ import org.beifengtz.jvmm.common.factory.ExecutorFactory;
 import org.beifengtz.jvmm.common.util.ClassLoaderUtil;
 import org.beifengtz.jvmm.common.util.FileUtil;
 import org.beifengtz.jvmm.common.util.IOUtil;
+import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
 import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
 import org.beifengtz.jvmm.server.entity.conf.Configuration;
 import org.beifengtz.jvmm.server.enums.ServerType;
@@ -69,8 +70,8 @@ public class ServerContext {
                     ? new File(home.getParent(), "temp")
                     : new File(home.getParentFile().getParent(), "temp");
 
-            System.setProperty("jvmm.home", homePath.getAbsolutePath());
-            System.setProperty("jvmm.tempPath", tempPath.getAbsolutePath());
+            System.setProperty(SystemPropertyUtil.PROPERTY_JVMM_HOME, homePath.getAbsolutePath());
+            System.setProperty(SystemPropertyUtil.PROPERTY_JVMM_TEMP_PATH, tempPath.getAbsolutePath());
         } catch (Exception e) {
             LoggerFactory.getLogger(ServerContext.class).error("Init server config failed: " + e.getMessage(), e);
         }
@@ -95,7 +96,7 @@ public class ServerContext {
     public static synchronized void setConfiguration(Configuration config) {
         configuration = config;
         config.getLog().setSystemProperties();
-        System.setProperty("jvmm.workThread", String.valueOf(config.getWorkThread()));
+        System.setProperty(SystemPropertyUtil.PROPERTY_JVMM_WORK_THREAD, String.valueOf(config.getWorkThread()));
     }
 
     public static Configuration getConfiguration() {
@@ -107,11 +108,11 @@ public class ServerContext {
     }
 
     public static String getTempPath() {
-        return System.getProperty("jvmm.tempPath", ".jvmm");
+        return System.getProperty(SystemPropertyUtil.PROPERTY_JVMM_TEMP_PATH, ".jvmm");
     }
 
     public static String getHomePath() {
-        return System.getProperty("jvmm.home", "");
+        return System.getProperty(SystemPropertyUtil.PROPERTY_JVMM_HOME, "");
     }
 
     public static Set<ServerType> getServerSet() {

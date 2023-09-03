@@ -6,6 +6,7 @@ import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.Promise;
 import org.beifengtz.jvmm.common.util.IPUtil;
 import org.beifengtz.jvmm.common.util.StringUtil;
+import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
 import org.beifengtz.jvmm.server.entity.conf.Configuration;
 import org.beifengtz.jvmm.server.entity.conf.ServerConf;
 import org.beifengtz.jvmm.server.enums.ServerType;
@@ -84,7 +85,7 @@ public class ServerBootstrap {
 
         if (ServerContext.isFromAgent()) {
             //  如果从agent启动，则取消默认的标注输出和文件输出
-            System.setProperty("jvmm.log.printers", "agentProxy");
+            System.setProperty(SystemPropertyUtil.PROPERTY_JVMM_LOG_PRINTERS, "agentProxy");
         }
 
         try {

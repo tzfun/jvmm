@@ -78,7 +78,8 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
     protected static final MultiMap<AsciiString, String> globalHeaders;
 
     static {
-        controllers = ReflexUtil.scanAnnotation(SystemPropertyUtil.get("jvmm.scanPack", "org.beifengtz.jvmm"), HttpController.class);
+        String scanPackage = SystemPropertyUtil.get(SystemPropertyUtil.PROPERTY_JVMM_SCAN_PACKAGE, "org.beifengtz.jvmm");
+        controllers = ReflexUtil.scanAnnotation(scanPackage, HttpController.class);
         mappings = new HashMap<>(controllers.size() * 5);
         methodMappings = new HashMap<>(controllers.size() * 5);
         globalHeaders = new MultiMap<>();

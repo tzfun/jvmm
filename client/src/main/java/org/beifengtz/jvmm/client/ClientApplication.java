@@ -1,5 +1,7 @@
 package org.beifengtz.jvmm.client;
 
+import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
+
 /**
  * <p>
  * Description: TODO
@@ -12,8 +14,8 @@ package org.beifengtz.jvmm.client;
 public class ClientApplication {
 
     private static void initLogger() {
-        System.setProperty("jvmm.log.level", "info");
-        System.setProperty("jvmm.log.pattern", "[%ansi{%level}{ERROR=31,INFO=32,WARN=33,DEBUG=34,TRACE=35}] %msg");
+        System.setProperty(SystemPropertyUtil.PROPERTY_JVMM_LOG_LEVEL, "info");
+        System.setProperty(SystemPropertyUtil.PROPERTY_JVMM_LOG_PATTERN, "[%ansi{%level}{ERROR=31,INFO=32,WARN=33,DEBUG=34,TRACE=35}] %msg");
     }
 
     public static void main(String[] args) throws Throwable {

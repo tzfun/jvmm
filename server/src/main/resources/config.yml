@@ -141,8 +141,12 @@ server:
 
 # The default Jvmm log configuration, if no SLF4J log implementation is found in the startup environment, use this configuration.
 log:
-  # Log level: ERROR, WARN, INFO, DEBUG, TRACE
+  # Log level: OFF, FATAL, ERROR, WARN, INFO, DEBUG, TRACE, ALL
   level: INFO
+  # Custom prefix level: OFF, FATAL, ERROR, WARN, INFO, DEBUG, TRACE, ALL
+  levels:
+    io.netty: INFO
+    org.beifengtz: DEBUG
   # Log file output directory
   file: logs
   # Log file prefix

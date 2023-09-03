@@ -1,7 +1,10 @@
 package org.beifengtz.jvmm.server.entity.conf;
 
 import org.beifengtz.jvmm.common.logger.LoggerLevel;
+import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
 import org.beifengtz.jvmm.common.util.meta.PairKey;
+
+import java.util.Map;
 
 /**
  * <p>
@@ -19,6 +22,7 @@ public class LogConf {
     private Integer fileLimitSize;
     private String pattern;
     private String printers;
+    private Map<String,LoggerLevel> levels;
 
     public LoggerLevel getLevel() {
         return level;
@@ -74,29 +78,52 @@ public class LogConf {
         return this;
     }
 
+    public LogConf setFileLimitSize(Integer fileLimitSize) {
+        this.fileLimitSize = fileLimitSize;
+        return this;
+    }
+
+    public Map<String, LoggerLevel> getLevels() {
+        return levels;
+    }
+
+    public LogConf setLevels(Map<String, LoggerLevel> levels) {
+        this.levels = levels;
+        return this;
+    }
+
     public void setSystemProperties() {
         if (level != null) {
-            System.setProperty("jvmm.log.level", level.toString());
+            System.setProperty(SystemPropertyUtil.PROPERTY_JVMM_LOG_LEVEL, level.toString());
         }
 
         if (file != null) {
-            System.setProperty("jvmm.log.file", file);
+            System.setProperty(SystemPropertyUtil.PROPERTY_JVMM_LOG_FILE, file);
         }
 
         if (fileName != null) {
-            System.setProperty("jvmm.log.fileName", fileName);
+            System.setProperty(SystemPropertyUtil.PROPERTY_JVMM_LOG_FILE_NAME, fileName);
         }
 
         if (fileLimitSize != null) {
-            System.setProperty("jvmm.log.fileLimitSize", fileLimitSize.toString());
+            System.setProperty(SystemPropertyUtil.PROPERTY_JVMM_LOG_FILE_LIMIT_SIZE, fileLimitSize.toString());
         }
 
         if (pattern != null) {
-            System.setProperty("jvmm.log.pattern", pattern);
+            System.setProperty(SystemPropertyUtil.PROPERTY_JVMM_LOG_PATTERN, pattern);
         }
 
         if (printers != null) {
-            System.setProperty("jvmm.log.printers", printers);
+            System.setProperty(SystemPropertyUtil.PROPERTY_JVMM_LOG_PRINTERS, printers);
+        }
+
+        if (levels != null && !levels.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            levels.forEach((k,v) -> {
+                sb.append(k).append(":").append(v).append(",");
+            });
+            sb.deleteCharAt(sb.length() - 1);
+            System.setProperty(SystemPropertyUtil.PROPERTY_JVMM_LOG_LEVELS, sb.toString());
         }
     }
 }

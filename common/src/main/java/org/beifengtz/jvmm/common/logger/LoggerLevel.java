@@ -8,7 +8,14 @@ package org.beifengtz.jvmm.common.logger;
  * @author beifengtz
  */
 public enum LoggerLevel {
-    ERROR(1), WARN(2), INFO(3), DEBUG(4), TRACE(5), OFF(6);
+    OFF(1),
+    FATAL(2),
+    ERROR(3),
+    WARN(4),
+    INFO(5),
+    DEBUG(6),
+    TRACE(7),
+    ALL(8);
 
     private final int value;
 

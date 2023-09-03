@@ -102,9 +102,9 @@ public class AsyncProfiler {
         }
 
         //  不可重复加载
-        if (!SystemPropertyUtil.getBoolean("jvmm.profiler.loaded", false)) {
+        if (!SystemPropertyUtil.getBoolean(SystemPropertyUtil.PROPERTY_JVMM_PROFILER_LOADED, false)) {
             System.load(libPath);
-            System.setProperty("jvmm.profiler.loaded", "true");
+            System.setProperty(SystemPropertyUtil.PROPERTY_JVMM_PROFILER_LOADED, "true");
         }
 
         instance = new AsyncProfiler();

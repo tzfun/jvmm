@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map.Entry;
 
 /**
  * Description: TODO
@@ -105,6 +106,15 @@ public class Logger implements org.slf4j.Logger {
 
     private void print(LoggerEvent event) {
         JvmmLogConfiguration config = StaticLoggerBinder.getSingleton().getConfig();
+        LoggerLevel targetLevel = null;
+        for (Entry<String, LoggerLevel> entry : config.getLevels().entrySet()) {
+            if (event.getName().startsWith(entry.getKey())) {
+                targetLevel = entry.getValue();
+            }
+        }
+        if (targetLevel != null && targetLevel.getValue() < event.getType().getValue()) {
+            return;
+        }
         for (Printer printer : printers) {
             if (printer.preformat()) {
                 String msg = event.getMsg() == null

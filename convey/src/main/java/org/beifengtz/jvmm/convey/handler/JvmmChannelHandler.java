@@ -64,7 +64,7 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
     private static final ChannelGroup channels = new DefaultChannelGroup(ImmediateEventExecutor.INSTANCE);
 
     static {
-        controllers = ReflexUtil.scanAnnotation(SystemPropertyUtil.get("jvmm.scanPack", "org.beifengtz.jvmm"), JvmmController.class);
+        controllers = ReflexUtil.scanAnnotation(SystemPropertyUtil.get(SystemPropertyUtil.PROPERTY_JVMM_SCAN_PACKAGE, "org.beifengtz.jvmm"), JvmmController.class);
         mappings = new HashMap<>(controllers.size() * 5);
 
         for (Class<?> controller : controllers) {

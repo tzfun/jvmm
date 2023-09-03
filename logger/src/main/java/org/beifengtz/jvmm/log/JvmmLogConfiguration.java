@@ -2,6 +2,9 @@ package org.beifengtz.jvmm.log;
 
 import org.beifengtz.jvmm.common.logger.LoggerLevel;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * description: TODO
  * date 10:18 2023/2/3
@@ -14,6 +17,7 @@ public class JvmmLogConfiguration {
      * 日志等级
      */
     private LoggerLevel level = LoggerLevel.INFO;
+    private Map<String,LoggerLevel> levels = new HashMap<>(0);
     /**
      * 日志文件输出目录
      */
@@ -81,5 +85,14 @@ public class JvmmLogConfiguration {
 
     public void setPrinters(String printers) {
         this.printers = printers;
+    }
+
+    public Map<String, LoggerLevel> getLevels() {
+        return levels;
+    }
+
+    public JvmmLogConfiguration setLevels(Map<String, LoggerLevel> levels) {
+        this.levels = levels;
+        return this;
     }
 }
