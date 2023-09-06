@@ -1,6 +1,7 @@
 package org.beifengtz.jvmm.common.util;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -21,7 +22,9 @@ import java.util.regex.Pattern;
  */
 public class StringUtil {
     private static final Pattern emojiPattern = Pattern.compile("[\ud83c\udc00-\ud83c\udfff]|[\ud83d\udc00-\ud83d\udfff]|[\u2600-\u27ff]");
-    private static final Gson gson = new Gson();
+    private static final Gson gson = new GsonBuilder()
+            .setPrettyPrinting()
+            .create();
 
     public static Gson getGson() {
         return gson;
@@ -261,5 +264,9 @@ public class StringUtil {
             return s;
         else
             return Character.toUpperCase(s.charAt(0)) + s.substring(1);
+    }
+
+    public static String doubleToString(double value, int scale, RoundingMode roundingMode) {
+        return BigDecimal.valueOf(value).setScale(scale, roundingMode).toString();
     }
 }

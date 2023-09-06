@@ -1,7 +1,6 @@
 package org.beifengtz.jvmm.client;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -12,6 +11,7 @@ import org.beifengtz.jvmm.client.annotation.JvmmOption;
 import org.beifengtz.jvmm.client.annotation.JvmmOptions;
 import org.beifengtz.jvmm.client.annotation.Order;
 import org.beifengtz.jvmm.client.cli.CmdParser;
+import org.beifengtz.jvmm.client.fomatter.TableFormatter;
 import org.beifengtz.jvmm.common.util.CodingUtil;
 import org.beifengtz.jvmm.common.util.FileUtil;
 import org.beifengtz.jvmm.common.util.StringUtil;
@@ -20,13 +20,24 @@ import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.enums.GlobalType;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 import org.beifengtz.jvmm.core.CollectionType;
+import org.beifengtz.jvmm.core.entity.info.CPUInfo;
+import org.beifengtz.jvmm.core.entity.info.DiskIOInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmClassLoaderInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmClassLoadingInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmCompilationInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmGCInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmMemoryManagerInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmThreadDetailInfo;
+import org.beifengtz.jvmm.core.entity.info.SysFileInfo;
+import org.beifengtz.jvmm.core.entity.info.SysInfo;
+import org.beifengtz.jvmm.core.entity.info.SysMemInfo;
 import org.beifengtz.jvmm.core.entity.info.ThreadTimedInfo;
 import org.beifengtz.jvmm.core.entity.result.JpsResult;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -234,6 +245,10 @@ public class ServerServiceImpl extends ServerService {
             }
             case port: {
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_PORT_STATUS);
+                if (!cmd.hasArg("p")) {
+                    printErr("Missing required parameter `-p`");
+                    return;
+                }
                 String[] ports = cmd.getArg("p").split(",");
                 JsonArray queryList = new JsonArray();
                 for (String port : ports) {
@@ -251,42 +266,208 @@ public class ServerServiceImpl extends ServerService {
         if (response == null) {
             return;
         }
+
+        String content = drawInfoResponse(type, response.getData());
+
         if (cmd.hasArg("f")) {
             try {
                 File file = new File(cmd.getArg("f"));
-                String str;
-                if (response.getData().isJsonArray()) {
-                    StringBuilder sb = new StringBuilder();
-                    for (JsonElement ele : response.getData().getAsJsonArray()) {
-                        sb.append(ele.getAsString());
-                    }
-                    str = sb.toString();
-                } else if (response.getData().isJsonObject()) {
-                    Gson gson = new GsonBuilder()
-                            .setPrettyPrinting()
-                            .serializeNulls()
-                            .create();
-                    str = gson.toJson(response.getData());
-                } else {
-                    str = response.getData().toString();
-                }
-                FileUtil.writeByteArrayToFile(file, str.getBytes(StandardCharsets.UTF_8));
+                FileUtil.writeByteArrayToFile(file, content.getBytes(StandardCharsets.UTF_8));
                 System.out.println("Write server info to file successful, path is " + file.getAbsolutePath());
             } catch (IOException e) {
                 printErr("Write failed, " + e.getMessage());
             }
         } else {
-            if (Objects.equals(type, CollectionType.jvm_thread_stack)) {
-                JsonArray stack = response.getData().getAsJsonArray();
-                StringBuilder str = new StringBuilder();
-                for (JsonElement ele : stack) {
-                    str.append(ele.getAsString());
-                }
-                System.out.println(str);
-            } else {
-                System.out.println(StringUtil.formatJsonCode(response.getData().toString()));
-            }
+            System.out.println(content);
         }
+    }
+
+    private static String drawInfoResponse(CollectionType type, JsonElement data) {
+        Gson gson = StringUtil.getGson();
+        String result;
+        if (type == CollectionType.jvm_thread_stack) {
+            JsonArray stack = data.getAsJsonArray();
+            StringBuilder str = new StringBuilder();
+            for (JsonElement ele : stack) {
+                str.append(ele.getAsString());
+            }
+            result = str.toString();
+        } else if (type == CollectionType.disk_io) {
+            JsonArray array = data.getAsJsonArray();
+            TableFormatter table = new TableFormatter();
+            table.setHead("Name", "Read(n/s)", "Write(n/s)", "Read(bytes/s)", "Write(bytes/s)", "Queue Len");
+            for (JsonElement json : array) {
+                DiskIOInfo info = gson.fromJson(json, DiskIOInfo.class);
+                table.addRow(
+                        info.getName(),
+                        StringUtil.doubleToString(info.getReadPerSecond(), 0, RoundingMode.FLOOR),
+                        StringUtil.doubleToString(info.getWritePerSecond(), 0, RoundingMode.FLOOR),
+                        StringUtil.doubleToString(info.getReadBytesPerSecond(), 0, RoundingMode.FLOOR),
+                        StringUtil.doubleToString(info.getWriteBytesPerSecond(), 0, RoundingMode.FLOOR),
+                        String.valueOf(info.getCurrentQueueLength())
+                );
+            }
+            result = table.toString();
+        } else if (type == CollectionType.cpu) {
+            TableFormatter table = new TableFormatter();
+            table.setHead("CPU Num", "Sys Usage(%)", "User Usage(%)", "IO Wait(%)", "Idle(%)");
+            CPUInfo info = gson.fromJson(data, CPUInfo.class);
+            table.addRow(
+                    String.valueOf(info.getCpuNum()),
+                    StringUtil.doubleToString(info.getSys() * 100, 2, RoundingMode.FLOOR),
+                    StringUtil.doubleToString(info.getUser() * 100, 2, RoundingMode.FLOOR),
+                    StringUtil.doubleToString(info.getIoWait() * 100, 2, RoundingMode.FLOOR),
+                    StringUtil.doubleToString(info.getIdle() * 100, 2, RoundingMode.FLOOR)
+            );
+            result = table.toString();
+        } else if (type == CollectionType.sys) {
+            TableFormatter table = new TableFormatter();
+            table.setHead("Name", "Version", "Arch", "CPU", "Time Zone", "IP", "User");
+            SysInfo info = gson.fromJson(data, SysInfo.class);
+            table.addRow(
+                    info.getName(),
+                    info.getVersion(),
+                    info.getArch(),
+                    String.valueOf(info.getCpuNum()),
+                    info.getTimeZone(),
+                    info.getIp(),
+                    info.getUser()
+            );
+            result = table.toString();
+        } else if (type == CollectionType.sys_memory) {
+            TableFormatter table = new TableFormatter();
+            table.setHead("Physical", "Physical Free", "Swap", "Swap Free", "Committed Virtual", "Buffer Cache", "Shared");
+            SysMemInfo info = gson.fromJson(data, SysMemInfo.class);
+            table.addRow(
+                    String.valueOf(info.getTotalPhysical()),
+                    String.valueOf(info.getFreePhysical()),
+                    String.valueOf(info.getTotalSwap()),
+                    String.valueOf(info.getFreeSwap()),
+                    String.valueOf(info.getCommittedVirtual()),
+                    String.valueOf(info.getBufferCache()),
+                    String.valueOf(info.getShared())
+            );
+            result = table.toString();
+        } else if (type == CollectionType.sys_file) {
+            JsonArray array = data.getAsJsonArray();
+            TableFormatter table = new TableFormatter();
+            table.setHead("Name", "Mount", "Label", "Type", "Size", "Free", "Usable");
+            for (JsonElement json : array) {
+                SysFileInfo info = gson.fromJson(json, SysFileInfo.class);
+                table.addRow(
+                        info.getName(),
+                        info.getMount(),
+                        info.getLabel(),
+                        info.getType(),
+                        String.valueOf(info.getSize()),
+                        String.valueOf(info.getFree()),
+                        String.valueOf(info.getUsable())
+                );
+            }
+            result = table.toString();
+        } else if (type == CollectionType.jvm_classloading) {
+            TableFormatter table = new TableFormatter();
+            table.setHead("Loaded Classes", "Unloaded Classes", "Loaded Total", "Verbose");
+            JvmClassLoadingInfo info = gson.fromJson(data, JvmClassLoadingInfo.class);
+            table.addRow(
+                    String.valueOf(info.getLoadedClassCount()),
+                    String.valueOf(info.getUnLoadedClassCount()),
+                    String.valueOf(info.getTotalLoadedClassCount()),
+                    String.valueOf(info.isVerbose())
+            );
+            result = table.toString();
+        } else if (type == CollectionType.jvm_classloader) {
+            JsonArray array = data.getAsJsonArray();
+            TableFormatter table = new TableFormatter();
+            table.setHead("Name", "Hash", "Parents");
+            for (JsonElement json : array) {
+                JvmClassLoaderInfo info = gson.fromJson(json, JvmClassLoaderInfo.class);
+                table.addRow(
+                        info.getName(),
+                        String.valueOf(info.getHash()),
+                        StringUtil.join(";", info.getParents())
+                );
+            }
+            result = table.toString();
+        } else if (type == CollectionType.jvm_compilation) {
+            TableFormatter table = new TableFormatter();
+            table.setHead("Name", "Compilation Time", "Support Timer");
+            JvmCompilationInfo info = gson.fromJson(data, JvmCompilationInfo.class);
+            table.addRow(
+                    info.getName(),
+                    String.valueOf(info.getTotalCompilationTime()),
+                    String.valueOf(info.isTimeMonitoringSupported())
+            );
+            result = table.toString();
+        } else if (type == CollectionType.jvm_gc) {
+            JsonArray array = data.getAsJsonArray();
+            TableFormatter table = new TableFormatter();
+            table.setHead("Name", "Valid", "GC Count", "GC Time", "Memory Pools");
+            for (JsonElement json : array) {
+                JvmGCInfo info = gson.fromJson(json, JvmGCInfo.class);
+                table.addRow(
+                        info.getName(),
+                        String.valueOf(info.isValid()),
+                        String.valueOf(info.getCollectionCount()),
+                        String.valueOf(info.getCollectionTime()),
+                        StringUtil.join(";", info.getMemoryPoolNames())
+                );
+            }
+            result = table.toString();
+        } else if (type == CollectionType.jvm_memory_manager) {
+            JsonArray array = data.getAsJsonArray();
+            TableFormatter table = new TableFormatter();
+            table.setHead("Name", "Valid", "Pools");
+            for (JsonElement json : array) {
+                JvmMemoryManagerInfo info = gson.fromJson(json, JvmMemoryManagerInfo.class);
+                table.addRow(
+                        info.getName(),
+                        String.valueOf(info.isValid()),
+                        StringUtil.join(";", info.getMemoryPoolNames())
+                );
+            }
+            result = table.toString();
+        } else if (type == CollectionType.jvm_thread_detail) {
+            JsonArray array = data.getAsJsonArray();
+            TableFormatter table = new TableFormatter();
+            table.setHead(
+                    "ID",
+                    "Name",
+                    "Group",
+                    "State",
+                    "OS State",
+                    "Daemon",
+                    "Priority",
+                    "User Time",
+                    "CPU Time",
+                    "Blocked Count",
+                    "Blocked Time",
+                    "Waited Count",
+                    "Waited Time"
+            );
+            for (JsonElement json : array) {
+                JvmThreadDetailInfo info = gson.fromJson(json, JvmThreadDetailInfo.class);
+                table.addRow(
+                        String.valueOf(info.getId()),
+                        info.getName(),
+                        info.getGroup(),
+                        info.getState().name(),
+                        String.valueOf(info.getOsState()),
+                        String.valueOf(info.getDaemon()),
+                        String.valueOf(info.getPriority()),
+                        String.valueOf(info.getUserTime()),
+                        String.valueOf(info.getCpuTime()),
+                        String.valueOf(info.getBlockedCount()),
+                        String.valueOf(info.getBlockedTime()),
+                        String.valueOf(info.getWaitedCount()),
+                        String.valueOf(info.getWaitedTime())
+                );
+            }
+            result = table.toString();
+        } else {
+            result = gson.toJson(data);
+        }
+        return result;
     }
 
     @JvmmOptions({
@@ -321,13 +502,14 @@ public class ServerServiceImpl extends ServerService {
                     name = "e",
                     argName = "event",
                     order = 6,
-                    desc = "Sample event, default is cpu. Not all events are supported in the current environment, " +
+                    desc = "Sample event, default is cpu. Not all events are supported in the target environment, " +
                             "you can see which events are supported by the `list` parameter. " +
                             "Optional values: \n- cpu\n- alloc\n- lock\n- wall\n- itimer\n" +
                             "- `ClassName.javaMethodName`, instruments the given Java method in order to record all " +
                             "invocations of this method with the stack traces. Just for non-native methods, example: java.util.Properties.getProperty\n" +
                             "- `Java_nativeMethodName`, instruments the given native method in order to record all " +
-                            "invocations of this method with the stack traces. Just for native methods, example: Java_java_lang_Throwable_fillInStackTrace"
+                            "invocations of this method with the stack traces. Just for native methods, example: Java_java_lang_Throwable_fillInStackTrace\n" +
+                            "- ... (More events please use `list` parameter to view)"
             ),
             @JvmmOption(
                     name = "c",
@@ -505,24 +687,19 @@ public class ServerServiceImpl extends ServerService {
         }
         JsonArray processes = response.getData().getAsJsonArray();
         Gson gson = StringUtil.getGson();
+        TableFormatter table = new TableFormatter();
+        table.setHead("PID", "Main Class", "Arguments");
+
         for (JsonElement ele : processes) {
             JpsResult jps = gson.fromJson(ele, JpsResult.class);
-
-            int prefixNum = String.valueOf(jps.getPid()).length() + jps.getMainClass().length();
-            String prefix = StringUtil.repeat("", prefixNum);
-            StringBuilder arguments = new StringBuilder();
-            boolean firstLine = true;
-            for (String argument : jps.getArguments()) {
-                if (firstLine) {
-                    arguments.append("\t").append(argument);
-                    firstLine = false;
-                } else {
-                    arguments.append(prefix).append("\t\t\t").append(argument);
-                }
-                arguments.append("\n");
-            }
-            System.out.printf("%d\t%s\t%s", jps.getPid(), jps.getMainClass(), arguments);
+            table.addRow(
+                    String.valueOf(jps.getPid()),
+                    jps.getMainClass(),
+                    StringUtil.join(";", jps.getArguments())
+            );
         }
+
+        table.print();
     }
 
     @Order(5)
@@ -637,18 +814,23 @@ public class ServerServiceImpl extends ServerService {
                     System.out.println(ele.getAsString());
                 }
             } else {
-                StringBuilder sb = new StringBuilder("ID\tName\tGroup\tState\tUser Time(ns)\tCPU Time(ns)\n");
+                TableFormatter table = new TableFormatter();
+                table.setHead("ID", "Name", "Group", "State", "User Time(ns)", "CPU Time(ns)");
+
                 Gson gson = StringUtil.getGson();
                 for (JsonElement json : response.getData().getAsJsonArray()) {
                     ThreadTimedInfo info = gson.fromJson(json, ThreadTimedInfo.class);
-                    sb.append(info.getId()).append("\t")
-                            .append(info.getName()).append("\t")
-                            .append(info.getGroup()).append("\t")
-                            .append(info.getState()).append("\t")
-                            .append(info.getUserTime()).append("\t")
-                            .append(info.getCpuTime()).append("\t\n");
+                    table.addRow(
+                            String.valueOf(info.getId()),
+                            info.getName(),
+                            info.getGroup(),
+                            String.valueOf(info.getState()),
+                            String.valueOf(info.getUserTime()),
+                            String.valueOf(info.getCpuTime())
+                    );
                 }
-                System.out.println(sb);
+
+                table.print();
             }
         } else {
             printErr("Invalid param value `t`");
