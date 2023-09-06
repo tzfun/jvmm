@@ -59,12 +59,13 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
 
     protected final JvmmBubble bubble = new JvmmBubble();
     private final Map<Class<?>, Object> controllerInstance = new ConcurrentHashMap<>(controllers.size());
-    private static final Set<Class<?>> controllers;
-    private static final Map<String, Method> mappings;
+    private static Set<Class<?>> controllers;
+    private static Map<String, Method> mappings;
     private static final ChannelGroup channels = new DefaultChannelGroup(ImmediateEventExecutor.INSTANCE);
 
-    static {
-        controllers = ReflexUtil.scanAnnotation(SystemPropertyUtil.get(SystemPropertyUtil.PROPERTY_JVMM_SCAN_PACKAGE, "org.beifengtz.jvmm"), JvmmController.class);
+    public static void init() {
+        String scanPackage = SystemPropertyUtil.get(SystemPropertyUtil.PROPERTY_JVMM_SCAN_PACKAGE, "org.beifengtz.jvmm");
+        controllers = ReflexUtil.scanAnnotation(scanPackage, JvmmController.class);
         mappings = new HashMap<>(controllers.size() * 5);
 
         for (Class<?> controller : controllers) {

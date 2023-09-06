@@ -191,7 +191,7 @@ public class CollectController {
     }
 
     @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_ORDERED_CPU_TIME)
-    @HttpRequest("/collect/jvm/dump_thread")
+    @HttpRequest("/collect/jvm/thread_ordered_cpu_time")
     public void getJvmThreadOrderedCpuTime(@RequestParam String type,
                                            @RequestParam int durationSeconds,
                                            ResponseFuture future) {

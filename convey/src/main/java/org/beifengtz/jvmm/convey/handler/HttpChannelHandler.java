@@ -71,13 +71,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     private final Map<Class<?>, Object> controllerInstance = new ConcurrentHashMap<>(controllers.size());
-    private static final Set<Class<?>> controllers;
-    private static final Map<String, Method> mappings;
-    private static final Map<String, HttpMethod> methodMappings;
+    private static Set<Class<?>> controllers;
+    private static Map<String, Method> mappings;
+    private static Map<String, HttpMethod> methodMappings;
     private static final ChannelGroup channels = new DefaultChannelGroup(ImmediateEventExecutor.INSTANCE);
-    protected static final MultiMap<AsciiString, String> globalHeaders;
+    protected static MultiMap<AsciiString, String> globalHeaders;
 
-    static {
+    public static void init() {
         String scanPackage = SystemPropertyUtil.get(SystemPropertyUtil.PROPERTY_JVMM_SCAN_PACKAGE, "org.beifengtz.jvmm");
         controllers = ReflexUtil.scanAnnotation(scanPackage, HttpController.class);
         mappings = new HashMap<>(controllers.size() * 5);
@@ -98,7 +98,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                 HttpRequest request = method.getAnnotation(HttpRequest.class);
                 String uri = request.value();
                 if (mappings.containsKey(uri) || methodMappings.containsKey(uri)) {
-                    throw new InvalidJvmmMappingException("There are duplicate jvmm http mapping: " + uri);
+                    throw new InvalidJvmmMappingException("There are duplicate http mapping: " + uri);
                 }
 
                 if (!Modifier.isPublic(method.getModifiers())) {
@@ -111,7 +111,6 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
             }
         }
     }
-
 
     public HttpChannelHandler() {
         super(true);

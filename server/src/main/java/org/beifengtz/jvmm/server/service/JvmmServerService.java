@@ -43,6 +43,7 @@ public class JvmmServerService extends AbstractListenerServerService {
 
     @Override
     protected void startUp(Promise<Integer> promise) {
+        JvmmChannelHandler.init();
         EventLoopGroup group = ServerContext.getWorkerGroup();
         ChannelFuture future = new ServerBootstrap()
                 .group(group)
