@@ -197,7 +197,7 @@ public class ServerBootstrap {
                     }
                 }
 
-                if (startServers.size() == 0) {
+                if (startServers.isEmpty()) {
                     callback.apply("warn:No new jvmm service need start");
                     callback.apply("end");
                     return;

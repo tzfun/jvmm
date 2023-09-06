@@ -23,19 +23,21 @@ public class ServerApplication {
                 System.exit(-1);
             }
         } else {
-            InputStream is = ServerApplication.class.getResourceAsStream("/config.yml");
-            if (is == null) {
-                File file = new File(System.getProperty("user.dir") + "/config.yml");
+            File file = new File(System.getProperty("user.dir") + "/config.yml");
+            if (file.exists()) {
+                return Configuration.parseFromYamlFile(file);
+            } else {
+                file = new File(System.getProperty("user.dir") + "/config/config.yml");
                 if (file.exists()) {
                     return Configuration.parseFromYamlFile(file);
                 } else {
-                    file = new File(System.getProperty("user.dir") + "/config/config.yml");
-                    if (file.exists()) {
-                        return Configuration.parseFromYamlFile(file);
+                    InputStream is = ServerApplication.class.getResourceAsStream("/config.yml");
+                    if (is == null) {
+                        throw new RuntimeException("Can not found any configuration.");
+                    } else {
+                        return Configuration.parseFromStream(is);
                     }
                 }
-            } else {
-                return Configuration.parseFromStream(is);
             }
         }
         return null;
