@@ -1,5 +1,7 @@
 package org.beifengtz.jvmm.convey.entity;
 
+import io.netty.buffer.ByteBuf;
+
 /**
  * description TODO
  * date 16:56 2023/9/8
@@ -25,7 +27,7 @@ public interface JvmmMsg {
      * 序列化为byte[]，规则如下：
      * 消息flag, [flag, (长度位数), 长度, type内容]...
      *
-     * @return byte[]
+     * @return {@link ByteBuf}
      */
-    byte[] serialize();
+    ByteBuf serialize();
 }

@@ -3,6 +3,8 @@ package org.beifengtz.jvmm.convey.entity;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.CompositeByteBuf;
+import io.netty.buffer.Unpooled;
 import org.beifengtz.jvmm.common.JsonParsable;
 import org.beifengtz.jvmm.common.exception.MessageSerializeException;
 import org.beifengtz.jvmm.common.util.CodingUtil;
@@ -97,53 +99,36 @@ public class JvmmRequest implements JvmmMsg, JsonParsable {
         return request;
     }
 
-    public byte[] serialize() {
+    public ByteBuf serialize() {
         if (type == null) {
             throw new MessageSerializeException("Missing required param: 'type'");
         }
         if (contextId == 0) {
             contextId = generateContextId();
         }
-
-        int length = 1;
-        List<byte[]> buffer = new ArrayList<>();
+        CompositeByteBuf compositeByteBuf = Unpooled.compositeBuffer();
         //  消息体标志
-        buffer.add(new byte[]{JvmmMsg.MSG_FLAG_REQUEST});
+        compositeByteBuf.addComponent(Unpooled.wrappedBuffer(new byte[]{JvmmMsg.MSG_FLAG_REQUEST}));
 
         //  消息类型标志
         byte[] typeBytes = CodingUtil.intToAtomicByteArray(type.getValue());
-        length += 2;
-        buffer.add(new byte[]{JvmmMsg.MSG_FLAG_TYPE, (byte) typeBytes.length});
-        length += typeBytes.length;
-        buffer.add(typeBytes);
+        compositeByteBuf.addComponent(Unpooled.wrappedBuffer(new byte[]{JvmmMsg.MSG_FLAG_TYPE, (byte) typeBytes.length}));
+        compositeByteBuf.addComponent(Unpooled.wrappedBuffer(typeBytes));
 
         //  上下文ID标志
         byte[] contextIdBytes = CodingUtil.longToByteArray(contextId);
-        length += 2;
-        buffer.add(new byte[]{JvmmMsg.MSG_FLAG_CONTEXT_ID, (byte) contextIdBytes.length});
-        length += contextIdBytes.length;
-        buffer.add(contextIdBytes);
+        compositeByteBuf.addComponent(Unpooled.wrappedBuffer(new byte[]{JvmmMsg.MSG_FLAG_CONTEXT_ID, (byte) contextIdBytes.length}));
+        compositeByteBuf.addComponent(Unpooled.wrappedBuffer(contextIdBytes));
 
         //  数据标志
         if (data != null) {
             byte[] dataBytes = data.toString().getBytes(StandardCharsets.UTF_8);
             byte[] lenBytes = CodingUtil.intToAtomicByteArray(dataBytes.length);
-            length += 2;
-            buffer.add(new byte[]{JvmmMsg.MSG_FLAG_DATA, (byte) lenBytes.length});
-            length += lenBytes.length;
-            buffer.add(lenBytes);
-            length += dataBytes.length;
-            buffer.add(dataBytes);
+            compositeByteBuf.addComponent(Unpooled.wrappedBuffer(new byte[]{JvmmMsg.MSG_FLAG_DATA, (byte) lenBytes.length}));
+            compositeByteBuf.addComponent(Unpooled.wrappedBuffer(lenBytes));
+            compositeByteBuf.addComponent(Unpooled.wrappedBuffer(dataBytes));
         }
-
-        //  合并所有bytes
-        byte[] result = new byte[length];
-        int idx = 0;
-        for (byte[] bytes : buffer) {
-            System.arraycopy(bytes, 0, result, idx, bytes.length);
-            idx += bytes.length;
-        }
-        return result;
+        return compositeByteBuf;
     }
 
     public RpcType getType() {

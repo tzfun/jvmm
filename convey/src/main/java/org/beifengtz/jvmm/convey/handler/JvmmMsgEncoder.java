@@ -2,6 +2,7 @@ package org.beifengtz.jvmm.convey.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
+import io.netty.handler.codec.string.StringEncoder;
 import org.beifengtz.jvmm.convey.entity.JvmmMsg;
 
 import java.util.List;
