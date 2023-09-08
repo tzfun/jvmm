@@ -1,15 +1,16 @@
 package org.beifengtz.jvmm.demo;
 
 import io.netty.channel.EventLoopGroup;
-import io.netty.util.concurrent.Future;
-import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
+import org.beifengtz.jvmm.common.exception.JvmmConnectFailedException;
+import org.beifengtz.jvmm.convey.channel.ChannelUtil;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
-import org.beifengtz.jvmm.convey.enums.GlobalType;
+import org.beifengtz.jvmm.convey.enums.RpcType;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -26,9 +27,9 @@ public class ServerConveyDemo {
     public static void main(String[] args) throws Exception {
         logger = LoggerFactory.getLogger(ServerConveyDemo.class);
 
-        EventLoopGroup executor = ChannelInitializers.newEventLoopGroup(1);
+        EventLoopGroup executor = ChannelUtil.newEventLoopGroup(1);
 
-        JvmmRequest request = JvmmRequest.create().setType(GlobalType.JVMM_TYPE_PING);
+        JvmmRequest request = JvmmRequest.create().setType(RpcType.JVMM_PING);
 
         //  向jvmm服务器发送一个消息并同步等待
         JvmmResponse response = sendMsgOnce(executor, request);
@@ -42,52 +43,49 @@ public class ServerConveyDemo {
     }
 
     private static JvmmResponse sendMsgOnce(EventLoopGroup executor, JvmmRequest request) throws Exception {
-        return JvmmConnector.waitForResponse(executor, "127.0.0.1:5010", request);
+        return JvmmConnector.waitForResponse(executor, "127.0.0.1", 5010, request, 5, TimeUnit.SECONDS);
     }
 
-    private static void sendMsgOnceAsync(EventLoopGroup executor, JvmmRequest request, JvmmConnector.MsgReceiveListener listener) throws Exception {
+    private static void sendMsgOnceAsync(EventLoopGroup executor, JvmmRequest request,
+                                         JvmmConnector.MsgReceiveListener listener) {
         JvmmConnector connector = JvmmConnector.newInstance("127.0.0.1", 5010, executor, false, "jvmm_acc", "jvmm_pwd");
-        Future<Boolean> f1 = connector.connect();
-        if (f1.await(3, TimeUnit.SECONDS)) {
-            if (f1.getNow()) {
+        CompletableFuture<Boolean> connectFuture = connector.connect();
+        connectFuture.whenComplete((success, throwable) -> {
+            if (throwable == null) {
+                if (success) {
+                    connector.registerCloseListener(() -> {
+                        logger.info("Jvmm connector closed");
+                        executor.shutdownGracefully();
+                    });
 
-                connector.registerCloseListener(() -> {
-                    logger.info("Jvmm connector closed");
-                    executor.shutdownGracefully();
-                });
+                    connector.registerListener(response -> {
+                        listener.onMessage(response);
+                        connector.close();
+                    });
 
-                connector.registerListener(response -> {
-                    listener.onMessage(response);
-                    connector.close();
-                });
-
-                connector.send(request);
+                    connector.send(request);
+                } else {
+                    logger.error("Authentication failed!");
+                }
             } else {
-                logger.error("Authentication failed!");
+                logger.error("Connect time out");
             }
-        } else {
-            logger.error("Connect time out");
-        }
+        });
     }
 
     private static JvmmConnector getKeepAliveConnector(EventLoopGroup executor) throws Exception {
         JvmmConnector connector = JvmmConnector.newInstance("127.0.0.1", 5010, executor, true, "jvmm_acc", "jvmm_pwd");
-        Future<Boolean> f1 = connector.connect();
-        if (f1.await(3, TimeUnit.SECONDS)) {
-            if (f1.getNow()) {
+        CompletableFuture<Boolean> connectFuture = connector.connect();
+        Boolean success = connectFuture.get(3, TimeUnit.SECONDS);
+        if (success) {
+            connector.registerCloseListener(() -> {
+                logger.info("Jvmm connector closed");
+                executor.shutdownGracefully();
+            });
 
-                connector.registerCloseListener(() -> {
-                    logger.info("Jvmm connector closed");
-                    executor.shutdownGracefully();
-                });
-
-                return connector;
-            } else {
-                logger.error("Authentication failed!");
-            }
+            return connector;
         } else {
-            logger.error("Connect time out");
+            throw new JvmmConnectFailedException("Authentication failed!");
         }
-        return null;
     }
 }

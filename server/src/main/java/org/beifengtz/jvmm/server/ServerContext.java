@@ -7,7 +7,7 @@ import org.beifengtz.jvmm.common.util.ClassLoaderUtil;
 import org.beifengtz.jvmm.common.util.FileUtil;
 import org.beifengtz.jvmm.common.util.IOUtil;
 import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
-import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
+import org.beifengtz.jvmm.convey.channel.ChannelUtil;
 import org.beifengtz.jvmm.server.entity.conf.Configuration;
 import org.beifengtz.jvmm.server.enums.ServerType;
 import org.beifengtz.jvmm.server.service.JvmmService;
@@ -123,7 +123,7 @@ public class ServerContext {
         if (workerGroup == null) {
             synchronized (ServerContext.class) {
                 if (workerGroup == null) {
-                    workerGroup = ChannelInitializers.newEventLoopGroup(1, ExecutorFactory.getThreadPool());
+                    workerGroup = ChannelUtil.newEventLoopGroup(1, ExecutorFactory.getThreadPool());
                 }
             }
         }

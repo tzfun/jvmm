@@ -17,9 +17,9 @@ import org.beifengtz.jvmm.common.util.FileUtil;
 import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
-import org.beifengtz.jvmm.convey.enums.GlobalType;
+import org.beifengtz.jvmm.convey.enums.RpcType;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
-import org.beifengtz.jvmm.core.CollectionType;
+import org.beifengtz.jvmm.core.contanstant.CollectionType;
 import org.beifengtz.jvmm.core.entity.info.CPUInfo;
 import org.beifengtz.jvmm.core.entity.info.DiskIOInfo;
 import org.beifengtz.jvmm.core.entity.info.JvmClassLoaderInfo;
@@ -139,56 +139,56 @@ public class ServerServiceImpl extends ServerService {
         JvmmRequest request = JvmmRequest.create();
         switch (type) {
             case process:
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_PROCESS_INFO);
+                request.setType(RpcType.JVMM_COLLECT_PROCESS_INFO);
                 break;
             case disk:
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_DISK_INFO);
+                request.setType(RpcType.JVMM_COLLECT_DISK_INFO);
                 break;
             case disk_io:
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_DISK_IO_INFO);
+                request.setType(RpcType.JVMM_COLLECT_DISK_IO_INFO);
                 break;
             case cpu:
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_CPU_INFO);
+                request.setType(RpcType.JVMM_COLLECT_CPU_INFO);
                 break;
             case network:
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_NETWORK_INFO);
+                request.setType(RpcType.JVMM_COLLECT_NETWORK_INFO);
                 break;
             case sys:
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_SYS_INFO);
+                request.setType(RpcType.JVMM_COLLECT_SYS_INFO);
                 break;
             case sys_memory:
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_SYS_MEMORY_INFO);
+                request.setType(RpcType.JVMM_COLLECT_SYS_MEMORY_INFO);
                 break;
             case sys_file:
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_SYS_FILE_INFO);
+                request.setType(RpcType.JVMM_COLLECT_SYS_FILE_INFO);
                 break;
             case jvm_classloading:
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_CLASSLOADING_INFO);
+                request.setType(RpcType.JVMM_COLLECT_JVM_CLASSLOADING_INFO);
                 break;
             case jvm_classloader:
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_CLASSLOADER_INFO);
+                request.setType(RpcType.JVMM_COLLECT_JVM_CLASSLOADER_INFO);
                 break;
             case jvm_compilation:
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_COMPILATION_INFO);
+                request.setType(RpcType.JVMM_COLLECT_JVM_COMPILATION_INFO);
                 break;
             case jvm_gc:
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_GC_INFO);
+                request.setType(RpcType.JVMM_COLLECT_JVM_GC_INFO);
                 break;
             case jvm_memory:
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_MEMORY_INFO);
+                request.setType(RpcType.JVMM_COLLECT_JVM_MEMORY_INFO);
                 break;
             case jvm_memory_manager:
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_MEMORY_MANAGER_INFO);
+                request.setType(RpcType.JVMM_COLLECT_JVM_MEMORY_MANAGER_INFO);
                 break;
             case jvm_memory_pool:
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_MEMORY_POOL_INFO);
+                request.setType(RpcType.JVMM_COLLECT_JVM_MEMORY_POOL_INFO);
                 break;
             case jvm_thread:
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_INFO);
+                request.setType(RpcType.JVMM_COLLECT_JVM_THREAD_INFO);
                 break;
             case jvm_thread_stack: {
                 if (cmd.hasArg("tid")) {
-                    request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_STACK);
+                    request.setType(RpcType.JVMM_COLLECT_JVM_THREAD_STACK);
                     JsonObject data = new JsonObject();
                     if (cmd.hasArg("tdeep")) {
                         data.addProperty("depth", cmd.getArgInt("tdeep"));
@@ -205,12 +205,12 @@ public class ServerServiceImpl extends ServerService {
                     data.add("idArr", idArr);
                     request.setData(data);
                 } else {
-                    request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_DUMP_THREAD);
+                    request.setType(RpcType.JVMM_COLLECT_JVM_DUMP_THREAD);
                 }
                 break;
             }
             case jvm_thread_detail: {
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_DETAIL);
+                request.setType(RpcType.JVMM_COLLECT_JVM_THREAD_DETAIL);
                 if (cmd.hasArg("tid")) {
                     JsonArray idArr = new JsonArray();
                     String[] ids = cmd.getArg("tid").split(",");
@@ -222,7 +222,7 @@ public class ServerServiceImpl extends ServerService {
                 break;
             }
             case jvm_thread_pool: {
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_POOL);
+                request.setType(RpcType.JVMM_COLLECT_JVM_THREAD_POOL);
                 String clazz = cmd.getArg("clazz");
                 if (clazz == null) {
                     printErr("Missing required parameter `clazz`");
@@ -248,7 +248,7 @@ public class ServerServiceImpl extends ServerService {
                 break;
             }
             case port: {
-                request.setType(GlobalType.JVMM_TYPE_COLLECT_PORT_STATUS);
+                request.setType(RpcType.JVMM_COLLECT_PORT_STATUS);
                 if (!cmd.hasArg("p")) {
                     printErr("Missing required parameter `-p`");
                     return;
@@ -550,18 +550,18 @@ public class ServerServiceImpl extends ServerService {
         boolean needArg = false;
         boolean responseForHex = false;
         if (cmd.hasArg("start")) {
-            request.setType(GlobalType.JVMM_TYPE_PROFILER_SAMPLE_START);
+            request.setType(RpcType.JVMM_PROFILER_SAMPLE_START);
             needArg = true;
         } else if (cmd.hasArg("stop")) {
-            request.setType(GlobalType.JVMM_TYPE_PROFILER_SAMPLE_STOP);
+            request.setType(RpcType.JVMM_PROFILER_SAMPLE_STOP);
             needArg = true;
             responseForHex = true;
         } else if (cmd.hasArg("status")) {
-            request.setType(GlobalType.JVMM_TYPE_PROFILER_STATUS);
+            request.setType(RpcType.JVMM_PROFILER_STATUS);
         } else if (cmd.hasArg("list")) {
-            request.setType(GlobalType.JVMM_TYPE_PROFILER_LIST_EVENTS);
+            request.setType(RpcType.JVMM_PROFILER_LIST_EVENTS);
         } else {
-            request.setType(GlobalType.JVMM_TYPE_PROFILER_SAMPLE);
+            request.setType(RpcType.JVMM_PROFILER_SAMPLE);
             needArg = true;
             responseForHex = true;
         }
@@ -662,7 +662,7 @@ public class ServerServiceImpl extends ServerService {
             json.addProperty("methodName", cmd.getArg("m"));
         }
         JvmmRequest request = JvmmRequest.create()
-                .setType(GlobalType.JVMM_TYPE_EXECUTE_JAD)
+                .setType(RpcType.JVMM_EXECUTE_JAD)
                 .setData(json);
         JvmmResponse response = request(connector, request);
         if (response == null) {
@@ -684,7 +684,7 @@ public class ServerServiceImpl extends ServerService {
     @Order(4)
     @JvmmCmdDesc(headDesc = "View all java processes running on this physical machine.")
     public static void jps(JvmmConnector connector, CmdParser cmd) {
-        JvmmRequest request = JvmmRequest.create().setType(GlobalType.JVMM_TYPE_EXECUTE_JAVA_PROCESS);
+        JvmmRequest request = JvmmRequest.create().setType(RpcType.JVMM_EXECUTE_JAVA_PROCESS);
         JvmmResponse response = request(connector, request);
         if (response == null) {
             return;
@@ -716,7 +716,7 @@ public class ServerServiceImpl extends ServerService {
             printErr("Can not execute empty command");
             return;
         }
-        JvmmRequest request = JvmmRequest.create().setType(GlobalType.JVMM_TYPE_EXECUTE_JVM_TOOL)
+        JvmmRequest request = JvmmRequest.create().setType(RpcType.JVMM_EXECUTE_JVM_TOOL)
                 .setData(new JsonPrimitive(command));
         JvmmResponse response = request(connector, request);
         if (response == null) {
@@ -735,7 +735,7 @@ public class ServerServiceImpl extends ServerService {
     @Order(6)
     @JvmmCmdDesc(headDesc = "Execute gc, no arguments.")
     public static void gc(JvmmConnector connector, CmdParser cmd) {
-        JvmmRequest request = JvmmRequest.create().setType(GlobalType.JVMM_TYPE_EXECUTE_GC);
+        JvmmRequest request = JvmmRequest.create().setType(RpcType.JVMM_EXECUTE_GC);
         JvmmResponse response = request(connector, request);
         if (response == null) {
             return;
@@ -756,7 +756,7 @@ public class ServerServiceImpl extends ServerService {
     public static void shutdown(JvmmConnector connector, CmdParser cmd) {
         if (cmd.hasArg("t")) {
             JvmmRequest request = JvmmRequest.create()
-                    .setType(GlobalType.JVMM_TYPE_SERVER_SHUTDOWN)
+                    .setType(RpcType.JVMM_SERVER_SHUTDOWN)
                     .setData(new JsonPrimitive(cmd.getArg("t")));
             JvmmResponse response = request(connector, request);
             if (response == null) {
@@ -810,7 +810,7 @@ public class ServerServiceImpl extends ServerService {
             data.addProperty("durationSeconds", durationSeconds);
 
             JvmmRequest request = JvmmRequest.create()
-                    .setType(GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_ORDERED_CPU_TIME)
+                    .setType(RpcType.JVMM_COLLECT_JVM_THREAD_ORDERED_CPU_TIME)
                     .setData(data);
             JvmmResponse response = request(connector, request);
             if (response == null) {
@@ -868,7 +868,9 @@ public class ServerServiceImpl extends ServerService {
     )
     public static void switches(JvmmConnector connector, CmdParser cmd) {
         if (cmd.hasArg("open") || cmd.hasArg("close")) {
-
+            String target = cmd.hasArg("open")
+                    ? cmd.getArg("open")
+                    : cmd.getArg("close");
         } else {
 
         }

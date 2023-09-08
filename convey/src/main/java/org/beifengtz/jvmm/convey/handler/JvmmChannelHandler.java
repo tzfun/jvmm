@@ -26,14 +26,13 @@ import org.beifengtz.jvmm.convey.annotation.JvmmMapping;
 import org.beifengtz.jvmm.convey.auth.JvmmBubble;
 import org.beifengtz.jvmm.convey.auth.JvmmBubbleDecrypt;
 import org.beifengtz.jvmm.convey.auth.JvmmBubbleEncrypt;
-import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
+import org.beifengtz.jvmm.convey.channel.ChannelUtil;
 import org.beifengtz.jvmm.convey.channel.JvmmServerChannelInitializer;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.entity.ResponseFuture;
-import org.beifengtz.jvmm.convey.enums.GlobalStatus;
-import org.beifengtz.jvmm.convey.enums.GlobalType;
-import org.beifengtz.jvmm.convey.socket.JvmmConnector;
+import org.beifengtz.jvmm.convey.enums.RpcStatus;
+import org.beifengtz.jvmm.convey.enums.RpcType;
 import org.slf4j.Logger;
 
 import java.io.Closeable;
@@ -55,12 +54,12 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author beifengtz
  */
-public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<String> {
+public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<JvmmRequest> {
 
     protected final JvmmBubble bubble = new JvmmBubble();
     private final Map<Class<?>, Object> controllerInstance = new ConcurrentHashMap<>(controllers.size());
     private static Set<Class<?>> controllers;
-    private static Map<String, Method> mappings;
+    private static Map<RpcType, Method> mappings;
     private static final ChannelGroup channels = new DefaultChannelGroup(ImmediateEventExecutor.INSTANCE);
 
     public static void init() {
@@ -72,10 +71,7 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
             Set<Method> methods = ReflexUtil.scanMethodAnnotation(controller, JvmmMapping.class);
             for (Method method : methods) {
                 JvmmMapping mapping = method.getAnnotation(JvmmMapping.class);
-                String type = mapping.type();
-                if ("".equals(type)) {
-                    type = mapping.typeEnum().name();
-                }
+                RpcType type = mapping.value();
                 if (mappings.containsKey(type)) {
                     throw new InvalidJvmmMappingException("There are duplicate jvmm mapping: " + type);
                 }
@@ -104,15 +100,15 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
         data.addProperty("key", bubble.getKey());
 
         JvmmResponse bubbleResp = JvmmResponse.create()
-                .setType(GlobalType.JVMM_TYPE_BUBBLE)
-                .setStatus(GlobalStatus.JVMM_STATUS_OK)
+                .setType(RpcType.JVMM_BUBBLE)
+                .setStatus(RpcStatus.JVMM_STATUS_OK)
                 .setData(data);
-        ctx.writeAndFlush(bubbleResp.serialize());
+        ctx.writeAndFlush(bubbleResp);
 
         ctx.pipeline()
-                .addAfter(ctx.executor(), ChannelInitializers.STRING_DECODER_HANDLER,
+                .addAfter(ctx.executor(), ChannelUtil.STRING_DECODER_HANDLER,
                         JvmmServerChannelInitializer.JVMM_BUBBLE_ENCODER, new JvmmBubbleEncrypt(seed, bubble.getKey()))
-                .addAfter(ctx.executor(), ChannelInitializers.STRING_DECODER_HANDLER,
+                .addAfter(ctx.executor(), ChannelUtil.STRING_DECODER_HANDLER,
                         JvmmServerChannelInitializer.JVMM_BUBBLE_DECODER, new JvmmBubbleDecrypt(seed, bubble.getKey()));
         channels.add(ctx.channel());
         super.channelActive(ctx);
@@ -131,38 +127,36 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, JvmmRequest request) throws Exception {
         try {
             long startTime = System.currentTimeMillis();
-            JvmmRequest request = JvmmRequest.parseFrom(msg);
             if (request.getType() == null) {
                 return;
             }
-            if (GlobalType.JVMM_TYPE_PING.name().equals(request.getType())) {
+            if (RpcType.JVMM_PING.equals(request.getType())) {
                 ctx.channel().writeAndFlush(JvmmResponse.create()
-                        .setType(GlobalType.JVMM_TYPE_PONG)
-                        .setStatus(GlobalStatus.JVMM_STATUS_OK)
-                        .serialize());
+                        .setType(RpcType.JVMM_PING)
+                        .setStatus(RpcStatus.JVMM_STATUS_OK)
+                        .setMessage("pong")
+                        .setContextId(request.getContextId()));
             } else {
                 handleRequest(ctx, request);
             }
-            if (!request.isHeartbeat()) {
+            if (request.getType() != RpcType.JVMM_HEARTBEAT) {
                 logger().debug("{} {} ms", request.getType(), System.currentTimeMillis() - startTime);
             }
         } catch (AuthenticationFailedException e) {
             ctx.channel().writeAndFlush(JvmmResponse.create()
-                    .setType(GlobalType.JVMM_TYPE_AUTHENTICATION)
-                    .setStatus(GlobalStatus.JVMM_STATUS_AUTHENTICATION_FAILED.name())
-                    .setMessage("Authentication failed.")
-                    .serialize());
+                    .setType(RpcType.JVMM_AUTHENTICATION)
+                    .setStatus(RpcStatus.JVMM_STATUS_AUTHENTICATION_FAILED)
+                    .setMessage("Authentication failed."));
             ctx.close();
             logger().debug("Channel closed by auth failed");
         } catch (JsonSyntaxException e) {
             ctx.channel().writeAndFlush(JvmmResponse.create()
-                    .setType(GlobalType.JVMM_TYPE_HANDLE_MSG)
-                    .setStatus(GlobalStatus.JVMM_STATUS_UNRECOGNIZED_CONTENT.name())
-                    .setMessage(e.getMessage())
-                    .serialize());
+                    .setType(RpcType.JVMM_HANDLE_MSG)
+                    .setStatus(RpcStatus.JVMM_STATUS_UNRECOGNIZED_CONTENT)
+                    .setMessage(e.getMessage()));
         } catch (Throwable e) {
             ctx.fireExceptionCaught(e);
         }
@@ -171,7 +165,8 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         if (cause instanceof InvalidMsgException) {
-            logger().error("Invalid message verify, seed: {}, ip: {}", ((InvalidMsgException) cause).getSeed(), JvmmConnector.getIpByCtx(ctx));
+            logger().error("Invalid message verify, seed: {}, ip: {}",
+                    ((InvalidMsgException) cause).getSeed(), ChannelUtil.getIpByCtx(ctx));
             ctx.close();
             logger().debug("Channel closed by message verify");
         } else if (cause instanceof IOException) {
@@ -265,11 +260,11 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
                             response = (JvmmResponse) data;
                         } else {
                             response = JvmmResponse.create()
-                                    .setStatus(GlobalStatus.JVMM_STATUS_OK)
+                                    .setStatus(RpcStatus.JVMM_STATUS_OK)
                                     .setType(reqMsg.getType())
                                     .setData(HandlerProvider.parseResult2Json(data));
                         }
-                        ctx.channel().writeAndFlush(response.serialize());
+                        ctx.channel().writeAndFlush(response);
                     });
                 } else if (parameterType.isEnum()) {
                     parameter[i] = Enum.valueOf((Class<? extends Enum>) parameterType, reqMsg.getData().toString());
@@ -296,13 +291,13 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
 
             Object result = method.invoke(instance, parameter);
             if (result instanceof JvmmResponse) {
-                ctx.channel().writeAndFlush(((JvmmResponse) result).serialize());
+                ctx.channel().writeAndFlush(result);
             } else if (result != null) {
                 JvmmResponse response = JvmmResponse.create()
-                        .setStatus(GlobalStatus.JVMM_STATUS_OK)
+                        .setStatus(RpcStatus.JVMM_STATUS_OK)
                         .setType(reqMsg.getType())
                         .setData(HandlerProvider.parseResult2Json(result));
-                ctx.channel().writeAndFlush(response.serialize());
+                ctx.channel().writeAndFlush(response);
             }
         } catch (Throwable e) {
             if (e instanceof AuthenticationFailedException) {
@@ -319,15 +314,15 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Str
         JvmmResponse response = JvmmResponse.create().setType(req.getType());
         if (e instanceof IllegalArgumentException) {
             logger().error(e.getMessage(), e);
-            response.setStatus(GlobalStatus.JVMM_STATUS_ILLEGAL_ARGUMENTS).setMessage(e.getMessage());
+            response.setStatus(RpcStatus.JVMM_STATUS_ILLEGAL_ARGUMENTS).setMessage(e.getMessage());
         } else {
             logger().error(e.getMessage(), e);
-            response.setStatus(GlobalStatus.JVMM_STATUS_SERVER_ERROR);
+            response.setStatus(RpcStatus.JVMM_STATUS_SERVER_ERROR);
         }
         if (e.getMessage() != null) {
             response.setMessage(e.getClass().getName() + ": " + e.getMessage());
         }
-        ctx.writeAndFlush(response.serialize());
+        ctx.writeAndFlush(response);
     }
 
     /**

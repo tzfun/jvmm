@@ -9,9 +9,9 @@ import org.beifengtz.jvmm.convey.annotation.JvmmMapping;
 import org.beifengtz.jvmm.convey.annotation.RequestBody;
 import org.beifengtz.jvmm.convey.annotation.RequestParam;
 import org.beifengtz.jvmm.convey.entity.ResponseFuture;
-import org.beifengtz.jvmm.convey.enums.GlobalType;
+import org.beifengtz.jvmm.convey.enums.RpcType;
 import org.beifengtz.jvmm.convey.enums.Method;
-import org.beifengtz.jvmm.core.CollectionType;
+import org.beifengtz.jvmm.core.contanstant.CollectionType;
 import org.beifengtz.jvmm.core.JvmmCollector;
 import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.Unsafe;
@@ -56,103 +56,103 @@ public class CollectController {
 
     private static final Logger logger = LoggerFactory.getLogger(CollectController.class);
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_PROCESS_INFO)
+    @JvmmMapping(RpcType.JVMM_COLLECT_PROCESS_INFO)
     @HttpRequest("/collect/process")
     public ProcessInfo getProcessInfo() {
         return JvmmFactory.getCollector().getProcess();
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_DISK_INFO)
+    @JvmmMapping(RpcType.JVMM_COLLECT_DISK_INFO)
     @HttpRequest("/collect/disk")
     public List<DiskInfo> getDiskInfo() {
         return JvmmFactory.getCollector().getDisk();
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_DISK_IO_INFO)
+    @JvmmMapping(RpcType.JVMM_COLLECT_DISK_IO_INFO)
     @HttpRequest("/collect/disk_io")
     public void getDiskIOInfo(ResponseFuture future) {
         JvmmFactory.getCollector().getDiskIO().thenAccept(future::apply);
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_CPU_INFO)
+    @JvmmMapping(RpcType.JVMM_COLLECT_CPU_INFO)
     @HttpRequest("/collect/cpu")
     public void getCPUInfo(ResponseFuture future) {
         JvmmFactory.getCollector().getCPU().thenAccept(future::apply);
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_NETWORK_INFO)
+    @JvmmMapping(RpcType.JVMM_COLLECT_NETWORK_INFO)
     @HttpRequest("/collect/network")
     public void getNetInfo(ResponseFuture future) {
         JvmmFactory.getCollector().getNetwork().thenAccept(future::apply);
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_SYS_INFO)
+    @JvmmMapping(RpcType.JVMM_COLLECT_SYS_INFO)
     @HttpRequest("/collect/sys")
     public SysInfo getSysInfo() {
         return JvmmFactory.getCollector().getSys();
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_SYS_MEMORY_INFO)
+    @JvmmMapping(RpcType.JVMM_COLLECT_SYS_MEMORY_INFO)
     @HttpRequest("/collect/sys/memory")
     public SysMemInfo getSysMemoryInfo() {
         return JvmmFactory.getCollector().getSysMem();
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_SYS_FILE_INFO)
+    @JvmmMapping(RpcType.JVMM_COLLECT_SYS_FILE_INFO)
     @HttpRequest("/collect/sys/file")
     public List<SysFileInfo> getSysFileInfo() {
         return JvmmFactory.getCollector().getSysFile();
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_CLASSLOADING_INFO)
+    @JvmmMapping(RpcType.JVMM_COLLECT_JVM_CLASSLOADING_INFO)
     @HttpRequest("/collect/jvm/classloading")
     public JvmClassLoadingInfo getJvmClassLoadingInfo() {
         return JvmmFactory.getCollector().getJvmClassLoading();
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_CLASSLOADER_INFO)
+    @JvmmMapping(RpcType.JVMM_COLLECT_JVM_CLASSLOADER_INFO)
     @HttpRequest("/collect/jvm/classloader")
     public List<JvmClassLoaderInfo> getJvmClassLoaders() {
         return JvmmFactory.getCollector().getJvmClassLoaders();
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_COMPILATION_INFO)
+    @JvmmMapping(RpcType.JVMM_COLLECT_JVM_COMPILATION_INFO)
     @HttpRequest("/collect/jvm/compilation")
     public JvmCompilationInfo getJvmCompilationInfo() {
         return JvmmFactory.getCollector().getJvmCompilation();
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_GC_INFO)
+    @JvmmMapping(RpcType.JVMM_COLLECT_JVM_GC_INFO)
     @HttpRequest("/collect/jvm/gc")
     public List<JvmGCInfo> getJvmGCInfo() {
         return JvmmFactory.getCollector().getJvmGC();
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_MEMORY_MANAGER_INFO)
+    @JvmmMapping(RpcType.JVMM_COLLECT_JVM_MEMORY_MANAGER_INFO)
     @HttpRequest("/collect/jvm/memory_manager")
     public List<JvmMemoryManagerInfo> getJvmMemoryManagerInfo() {
         return JvmmFactory.getCollector().getJvmMemoryManager();
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_MEMORY_POOL_INFO)
+    @JvmmMapping(RpcType.JVMM_COLLECT_JVM_MEMORY_POOL_INFO)
     @HttpRequest("/collect/jvm/memory_pool")
     public List<JvmMemoryPoolInfo> getJvmMemoryPoolInfo() {
         return JvmmFactory.getCollector().getJvmMemoryPool();
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_MEMORY_INFO)
+    @JvmmMapping(RpcType.JVMM_COLLECT_JVM_MEMORY_INFO)
     @HttpRequest("/collect/jvm/memory")
     public JvmMemoryInfo getJvmMemoryInfo() {
         return JvmmFactory.getCollector().getJvmMemory();
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_INFO)
+    @JvmmMapping(RpcType.JVMM_COLLECT_JVM_THREAD_INFO)
     @HttpRequest("/collect/jvm/thread")
     public JvmThreadInfo getJvmThreadInfo() {
         return JvmmFactory.getCollector().getJvmThread();
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_STACK)
+    @JvmmMapping(RpcType.JVMM_COLLECT_JVM_THREAD_STACK)
     @HttpRequest(value = "/collect/jvm/thread_stack", method = Method.POST)
     public List<String> getJvmThreadStack(@RequestBody ThreadInfoDTO data) {
         if (data == null) {
@@ -167,7 +167,7 @@ public class CollectController {
         return new ArrayList<>(Arrays.asList(infos));
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_DETAIL)
+    @JvmmMapping(RpcType.JVMM_COLLECT_JVM_THREAD_DETAIL)
     @HttpRequest("/collect/jvm/thread_detail")
     public JvmThreadDetailInfo[] getJvmThreadDetail(@RequestParam long[] id) {
         if (id == null || id.length == 0) {
@@ -177,7 +177,7 @@ public class CollectController {
         }
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_DUMP_THREAD)
+    @JvmmMapping(RpcType.JVMM_COLLECT_JVM_DUMP_THREAD)
     @HttpRequest("/collect/jvm/dump_thread")
     public JsonArray jvmDumpThread() {
         String[] dump = JvmmFactory.getCollector().dumpAllThreads();
@@ -190,7 +190,7 @@ public class CollectController {
         return result;
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_ORDERED_CPU_TIME)
+    @JvmmMapping(RpcType.JVMM_COLLECT_JVM_THREAD_ORDERED_CPU_TIME)
     @HttpRequest("/collect/jvm/thread_ordered_cpu_time")
     public void getJvmThreadOrderedCpuTime(@RequestParam String type,
                                            @RequestParam int durationSeconds,
@@ -204,7 +204,7 @@ public class CollectController {
         }
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_POOL)
+    @JvmmMapping(RpcType.JVMM_COLLECT_JVM_THREAD_POOL)
     @HttpRequest("/collect/jvm/thread_pool")
     public ThreadPoolInfo getThreadPoolInfo(@RequestParam int classLoaderHash, @RequestParam String clazz,
                                             @RequestParam String instanceField, @RequestParam String field) {
@@ -219,7 +219,7 @@ public class CollectController {
         }
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_PORT_STATUS)
+    @JvmmMapping(RpcType.JVMM_COLLECT_PORT_STATUS)
     @HttpRequest("/collect/port")
     public PortInfo getPortStatus(@RequestParam int[] ports) {
         if (ports == null) {
@@ -228,7 +228,7 @@ public class CollectController {
         return JvmmFactory.getCollector().getPortInfo(ports);
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_COLLECT_BATCH)
+    @JvmmMapping(RpcType.JVMM_COLLECT_BATCH)
     @HttpRequest(value = "/collect/by_options")
     public void collectBatch(@RequestParam List<CollectionType> options, ResponseFuture future) {
         JvmmService.collectByOptions(options, null, null, pair -> {

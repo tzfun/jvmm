@@ -2,13 +2,13 @@ package org.beifengtz.jvmm.web.mvc.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.beifengtz.jvmm.common.util.StringUtil;
-import org.beifengtz.jvmm.common.util.TimeUtil;
 import org.beifengtz.jvmm.web.common.exception.AuthException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Description: Jvmm业务逻辑实现类
@@ -44,7 +44,7 @@ public class JvmmService {
             throw new AuthException();
         }
         long logTime = Long.parseLong(this.token.split(TOKEN_SPLITTER)[1]);
-        if (System.currentTimeMillis() - logTime >= tokenExpireDay * TimeUtil.MILLIS_PER_DAY) {
+        if (System.currentTimeMillis() - logTime >= TimeUnit.DAYS.toMillis(tokenExpireDay)) {
             throw new AuthException();
         }
     }

@@ -1,8 +1,6 @@
 package org.beifengtz.jvmm.web.mvc.service;
 
-import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
 import org.beifengtz.jvmm.common.exception.JvmmConnectFailedException;
-import org.beifengtz.jvmm.common.exception.SocketExecuteException;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 import org.beifengtz.jvmm.web.entity.dto.NodeDTO;
 import org.beifengtz.jvmm.web.entity.po.NodePO;
@@ -13,11 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.concurrent.TimeoutException;
 
 /**
  * Description: TODO
- *
+ * <p>
  * Created in 11:23 2022/2/25
  *
  * @author beifengtz
@@ -64,7 +61,7 @@ public class NodeService {
         try {
             JvmmConnector connector = jvmmConnectorFactory.getConnector(node);
             connector.ping();
-        } catch (TimeoutException | SocketExecuteException | AuthenticationFailedException e) {
+        } catch (Exception e) {
             throw new JvmmConnectFailedException(e.getMessage(), e);
         }
     }

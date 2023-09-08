@@ -9,8 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
-import org.beifengtz.jvmm.convey.enums.GlobalStatus;
-import org.beifengtz.jvmm.convey.enums.GlobalType;
+import org.beifengtz.jvmm.convey.enums.RpcStatus;
+import org.beifengtz.jvmm.convey.enums.RpcType;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 import org.beifengtz.jvmm.core.entity.info.JvmClassLoadingInfo;
 import org.beifengtz.jvmm.core.entity.info.JvmGCInfo;
@@ -41,6 +41,7 @@ import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -155,11 +156,11 @@ public class CollectService {
                     JvmmConnector.MsgReceiveListener listener = new JvmmConnector.MsgReceiveListener() {
                         @Override
                         public void onMessage(JvmmResponse rsp) {
-                            if (!Objects.equals(rsp.getType(), GlobalType.JVMM_TYPE_COLLECT_BATCH.name())) {
+                            if (!Objects.equals(rsp.getType(), RpcType.JVMM_COLLECT_BATCH.name())) {
                                 return;
                             }
                             try {
-                                if (Objects.equals(rsp.getStatus(), GlobalStatus.JVMM_STATUS_OK.name())) {
+                                if (Objects.equals(rsp.getStatus(), RpcStatus.JVMM_STATUS_OK.name())) {
                                     long now = System.currentTimeMillis();
                                     JsonObject data = rsp.getData().getAsJsonObject();
                                     trySendWebsocket(now, data);
@@ -168,15 +169,17 @@ public class CollectService {
                                     }
                                 }
                             } finally {
-                                connector.removeListener(this);
+                                connector.unregisterListener(this);
                             }
                         }
                     };
                     connector.registerListener(listener);
-                    ChannelFuture future = connector.send(JvmmRequest.create().setType(GlobalType.JVMM_TYPE_COLLECT_BATCH).setData(items));
-                    future.addListener(f -> {
-                        if (!f.isSuccess()) {
-                            connector.removeListener(listener);
+                    CompletableFuture<JvmmResponse> future = connector.send(JvmmRequest.create()
+                            .setType(RpcType.JVMM_COLLECT_BATCH)
+                            .setData(items));
+                    future.whenComplete((r, t) -> {
+                        if (t != null) {
+                            connector.unregisterListener(listener);
                         }
                     });
                 }

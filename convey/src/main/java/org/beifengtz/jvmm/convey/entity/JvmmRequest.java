@@ -1,10 +1,17 @@
 package org.beifengtz.jvmm.convey.entity;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import io.netty.buffer.ByteBuf;
 import org.beifengtz.jvmm.common.JsonParsable;
 import org.beifengtz.jvmm.common.exception.MessageSerializeException;
-import org.beifengtz.jvmm.common.util.StringUtil;
-import org.beifengtz.jvmm.convey.enums.GlobalType;
+import org.beifengtz.jvmm.common.util.CodingUtil;
+import org.beifengtz.jvmm.convey.enums.RpcType;
+
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * <p>
@@ -15,9 +22,15 @@ import org.beifengtz.jvmm.convey.enums.GlobalType;
  *
  * @author beifengtz
  */
-public class JvmmRequest implements JsonParsable {
-    private String type;
+public class JvmmRequest implements JvmmMsg, JsonParsable {
+
+    private static final AtomicInteger ID_COUNTER = new AtomicInteger();
+    private RpcType type;
     private JsonElement data;
+    /**
+     * context id，用于指定一次会话
+     */
+    private long contextId;
 
     private JvmmRequest() {
     }
@@ -26,32 +39,119 @@ public class JvmmRequest implements JsonParsable {
         return new JvmmRequest();
     }
 
-    public static JvmmRequest parseFrom(String msg) {
-        return StringUtil.getGson().fromJson(msg, JvmmRequest.class);
+    public static long generateContextId() {
+        return generateContextId(1);
     }
 
-    public boolean isHeartbeat() {
-        return GlobalType.JVMM_TYPE_HEARTBEAT.name().equalsIgnoreCase(type);
+    /**
+     * 8位ServerId + 32位时间戳 + 24位自增（去重）
+     *
+     * @param serverId 服务ID
+     * @return 雪花ID
+     */
+    public static long generateContextId(int serverId) {
+        long count = ID_COUNTER.getAndIncrement();
+        if (count >= 0xFFFFFFF) {
+            count = ID_COUNTER.getAndSet(1);
+        }
+        long sec = (System.currentTimeMillis() / 1000);
+        return ((long) (serverId & 0xFF) << 56) | (sec << 24) | (count & 0xFFFFFF);
     }
 
-    public String serialize() {
+    public static JvmmRequest parseFrom(ByteBuf msg) {
+        if (msg.readByte() != JvmmMsg.MSG_FLAG_REQUEST) {
+            throw new MessageSerializeException("Can not parse jvmm request with wrong flag");
+        }
+        JvmmRequest request = new JvmmRequest();
+        while (msg.isReadable()) {
+            byte flag = msg.readByte();
+            switch (flag) {
+                case JvmmMsg.MSG_FLAG_TYPE: {
+                    byte len = msg.readByte();
+                    byte[] bytes = new byte[len];
+                    msg.readBytes(bytes);
+                    request.setType(RpcType.valueOf(CodingUtil.byteArrayToInt(bytes)));
+                    break;
+                }
+                case JvmmMsg.MSG_FLAG_CONTEXT_ID: {
+                    byte len = msg.readByte();
+                    byte[] bytes = new byte[len];
+                    msg.readBytes(bytes);
+                    request.setContextId(CodingUtil.byteArrayToLong(bytes));
+                    break;
+                }
+                case JvmmMsg.MSG_FLAG_DATA: {
+                    byte len = msg.readByte();
+                    byte[] bytes = new byte[len];
+                    msg.readBytes(bytes);
+                    int dataLength = CodingUtil.byteArrayToInt(bytes);
+                    bytes = new byte[dataLength];
+                    msg.readBytes(bytes);
+                    request.setData(JsonParser.parseString(new String(bytes, StandardCharsets.UTF_8)));
+                }
+                default: {
+                    throw new MessageSerializeException("Can not parse jvmm message field with wrong flag");
+                }
+            }
+        }
+        return request;
+    }
+
+    public byte[] serialize() {
         if (type == null) {
             throw new MessageSerializeException("Missing required param: 'type'");
         }
-        return toJsonStr();
+        if (contextId == 0) {
+            contextId = generateContextId();
+        }
+
+        int length = 1;
+        List<byte[]> buffer = new ArrayList<>();
+        //  消息体标志
+        buffer.add(new byte[]{JvmmMsg.MSG_FLAG_REQUEST});
+
+        //  消息类型标志
+        byte[] typeBytes = CodingUtil.intToAtomicByteArray(type.getValue());
+        length += 2;
+        buffer.add(new byte[]{JvmmMsg.MSG_FLAG_TYPE, (byte) typeBytes.length});
+        length += typeBytes.length;
+        buffer.add(typeBytes);
+
+        //  上下文ID标志
+        byte[] contextIdBytes = CodingUtil.longToByteArray(contextId);
+        length += 2;
+        buffer.add(new byte[]{JvmmMsg.MSG_FLAG_CONTEXT_ID, (byte) contextIdBytes.length});
+        length += contextIdBytes.length;
+        buffer.add(contextIdBytes);
+
+        //  数据标志
+        if (data != null) {
+            byte[] dataBytes = data.toString().getBytes(StandardCharsets.UTF_8);
+            byte[] lenBytes = CodingUtil.intToAtomicByteArray(dataBytes.length);
+            length += 2;
+            buffer.add(new byte[]{JvmmMsg.MSG_FLAG_DATA, (byte) lenBytes.length});
+            length += lenBytes.length;
+            buffer.add(lenBytes);
+            length += dataBytes.length;
+            buffer.add(dataBytes);
+        }
+
+        //  合并所有bytes
+        byte[] result = new byte[length];
+        int idx = 0;
+        for (byte[] bytes : buffer) {
+            System.arraycopy(bytes, 0, result, idx, bytes.length);
+            idx += bytes.length;
+        }
+        return result;
     }
 
-    public String getType() {
+    public RpcType getType() {
         return type;
     }
 
-    public JvmmRequest setType(String type) {
+    public JvmmRequest setType(RpcType type) {
         this.type = type;
-        return this;
-    }
-
-    public JvmmRequest setType(GlobalType type) {
-        this.type = type.name();
         return this;
     }
 
@@ -61,6 +161,15 @@ public class JvmmRequest implements JsonParsable {
 
     public JvmmRequest setData(JsonElement data) {
         this.data = data;
+        return this;
+    }
+
+    public long getContextId() {
+        return contextId;
+    }
+
+    public JvmmRequest setContextId(long contextId) {
+        this.contextId = contextId;
         return this;
     }
 }

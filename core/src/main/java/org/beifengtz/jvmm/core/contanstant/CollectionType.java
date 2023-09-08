@@ -1,4 +1,4 @@
-package org.beifengtz.jvmm.core;
+package org.beifengtz.jvmm.core.contanstant;
 
 /**
  * description: Server提供的采集项

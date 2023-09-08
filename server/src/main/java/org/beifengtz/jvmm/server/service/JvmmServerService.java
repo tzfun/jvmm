@@ -7,7 +7,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.Promise;
-import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
+import org.beifengtz.jvmm.convey.channel.ChannelUtil;
 import org.beifengtz.jvmm.convey.channel.JvmmServerChannelInitializer;
 import org.beifengtz.jvmm.convey.handler.JvmmChannelHandler;
 import org.beifengtz.jvmm.server.ServerContext;
@@ -47,7 +47,7 @@ public class JvmmServerService extends AbstractListenerServerService {
         EventLoopGroup group = ServerContext.getWorkerGroup();
         ChannelFuture future = new ServerBootstrap()
                 .group(group)
-                .channel(ChannelInitializers.serverChannelClass(ServerContext.getWorkerGroup()))
+                .channel(ChannelUtil.serverChannelClass(ServerContext.getWorkerGroup()))
                 .childHandler(new JvmmServerChannelInitializer(new JvmmServerHandlerProvider(10, group)))
                 .bind(runningPort.get())
                 .syncUninterruptibly();

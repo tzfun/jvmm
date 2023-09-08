@@ -85,7 +85,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.EventLoopGroup;
 import org.beifengtz.etcd.server.handler.HttpHandler;
-import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
+import org.beifengtz.jvmm.convey.channel.ChannelUtil;
 import org.beifengtz.jvmm.convey.channel.HttpServerChannelInitializer;
 import org.beifengtz.jvmm.convey.handler.HandlerProvider;
 import org.slf4j.Logger;

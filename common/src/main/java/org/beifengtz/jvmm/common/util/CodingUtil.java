@@ -3,6 +3,7 @@ package org.beifengtz.jvmm.common.util;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.ByteBuffer;
 
 /**
  * <p>
@@ -16,6 +17,7 @@ import java.net.URLEncoder;
 public class CodingUtil {
 
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
+    private static final ByteBuffer LONG_BUFFER = ByteBuffer.allocate(8);
 
     public static String encodeUrl(String url, String enc) {
         try {
@@ -86,5 +88,92 @@ public class CodingUtil {
             hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
         }
         return new String(hexChars);
+    }
+
+    public static short byteArrayToShort(byte[] array) {
+        short value = 0;
+        for (int i = 0; i < array.length; i++) {
+            // & 0xff，除去符号位干扰
+            value |= (short) ((array[i] & 0xff) << (i * 8));
+        }
+        return value;
+    }
+
+    public static int byteArrayToInt(byte[] array) {
+        int value = 0;
+        for (int i = 0; i < array.length; i++) {
+            value |= ((array[i] & 0xff) << (i * 8));
+
+        }
+        return value;
+    }
+
+    public static long byteArrayToLong(byte[] array) {
+        long value = 0;
+        for (int i = 0; i < array.length; i++) {
+            value |= ((long) (array[i] & 0xff) << (i * 8));
+        }
+        return value;
+    }
+
+    public static byte[] intToAtomicByteArray(int v) {
+        if (v <= Short.MAX_VALUE) {
+            return shortToAtomicByteArray((short) v);
+        }
+        byte[] array = new byte[4];
+
+        for (int i = 0; i < array.length; i++) {
+            array[i] = (byte) (v >> (i * 8));
+        }
+        return array;
+    }
+
+    public static byte[] intToByteArray(int v) {
+        byte[] array = new byte[4];
+
+        for (int i = 0; i < array.length; i++) {
+            array[i] = (byte) (v >> (i * 8));
+        }
+        return array;
+    }
+
+    public static byte[] shortToAtomicByteArray(short v) {
+        if (v <= Byte.MAX_VALUE) {
+            return new byte[]{(byte) v};
+        }
+        byte[] array = new byte[2];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = (byte) (v >> (i * 8));
+        }
+        return array;
+    }
+
+    public static byte[] shortToByteArray(short v) {
+        byte[] array = new byte[2];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = (byte) (v >> (i * 8));
+        }
+        return array;
+    }
+
+    public static byte[] longToAtomicByteArray(long v) {
+        if (v <= Integer.MAX_VALUE) {
+            return intToAtomicByteArray((int) v);
+        }
+        byte[] array = new byte[8];
+
+        for (int i = 0; i < array.length; i++) {
+            array[i] = (byte) (v >> (i * 8));
+        }
+        return array;
+    }
+
+    public static byte[] longToByteArray(long v) {
+        byte[] array = new byte[8];
+
+        for (int i = 0; i < array.length; i++) {
+            array[i] = (byte) (v >> (i * 8));
+        }
+        return array;
     }
 }

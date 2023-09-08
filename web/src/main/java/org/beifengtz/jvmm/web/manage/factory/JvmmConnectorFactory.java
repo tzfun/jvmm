@@ -5,18 +5,18 @@ import io.netty.util.concurrent.Future;
 import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
 import org.beifengtz.jvmm.common.factory.ExecutorFactory;
 import org.beifengtz.jvmm.common.util.AssertUtil;
-import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
+import org.beifengtz.jvmm.convey.channel.ChannelUtil;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 import org.beifengtz.jvmm.web.entity.po.NodePO;
 import org.springframework.stereotype.Component;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-import static com.google.gson.internal.$Gson$Preconditions.checkArgument;
 
 /**
  * Description: TODO
@@ -27,28 +27,28 @@ import static com.google.gson.internal.$Gson$Preconditions.checkArgument;
  */
 @Component
 public class JvmmConnectorFactory {
-    private static final EventLoopGroup GLOBAL_GROUP = ChannelInitializers.newEventLoopGroup(ExecutorFactory.getNThreads(), ExecutorFactory.getThreadPool());
+    private static final EventLoopGroup GLOBAL_GROUP = ChannelUtil.newEventLoopGroup(ExecutorFactory.getNThreads(), ExecutorFactory.getThreadPool());
 
     private final Map<String, JvmmConnector> connectorPool = new ConcurrentHashMap<>(2);
     private final Map<String, Object> addressLock = new ConcurrentHashMap<>(2);
 
-    public JvmmConnector getConnector(NodePO node) throws TimeoutException, AuthenticationFailedException {
+    public JvmmConnector getConnector(NodePO node) throws Exception {
         return getConnector(null, node);
     }
 
-    public JvmmConnector getConnector(EventLoopGroup group, NodePO node) throws TimeoutException, AuthenticationFailedException {
+    public JvmmConnector getConnector(EventLoopGroup group, NodePO node) throws Exception {
         return getConnector(group, node.getIp() + ":" + node.getPort(),
                 node.isAuthEnable() ? node.getAuthName() : null,
                 node.isAuthEnable() ? node.getAuthPass() : null);
     }
 
     public JvmmConnector getConnector(String address, String authAccount, String authPassword)
-            throws TimeoutException, AuthenticationFailedException {
+            throws Exception {
         return getConnector(null, address, authAccount, authPassword);
     }
 
     public JvmmConnector getConnector(EventLoopGroup group, String address, String authAccount, String authPassword)
-            throws TimeoutException, AuthenticationFailedException {
+            throws Exception {
         AssertUtil.checkArguments(address != null, "Missing required address");
 
         JvmmConnector connector = connectorPool.get(address);
@@ -64,18 +64,16 @@ public class JvmmConnectorFactory {
 
         synchronized (lock) {
             String[] split = address.split(":");
-            connector = JvmmConnector.newInstance(split[0], Integer.parseInt(split[1]), group == null ? GLOBAL_GROUP : group, true, authAccount, authPassword);
-            Future<Boolean> future = connector.connect();
-            if (future.awaitUninterruptibly(3, TimeUnit.SECONDS)) {
-                Boolean success = future.getNow();
-                if (success != null && success) {
-                    connectorPool.put(address, connector);
-                    return connector;
-                } else {
-                    throw new AuthenticationFailedException();
-                }
+            connector = JvmmConnector.newInstance(split[0], Integer.parseInt(split[1]), group == null ? GLOBAL_GROUP : group,
+                    true, authAccount, authPassword);
+
+            CompletableFuture<Boolean> future = connector.connect();
+            Boolean success = future.get(3, TimeUnit.SECONDS);
+            if (success) {
+                connectorPool.put(address, connector);
+                return connector;
             } else {
-                throw new TimeoutException("Connect jvmm server time out: " + address);
+                throw new AuthenticationFailedException();
             }
         }
     }

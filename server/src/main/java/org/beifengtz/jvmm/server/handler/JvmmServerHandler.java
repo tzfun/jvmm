@@ -4,8 +4,8 @@ import com.google.gson.JsonObject;
 import io.netty.channel.ChannelHandlerContext;
 import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
 import org.beifengtz.jvmm.common.util.SignatureUtil;
-import org.beifengtz.jvmm.convey.enums.GlobalStatus;
-import org.beifengtz.jvmm.convey.enums.GlobalType;
+import org.beifengtz.jvmm.convey.enums.RpcStatus;
+import org.beifengtz.jvmm.convey.enums.RpcType;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.handler.JvmmChannelHandler;
@@ -39,7 +39,7 @@ public class JvmmServerHandler extends JvmmChannelHandler {
     protected boolean handleBefore(ChannelHandlerContext ctx, JvmmRequest reqMsg) throws Exception {
         JvmmServerConf conf = ServerContext.getConfiguration().getServer().getJvmm();
 
-        if (Objects.equals(reqMsg.getType(), GlobalType.JVMM_TYPE_AUTHENTICATION.name())) {
+        if (Objects.equals(reqMsg.getType(), RpcType.JVMM_AUTHENTICATION.name())) {
             auth(ctx, reqMsg, conf);
             return false;
         } else {
@@ -68,9 +68,8 @@ public class JvmmServerHandler extends JvmmChannelHandler {
             }
         }
         authed = true;
-        JvmmResponse response = JvmmResponse.create().setType(GlobalType.JVMM_TYPE_AUTHENTICATION)
-                .setStatus(GlobalStatus.JVMM_STATUS_OK.name());
-        ctx.writeAndFlush(response.serialize());
+        JvmmResponse response = JvmmResponse.create().setType(RpcType.JVMM_AUTHENTICATION);
+        ctx.writeAndFlush(response);
     }
 
 }

@@ -1,6 +1,7 @@
 package org.beifengtz.jvmm.convey.channel;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollServerSocketChannel;
@@ -16,6 +17,8 @@ import org.beifengtz.jvmm.common.util.PlatformUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.concurrent.Executor;
 
 /**
@@ -27,15 +30,16 @@ import java.util.concurrent.Executor;
  *
  * @author beifengtz
  */
-public class ChannelInitializers {
-    private static final Logger logger = LoggerFactory.getLogger(ChannelInitializers.class);
+public class ChannelUtil {
+    private static final Logger logger = LoggerFactory.getLogger(ChannelUtil.class);
 
     public static final String IDLE_STATE_HANDLER = "idleStateHandler";
-
     public static final String LEN_DECODER_HANDLER = "lenDecoderHandler";
     public static final String LEN_ENCODER_HANDLER = "lenEncoderHandler";
     public static final String STRING_DECODER_HANDLER = "stringDecoderHandler";
     public static final String STRING_ENCODER_HANDLER = "stringEncoderHandler";
+    public static final String JVMM_DECODER_HANDLER = "jvmmDecoderHandler";
+    public static final String JVMM_ENCODER_HANDLER = "jvmmEncoderHandler";
     public static final String CHUNKED_WRITE_HANDLER = "chunkedWriteHandler";
     public static final String HTTP_CODEC_HANDLER = "httpCodecHandler";
     public static final String AGGREGATOR_HANDLER = "HttpObjectAggregator";
@@ -83,5 +87,17 @@ public class ChannelInitializers {
             logger.debug("New event loop group failed, try to use NioEventLoopGroup, platform: {}, case: {}", PlatformUtil.arch(), e.getMessage());
         }
         return new NioEventLoopGroup(nThreads, executor);
+    }
+
+    public static String getIpByCtx(ChannelHandlerContext ctx) {
+        String ip = null;
+        try {
+            SocketAddress socketAddress = ctx.channel().remoteAddress();
+            if (socketAddress != null) {
+                ip = ((InetSocketAddress) socketAddress).getAddress().getHostAddress();
+            }
+        } catch (Exception ignored) {
+        }
+        return ip;
     }
 }

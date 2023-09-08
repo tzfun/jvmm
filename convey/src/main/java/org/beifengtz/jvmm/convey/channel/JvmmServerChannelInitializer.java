@@ -5,20 +5,18 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.beifengtz.jvmm.convey.handler.HandlerProvider;
+import org.beifengtz.jvmm.convey.handler.JvmmMsgDecoder;
+import org.beifengtz.jvmm.convey.handler.JvmmMsgEncoder;
 
-import java.nio.charset.StandardCharsets;
-
-import static org.beifengtz.jvmm.convey.channel.ChannelInitializers.CHUNKED_WRITE_HANDLER;
-import static org.beifengtz.jvmm.convey.channel.ChannelInitializers.IDLE_STATE_HANDLER;
-import static org.beifengtz.jvmm.convey.channel.ChannelInitializers.LEN_DECODER_HANDLER;
-import static org.beifengtz.jvmm.convey.channel.ChannelInitializers.LEN_ENCODER_HANDLER;
-import static org.beifengtz.jvmm.convey.channel.ChannelInitializers.STRING_DECODER_HANDLER;
-import static org.beifengtz.jvmm.convey.channel.ChannelInitializers.STRING_ENCODER_HANDLER;
+import static org.beifengtz.jvmm.convey.channel.ChannelUtil.CHUNKED_WRITE_HANDLER;
+import static org.beifengtz.jvmm.convey.channel.ChannelUtil.IDLE_STATE_HANDLER;
+import static org.beifengtz.jvmm.convey.channel.ChannelUtil.JVMM_DECODER_HANDLER;
+import static org.beifengtz.jvmm.convey.channel.ChannelUtil.JVMM_ENCODER_HANDLER;
+import static org.beifengtz.jvmm.convey.channel.ChannelUtil.LEN_DECODER_HANDLER;
+import static org.beifengtz.jvmm.convey.channel.ChannelUtil.LEN_ENCODER_HANDLER;
 
 /**
  * <p>
@@ -44,13 +42,13 @@ public class JvmmServerChannelInitializer extends ChannelInitializer<Channel> {
     protected void initChannel(Channel ch) throws Exception {
         ChannelPipeline p = ch.pipeline();
         if (provider.getIdleSeconds() > 0) {
-            p.addLast(provider.getGroup(), IDLE_STATE_HANDLER, new IdleStateHandler(provider.getIdleSeconds(), provider.getIdleSeconds(), provider.getIdleSeconds()));
+            p.addLast(provider.getGroup(), IDLE_STATE_HANDLER, new IdleStateHandler(provider.getIdleSeconds(), 0, 0));
         }
         p.addLast(provider.getGroup(), LEN_DECODER_HANDLER, new LengthFieldBasedFrameDecoder(0xFFFFFF, 0, 4, 0, 4));
         p.addLast(provider.getGroup(), LEN_ENCODER_HANDLER, new LengthFieldPrepender(4));
         p.addLast(provider.getGroup(), CHUNKED_WRITE_HANDLER, new ChunkedWriteHandler());
-        p.addLast(provider.getGroup(), STRING_ENCODER_HANDLER, new StringEncoder(StandardCharsets.UTF_8));
-        p.addLast(provider.getGroup(), STRING_DECODER_HANDLER, new StringDecoder(StandardCharsets.UTF_8));
+        p.addLast(provider.getGroup(), JVMM_DECODER_HANDLER, new JvmmMsgDecoder());
+        p.addLast(provider.getGroup(), JVMM_ENCODER_HANDLER, new JvmmMsgEncoder());
         p.addLast(provider.getGroup(), provider.getName(), provider.getHandler());
     }
 }

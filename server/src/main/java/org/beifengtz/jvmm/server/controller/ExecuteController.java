@@ -10,10 +10,12 @@ import org.beifengtz.jvmm.convey.annotation.JvmmController;
 import org.beifengtz.jvmm.convey.annotation.JvmmMapping;
 import org.beifengtz.jvmm.convey.annotation.RequestBody;
 import org.beifengtz.jvmm.convey.annotation.RequestParam;
-import org.beifengtz.jvmm.convey.enums.GlobalType;
+import org.beifengtz.jvmm.convey.enums.RpcType;
 import org.beifengtz.jvmm.convey.enums.Method;
+import org.beifengtz.jvmm.core.JvmmExecutor;
 import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.Unsafe;
+import org.beifengtz.jvmm.core.contanstant.Switches;
 import org.beifengtz.jvmm.core.entity.result.JpsResult;
 import org.beifengtz.jvmm.server.ServerBootstrap;
 import org.beifengtz.jvmm.server.ServerContext;
@@ -22,7 +24,9 @@ import org.beifengtz.jvmm.server.entity.vo.PatchVO;
 
 import java.lang.instrument.ClassDefinition;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -37,49 +41,51 @@ import java.util.List;
 @HttpController
 public class ExecuteController {
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_EXECUTE_GC)
+    @JvmmMapping(RpcType.JVMM_EXECUTE_GC)
     @HttpRequest("/execute/gc")
     public String gc() {
         JvmmFactory.getExecutor().gc();
         return ServerContext.STATUS_OK;
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_EXECUTE_SET_CLASSLOADING_VERBOSE)
-    @HttpRequest("/execute/set_classloading_verbose")
-    public String setClassLoadingVerbose(@RequestParam boolean verbose) {
-        JvmmFactory.getExecutor().setClassLoadingVerbose(verbose);
+    @JvmmMapping(RpcType.JVMM_EXECUTE_SWITCHES_GET)
+    @HttpRequest("/execute/get_switches")
+    public Map<Switches, Boolean> getSwitches() {
+        JvmmExecutor executor = JvmmFactory.getExecutor();
+        Map<Switches, Boolean> info = new HashMap<>();
+        info.put(Switches.classLoadingVerbose, executor.isClassLoadingVerbose());
+        info.put(Switches.memoryVerbose, executor.isMemoryVerbose());
+        info.put(Switches.threadCpuTime, executor.isThreadCpuTimeEnabled());
+        info.put(Switches.threadContentionMonitoring, executor.isThreadContentionMonitoringEnabled());
+        return info;
+    }
+
+    @JvmmMapping(RpcType.JVMM_EXECUTE_SWITCHES_GET)
+    @HttpRequest("/execute/set_switches")
+    public String setSwitches(@RequestParam Switches[] names, @RequestParam boolean open) {
+        JvmmExecutor executor = JvmmFactory.getExecutor();
+        for (Switches name : names) {
+            if (name == Switches.classLoadingVerbose) {
+                executor.setClassLoadingVerbose(open);
+            } else if (name == Switches.memoryVerbose) {
+                executor.setMemoryVerbose(open);
+            } else if (name == Switches.threadCpuTime) {
+                executor.setThreadCpuTimeEnabled(open);
+            } else if (name == Switches.threadContentionMonitoring) {
+                executor.setThreadContentionMonitoringEnabled(open);
+            }
+        }
         return ServerContext.STATUS_OK;
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_EXECUTE_SET_MEMORY_VERBOSE)
-    @HttpRequest("/execute/set_memory_verbose")
-    public String setMemoryVerbose(@RequestParam boolean verbose) {
-        JvmmFactory.getExecutor().setMemoryVerbose(verbose);
-        return ServerContext.STATUS_OK;
-    }
-
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_EXECUTE_SET_THREAD_CPU_TIME_ENABLED)
-    @HttpRequest("/execute/set_thread_cpu_time_enabled")
-    public String setThreadCpuTimeEnabled(@RequestParam boolean verbose) {
-        JvmmFactory.getExecutor().setThreadCpuTimeEnabled(verbose);
-        return ServerContext.STATUS_OK;
-    }
-
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_EXECUTE_SET_THREAD_CONTENTION_MONITOR_ENABLED)
-    @HttpRequest("/execute/set_thread_contention_monitor_enabled")
-    public String setThreadContentionMonitoringEnabled(@RequestParam boolean verbose) {
-        JvmmFactory.getExecutor().setThreadContentionMonitoringEnabled(verbose);
-        return ServerContext.STATUS_OK;
-    }
-
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_EXECUTE_RESET_PEAK_THREAD_COUNT)
+    @JvmmMapping(RpcType.JVMM_EXECUTE_RESET_PEAK_THREAD_COUNT)
     @HttpRequest("/execute/reset_peak_thread_count")
     public String resetPeakThreadCount() {
         JvmmFactory.getExecutor().resetPeakThreadCount();
         return ServerContext.STATUS_OK;
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_EXECUTE_JAVA_PROCESS)
+    @JvmmMapping(RpcType.JVMM_EXECUTE_JAVA_PROCESS)
     @HttpRequest("/execute/jps")
     public JsonArray listJavaProcess() throws Exception {
         PairKey<List<JpsResult>, String> pair = JvmmFactory.getExecutor().listJavaProcess();
@@ -92,7 +98,7 @@ public class ExecuteController {
         }
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_EXECUTE_JVM_TOOL)
+    @JvmmMapping(RpcType.JVMM_EXECUTE_JVM_TOOL)
     @HttpRequest(value = "/execute/jvm_tool", method = Method.POST)
     public Object jvmTool(@RequestBody String command) throws Exception {
         PairKey<List<String>, Boolean> pair = JvmmFactory.getExecutor().executeJvmTools(command);
@@ -103,13 +109,13 @@ public class ExecuteController {
         }
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_EXECUTE_JAD)
+    @JvmmMapping(RpcType.JVMM_EXECUTE_JAD)
     @HttpRequest("/execute/jad")
     public String jad(@RequestParam String className, @RequestParam String methodName) throws Throwable {
         return JvmmFactory.getExecutor().jad(ServerContext.getInstrumentation(), className, methodName);
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_EXECUTE_LOAD_PATCH)
+    @JvmmMapping(RpcType.JVMM_EXECUTE_LOAD_PATCH)
     @HttpRequest(value = "/execute/load_patch", method = Method.POST)
     public List<PatchVO> loadPatch(@RequestBody List<PatchDTO> patchList) throws Throwable {
         List<ClassDefinition> definitions = new ArrayList<>(patchList.size());

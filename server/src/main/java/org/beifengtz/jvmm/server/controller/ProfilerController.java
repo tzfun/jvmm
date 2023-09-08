@@ -11,8 +11,8 @@ import org.beifengtz.jvmm.convey.annotation.RequestBody;
 import org.beifengtz.jvmm.convey.annotation.RequestParam;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.entity.ResponseFuture;
-import org.beifengtz.jvmm.convey.enums.GlobalStatus;
-import org.beifengtz.jvmm.convey.enums.GlobalType;
+import org.beifengtz.jvmm.convey.enums.RpcStatus;
+import org.beifengtz.jvmm.convey.enums.RpcType;
 import org.beifengtz.jvmm.convey.enums.Method;
 import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerCounter;
@@ -41,19 +41,19 @@ public class ProfilerController {
     private static final Logger logger = LoggerFactory.getLogger(ProfilerController.class);
     private static volatile boolean PROFILER_STARTED = false;
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_PROFILER_EXECUTE)
+    @JvmmMapping(RpcType.JVMM_PROFILER_EXECUTE)
     @HttpRequest(value = "/profiler/execute", method = Method.POST)
     public String execute(@RequestBody String command) throws IOException {
         return JvmmFactory.getProfiler().execute(command);
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_PROFILER_SAMPLE)
+    @JvmmMapping(RpcType.JVMM_PROFILER_SAMPLE)
     @HttpRequest(value = "/profiler/flame_graph", method = Method.POST)
     public void flameGraph(@RequestBody ProfilerSampleDTO data, ResponseFuture respFuture) {
         if (PROFILER_STARTED) {
             respFuture.apply(JvmmResponse.create()
-                    .setType(GlobalType.JVMM_TYPE_PROFILER_SAMPLE)
-                    .setStatus(GlobalStatus.JVMM_STATUS_PROFILER_FAILED)
+                    .setType(RpcType.JVMM_PROFILER_SAMPLE)
+                    .setStatus(RpcStatus.JVMM_STATUS_PROFILER_FAILED)
                     .setMessage("Profiler started"));
             return;
         }
@@ -76,31 +76,31 @@ public class ProfilerController {
         PROFILER_STARTED = true;
         future.registerListener(f -> {
             PROFILER_STARTED = false;
-            JvmmResponse response = JvmmResponse.create().setType(GlobalType.JVMM_TYPE_PROFILER_SAMPLE.name());
+            JvmmResponse response = JvmmResponse.create().setType(RpcType.JVMM_PROFILER_SAMPLE);
 
             if (f.isSuccess()) {
                 String result = f.getNow();
                 if (to.exists()) {
                     try {
-                        response.setData(new JsonPrimitive(FileUtil.readToHexStr(to))).setStatus(GlobalStatus.JVMM_STATUS_OK);
+                        response.setData(new JsonPrimitive(FileUtil.readToHexStr(to))).setStatus(RpcStatus.JVMM_STATUS_OK);
                     } catch (IOException e) {
                         logger.error("Read profiler file failed: " + e.getMessage(), e);
-                        response.setStatus(GlobalStatus.JVMM_STATUS_PROFILER_FAILED).setMessage(e.getMessage());
+                        response.setStatus(RpcStatus.JVMM_STATUS_PROFILER_FAILED).setMessage(e.getMessage());
                     } finally {
                         to.delete();
                     }
                 } else {
-                    response.setStatus(GlobalStatus.JVMM_STATUS_PROFILER_FAILED).setMessage("Generate failed");
+                    response.setStatus(RpcStatus.JVMM_STATUS_PROFILER_FAILED).setMessage("Generate failed");
                 }
                 response.setMessage(result);
             } else {
-                response.setStatus(GlobalStatus.JVMM_STATUS_PROFILER_FAILED).setMessage(f.getCause().getMessage());
+                response.setStatus(RpcStatus.JVMM_STATUS_PROFILER_FAILED).setMessage(f.getCause().getMessage());
             }
             respFuture.apply(response);
         });
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_PROFILER_SAMPLE_START)
+    @JvmmMapping(RpcType.JVMM_PROFILER_SAMPLE_START)
     @HttpRequest(value = "/profiler/start", method = Method.POST)
     public String start(@RequestBody ProfilerSampleDTO data) {
         if (PROFILER_STARTED) {
@@ -111,12 +111,12 @@ public class ProfilerController {
         return result;
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_PROFILER_SAMPLE_STOP)
+    @JvmmMapping(RpcType.JVMM_PROFILER_SAMPLE_STOP)
     @HttpRequest(value = "/profiler/stop", method = Method.POST)
     public JvmmResponse stop(@RequestParam String format) throws IOException {
-        JvmmResponse response = JvmmResponse.create().setType(GlobalType.JVMM_TYPE_PROFILER_SAMPLE_STOP.name());
+        JvmmResponse response = JvmmResponse.create().setType(RpcType.JVMM_PROFILER_SAMPLE_STOP);
         if (!PROFILER_STARTED) {
-            return response.setStatus(GlobalStatus.JVMM_STATUS_PROFILER_FAILED).setMessage("Profiler not start");
+            return response.setStatus(RpcStatus.JVMM_STATUS_PROFILER_FAILED).setMessage("Profiler not start");
         }
         if (format == null || format.isEmpty()) {
             format = "html";
@@ -128,10 +128,10 @@ public class ProfilerController {
         try {
             JvmmFactory.getProfiler().stop(to);
             if (to.exists()) {
-                response.setData(new JsonPrimitive(FileUtil.readToHexStr(to))).setStatus(GlobalStatus.JVMM_STATUS_OK);
+                response.setData(new JsonPrimitive(FileUtil.readToHexStr(to))).setStatus(RpcStatus.JVMM_STATUS_OK);
                 to.delete();
             } else {
-                response.setStatus(GlobalStatus.JVMM_STATUS_PROFILER_FAILED).setMessage("Generate failed");
+                response.setStatus(RpcStatus.JVMM_STATUS_PROFILER_FAILED).setMessage("Generate failed");
             }
             return response;
         } finally {
@@ -142,13 +142,13 @@ public class ProfilerController {
         }
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_PROFILER_STATUS)
+    @JvmmMapping(RpcType.JVMM_PROFILER_STATUS)
     @HttpRequest(value = "/profiler/status")
     public String status() {
         return JvmmFactory.getProfiler().status();
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_PROFILER_LIST_EVENTS)
+    @JvmmMapping(RpcType.JVMM_PROFILER_LIST_EVENTS)
     @HttpRequest(value = "/profiler/list_events")
     public String listEvents() {
         return JvmmFactory.getProfiler().enabledEvents();

@@ -79,14 +79,14 @@ public class TestAgent {
 
 org.beifengtz.jvmm.aop.core.Enhancer 类中提供了一些静态方法可以直接使用
 
-例如：对 org.beifengtz.jvmm.common.util.TimeUtil 中的以 Days 结尾但又不包含 addDays 的方法进行增强
+例如：对 org.beifengtz.jvmm.common.util.StringUtil 中的以 Days 结尾但又不包含 addDays 的方法进行增强
 
 ```java
 import java.lang.instrument.Instrumentation;
 
 public class EnhanceMain {
     public static void main(String[] args) {
-        String className = "org.beifengtz.jvmm.common.util.TimeUtil";
+        String className = "org.beifengtz.jvmm.common.util.StringUtil";
         byte[] classBytes = Enhancer.enhanceMethod(
                 className,
                 methodListener,

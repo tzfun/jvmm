@@ -4,13 +4,11 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.EventLoopGroup;
-import io.netty.handler.ssl.SslContext;
 import io.netty.util.concurrent.EventExecutorGroup;
-import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
+import org.beifengtz.jvmm.convey.channel.ChannelUtil;
 import org.beifengtz.jvmm.convey.channel.HttpServerChannelInitializer;
 import org.beifengtz.jvmm.convey.handler.HandlerProvider;
 import org.beifengtz.jvmm.server.ServerContext;
-import org.beifengtz.jvmm.server.handler.HttpServerHandlerProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +26,7 @@ public class SubscriberDemo {
         EventLoopGroup group = ServerContext.getWorkerGroup();
         ChannelFuture future = new ServerBootstrap()
                 .group(group)
-                .channel(ChannelInitializers.serverChannelClass(group))
+                .channel(ChannelUtil.serverChannelClass(group))
                 .childHandler(new HttpServerChannelInitializer(new HandlerProvider() {
                     @Override
                     public ChannelHandler getHandler() {

@@ -382,10 +382,10 @@ public class Jvmm {
 ```java
 import io.netty.channel.EventLoopGroup;
 import io.netty.util.concurrent.Future;
-import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
+import org.beifengtz.jvmm.convey.channel.ChannelUtil;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
-import org.beifengtz.jvmm.convey.enums.GlobalType;
+import org.beifengtz.jvmm.convey.enums.RpcType;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

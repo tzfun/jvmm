@@ -9,30 +9,30 @@ package org.beifengtz.jvmm.common.exception;
  *
  * @author beifengtz
  */
-public class ErrorStatusException extends RuntimeException {
+public class RpcStatusException extends RuntimeException {
 
     private final String status;
 
-    public ErrorStatusException(String status) {
+    public RpcStatusException(String status) {
         this.status = status;
     }
 
-    public ErrorStatusException(String message, String status) {
+    public RpcStatusException(String message, String status) {
         super(message);
         this.status = status;
     }
 
-    public ErrorStatusException(String message, Throwable cause, String status) {
+    public RpcStatusException(String message, Throwable cause, String status) {
         super(message, cause);
         this.status = status;
     }
 
-    public ErrorStatusException(Throwable cause, String status) {
+    public RpcStatusException(Throwable cause, String status) {
         super(cause);
         this.status = status;
     }
 
-    public ErrorStatusException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, String status) {
+    public RpcStatusException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, String status) {
         super(message, cause, enableSuppression, writableStackTrace);
         this.status = status;
     }

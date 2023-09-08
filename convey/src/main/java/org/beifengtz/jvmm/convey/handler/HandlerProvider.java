@@ -29,7 +29,7 @@ public interface HandlerProvider {
     ChannelHandler getHandler();
 
     /**
-     * 当一个连接在 idle 时间内未收到或发送数据时，将断开连接
+     * 当一个连接在 idle 时间内未收到数据时，将断开连接
      * @return idle时间，单位秒，如果为0则用不断开，除非逻辑层面手动触发断开连接
      */
     default int getIdleSeconds() {

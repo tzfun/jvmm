@@ -9,7 +9,7 @@ import org.beifengtz.jvmm.client.cli.CmdLine;
 import org.beifengtz.jvmm.client.cli.CmdLineGroup;
 import org.beifengtz.jvmm.client.cli.CmdOption;
 import org.beifengtz.jvmm.client.cli.CmdParser;
-import org.beifengtz.jvmm.common.exception.ErrorStatusException;
+import org.beifengtz.jvmm.common.exception.RpcStatusException;
 import org.beifengtz.jvmm.common.util.CommonUtil;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
@@ -160,7 +160,7 @@ public class ServerService {
     protected static JvmmResponse request(JvmmConnector connector, JvmmRequest request, long timeout, TimeUnit timeUnit) {
         try {
             return connector.waitForResponse(request, timeout, timeUnit);
-        } catch (ErrorStatusException e) {
+        } catch (RpcStatusException e) {
             printErr(String.format("Wrong response status: '%s', msg: %s", e.getStatus(), e.getMessage()));
         } catch (InterruptedException | TimeoutException e) {
             printErr("Request failed: " + e.getMessage());

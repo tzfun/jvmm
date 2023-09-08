@@ -1,7 +1,6 @@
 package org.beifengtz.jvmm.client;
 
 import io.netty.channel.EventLoopGroup;
-import io.netty.util.concurrent.Future;
 import org.beifengtz.jvmm.client.cli.CmdLine;
 import org.beifengtz.jvmm.client.cli.CmdLineGroup;
 import org.beifengtz.jvmm.client.cli.CmdOption;
@@ -11,7 +10,7 @@ import org.beifengtz.jvmm.common.util.IOUtil;
 import org.beifengtz.jvmm.common.util.PidUtil;
 import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.common.util.meta.PairKey;
-import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
+import org.beifengtz.jvmm.convey.channel.ChannelUtil;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 import org.beifengtz.jvmm.core.driver.VMDriver;
 import org.slf4j.Logger;
@@ -28,8 +27,11 @@ import java.nio.file.Files;
 import java.text.ParseException;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.jar.JarFile;
 
@@ -316,7 +318,7 @@ public class CommandRunner {
         String host = split[0];
         int port = Integer.parseInt(split[1]);
 
-        EventLoopGroup group = ChannelInitializers.newEventLoopGroup(1);
+        EventLoopGroup group = ChannelUtil.newEventLoopGroup(1);
 
         JvmmConnector connector = tryConnect(host, port, group, username, password);
 
@@ -354,9 +356,11 @@ public class CommandRunner {
 
     private static JvmmConnector tryConnect(String host, int port, EventLoopGroup group, String username, String password) throws InterruptedException {
         JvmmConnector connector = JvmmConnector.newInstance(host, port, group, true, username, password);
-        Future<Boolean> authFuture = connector.connect();
-        if (authFuture.await(3, TimeUnit.SECONDS)) {
-            if (authFuture.getNow()) {
+        CompletableFuture<Boolean> authFuture = connector.connect();
+
+        try {
+            boolean success = authFuture.get(3, TimeUnit.SECONDS);
+            if (success) {
                 logger.info("Connect successful! You can use the 'help' command to learn how to use. Enter 'exit' to safely exit the connection.");
                 return connector;
             } else {
@@ -367,7 +371,7 @@ public class CommandRunner {
                 password = GuidedRunner.askServerAuthPassword();
                 return tryConnect(host, port, group, username, password);
             }
-        } else {
+        } catch (ExecutionException | TimeoutException e) {
             logger.error("Connect server failed! case: time out");
             System.exit(-1);
         }

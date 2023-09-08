@@ -1,7 +1,6 @@
 package org.beifengtz.jvmm.convey.socket;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -12,29 +11,27 @@ import io.netty.channel.ChannelPromise;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.concurrent.DefaultPromise;
-import io.netty.util.concurrent.Future;
-import org.beifengtz.jvmm.common.exception.ErrorStatusException;
+import org.beifengtz.jvmm.common.exception.RpcStatusException;
 import org.beifengtz.jvmm.common.exception.SocketExecuteException;
 import org.beifengtz.jvmm.common.util.SignatureUtil;
-import org.beifengtz.jvmm.convey.enums.GlobalStatus;
-import org.beifengtz.jvmm.convey.enums.GlobalType;
 import org.beifengtz.jvmm.convey.auth.JvmmBubbleDecrypt;
 import org.beifengtz.jvmm.convey.auth.JvmmBubbleEncrypt;
-import org.beifengtz.jvmm.convey.channel.ChannelInitializers;
+import org.beifengtz.jvmm.convey.channel.ChannelUtil;
 import org.beifengtz.jvmm.convey.channel.JvmmServerChannelInitializer;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
+import org.beifengtz.jvmm.convey.enums.RpcStatus;
+import org.beifengtz.jvmm.convey.enums.RpcType;
 import org.beifengtz.jvmm.convey.handler.HandlerProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -59,8 +56,8 @@ public class JvmmConnector implements Closeable {
 
     private EventLoopGroup workGroup;
     private volatile State state = State.NONE;
-    private DefaultPromise<Boolean> openPromise;
-    private Channel channel;
+    private CompletableFuture<Boolean> openFuture;
+    private volatile Channel channel;
 
     private boolean keepAlive;
 
@@ -88,15 +85,15 @@ public class JvmmConnector implements Closeable {
         @Override
         public void run() {
             if (isConnected()) {
-                channel.writeAndFlush(JvmmRequest.create().setType(GlobalType.JVMM_TYPE_HEARTBEAT).serialize());
+                channel.writeAndFlush(JvmmRequest.create().setType(RpcType.JVMM_HEARTBEAT));
                 workGroup.next().schedule(this, 5, TimeUnit.SECONDS);
             }
         }
     }
 
-    class SocketResponseHandler extends SimpleChannelInboundHandler<String> implements HandlerProvider {
+    class SocketResponseHandler extends SimpleChannelInboundHandler<JvmmResponse> implements HandlerProvider {
 
-        private static final String handleName = "jvmmSocketRespHandler";
+        private static final String HANDLER_NAME = "jvmmSocketHandler";
 
         @Override
         public ChannelHandler getHandler() {
@@ -105,49 +102,29 @@ public class JvmmConnector implements Closeable {
 
         @Override
         public String getName() {
-            return handleName;
+            return HANDLER_NAME;
         }
 
         @Override
-        protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
-            JvmmResponse response = null;
-            try {
-                response = JvmmResponse.parseFrom(msg);
-            } catch (JsonSyntaxException e) {
-                logger.warn("Jvmm socket connector received an unparseable message: " + msg);
-                logger.debug(e.getMessage(), e);
-            }
-            if (response != null) {
-                handleResponse(ctx, response);
-            }
-        }
-
-        @Override
-        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-            if (cause instanceof IOException) {
-                logger.debug(cause.toString());
-            }
-        }
-
-        private void handleResponse(ChannelHandlerContext ctx, JvmmResponse response) throws Exception {
-            String type = response.getType();
-            if (Objects.equals(response.getStatus(), GlobalStatus.JVMM_STATUS_AUTHENTICATION_FAILED.name())) {
-                openPromise.trySuccess(false);
+        protected void channelRead0(ChannelHandlerContext ctx, JvmmResponse response) throws Exception {
+            RpcType type = response.getType();
+            if (response.getStatus() == RpcStatus.JVMM_STATUS_AUTHENTICATION_FAILED) {
+                openFuture.complete(false);
                 close();
                 return;
             }
-            if (GlobalType.JVMM_TYPE_BUBBLE.name().equals(type)) {
+            if (RpcType.JVMM_BUBBLE == type) {
                 JsonObject data = response.getData().getAsJsonObject();
                 String key = data.get("key").getAsString();
                 int seed = data.get("seed").getAsInt();
 
                 ctx.pipeline()
-                        .addAfter(ctx.executor(), ChannelInitializers.STRING_DECODER_HANDLER,
+                        .addAfter(ctx.executor(), ChannelUtil.STRING_DECODER_HANDLER,
                                 JvmmServerChannelInitializer.JVMM_BUBBLE_ENCODER, new JvmmBubbleEncrypt(seed, key))
-                        .addAfter(ctx.executor(), ChannelInitializers.STRING_DECODER_HANDLER,
+                        .addAfter(ctx.executor(), ChannelUtil.STRING_DECODER_HANDLER,
                                 JvmmServerChannelInitializer.JVMM_BUBBLE_DECODER, new JvmmBubbleDecrypt(seed, key));
 
-                JvmmRequest authReq = JvmmRequest.create().setType(GlobalType.JVMM_TYPE_AUTHENTICATION);
+                JvmmRequest authReq = JvmmRequest.create().setType(RpcType.JVMM_AUTHENTICATION);
 
                 if (authAccount != null && authPassword != null) {
                     JsonObject reqData = new JsonObject();
@@ -156,16 +133,23 @@ public class JvmmConnector implements Closeable {
                     authReq.setData(reqData);
                 }
 
-                ctx.pipeline().writeAndFlush(authReq.serialize());
+                ctx.pipeline().writeAndFlush(authReq);
 
                 if (keepAlive) {
                     workGroup.next().execute(new HeartBeatHandler());
                 }
 
-            } else if (GlobalType.JVMM_TYPE_AUTHENTICATION.name().equals(type)) {
-                openPromise.trySuccess(GlobalStatus.JVMM_STATUS_OK.name().equals(response.getStatus()));
+            } else if (RpcType.JVMM_AUTHENTICATION == type) {
+                openFuture.complete(RpcStatus.JVMM_STATUS_OK == response.getStatus());
             } else {
                 listeners.forEach(o -> o.onMessage(response));
+            }
+        }
+
+        @Override
+        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+            if (cause instanceof IOException) {
+                logger.debug(cause.toString());
             }
         }
     }
@@ -188,7 +172,7 @@ public class JvmmConnector implements Closeable {
      *                     false - 不自动发送心跳包，连接闲置后会自动断开连接。
      * @param authAccount  安全认证账号
      * @param authPassword 安全认证密码
-     * @param workerGroup  连接工作线程组，建议使用{@link ChannelInitializers#newEventLoopGroup}方法获得
+     * @param workerGroup  连接工作线程组，建议使用{@link ChannelUtil#newEventLoopGroup}方法获得
      * @return {@link JvmmConnector} 实例
      */
     public static JvmmConnector newInstance(String host, int port, EventLoopGroup workerGroup, boolean keepAlive, String authAccount, String authPassword) {
@@ -210,13 +194,13 @@ public class JvmmConnector implements Closeable {
         this.listeners.addAll(listeners);
     }
 
-    public void removeListener(MsgReceiveListener... listeners) {
+    public void unregisterListener(MsgReceiveListener... listeners) {
         for (MsgReceiveListener l : listeners) {
             this.listeners.remove(l);
         }
     }
 
-    public void removeAllListener() {
+    public void unregisterAllListener() {
         this.listeners.clear();
     }
 
@@ -224,43 +208,73 @@ public class JvmmConnector implements Closeable {
         this.closeListener = closeListener;
     }
 
-    public Future<Boolean> connect() {
+    public CompletableFuture<Boolean> connect() {
         if (state != State.CONNECTED) {
-            openPromise = new DefaultPromise<>(workGroup.next());
+            openFuture = new CompletableFuture<>();
             Bootstrap b = new Bootstrap();
-            b.group(workGroup).channel(ChannelInitializers.channelClass(workGroup)).handler(new JvmmServerChannelInitializer(new SocketResponseHandler()));
-            channel = b.connect(host, port).channel();
-            channel.closeFuture().addListener(future -> {
-                state = State.CLOSED;
-                if (closeListener != null) {
-                    closeListener.onclose();
+            b.group(workGroup)
+                    .channel(ChannelUtil.channelClass(workGroup))
+                    .handler(new JvmmServerChannelInitializer(new SocketResponseHandler()));
+            ChannelFuture connectFuture = b.connect(host, port);
+            connectFuture.addListener(f -> {
+                if (f.isSuccess()) {
+                    channel = connectFuture.channel();
+                    channel.closeFuture().addListener(future -> {
+                        state = State.CLOSED;
+                        if (closeListener != null) {
+                            closeListener.onclose();
+                        }
+                    });
+                } else {
+                    openFuture.completeExceptionally(f.cause());
                 }
             });
+
             state = State.CONNECTED;
         } else {
             logger.warn("Jvmm socket connector is already connected.");
         }
-        return openPromise;
+        return openFuture;
     }
 
-    public ChannelFuture send(JvmmRequest request) {
+    public void sendOnly(JvmmRequest request) {
         if (isConnected()) {
-            return channel.writeAndFlush(request.serialize()).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+            channel.writeAndFlush(request).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
         } else {
             throw new IllegalStateException("Jvmm socket has disconnected");
         }
     }
 
+    public CompletableFuture<JvmmResponse> send(JvmmRequest request) {
+        CompletableFuture<JvmmResponse> future = new CompletableFuture<>();
+        if (isConnected()) {
+            long contextId = request.getContextId();
+            MsgReceiveListener listener = response -> {
+                if (response.getContextId() == contextId) {
+                    future.complete(response);
+                }
+            };
+            registerListener(listener);
+            channel.writeAndFlush(request).addListener(f -> {
+                if (!f.isSuccess()) {
+                    future.completeExceptionally(f.cause());
+                }
+            });
+            future.whenComplete((r,t) -> unregisterListener(listener));
+        } else {
+            future.completeExceptionally(new IllegalStateException("Jvmm socket has disconnected"));
+        }
+        return future;
+    }
+
     public String ping() {
         try {
-            JvmmRequest request = JvmmRequest.create().setType(GlobalType.JVMM_TYPE_PING);
-
+            JvmmRequest request = JvmmRequest.create().setType(RpcType.JVMM_PING);
+            long contextId = request.getContextId();
             final DefaultPromise<JvmmResponse> promise = new DefaultPromise<>(workGroup.next());
             MsgReceiveListener listener = response -> {
-                String waitFor = GlobalType.JVMM_TYPE_PONG.name();
-
-                if (waitFor.equals(response.getType())) {
-                    if (GlobalStatus.JVMM_STATUS_OK.name().equals(response.getStatus())) {
+                if (response.getContextId() == contextId) {
+                    if (RpcStatus.JVMM_STATUS_OK == response.getStatus()) {
                         promise.trySuccess(response);
                     } else {
                         promise.tryFailure(new Exception(response.getMessage()));
@@ -272,7 +286,7 @@ public class JvmmConnector implements Closeable {
                 send(request);
                 promise.get(3, TimeUnit.SECONDS);
             } finally {
-                removeListener(listener);
+                unregisterListener(listener);
             }
         } catch (Exception e) {
             throw new SocketExecuteException(e.getMessage(), e);
@@ -297,93 +311,51 @@ public class JvmmConnector implements Closeable {
         }
     }
 
-    public JvmmResponse waitForResponse(JvmmRequest request)
-            throws ErrorStatusException, InterruptedException, TimeoutException {
-        return waitForResponse(request, 5, TimeUnit.SECONDS);
-    }
-
-    public JvmmResponse waitForResponse(JvmmRequest request, long timeout, TimeUnit timeunit) throws ErrorStatusException,
+    public JvmmResponse waitForResponse(JvmmRequest request, long timeout, TimeUnit timeunit) throws RpcStatusException,
             InterruptedException, TimeoutException {
-        return waitForResponse(request, null, timeout, timeunit);
-    }
-
-    public JvmmResponse waitForResponse(JvmmRequest request, String waitType, long timeout, TimeUnit timeunit)
-            throws ErrorStatusException, InterruptedException, TimeoutException {
-        final DefaultPromise<JvmmResponse> promise = new DefaultPromise<>(workGroup.next());
+        CompletableFuture<JvmmResponse> future = new CompletableFuture<>();
+        long contextId = request.getContextId();
         MsgReceiveListener listener = response -> {
-            String waitFor = waitType;
-            if (waitFor == null) {
-                waitFor = request.getType();
-            }
-            if (waitFor.equals(response.getType())) {
-                if (GlobalStatus.JVMM_STATUS_OK.name().equals(response.getStatus())) {
-                    promise.trySuccess(response);
+            if (contextId == response.getContextId()) {
+                if (RpcStatus.JVMM_STATUS_OK == response.getStatus()) {
+                    future.complete(response);
                 } else {
-                    promise.tryFailure(new ErrorStatusException(response.getMessage(), response.getStatus()));
+                    future.completeExceptionally(new RpcStatusException(response.getMessage(), response.getStatus().name()));
                 }
             }
         };
         registerListener(listener);
         send(request);
-        if (promise.await(timeout, timeunit)) {
-            if (promise.isSuccess()) {
-                return promise.getNow();
-            } else {
-                if (promise.cause() instanceof ErrorStatusException) {
-                    throw (ErrorStatusException) promise.cause();
-                } else {
-                    throw new RuntimeException(promise.cause());
-                }
-            }
-        } else {
-            throw new TimeoutException("request time out");
+        try {
+            return future.get(timeout, timeunit);
+
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
         }
-    }
-
-    public static JvmmResponse waitForResponse(EventLoopGroup group, String address, JvmmRequest request)
-            throws ErrorStatusException, InterruptedException, TimeoutException {
-        return waitForResponse(group, address, request, request.getType(), 5, TimeUnit.SECONDS);
-    }
-
-    public static JvmmResponse waitForResponse(EventLoopGroup group, String address, JvmmRequest request, long timeout, TimeUnit timeunit)
-            throws ErrorStatusException, InterruptedException, TimeoutException {
-        return waitForResponse(group, address, request, request.getType(), timeout, timeunit);
     }
 
     /**
      * 一次性连接请求
      *
      * @param group    executor
-     * @param address  地址，比如：127.0.0.1:5010
+     * @param host     地址，比如：127.0.0.1
+     * @param port     端口
      * @param request  {@link JvmmRequest}
-     * @param waitType 监听返回类型，如果为null则默认监听请求的类型。见：{@link GlobalType}
      * @param timeout  超时时间
      * @param timeunit 超时单位
      * @return {@link JvmmResponse}
-     * @throws ErrorStatusException 响应状态码错误时抛出，非 {@link GlobalStatus#JVMM_STATUS_OK} 状态均会抛出
+     * @throws RpcStatusException   响应状态码错误时抛出，非 {@link RpcStatus#JVMM_STATUS_OK} 状态均会抛出
      * @throws InterruptedException 中断异常，不可控
      * @throws TimeoutException     超时未返回后抛出
      */
-    public static JvmmResponse waitForResponse(EventLoopGroup group, String address, JvmmRequest request, String waitType, long timeout, TimeUnit timeunit)
-            throws ErrorStatusException, InterruptedException, TimeoutException {
+    public static JvmmResponse waitForResponse(EventLoopGroup group, String host, int port, JvmmRequest request,
+                                               long timeout, TimeUnit timeunit)
+            throws RpcStatusException, InterruptedException, TimeoutException {
         if (group == null) {
             throw new IllegalArgumentException("Can not execute one request with null event loop group.");
         }
-        String[] split = address.split(":");
-        try (JvmmConnector connector = newInstance(split[0], Integer.parseInt(split[1]), group)) {
-            return connector.waitForResponse(request, waitType, timeout, timeunit);
+        try (JvmmConnector connector = newInstance(host, port, group)) {
+            return connector.waitForResponse(request, timeout, timeunit);
         }
-    }
-
-    public static String getIpByCtx(ChannelHandlerContext ctx) {
-        String ip = null;
-        try {
-            SocketAddress socketAddress = ctx.channel().remoteAddress();
-            if (socketAddress != null) {
-                ip = ((InetSocketAddress) socketAddress).getAddress().getHostAddress();
-            }
-        } catch (Exception ignored) {
-        }
-        return ip;
     }
 }

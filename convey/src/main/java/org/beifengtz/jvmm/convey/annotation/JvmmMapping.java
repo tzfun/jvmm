@@ -1,6 +1,6 @@
 package org.beifengtz.jvmm.convey.annotation;
 
-import org.beifengtz.jvmm.convey.enums.GlobalType;
+import org.beifengtz.jvmm.convey.enums.RpcType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -19,8 +19,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface JvmmMapping {
-
-    String type() default "";
-
-    GlobalType typeEnum() default GlobalType.JVMM_TYPE_HANDLE_MSG;
+    RpcType value() default RpcType.JVMM_HANDLE_MSG;
 }

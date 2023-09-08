@@ -36,7 +36,7 @@ import org.beifengtz.jvmm.convey.annotation.RequestBody;
 import org.beifengtz.jvmm.convey.annotation.RequestParam;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.entity.ResponseFuture;
-import org.beifengtz.jvmm.convey.enums.GlobalStatus;
+import org.beifengtz.jvmm.convey.enums.RpcStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -288,7 +288,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                     parameter[i] = new ResponseFuture(data -> {
                         if (data instanceof JvmmResponse) {
                             JvmmResponse resp = (JvmmResponse) data;
-                            if (GlobalStatus.JVMM_STATUS_OK.name().equals(resp.getStatus())) {
+                            if (RpcStatus.JVMM_STATUS_OK.name().equals(resp.getStatus())) {
                                 response(ctx, HttpResponseStatus.OK, resp.getData().toString());
                             } else {
                                 response(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR, resp.getMessage());

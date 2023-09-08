@@ -32,15 +32,15 @@ public class HttpServerChannelInitializer extends ChannelInitializer<Channel> {
     @Override
     protected void initChannel(Channel ch) throws Exception {
         ChannelPipeline p = ch.pipeline();
-        p.addLast(ChannelInitializers.IDLE_STATE_HANDLER, new IdleStateHandler(provider.getIdleSeconds(), provider.getIdleSeconds(), provider.getIdleSeconds()));
+        p.addLast(ChannelUtil.IDLE_STATE_HANDLER, new IdleStateHandler(provider.getIdleSeconds(), 0, 0));
 
         SslContext sslContext = provider.getSslContext();
         if (sslContext != null) {
             p.addLast(sslContext.newHandler(ch.alloc()));
         }
 
-        p.addLast(ChannelInitializers.HTTP_CODEC_HANDLER, new HttpServerCodec());
-        p.addLast(ChannelInitializers.AGGREGATOR_HANDLER, new HttpObjectAggregator(1048576));
+        p.addLast(ChannelUtil.HTTP_CODEC_HANDLER, new HttpServerCodec());
+        p.addLast(ChannelUtil.AGGREGATOR_HANDLER, new HttpObjectAggregator(1048576));
         p.addLast(HTTP_SERVER_HANDLER_NAME, provider.getHandler());
     }
 }

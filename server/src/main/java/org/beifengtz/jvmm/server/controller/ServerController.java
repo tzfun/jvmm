@@ -6,7 +6,7 @@ import org.beifengtz.jvmm.convey.annotation.HttpRequest;
 import org.beifengtz.jvmm.convey.annotation.JvmmController;
 import org.beifengtz.jvmm.convey.annotation.JvmmMapping;
 import org.beifengtz.jvmm.convey.annotation.RequestParam;
-import org.beifengtz.jvmm.convey.enums.GlobalType;
+import org.beifengtz.jvmm.convey.enums.RpcType;
 import org.beifengtz.jvmm.server.ServerContext;
 import org.beifengtz.jvmm.server.enums.ServerType;
 
@@ -23,11 +23,11 @@ import org.beifengtz.jvmm.server.enums.ServerType;
 @HttpController
 public class ServerController {
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_HEARTBEAT)
+    @JvmmMapping(RpcType.JVMM_HEARTBEAT)
     public void heartbeat() {
     }
 
-    @JvmmMapping(typeEnum = GlobalType.JVMM_TYPE_SERVER_SHUTDOWN)
+    @JvmmMapping(RpcType.JVMM_SERVER_SHUTDOWN)
     @HttpRequest("/server/shutdown")
     public String shutdown(@RequestParam String target) {
         AssertUtil.checkArguments(target != null, "Missing required param 'target'");
