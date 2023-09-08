@@ -80,7 +80,17 @@ public class CmdParser {
     }
 
     public String getArg(String arg) {
-        return kv.get(arg).get(0);
+        return getArg(arg, null);
+    }
+
+    public String getArg(String arg, String defaultValue) {
+        if (kv.containsKey(arg)) {
+            List<String> values = kv.get(arg);
+            if (!values.isEmpty()) {
+                return values.get(0);
+            }
+        }
+        return defaultValue;
     }
 
     public List<String> getArgList(String arg) {

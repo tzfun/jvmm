@@ -610,8 +610,13 @@ class DefaultJvmmCollector implements JvmmCollector {
 
                 ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
 
+                ThreadInfo[] threadInfos = threadMXBean.dumpAllThreads(true, true);
+                Map<Long,ThreadInfo> threadInfoMap = new HashMap<>(threadInfos.length);
+                for (ThreadInfo threadInfo : threadInfos) {
+                    threadInfoMap.put(threadInfo.getThreadId(), threadInfo);
+                }
                 for (ThreadTimedInfo info : infos) {
-                    ThreadInfo threadInfo = threadMXBean.getThreadInfo(info.getId());
+                    ThreadInfo threadInfo = threadInfoMap.get(info.getId());
                     if (threadInfo != null) {
                         result.add(threadInfo2Str(threadMXBean, threadInfo));
                     }

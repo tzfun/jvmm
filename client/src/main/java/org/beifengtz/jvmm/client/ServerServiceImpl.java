@@ -125,7 +125,7 @@ public class ServerServiceImpl extends ServerService {
     @Order(1)
     public static void info(JvmmConnector connector, CmdParser cmd) throws Exception {
         if (!cmd.hasArg("t")) {
-            printErr("Missing required argument 't'");
+            printErr("Missing required parameter 't'");
             return;
         }
         CollectionType type;
@@ -191,12 +191,16 @@ public class ServerServiceImpl extends ServerService {
                     request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_STACK);
                     JsonObject data = new JsonObject();
                     if (cmd.hasArg("tdeep")) {
-                        data.addProperty("depth", Integer.parseInt(cmd.getArg("tdeep")));
+                        data.addProperty("depth", cmd.getArgInt("tdeep"));
                     }
                     JsonArray idArr = new JsonArray();
-                    String[] ids = cmd.getArg("tid").split(",");
+                    String[] ids = cmd.getArg("tid", "").split(",");
                     for (String id : ids) {
                         idArr.add(Long.parseLong(id));
+                    }
+                    if (idArr.isEmpty()) {
+                        printErr("Parameter `tid` value is empty");
+                        return;
                     }
                     data.add("idArr", idArr);
                     request.setData(data);
@@ -221,14 +225,14 @@ public class ServerServiceImpl extends ServerService {
                 request.setType(GlobalType.JVMM_TYPE_COLLECT_JVM_THREAD_POOL);
                 String clazz = cmd.getArg("clazz");
                 if (clazz == null) {
-                    printErr("Missing required param `clazz`");
+                    printErr("Missing required parameter `clazz`");
                     return;
                 }
                 String loader = cmd.getArg("loader");
                 String ifield = cmd.getArg("ifield");
                 String field = cmd.getArg("field");
                 if (field == null) {
-                    printErr("Missing required param `field`");
+                    printErr("Missing required parameter `field`");
                     return;
                 }
                 JsonObject data = new JsonObject();
@@ -295,7 +299,7 @@ public class ServerServiceImpl extends ServerService {
         } else if (type == CollectionType.disk_io) {
             JsonArray array = data.getAsJsonArray();
             TableFormatter table = new TableFormatter();
-            table.setHead("Name", "Read(n/s)", "Write(n/s)", "Read(bytes/s)", "Write(bytes/s)", "Queue Len");
+            table.setHead("Name", "Read(n/s)", "Write(n/s)", "Read(b/s)", "Write(b/s)", "Queue Len");
             for (JsonElement json : array) {
                 DiskIOInfo info = gson.fromJson(json, DiskIOInfo.class);
                 table.addRow(
@@ -351,7 +355,7 @@ public class ServerServiceImpl extends ServerService {
         } else if (type == CollectionType.sys_file) {
             JsonArray array = data.getAsJsonArray();
             TableFormatter table = new TableFormatter();
-            table.setHead("Name", "Mount", "Label", "Type", "Size", "Free", "Usable");
+            table.setHead("Name", "Mount", "Label", "Type", "Size(B)", "Free(B)", "Usable(B)");
             for (JsonElement json : array) {
                 SysFileInfo info = gson.fromJson(json, SysFileInfo.class);
                 table.addRow(
@@ -438,12 +442,12 @@ public class ServerServiceImpl extends ServerService {
                     "OS State",
                     "Daemon",
                     "Priority",
-                    "User Time",
-                    "CPU Time",
-                    "Blocked Count",
-                    "Blocked Time",
-                    "Waited Count",
-                    "Waited Time"
+                    "User(ns)",
+                    "CPU(ns)",
+                    "Blocked",
+                    "Blocked(ns)",
+                    "Waited",
+                    "Waited(ns)"
             );
             for (JsonElement json : array) {
                 JvmThreadDetailInfo info = gson.fromJson(json, JvmThreadDetailInfo.class);
@@ -760,7 +764,7 @@ public class ServerServiceImpl extends ServerService {
             }
             System.out.println("ok");
         } else {
-            printErr("Missing required param `t`");
+            printErr("Missing required parameter `t`");
         }
     }
 
@@ -789,6 +793,10 @@ public class ServerServiceImpl extends ServerService {
             headDesc = "Collect data for a certain period of time."
     )
     public static void metric(JvmmConnector connector, CmdParser cmd) {
+        if (!cmd.hasArg("t")) {
+            printErr("Missing required parameter `t`");
+            return;
+        }
         String type = cmd.getArg("t");
         if ("thread_cpu_time".equals(type)) {
             JsonObject data = new JsonObject();
@@ -834,6 +842,35 @@ public class ServerServiceImpl extends ServerService {
             }
         } else {
             printErr("Invalid param value `t`");
+        }
+    }
+
+    @Order(8)
+    @JvmmOptions({
+            @JvmmOption(
+                    name = "open",
+                    argName = "switch",
+                    order = 1,
+                    desc = "Open target switch"
+            ),
+            @JvmmOption(
+                    name = "close",
+                    argName = "switch",
+                    order = 2,
+                    desc = "Close target switch"
+            )
+    })
+    @JvmmCmdDesc(
+            headDesc = "Switches status manage: \n- classLoadingVerbose\n - memoryVerbose\n - threadCpuTime\n - threadContentionMonitoring",
+            tailDesc = "eg1: `switches`\n" +
+                    "eg2: switches -open threadCpuTime\n" +
+                    "eg3: switches -close threadContentionMonitoring"
+    )
+    public static void switches(JvmmConnector connector, CmdParser cmd) {
+        if (cmd.hasArg("open") || cmd.hasArg("close")) {
+
+        } else {
+
         }
     }
 }
