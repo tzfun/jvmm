@@ -1,8 +1,5 @@
 package org.beifengtz.jvmm.convey.enums;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * <p>
  * Description: TODO
@@ -43,7 +40,7 @@ public enum RpcType {
     JVMM_EXECUTE_GC(20002),
     JVMM_EXECUTE_SET_CLASSLOADING_VERBOSE(20003),
     JVMM_EXECUTE_SWITCHES_GET(20004),
-    JVMM_EXECUTE_SET_SWITCHES(20005),
+    JVMM_EXECUTE_SWITCHES_SET(20005),
     JVMM_EXECUTE_RESET_PEAK_THREAD_COUNT(20006),
     JVMM_EXECUTE_JAVA_PROCESS(20007),
     JVMM_EXECUTE_JVM_TOOL(20008),
@@ -92,15 +89,9 @@ public enum RpcType {
     JVMM_PROFILER_LIST_EVENTS(40006);
 
     private final int value;
-    private static final Map<Integer, RpcType> VALUE_MAP = new HashMap<>();
 
     RpcType(int value) {
         this.value = value;
-        mapping();
-    }
-
-    void mapping() {
-        VALUE_MAP.put(value, this);
     }
 
     public int getValue() {
@@ -108,6 +99,52 @@ public enum RpcType {
     }
 
     public static RpcType valueOf(int value) {
-        return VALUE_MAP.get(value);
+        switch (value){
+            case 10001: return JVMM_HANDLE_MSG;
+            case 10002: return JVMM_HEARTBEAT;
+            case 10003: return JVMM_BUBBLE;
+            case 10004: return JVMM_AUTHENTICATION;
+            case 10005: return JVMM_PING;
+            case 20001: return JVMM_SERVER_SHUTDOWN;
+            case 20002: return JVMM_EXECUTE_GC;
+            case 20003: return JVMM_EXECUTE_SET_CLASSLOADING_VERBOSE;
+            case 20004: return JVMM_EXECUTE_SWITCHES_GET;
+            case 20005: return JVMM_EXECUTE_SWITCHES_SET;
+            case 20006: return JVMM_EXECUTE_RESET_PEAK_THREAD_COUNT;
+            case 20007: return JVMM_EXECUTE_JAVA_PROCESS;
+            case 20008: return JVMM_EXECUTE_JVM_TOOL;
+            case 20009: return JVMM_EXECUTE_JAD;
+            case 20010: return JVMM_EXECUTE_LOAD_PATCH;
+            case 30001: return JVMM_COLLECT_SYS_INFO;
+            case 30002: return JVMM_COLLECT_PROCESS_INFO;
+            case 30003: return JVMM_COLLECT_CPU_INFO;
+            case 30004: return JVMM_COLLECT_NETWORK_INFO;
+            case 30005: return JVMM_COLLECT_SYS_MEMORY_INFO;
+            case 30006: return JVMM_COLLECT_DISK_INFO;
+            case 30007: return JVMM_COLLECT_DISK_IO_INFO;
+            case 30008: return JVMM_COLLECT_SYS_FILE_INFO;
+            case 30009: return JVMM_COLLECT_PORT_STATUS;
+            case 30010: return JVMM_COLLECT_JVM_CLASSLOADING_INFO;
+            case 30011: return JVMM_COLLECT_JVM_CLASSLOADER_INFO;
+            case 30012: return JVMM_COLLECT_JVM_COMPILATION_INFO;
+            case 30013: return JVMM_COLLECT_JVM_GC_INFO;
+            case 30014: return JVMM_COLLECT_JVM_MEMORY_MANAGER_INFO;
+            case 30015: return JVMM_COLLECT_JVM_MEMORY_POOL_INFO;
+            case 30016: return JVMM_COLLECT_JVM_MEMORY_INFO;
+            case 30017: return JVMM_COLLECT_JVM_THREAD_STACK;
+            case 30018: return JVMM_COLLECT_JVM_THREAD_INFO;
+            case 30019: return JVMM_COLLECT_JVM_THREAD_DETAIL;
+            case 30020: return JVMM_COLLECT_JVM_DUMP_THREAD;
+            case 30021: return JVMM_COLLECT_JVM_THREAD_ORDERED_CPU_TIME;
+            case 30022: return JVMM_COLLECT_JVM_THREAD_POOL;
+            case 31011: return JVMM_COLLECT_BATCH;
+            case 40001: return JVMM_PROFILER_EXECUTE;
+            case 40002: return JVMM_PROFILER_SAMPLE;
+            case 40003: return JVMM_PROFILER_SAMPLE_START;
+            case 40004: return JVMM_PROFILER_SAMPLE_STOP;
+            case 40005: return JVMM_PROFILER_STATUS;
+            case 40006: return JVMM_PROFILER_LIST_EVENTS;
+            default: return null;
+        }
     }
 }

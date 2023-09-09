@@ -259,6 +259,9 @@ public class ServerBootstrap {
             logger().error("Jvmm service start failed: " + e.getMessage(), e);
             callback.apply(e.getMessage());
             callback.apply("end");
+            if (ServerContext.isBootApp()) {
+                System.exit(1);
+            }
         }
     }
 

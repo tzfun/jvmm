@@ -1,5 +1,6 @@
 package org.beifengtz.jvmm.server;
 
+import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
 import org.beifengtz.jvmm.server.entity.conf.Configuration;
 
 import java.io.File;
@@ -9,11 +10,13 @@ import java.io.InputStream;
 /**
  * description: TODO
  * date 15:36 2023/2/1
+ *
  * @author beifengtz
  */
 public class ServerApplication {
 
     private static Configuration loadConf(String[] args) throws IOException {
+        System.setProperty(SystemPropertyUtil.PROPERTY_JVMM_SERVER_APPLICATION, "true");
         if (args.length > 0) {
             File file = new File(args[0]);
             if (file.exists()) {
@@ -43,7 +46,7 @@ public class ServerApplication {
         return null;
     }
 
-    public static void main(String[] args) throws Throwable {
+    public static void main(String[] args) throws Exception {
         ServerBootstrap.getInstance(loadConf(args)).start();
     }
 }

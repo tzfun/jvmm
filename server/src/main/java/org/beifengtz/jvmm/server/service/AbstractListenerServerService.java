@@ -3,6 +3,7 @@ package org.beifengtz.jvmm.server.service;
 import io.netty.channel.unix.Errors;
 import io.netty.util.concurrent.Promise;
 import org.beifengtz.jvmm.common.util.PlatformUtil;
+import org.beifengtz.jvmm.server.ServerContext;
 import org.beifengtz.jvmm.server.entity.conf.JvmmServerConf;
 import org.slf4j.Logger;
 
@@ -66,6 +67,9 @@ public abstract class AbstractListenerServerService implements JvmmService {
                 logger().error("Jvmm service start up failed. " + e.getMessage(), e);
                 promise.tryFailure(e);
                 this.shutdown();
+                if (ServerContext.isBootApp()) {
+                    System.exit(1);
+                }
             }
         } else {
             if (conf.isAdaptivePort()) {
@@ -75,6 +79,9 @@ public abstract class AbstractListenerServerService implements JvmmService {
             } else {
                 promise.tryFailure(new RuntimeException("Port " + runningPort.get() + " is not available and the auto increase switch is closed."));
                 this.shutdown();
+                if (ServerContext.isBootApp()) {
+                    System.exit(1);
+                }
             }
         }
     }

@@ -1,8 +1,5 @@
 package org.beifengtz.jvmm.convey.enums;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * <p>
  * Description: TODO
@@ -22,15 +19,9 @@ public enum RpcStatus {
     JVMM_STATUS_PROFILER_FAILED(10006);
 
     private final int value;
-    private static final Map<Integer, RpcStatus> VALUE_MAP = new HashMap<>();
 
     RpcStatus(int value) {
         this.value = value;
-        mapping();
-    }
-
-    void mapping() {
-        VALUE_MAP.put(value, this);
     }
 
     public int getValue() {
@@ -38,6 +29,15 @@ public enum RpcStatus {
     }
 
     public static RpcStatus valueOf(int value) {
-        return VALUE_MAP.get(value);
+        switch (value){
+            case 0: return JVMM_STATUS_OK;
+            case 10001: return JVMM_STATUS_SERVER_ERROR;
+            case 10002: return JVMM_STATUS_UNRECOGNIZED_CONTENT;
+            case 10003: return JVMM_STATUS_AUTHENTICATION_FAILED;
+            case 10004: return JVMM_STATUS_ILLEGAL_ARGUMENTS;
+            case 10005: return JVMM_STATUS_EXECUTE_FAILED;
+            case 10006: return JVMM_STATUS_PROFILER_FAILED;
+            default: return null;
+        }
     }
 }

@@ -60,7 +60,7 @@ public class ExecuteController {
         return info;
     }
 
-    @JvmmMapping(RpcType.JVMM_EXECUTE_SWITCHES_GET)
+    @JvmmMapping(RpcType.JVMM_EXECUTE_SWITCHES_SET)
     @HttpRequest("/execute/set_switches")
     public String setSwitches(@RequestParam Switches[] names, @RequestParam boolean open) {
         JvmmExecutor executor = JvmmFactory.getExecutor();

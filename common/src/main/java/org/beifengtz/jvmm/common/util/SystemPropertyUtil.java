@@ -29,6 +29,7 @@ public class SystemPropertyUtil {
     public static final String PROPERTY_JVMM_LOG_FILE_LIMIT_SIZE = "jvmm.log.fileLimitSize";
     public static final String PROPERTY_JVMM_LOG_PATTERN = "jvmm.log.pattern";
     public static final String PROPERTY_JVMM_LOG_PRINTERS = "jvmm.log.printers";
+    public static final String PROPERTY_JVMM_SERVER_APPLICATION = "jvmm.server.app";
 
 
     private static Logger logger() {

@@ -177,6 +177,9 @@ public class ServerContext {
             }
         } catch (Exception e) {
             promise.tryFailure(e);
+            if (ServerContext.isBootApp()) {
+                System.exit(1);
+            }
         }
     }
 
@@ -219,5 +222,9 @@ public class ServerContext {
         }
 
         loadedLogLib = true;
+    }
+
+    public static boolean isBootApp() {
+        return SystemPropertyUtil.getBoolean(SystemPropertyUtil.PROPERTY_JVMM_SERVER_APPLICATION, false);
     }
 }
