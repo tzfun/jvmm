@@ -20,6 +20,7 @@ import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.enums.RpcType;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 import org.beifengtz.jvmm.core.contanstant.CollectionType;
+import org.beifengtz.jvmm.core.contanstant.Switches;
 import org.beifengtz.jvmm.core.entity.info.CPUInfo;
 import org.beifengtz.jvmm.core.entity.info.DiskIOInfo;
 import org.beifengtz.jvmm.core.entity.info.JvmClassLoaderInfo;
@@ -861,18 +862,54 @@ public class ServerServiceImpl extends ServerService {
             )
     })
     @JvmmCmdDesc(
-            headDesc = "Switches status manage: \n- classLoadingVerbose\n - memoryVerbose\n - threadCpuTime\n - threadContentionMonitoring",
+            headDesc = "Switches status manage: \n - classLoadingVerbose\n - memoryVerbose\n - threadCpuTime\n - threadContentionMonitoring",
             tailDesc = "eg1: `switches`\n" +
-                    "eg2: switches -open threadCpuTime\n" +
-                    "eg3: switches -close threadContentionMonitoring"
+                    "eg2: sw -open threadCpuTime\n" +
+                    "eg3: sw -close threadContentionMonitoring"
     )
-    public static void switches(JvmmConnector connector, CmdParser cmd) {
+    public static void sw(JvmmConnector connector, CmdParser cmd) {
         if (cmd.hasArg("open") || cmd.hasArg("close")) {
             String target = cmd.hasArg("open")
                     ? cmd.getArg("open")
                     : cmd.getArg("close");
+            JsonArray switches = new JsonArray();
+            String[] names = target.split(",");
+            for (String name : names) {
+                try {
+                    Switches.valueOf(name.trim());
+                } catch (IllegalArgumentException e) {
+                    printErr("Invalid switch: " + name);
+                    return;
+                }
+                switches.add(name);
+            }
+            JsonObject data = new JsonObject();
+            data.addProperty("open", cmd.hasArg("open"));
+            data.add("names", switches);
+            JvmmRequest request = JvmmRequest.create()
+                    .setType(RpcType.JVMM_EXECUTE_SWITCHES_SET)
+                    .setData(data);
+            JvmmResponse response = request(connector, request);
+            if (response == null) {
+                return;
+            }
+            System.out.println(response.getData());
         } else {
-
+            JvmmRequest request = JvmmRequest.create().setType(RpcType.JVMM_EXECUTE_SWITCHES_GET);
+            JvmmResponse response = request(connector, request);
+            if (response == null) {
+                return;
+            }
+            TableFormatter table = new TableFormatter();
+            table.setHead("Thread Contention", "Thread CPU Time", "Memory Verbose", "Classload Verbose");
+            JsonObject json = response.getData().getAsJsonObject();
+            table.addRow(
+                    json.get("threadContentionMonitoring").toString(),
+                    json.get("threadCpuTime").toString(),
+                    json.get("memoryVerbose").toString(),
+                    json.get("classloadingVerbose").toString()
+            );
+            table.print();
         }
     }
 }

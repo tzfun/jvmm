@@ -216,35 +216,36 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Jvm
 
             Class<?>[] parameterTypes = method.getParameterTypes();
             Object[] parameter = new Object[parameterTypes.length];
+            JsonElement reqData = reqMsg.getData();
             for (int i = 0; i < parameterTypes.length; i++) {
                 Class<?> parameterType = parameterTypes[i];
+                String argName = method.getParameters()[i].getName();
+
                 if (Channel.class.isAssignableFrom(parameterType)) {
                     parameter[i] = ctx.channel();
                 } else if (JvmmRequest.class.isAssignableFrom(parameterType)) {
                     parameter[i] = reqMsg;
                 } else if (JsonObject.class.isAssignableFrom(parameterType)) {
-                    parameter[i] = reqMsg.getData() == null ? null : reqMsg.getData().getAsJsonObject();
+                    parameter[i] = reqData == null ? null : reqData.getAsJsonObject();
                 } else if (JsonArray.class.isAssignableFrom(parameterType)) {
-                    parameter[i] = reqMsg.getData() == null ? null : reqMsg.getData().getAsJsonArray();
+                    parameter[i] = reqData == null ? null : reqData.getAsJsonArray();
                 } else if (JsonElement.class.isAssignableFrom(parameterType)) {
-                    parameter[i] = reqMsg.getData();
+                    parameter[i] = reqData;
                 } else if (String.class.isAssignableFrom(parameterType)) {
-                    JsonElement data = reqMsg.getData();
-                    if (data == null) {
+                    if (reqData == null) {
                         parameter[i] = null;
                     } else {
-                        if (data.isJsonObject()) {
-                            String paramName = method.getParameters()[i].getName();
-                            JsonElement value = data.getAsJsonObject().get(paramName);
+                        if (reqData.isJsonObject()) {
+                            JsonElement value = reqData.getAsJsonObject().get(argName);
                             if (value == null) {
                                 parameter[i] = null;
                             } else {
                                 parameter[i] = value.getAsString();
                             }
-                        } else if (data.isJsonPrimitive()) {
-                            parameter[i] = data.getAsString();
+                        } else if (reqData.isJsonPrimitive()) {
+                            parameter[i] = reqData.getAsString();
                         } else {
-                            parameter[i] = data.toString();
+                            parameter[i] = reqData.toString();
                         }
                     }
                 } else if (EventExecutor.class.isAssignableFrom(parameterType)) {
@@ -267,15 +268,14 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Jvm
                         ctx.channel().writeAndFlush(response);
                     });
                 } else if (parameterType.isEnum()) {
-                    parameter[i] = Enum.valueOf((Class<? extends Enum>) parameterType, reqMsg.getData().toString());
+                    parameter[i] = Enum.valueOf((Class<? extends Enum>) parameterType, reqData.toString());
                 } else if (ReflexUtil.isBaseType(parameterType)) {
-                    JsonElement data = reqMsg.getData();
-                    if (data != null) {
-                        if (data.isJsonPrimitive()) {
-                            parameter[i] = ReflexUtil.parseValueFromStr(parameterType, data.getAsString());
-                        } else if (data.isJsonObject()) {
+                    if (reqData != null) {
+                        if (reqData.isJsonPrimitive()) {
+                            parameter[i] = ReflexUtil.parseValueFromStr(parameterType, reqData.getAsString());
+                        } else if (reqData.isJsonObject()) {
                             String paramName = method.getParameters()[i].getName();
-                            JsonElement value = data.getAsJsonObject().get(paramName);
+                            JsonElement value = reqData.getAsJsonObject().get(paramName);
                             if (value != null) {
                                 parameter[i] = ReflexUtil.parseValueFromStr(parameterType, value.getAsString());
                             }
@@ -285,7 +285,19 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Jvm
                         parameter[i] = ReflexUtil.getBaseTypeDefault(parameterType);
                     }
                 } else {
-                    parameter[i] = StringUtil.getGson().fromJson(reqMsg.getData(), method.getGenericParameterTypes()[i]);
+                    if (reqData == null) {
+                        parameter[i] = null;
+                        continue;
+                    }
+
+                    JsonElement json = reqData;
+                    if (reqData.isJsonObject()) {
+                        JsonElement paramData = reqData.getAsJsonObject().get(argName);
+                        if (paramData != null) {
+                            json = paramData;
+                        }
+                    }
+                    parameter[i] = StringUtil.getGson().fromJson(json, method.getGenericParameterTypes()[i]);
                 }
             }
 

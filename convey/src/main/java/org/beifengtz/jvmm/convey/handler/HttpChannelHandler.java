@@ -211,6 +211,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
             Object[] parameter = new Object[parameterTypes.length];
             for (int i = 0; i < parameterTypes.length; i++) {
                 Class<?> parameterType = parameterTypes[i];
+                String argName = method.getParameters()[i].getName();
                 if (Channel.class.isAssignableFrom(parameterType)) {
                     parameter[i] = ctx.channel();
                 } else if (FullHttpRequest.class.isAssignableFrom(parameterType)) {
@@ -226,7 +227,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                             }
                         } else if (anno.annotationType() == RequestParam.class) {
                             RequestParam rp = (RequestParam) anno;
-                            String key = "".equals(rp.value()) ? method.getParameters()[i].getName() : rp.value();
+                            String key = "".equals(rp.value()) ? argName : rp.value();
                             Object value = params.get(key);
 
                             if (value == null) {
@@ -274,7 +275,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                             }
                         } else if (anno.annotationType() == RequestAttr.class) {
                             RequestAttr ra = (RequestAttr) anno;
-                            String key = "".equals(ra.value()) ? method.getParameters()[i].getName() : ra.value();
+                            String key = "".equals(ra.value()) ? argName : ra.value();
                             parameter[i] = ctx.channel().attr(AttributeKey.valueOf(key)).get();
                         }
                     }
@@ -288,7 +289,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                     parameter[i] = new ResponseFuture(data -> {
                         if (data instanceof JvmmResponse) {
                             JvmmResponse resp = (JvmmResponse) data;
-                            if (RpcStatus.JVMM_STATUS_OK.name().equals(resp.getStatus())) {
+                            if (RpcStatus.JVMM_STATUS_OK == resp.getStatus()) {
                                 response(ctx, HttpResponseStatus.OK, resp.getData().toString());
                             } else {
                                 response(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR, resp.getMessage());
