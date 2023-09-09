@@ -13,8 +13,8 @@ import org.beifengtz.jvmm.convey.handler.JvmmMsgEncoder;
 
 import static org.beifengtz.jvmm.convey.channel.ChannelUtil.CHUNKED_WRITE_HANDLER;
 import static org.beifengtz.jvmm.convey.channel.ChannelUtil.IDLE_STATE_HANDLER;
-import static org.beifengtz.jvmm.convey.channel.ChannelUtil.JVMM_DECODER_HANDLER;
-import static org.beifengtz.jvmm.convey.channel.ChannelUtil.JVMM_ENCODER_HANDLER;
+import static org.beifengtz.jvmm.convey.channel.ChannelUtil.JVMM_DECODER;
+import static org.beifengtz.jvmm.convey.channel.ChannelUtil.JVMM_ENCODER;
 import static org.beifengtz.jvmm.convey.channel.ChannelUtil.LEN_DECODER_HANDLER;
 import static org.beifengtz.jvmm.convey.channel.ChannelUtil.LEN_ENCODER_HANDLER;
 
@@ -46,9 +46,8 @@ public class JvmmServerChannelInitializer extends ChannelInitializer<Channel> {
         }
         p.addLast(provider.getGroup(), LEN_DECODER_HANDLER, new LengthFieldBasedFrameDecoder(0xFFFFFF, 0, 4, 0, 4));
         p.addLast(provider.getGroup(), LEN_ENCODER_HANDLER, new LengthFieldPrepender(4));
-        p.addLast(provider.getGroup(), CHUNKED_WRITE_HANDLER, new ChunkedWriteHandler());
-        p.addLast(provider.getGroup(), JVMM_DECODER_HANDLER, new JvmmMsgDecoder());
-        p.addLast(provider.getGroup(), JVMM_ENCODER_HANDLER, new JvmmMsgEncoder());
+        p.addLast(provider.getGroup(), JVMM_DECODER, new JvmmMsgDecoder());
+        p.addLast(provider.getGroup(), JVMM_ENCODER, new JvmmMsgEncoder());
         p.addLast(provider.getGroup(), provider.getName(), provider.getHandler());
     }
 }

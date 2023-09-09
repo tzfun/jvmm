@@ -33,7 +33,6 @@ public class JvmmMsgDecoder extends MessageToMessageDecoder<ByteBuf> {
             logger.warn("Unable to decode illegal message. {}", ctx.channel());
             return;
         }
-        msg.release();
         out.add(jvmmMsg);
     }
 }

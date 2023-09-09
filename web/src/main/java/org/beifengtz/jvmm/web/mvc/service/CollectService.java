@@ -82,7 +82,7 @@ public class CollectService {
 
     public void startScheduleTask() {
         List<NodePO> nodes = nodeMapper.selectList(Condition.empty());
-        if (nodes.size() > 0) {
+        if (!nodes.isEmpty()) {
             for (NodePO node : nodes) {
                 addScheduleTask(node.getId());
             }
@@ -156,11 +156,11 @@ public class CollectService {
                     JvmmConnector.MsgReceiveListener listener = new JvmmConnector.MsgReceiveListener() {
                         @Override
                         public void onMessage(JvmmResponse rsp) {
-                            if (!Objects.equals(rsp.getType(), RpcType.JVMM_COLLECT_BATCH.name())) {
+                            if (rsp.getType() != RpcType.JVMM_COLLECT_BATCH) {
                                 return;
                             }
                             try {
-                                if (Objects.equals(rsp.getStatus(), RpcStatus.JVMM_STATUS_OK.name())) {
+                                if (rsp.getStatus()!= RpcStatus.JVMM_STATUS_OK) {
                                     long now = System.currentTimeMillis();
                                     JsonObject data = rsp.getData().getAsJsonObject();
                                     trySendWebsocket(now, data);

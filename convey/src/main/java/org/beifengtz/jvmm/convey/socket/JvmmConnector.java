@@ -14,8 +14,8 @@ import io.netty.util.concurrent.DefaultPromise;
 import org.beifengtz.jvmm.common.exception.RpcStatusException;
 import org.beifengtz.jvmm.common.exception.SocketExecuteException;
 import org.beifengtz.jvmm.common.util.SignatureUtil;
-import org.beifengtz.jvmm.convey.auth.JvmmBubbleDecrypt;
-import org.beifengtz.jvmm.convey.auth.JvmmBubbleEncrypt;
+import org.beifengtz.jvmm.convey.auth.JvmmBubbleDecoder;
+import org.beifengtz.jvmm.convey.auth.JvmmBubbleEncoder;
 import org.beifengtz.jvmm.convey.channel.ChannelUtil;
 import org.beifengtz.jvmm.convey.channel.JvmmServerChannelInitializer;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
@@ -69,7 +69,7 @@ public class JvmmConnector implements Closeable {
     }
 
     private enum State {
-        NONE, CONNECTED, CLOSED
+        NONE, CONNECTING, CONNECTED, CLOSED
     }
 
     public interface MsgReceiveListener {
@@ -119,10 +119,10 @@ public class JvmmConnector implements Closeable {
                 int seed = data.get("seed").getAsInt();
 
                 ctx.pipeline()
-                        .addAfter(ctx.executor(), ChannelUtil.STRING_DECODER_HANDLER,
-                                JvmmServerChannelInitializer.JVMM_BUBBLE_ENCODER, new JvmmBubbleEncrypt(seed, key))
-                        .addAfter(ctx.executor(), ChannelUtil.STRING_DECODER_HANDLER,
-                                JvmmServerChannelInitializer.JVMM_BUBBLE_DECODER, new JvmmBubbleDecrypt(seed, key));
+                        .addBefore(ctx.executor(), ChannelUtil.JVMM_ENCODER,
+                                JvmmServerChannelInitializer.JVMM_BUBBLE_ENCODER, new JvmmBubbleEncoder(seed, key))
+                        .addBefore(ctx.executor(), ChannelUtil.JVMM_DECODER,
+                                JvmmServerChannelInitializer.JVMM_BUBBLE_DECODER, new JvmmBubbleDecoder(seed, key));
 
                 JvmmRequest authReq = JvmmRequest.create().setType(RpcType.JVMM_AUTHENTICATION);
 
@@ -133,10 +133,10 @@ public class JvmmConnector implements Closeable {
                     authReq.setData(reqData);
                 }
 
-                ctx.pipeline().writeAndFlush(authReq);
+                ctx.writeAndFlush(authReq);
 
                 if (keepAlive) {
-                    workGroup.next().execute(new HeartBeatHandler());
+                    workGroup.next().schedule(new HeartBeatHandler(), 3, TimeUnit.SECONDS);
                 }
 
             } else if (RpcType.JVMM_AUTHENTICATION == type) {
@@ -219,18 +219,21 @@ public class JvmmConnector implements Closeable {
             connectFuture.addListener(f -> {
                 if (f.isSuccess()) {
                     channel = connectFuture.channel();
+                    state = State.CONNECTED;
                     channel.closeFuture().addListener(future -> {
                         state = State.CLOSED;
+                        System.out.println("connector closed");
                         if (closeListener != null) {
                             closeListener.onclose();
                         }
                     });
                 } else {
+                    state = State.CLOSED;
                     openFuture.completeExceptionally(f.cause());
                 }
             });
 
-            state = State.CONNECTED;
+            state = State.CONNECTING;
         } else {
             logger.warn("Jvmm socket connector is already connected.");
         }
@@ -260,7 +263,7 @@ public class JvmmConnector implements Closeable {
                     future.completeExceptionally(f.cause());
                 }
             });
-            future.whenComplete((r,t) -> unregisterListener(listener));
+            future.whenComplete((r, t) -> unregisterListener(listener));
         } else {
             future.completeExceptionally(new IllegalStateException("Jvmm socket has disconnected"));
         }

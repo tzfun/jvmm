@@ -39,7 +39,7 @@ public class JvmmServerHandler extends JvmmChannelHandler {
     protected boolean handleBefore(ChannelHandlerContext ctx, JvmmRequest reqMsg) throws Exception {
         JvmmServerConf conf = ServerContext.getConfiguration().getServer().getJvmm();
 
-        if (Objects.equals(reqMsg.getType(), RpcType.JVMM_AUTHENTICATION.name())) {
+        if (reqMsg.getType() == RpcType.JVMM_AUTHENTICATION) {
             auth(ctx, reqMsg, conf);
             return false;
         } else {

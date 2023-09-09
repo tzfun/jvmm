@@ -197,6 +197,9 @@ public class ServerContext {
             ExecutorFactory.releaseThreadPool();
             workerGroup.shutdownGracefully();
             workerGroup = null;
+            if (isBootApp()) {
+                System.exit(0);
+            }
         }
     }
 

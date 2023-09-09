@@ -38,8 +38,8 @@ public class ChannelUtil {
     public static final String LEN_ENCODER_HANDLER = "lenEncoderHandler";
     public static final String STRING_DECODER_HANDLER = "stringDecoderHandler";
     public static final String STRING_ENCODER_HANDLER = "stringEncoderHandler";
-    public static final String JVMM_DECODER_HANDLER = "jvmmDecoderHandler";
-    public static final String JVMM_ENCODER_HANDLER = "jvmmEncoderHandler";
+    public static final String JVMM_DECODER = "jvmmDecoder";
+    public static final String JVMM_ENCODER = "jvmmEncoder";
     public static final String CHUNKED_WRITE_HANDLER = "chunkedWriteHandler";
     public static final String HTTP_CODEC_HANDLER = "httpCodecHandler";
     public static final String AGGREGATOR_HANDLER = "HttpObjectAggregator";

@@ -22,7 +22,7 @@ import java.nio.charset.StandardCharsets;
  *
  * @author beifengtz
  */
-public class JvmmResponse implements JvmmMsg, JsonParsable {
+public class JvmmResponse implements JvmmMsg {
     private RpcType type;
     private RpcStatus status;
     private String message;
@@ -73,6 +73,7 @@ public class JvmmResponse implements JvmmMsg, JsonParsable {
                     bytes = new byte[messageLength];
                     msg.readBytes(bytes);
                     response.setMessage(new String(bytes, StandardCharsets.UTF_8));
+                    break;
                 }
                 case JvmmMsg.MSG_FLAG_DATA: {
                     byte len = msg.readByte();
@@ -82,6 +83,7 @@ public class JvmmResponse implements JvmmMsg, JsonParsable {
                     bytes = new byte[dataLength];
                     msg.readBytes(bytes);
                     response.setData(JsonParser.parseString(new String(bytes, StandardCharsets.UTF_8)));
+                    break;
                 }
                 default: {
                     throw new MessageSerializeException("Can not parse jvmm message field with wrong flag");
@@ -102,39 +104,39 @@ public class JvmmResponse implements JvmmMsg, JsonParsable {
         CompositeByteBuf compositeByteBuf = Unpooled.compositeBuffer();
 
         //  消息体标志
-        compositeByteBuf.addComponent(Unpooled.wrappedBuffer(new byte[]{JvmmMsg.MSG_FLAG_RESPONSE}));
+        compositeByteBuf.addComponent(true, Unpooled.wrappedBuffer(new byte[]{JvmmMsg.MSG_FLAG_RESPONSE}));
 
         //  消息类型标志
         byte[] typeBytes = CodingUtil.intToAtomicByteArray(type.getValue());
-        compositeByteBuf.addComponent(Unpooled.wrappedBuffer(new byte[]{JvmmMsg.MSG_FLAG_TYPE, (byte) typeBytes.length}));
-        compositeByteBuf.addComponent(Unpooled.wrappedBuffer(typeBytes));
+        compositeByteBuf.addComponent(true, Unpooled.wrappedBuffer(new byte[]{JvmmMsg.MSG_FLAG_TYPE, (byte) typeBytes.length}));
+        compositeByteBuf.addComponent(true, Unpooled.wrappedBuffer(typeBytes));
 
         //  上下文ID标志
         byte[] contextIdBytes = CodingUtil.longToByteArray(contextId);
-        compositeByteBuf.addComponent(Unpooled.wrappedBuffer(new byte[]{JvmmMsg.MSG_FLAG_CONTEXT_ID, (byte) contextIdBytes.length}));
-        compositeByteBuf.addComponent(Unpooled.wrappedBuffer(contextIdBytes));
+        compositeByteBuf.addComponent(true, Unpooled.wrappedBuffer(new byte[]{JvmmMsg.MSG_FLAG_CONTEXT_ID, (byte) contextIdBytes.length}));
+        compositeByteBuf.addComponent(true, Unpooled.wrappedBuffer(contextIdBytes));
 
         //  消息状态码标志
         byte[] statusBytes = CodingUtil.intToAtomicByteArray(status.getValue());
-        compositeByteBuf.addComponent(Unpooled.wrappedBuffer(new byte[]{JvmmMsg.MSG_FLAG_STATUS, (byte) statusBytes.length}));
-        compositeByteBuf.addComponent(Unpooled.wrappedBuffer(statusBytes));
+        compositeByteBuf.addComponent(true, Unpooled.wrappedBuffer(new byte[]{JvmmMsg.MSG_FLAG_STATUS, (byte) statusBytes.length}));
+        compositeByteBuf.addComponent(true, Unpooled.wrappedBuffer(statusBytes));
 
         //  消息标志
         if (message != null) {
             byte[] messageBytes = data.toString().getBytes(StandardCharsets.UTF_8);
             byte[] lenBytes = CodingUtil.intToAtomicByteArray(messageBytes.length);
-            compositeByteBuf.addComponent(Unpooled.wrappedBuffer(new byte[]{JvmmMsg.MSG_FLAG_MESSAGE, (byte) lenBytes.length}));
-            compositeByteBuf.addComponent(Unpooled.wrappedBuffer(lenBytes));
-            compositeByteBuf.addComponent(Unpooled.wrappedBuffer(messageBytes));
+            compositeByteBuf.addComponent(true, Unpooled.wrappedBuffer(new byte[]{JvmmMsg.MSG_FLAG_MESSAGE, (byte) lenBytes.length}));
+            compositeByteBuf.addComponent(true, Unpooled.wrappedBuffer(lenBytes));
+            compositeByteBuf.addComponent(true, Unpooled.wrappedBuffer(messageBytes));
         }
 
         //  数据标志
         if (data != null) {
             byte[] dataBytes = data.toString().getBytes(StandardCharsets.UTF_8);
             byte[] lenBytes = CodingUtil.intToAtomicByteArray(dataBytes.length);
-            compositeByteBuf.addComponent(Unpooled.wrappedBuffer(new byte[]{JvmmMsg.MSG_FLAG_DATA, (byte) lenBytes.length}));
-            compositeByteBuf.addComponent(Unpooled.wrappedBuffer(lenBytes));
-            compositeByteBuf.addComponent(Unpooled.wrappedBuffer(dataBytes));
+            compositeByteBuf.addComponent(true, Unpooled.wrappedBuffer(new byte[]{JvmmMsg.MSG_FLAG_DATA, (byte) lenBytes.length}));
+            compositeByteBuf.addComponent(true, Unpooled.wrappedBuffer(lenBytes));
+            compositeByteBuf.addComponent(true, Unpooled.wrappedBuffer(dataBytes));
         }
         return compositeByteBuf;
     }

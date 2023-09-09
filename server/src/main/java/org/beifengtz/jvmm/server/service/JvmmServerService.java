@@ -63,7 +63,7 @@ public class JvmmServerService extends AbstractListenerServerService {
             logger.info("Trigger to shutdown jvmm server...");
             channel.close().addListener((GenericFutureListener<Future<Void>>) future -> {
                 if (future.isSuccess()) {
-                    logger.info("Jvmm server is shutdown");
+                    logger.info("Jvmm server has been shutdown");
                     JvmmChannelHandler.closeAllChannels().addListener((GenericFutureListener<Future<Void>>) f -> {
                         logger.info("Jvmm server all channels has closed");
                     });

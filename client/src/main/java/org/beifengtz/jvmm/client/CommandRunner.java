@@ -371,9 +371,9 @@ public class CommandRunner {
                 password = GuidedRunner.askServerAuthPassword();
                 return tryConnect(host, port, group, username, password);
             }
-        } catch (ExecutionException | TimeoutException e) {
+        } catch (ExecutionException| TimeoutException e) {
             logger.error("Connect server failed! case: time out");
-            System.exit(-1);
+            System.exit(1);
         }
         return null;
     }

@@ -1,6 +1,9 @@
 package org.beifengtz.jvmm.convey.entity;
 
 import io.netty.buffer.ByteBuf;
+import org.beifengtz.jvmm.common.JsonParsable;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * description TODO
@@ -8,7 +11,9 @@ import io.netty.buffer.ByteBuf;
  *
  * @author beifengtz
  */
-public interface JvmmMsg {
+public interface JvmmMsg extends JsonParsable {
+
+    byte MSG_FLAG_CRC = 0;
     byte MSG_FLAG_REQUEST = 1;
     byte MSG_FLAG_RESPONSE = 2;
     byte MSG_FLAG_TYPE = 3;

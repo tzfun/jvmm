@@ -37,20 +37,16 @@ public class SignatureUtil {
      * @return 结果
      * @throws Exception 加密异常
      */
-    public static String AESEncrypt(String src, String key) throws Exception {
-        if (Objects.isNull(src)) {
-            src = "";
-        }
+    public static byte[] AESEncrypt(byte[] src, String key) throws Exception {
         if (key.length() != 16) {
             throw new IllegalArgumentException("length of key must be 16: " + key.length());
         }
         byte[] raw = key.getBytes(StandardCharsets.UTF_8);
         SecretKeySpec spec = new SecretKeySpec(raw, "AES");
-        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");//"算法/模式/补码方式"
+        //  算法/模式/补码方式
+        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
         cipher.init(Cipher.ENCRYPT_MODE, spec);
-        byte[] encrypted = cipher.doFinal(src.getBytes(StandardCharsets.UTF_8));
-
-        return Base64.getEncoder().encodeToString(encrypted);//此处使用BASE64做转码功能，同时能起到2次加密的作用。
+        return cipher.doFinal(src);
     }
 
     /**
@@ -60,21 +56,15 @@ public class SignatureUtil {
      * @param key 秘钥
      * @return 结果
      */
-    public static String AESDecrypt(String src, String key) {
-        try {
-            if (key.length() != 16) {
-                throw new IllegalArgumentException("length of key must be 16");
-            }
-            byte[] raw = key.getBytes(StandardCharsets.UTF_8);
-            SecretKeySpec spec = new SecretKeySpec(raw, "AES");
-            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-            cipher.init(Cipher.DECRYPT_MODE, spec);
-            byte[] encrypted1 = Base64.getDecoder().decode(src);
-            byte[] original = cipher.doFinal(encrypted1);
-            return new String(original, StandardCharsets.UTF_8);
-        } catch (Exception ignore) {
-            return null;
+    public static byte[] AESDecrypt(byte[] src, String key) throws Exception {
+        if (key.length() != 16) {
+            throw new IllegalArgumentException("length of key must be 16");
         }
+        byte[] raw = key.getBytes(StandardCharsets.UTF_8);
+        SecretKeySpec spec = new SecretKeySpec(raw, "AES");
+        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+        cipher.init(Cipher.DECRYPT_MODE, spec);
+        return cipher.doFinal(src);
     }
 
     /**

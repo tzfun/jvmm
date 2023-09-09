@@ -5,14 +5,11 @@ import com.google.gson.JsonParser;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.CompositeByteBuf;
 import io.netty.buffer.Unpooled;
-import org.beifengtz.jvmm.common.JsonParsable;
 import org.beifengtz.jvmm.common.exception.MessageSerializeException;
 import org.beifengtz.jvmm.common.util.CodingUtil;
 import org.beifengtz.jvmm.convey.enums.RpcType;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -24,8 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author beifengtz
  */
-public class JvmmRequest implements JvmmMsg, JsonParsable {
-
+public class JvmmRequest implements JvmmMsg {
     private static final AtomicInteger ID_COUNTER = new AtomicInteger();
     private RpcType type;
     private JsonElement data;
@@ -90,6 +86,7 @@ public class JvmmRequest implements JvmmMsg, JsonParsable {
                     bytes = new byte[dataLength];
                     msg.readBytes(bytes);
                     request.setData(JsonParser.parseString(new String(bytes, StandardCharsets.UTF_8)));
+                    break;
                 }
                 default: {
                     throw new MessageSerializeException("Can not parse jvmm message field with wrong flag");
@@ -108,25 +105,25 @@ public class JvmmRequest implements JvmmMsg, JsonParsable {
         }
         CompositeByteBuf compositeByteBuf = Unpooled.compositeBuffer();
         //  消息体标志
-        compositeByteBuf.addComponent(Unpooled.wrappedBuffer(new byte[]{JvmmMsg.MSG_FLAG_REQUEST}));
+        compositeByteBuf.addComponent(true, Unpooled.wrappedBuffer(new byte[]{JvmmMsg.MSG_FLAG_REQUEST}));
 
         //  消息类型标志
         byte[] typeBytes = CodingUtil.intToAtomicByteArray(type.getValue());
-        compositeByteBuf.addComponent(Unpooled.wrappedBuffer(new byte[]{JvmmMsg.MSG_FLAG_TYPE, (byte) typeBytes.length}));
-        compositeByteBuf.addComponent(Unpooled.wrappedBuffer(typeBytes));
+        compositeByteBuf.addComponent(true, Unpooled.wrappedBuffer(new byte[]{JvmmMsg.MSG_FLAG_TYPE, (byte) typeBytes.length}));
+        compositeByteBuf.addComponent(true, Unpooled.wrappedBuffer(typeBytes));
 
         //  上下文ID标志
         byte[] contextIdBytes = CodingUtil.longToByteArray(contextId);
-        compositeByteBuf.addComponent(Unpooled.wrappedBuffer(new byte[]{JvmmMsg.MSG_FLAG_CONTEXT_ID, (byte) contextIdBytes.length}));
-        compositeByteBuf.addComponent(Unpooled.wrappedBuffer(contextIdBytes));
+        compositeByteBuf.addComponent(true, Unpooled.wrappedBuffer(new byte[]{JvmmMsg.MSG_FLAG_CONTEXT_ID, (byte) contextIdBytes.length}));
+        compositeByteBuf.addComponent(true, Unpooled.wrappedBuffer(contextIdBytes));
 
         //  数据标志
         if (data != null) {
             byte[] dataBytes = data.toString().getBytes(StandardCharsets.UTF_8);
             byte[] lenBytes = CodingUtil.intToAtomicByteArray(dataBytes.length);
-            compositeByteBuf.addComponent(Unpooled.wrappedBuffer(new byte[]{JvmmMsg.MSG_FLAG_DATA, (byte) lenBytes.length}));
-            compositeByteBuf.addComponent(Unpooled.wrappedBuffer(lenBytes));
-            compositeByteBuf.addComponent(Unpooled.wrappedBuffer(dataBytes));
+            compositeByteBuf.addComponent(true, Unpooled.wrappedBuffer(new byte[]{JvmmMsg.MSG_FLAG_DATA, (byte) lenBytes.length}));
+            compositeByteBuf.addComponent(true, Unpooled.wrappedBuffer(lenBytes));
+            compositeByteBuf.addComponent(true, Unpooled.wrappedBuffer(dataBytes));
         }
         return compositeByteBuf;
     }
