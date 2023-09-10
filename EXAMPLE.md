@@ -1,6 +1,6 @@
-# Collections
+# info
 
-下面提供一些简单的数据采集示例，以 `json` 格式展示，每一个信息都与 core 模块中的 Java Entity对应。
+下面提供一些简单的数据采集示例，以 `json` 和 `table` 格式展示，每一个信息都与 core 模块中的 Java Entity对应。
 
 ## Machine Collections
 
@@ -14,27 +14,24 @@ info -t process
 
 ```json
 {
-   "name":"16056@DESKTOP-236E652",
-   "startTime":1682215965485,
-   "uptime":80371,
-   "pid":16056,
-   "vmVersion":"11.0.13+10-LTS-370",
-   "vmVendor":"Oracle Corporation",
-   "vmName":"Java HotSpot(TM) 64-Bit Server VM",
-   "vmHome":"D:\\Java\\jdk-11.0.13",
-   "vmManagementSpecVersion":"2.0",
-   "vmSpecName":"Java Virtual Machine Specification",
-   "vmSpecVendor":"Oracle Corporation",
-   "vmSpecVersion":"11",
-   "inputArgs": [
-      "-Dlog4j.skipJansi=false",
-      "-agentlib:jdwp=transport=dt_socket, server=n, suspend=y,address=127.0.0.1:63212",
-      "-Dfile.encoding=UTF-8",
-      "-Duser.country=CN",
-      "-Duser.language=zh",
-      "-Duser.variant"
-   ],
-   "workDir":"E:\\Project\\ProjectChain\\C1\\C1Server"
+  "name": "13106@beifengtzs-MacBook-Pro.local",
+  "startTime": 1694325547579,
+  "uptime": 34138,
+  "pid": 13106,
+  "vmVersion": "11.0.13+10-LTS-370",
+  "vmVendor": "Oracle Corporation",
+  "vmName": "Java HotSpot(TM) 64-Bit Server VM",
+  "vmHome": "/Library/Java/JavaVirtualMachines/jdk-11.0.13.jdk/Contents/Home",
+  "vmManagementSpecVersion": "2.0",
+  "vmSpecName": "Java Virtual Machine Specification",
+  "vmSpecVendor": "Oracle Corporation",
+  "vmSpecVersion": "11",
+  "inputArgs": [
+    "--add-opens\u003djava.base/jdk.internal.loader\u003dALL-UNNAMED",
+    "--add-opens\u003djdk.zipfs/jdk.nio.zipfs\u003dALL-UNNAMED",
+    "--add-opens\u003djava.management/sun.management\u003dALL-UNNAMED"
+  ],
+  "workDir": "/Users/beifengtz/Program/jvmm-dev/jvmm-2.2.0"
 }
 ```
 
@@ -86,25 +83,13 @@ info -t disk
 info -t disk_io
 ```
 
-```json
-[
-   {
-      "name":"PHYSICALDRIVE1",
-      "readPerSecond":0.0,
-      "writePerSecond":16.0,
-      "readBytesPerSecond":0.0,
-      "writeBytesPerSecond":65536.0,
-      "currentQueueLength":0
-   },
-   {
-      "name":"PHYSICALDRIVE0",
-      "readPerSecond":6.0,
-      "writePerSecond":41.0,
-      "readBytesPerSecond":827392.0,
-      "writeBytesPerSecond":2296320.0,
-      "currentQueueLength":0
-   }
-]
+```text
++------+----------+-----------+----------+-----------+----------+
+|Name  |Read(n/s) |Write(n/s) |Read(b/s) |Write(b/s) |Queue Len |
++------+----------+-----------+----------+-----------+----------+
+|disk0 |1         |21         |4096      |126976     |0         |
+|disk1 |1         |21         |4096      |126976     |0         |
++------+----------+-----------+----------+-----------+----------+
 ```
 
 ### cpu
@@ -113,14 +98,12 @@ info -t disk_io
 info -t cpu
 ```
 
-```json
-{
-   "cpuNum":6,
-   "sys":0.1510177281680893,
-   "user":0.02314510833880499,
-   "ioWait":0.0,
-   "idle":0.8205843729481287
-}
+```text
++--------+-------------+--------------+-----------+--------+
+|CPU Num |Sys Usage(%) |User Usage(%) |IO Wait(%) |Idle(%) |
++--------+-------------+--------------+-----------+--------+
+|16      |0.80         |1.61          |0.00       |97.57   |
++--------+-------------+--------------+-----------+--------+
 ```
 
 ### network
@@ -236,16 +219,12 @@ info -t network
 info -t sys
 ```
 
-```json
-{
-   "name":"Windows 10",
-   "version":"10.0",
-   "arch":"amd64",
-   "cpuNum":6,
-   "timeZone":"Asia/Shanghai",
-   "ip":"192.168.0.198",
-   "user":"Administrator"
-}
+```text
++---------+--------+-------+----+--------------+---------------+----------+
+|Name     |Version |Arch   |CPU |Time Zone     |IP             |User      |
++---------+--------+-------+----+--------------+---------------+----------+
+|Mac OS X |11.1    |x86_64 |16  |Asia/Shanghai |192.168.31.163 |beifengtz |
++---------+--------+-------+----+--------------+---------------+----------+
 ```
 
 ### sys_memory
@@ -254,16 +233,12 @@ info -t sys
 info -t sys_memory
 ```
 
-```json
-{
-   "committedVirtual":435396608,
-   "totalPhysical":17120530432,
-   "freePhysical":2682462208,
-   "totalSwap":34562719744,
-   "freeSwap":2682462208,
-   "bufferCache":0,
-   "shared":0
-}
+```text
++------------+--------------+-----------+----------+------------------+-------------+-------+
+|Physical    |Physical Free |Swap       |Swap Free |Committed Virtual |Buffer Cache |Shared |
++------------+--------------+-----------+----------+------------------+-------------+-------+
+|17179869184 |145301504     |5368709120 |145301504 |41118126080       |0            |0      |
++------------+--------------+-----------+----------+------------------+-------------+-------+
 ```
 
 ### sys_file
@@ -272,38 +247,19 @@ info -t sys_memory
 info -t sys_file
 ```
 
-```json
-[
-   {
-      "name":"本地固定磁盘 (C:)",
-      "mount":"C:\\",
-      "label":"System",
-      "type":"NTFS",
-      "size":255817510912,
-      "free":81914798080,
-      "usable":81914798080
-   },
-   {
-      "name":"本地固定磁盘 (D:)",
-      "mount":"D:\\",
-      "label":"Soft",
-      "type":"NTFS",
-      "size":334340550656,
-      "free":239368650752,
-      "usable":239368650752
-   },
-   {
-      "name":"本地固定磁盘 (E:)",
-      "mount":"E:\\",
-      "label":"Work",
-      "type":"NTFS",
-      "size":665844707328,
-      "free":383934816256,
-      "usable":383934816256
-   }
-]
+```text
++--------------------+----------------------------+--------------------+-----+-------------+-------------+-------------+
+|Name                |Mount                       |Label               |Type |Size(B)      |Free(B)      |Usable(B)    |
++--------------------+----------------------------+--------------------+-----+-------------+-------------+-------------+
+|Macintosh HD        |/                           |Macintosh HD        |apfs |886000558080 |432142954496 |432142954496 |
+|Preboot             |/System/Volumes/Preboot     |Preboot             |apfs |886000558080 |432142954496 |432142954496 |
+|VM                  |/System/Volumes/VM          |VM                  |apfs |886000558080 |432142954496 |432142954496 |
+|Update              |/System/Volumes/Update      |Update              |apfs |886000558080 |432142954496 |432142954496 |
+|Macintosh HD - Data |/System/Volumes/Data        |Macintosh HD - Data |apfs |886000558080 |432142954496 |432142954496 |
+|BOOTCAMP            |/Volumes/BOOTCAMP           |BOOTCAMP            |lifs |114240253952 |88964022272  |88964022272  |
+|Macintosh HD        |/System/Volumes/Update/mnt1 |Macintosh HD        |apfs |886000558080 |432142954496 |432142954496 |
++--------------------+----------------------------+--------------------+-----+-------------+-------------+-------------+
 ```
-
 
 ## JVM Collections
 
@@ -315,13 +271,12 @@ info -t sys_file
 info -t jvm_classloading
 ```
 
-```json
-{
-   "verbose":false,
-   "loadedClassCount":5807,
-   "unLoadedClassCount":0,
-   "totalLoadedClassCount":5807
-}
+```text
++---------------+-----------------+-------------+--------+
+|Loaded Classes |Unloaded Classes |Loaded Total |Verbose |
++---------------+-----------------+-------------+--------+
+|3221           |0                |3221         |false   |
++---------------+-----------------+-------------+--------+
 ```
 
 ### jvm_classloader
@@ -330,24 +285,12 @@ info -t jvm_classloading
 info -t jvm_classloader
 ```
 
-```json
-[
-   {
-      "name":"jdk.internal.loader.ClassLoaders$AppClassLoader",
-      "hash":1768305536,
-      "parents": [
-         "jdk.internal.loader.ClassLoaders$PlatformClassLoader"
-      ]
-   },
-   {
-      "name":"org.beifengtz.jvmm.agent.JvmmAgentClassLoader",
-      "hash":1656061862,
-      "parents": [
-         "jdk.internal.loader.ClassLoaders$AppClassLoader",
-         "jdk.internal.loader.ClassLoaders$PlatformClassLoader"
-      ]
-   }
-]
+```text
++------------------------------------------------+-----------+-----------------------------------------------------+
+|Name                                            |Hash       |Parents                                              |
++------------------------------------------------+-----------+-----------------------------------------------------+
+|jdk.internal.loader.ClassLoaders$AppClassLoader |1267032364 |jdk.internal.loader.ClassLoaders$PlatformClassLoader |
++------------------------------------------------+-----------+-----------------------------------------------------+
 ```
 
 ### jvm_compilation
@@ -356,12 +299,12 @@ info -t jvm_classloader
 info -t jvm_compilation
 ```
 
-```json
-{
-   "name":"HotSpot 64-Bit Tiered Compilers",
-   "timeMonitoringSupported":true,
-   "totalCompilationTime":3439
-}
+```text
++--------------------------------+-----------------+--------------+
+|Name                            |Compilation Time |Support Timer |
++--------------------------------+-----------------+--------------+
+|HotSpot 64-Bit Tiered Compilers |3234             |true          |
++--------------------------------+-----------------+--------------+
 ```
 
 ### jvm_gc
@@ -370,31 +313,13 @@ info -t jvm_compilation
 info -t jvm_gc
 ```
 
-```json
-[
-   {
-      "name":"G1 Young Generation",
-      "valid":true,
-      "collectionCount":4,
-      "collectionTime":21,
-      "memoryPoolNames": [
-         "G1 Eden Space",
-         "G1 Survivor Space",
-         "G1 Old Gen"
-      ]
-   },
-   {
-      "name":"G1 Old Generation",
-      "valid":true,
-      "collectionCount":0,
-      "collectionTime":0,
-      "memoryPoolNames": [
-         "G1 Eden Space",
-         "G1 Survivor Space",
-         "G1 Old Gen"
-      ]
-   }
-]
+```text
++--------------------+------+---------+--------+-------------------------------------------+
+|Name                |Valid |GC Count |GC Time |Memory Pools                               |
++--------------------+------+---------+--------+-------------------------------------------+
+|G1 Young Generation |true  |3        |24      |G1 Eden Space;G1 Survivor Space;G1 Old Gen |
+|G1 Old Generation   |true  |0        |0       |G1 Eden Space;G1 Survivor Space;G1 Old Gen |
++--------------------+------+---------+--------+-------------------------------------------+
 ```
 
 ### jvm_memory
@@ -428,44 +353,15 @@ info -t jvm_memory
 info -t jvm_memory_manager
 ```
 
-```json
-[
-   {
-      "name":"CodeCacheManager",
-      "valid":true,
-      "memoryPoolNames": [
-         "CodeHeap 'non-nmethods'",
-         "CodeHeap 'profiled nmethods'",
-         "CodeHeap 'non-profiled nmethods'"
-      ]
-   },
-   {
-      "name":"Metaspace Manager",
-      "valid":true,
-      "memoryPoolNames": [
-         "Metaspace",
-         "Compressed Class Space"
-      ]
-   },
-   {
-      "name":"G1 Young Generation",
-      "valid":true,
-      "memoryPoolNames": [
-         "G1 Eden Space",
-         "G1 Survivor Space",
-         "G1 Old Gen"
-      ]
-   },
-   {
-      "name":"G1 Old Generation",
-      "valid":true,
-      "memoryPoolNames": [
-         "G1 Eden Space",
-         "G1 Survivor Space",
-         "G1 Old Gen"
-      ]
-   }
-]
+```text
++--------------------+------+--------------------------------------------------------------------------------------+
+|Name                |Valid |Pools                                                                                 |
++--------------------+------+--------------------------------------------------------------------------------------+
+|CodeCacheManager    |true  |CodeHeap 'non-nmethods';CodeHeap 'profiled nmethods';CodeHeap 'non-profiled nmethods' |
+|Metaspace Manager   |true  |Metaspace;Compressed Class Space                                                      |
+|G1 Young Generation |true  |G1 Eden Space;G1 Survivor Space;G1 Old Gen                                            |
+|G1 Old Generation   |true  |G1 Eden Space;G1 Survivor Space;G1 Old Gen                                            |
++--------------------+------+--------------------------------------------------------------------------------------+
 ```
 
 ### jvm_memory_pool
@@ -782,153 +678,29 @@ info -t jvm_thread
 info -t jvm_thread_detail
 ```
 
-```json
-[
-   {
-      "id":2,
-      "name":"Reference Handler",
-      "group":"system",
-      "state":"RUNNABLE",
-      "osState":5,
-      "daemon":true,
-      "priority":10,
-      "userTime":15625000,
-      "cpuTime":15625000,
-      "blockedCount":1,
-      "blockedTime":-1,
-      "waitedCount":0,
-      "waitedTime":-1,
-      "locks": [
-
-      ]
-   },
-   {
-      "id":3,
-      "name":"Finalizer",
-      "group":"system",
-      "state":"WAITING",
-      "osState":401,
-      "daemon":true,
-      "priority":8,
-      "userTime":0,
-      "cpuTime":0,
-      "blockedCount":3,
-      "blockedTime":-1,
-      "waitedCount":4,
-      "waitedTime":-1,
-      "locks": [
-
-      ]
-   },
-   {
-      "id":4,
-      "name":"Signal Dispatcher",
-      "group":"system",
-      "state":"RUNNABLE",
-      "osState":5,
-      "daemon":true,
-      "priority":9,
-      "userTime":0,
-      "cpuTime":0,
-      "blockedCount":0,
-      "blockedTime":-1,
-      "waitedCount":0,
-      "waitedTime":-1,
-      "locks": [
-
-      ]
-   },
-   {
-      "id":5,
-      "name":"Attach Listener",
-      "group":"system",
-      "state":"RUNNABLE",
-      "osState":5,
-      "daemon":true,
-      "priority":5,
-      "userTime":31250000,
-      "cpuTime":31250000,
-      "blockedCount":1,
-      "blockedTime":-1,
-      "waitedCount":1,
-      "waitedTime":-1,
-      "locks": [
-
-      ]
-   },
-   {
-      "id":26,
-      "name":"DestroyJavaVM",
-      "group":"main",
-      "state":"RUNNABLE",
-      "osState":5,
-      "daemon":false,
-      "priority":5,
-      "userTime":875000000,
-      "cpuTime":1078125000,
-      "blockedCount":0,
-      "blockedTime":-1,
-      "waitedCount":0,
-      "waitedTime":-1,
-      "locks": [
-
-      ]
-   },
-   {
-      "id":34,
-      "name":"JNA Cleaner",
-      "group":"jvmm",
-      "state":"WAITING",
-      "osState":401,
-      "daemon":true,
-      "priority":5,
-      "userTime":15625000,
-      "cpuTime":15625000,
-      "blockedCount":10,
-      "blockedTime":-1,
-      "waitedCount":2,
-      "waitedTime":-1,
-      "locks": [
-
-      ]
-   },
-   {
-      "id":35,
-      "name":"pool-5-thread-1",
-      "group":"jvmm",
-      "state":"WAITING",
-      "osState":657,
-      "daemon":false,
-      "priority":5,
-      "userTime":46875000,
-      "cpuTime":140625000,
-      "blockedCount":1,
-      "blockedTime":-1,
-      "waitedCount":7,
-      "waitedTime":-1,
-      "locks": [
-
-      ]
-   },
-   {
-      "id":37,
-      "name":"ForkJoinPool.commonPool-worker-5",
-      "group":"jvmm",
-      "state":"WAITING",
-      "osState":657,
-      "daemon":true,
-      "priority":5,
-      "userTime":15625000,
-      "cpuTime":15625000,
-      "blockedCount":0,
-      "blockedTime":-1,
-      "waitedCount":3,
-      "waitedTime":-1,
-      "locks": [
-
-      ]
-   }
-]
+```text
++---+----------------------------------+---------------------+--------------+---------+-------+---------+-----------+-----------+--------+------------+-------+-----------+
+|ID |Name                              |Group                |State         |OS State |Daemon |Priority |User(ns)   |CPU(ns)    |Blocked |Blocked(ns) |Waited |Waited(ns) |
++---+----------------------------------+---------------------+--------------+---------+-------+---------+-----------+-----------+--------+------------+-------+-----------+
+|2  |Reference Handler                 |system               |RUNNABLE      |5        |true   |10       |30622000   |31806000   |6       |-1          |0      |-1         |
+|3  |Finalizer                         |system               |WAITING       |401      |true   |8        |172000     |235000     |1       |-1          |2      |-1         |
+|4  |Signal Dispatcher                 |system               |RUNNABLE      |5        |true   |9        |16000      |44000      |0       |-1          |0      |-1         |
+|19 |Common-Cleaner                    |InnocuousThreadGroup |TIMED_WAITING |417      |true   |8        |659000     |983000     |3       |-1          |11     |-1         |
+|22 |jvmm-1-thread-1                   |jvmm                 |RUNNABLE      |5        |false  |5        |1668509000 |1779777000 |5       |-1          |3      |-1         |
+|23 |DestroyJavaVM                     |main                 |RUNNABLE      |5        |false  |5        |475892000  |535431000  |0       |-1          |0      |-1         |
+|25 |JNA Cleaner                       |jvmm                 |WAITING       |401      |true   |5        |38175000   |39948000   |623     |-1          |3      |-1         |
+|26 |pool-1-thread-1                   |jvmm                 |WAITING       |657      |false  |5        |44815000   |67730000   |1       |-1          |7      |-1         |
+|29 |ForkJoinPool.commonPool-worker-5  |jvmm                 |WAITING       |657      |true   |5        |921000     |1469000    |0       |-1          |2      |-1         |
+|31 |ForkJoinPool.commonPool-worker-23 |jvmm                 |WAITING       |657      |true   |5        |335000     |606000     |0       |-1          |2      |-1         |
+|30 |ForkJoinPool.commonPool-worker-9  |jvmm                 |WAITING       |657      |true   |5        |555000     |998000     |0       |-1          |2      |-1         |
+|32 |ForkJoinPool.commonPool-worker-27 |jvmm                 |WAITING       |657      |true   |5        |355000     |716000     |0       |-1          |2      |-1         |
+|36 |ForkJoinPool.commonPool-worker-3  |jvmm                 |WAITING       |657      |true   |5        |401000     |717000     |0       |-1          |2      |-1         |
+|35 |ForkJoinPool.commonPool-worker-17 |jvmm                 |WAITING       |657      |true   |5        |233000     |510000     |0       |-1          |2      |-1         |
+|34 |ForkJoinPool.commonPool-worker-31 |jvmm                 |WAITING       |657      |true   |5        |143000     |354000     |0       |-1          |2      |-1         |
+|33 |ForkJoinPool.commonPool-worker-13 |jvmm                 |WAITING       |657      |true   |5        |263000     |586000     |0       |-1          |3      |-1         |
+|37 |ForkJoinPool.commonPool-worker-21 |jvmm                 |WAITING       |657      |true   |5        |184000     |352000     |0       |-1          |2      |-1         |
+|41 |ForkJoinPool.commonPool-worker-29 |jvmm                 |TIMED_WAITING |673      |true   |5        |130000     |224000     |0       |-1          |2      |-1         |
++---+----------------------------------+---------------------+--------------+---------+-------+---------+-----------+-----------+--------+------------+-------+-----------+
 ```
 
 ### jvm_thread_stack
@@ -1103,4 +875,261 @@ info -t jvm_thread_pool -clazz org.beifengtz.jvmm.common.factory.ExecutorFactory
   "taskCount": 1,
   "completedTaskCount": 0
 }
+```
+
+### port
+
+```shell
+info -t port -p 3306,5010,5011,8080
+```
+
+```json
+{
+  "running": [
+    3306,
+    5010,
+    8080
+  ],
+  "stopped": [
+    5011
+  ]
+}
+```
+
+# metric
+
+## thread_cpu_time
+
+从指令执行开始，进行采集 `d` 秒，输出线程占用CPU情况（按 CPU Time 降序排序）
+
+```shell
+metric -t thread_cpu_time -d 3
+```
+
+```text
++---+----------------------------------+---------------------+--------------+--------------+-------------+
+|ID |Name                              |Group                |State         |User Time(ns) |CPU Time(ns) |
++---+----------------------------------+---------------------+--------------+--------------+-------------+
+|22 |jvmm-1-thread-1                   |jvmm                 |RUNNABLE      |3357000       |3837000      |
+|2  |Reference Handler                 |system               |RUNNABLE      |0             |0            |
+|3  |Finalizer                         |system               |WAITING       |0             |0            |
+|4  |Signal Dispatcher                 |system               |RUNNABLE      |0             |0            |
+|19 |Common-Cleaner                    |InnocuousThreadGroup |TIMED_WAITING |0             |0            |
+|23 |DestroyJavaVM                     |main                 |RUNNABLE      |0             |0            |
+|25 |JNA Cleaner                       |jvmm                 |WAITING       |0             |0            |
+|26 |pool-1-thread-1                   |jvmm                 |WAITING       |0             |0            |
+|31 |ForkJoinPool.commonPool-worker-23 |jvmm                 |WAITING       |0             |0            |
+|32 |ForkJoinPool.commonPool-worker-27 |jvmm                 |WAITING       |0             |0            |
+|36 |ForkJoinPool.commonPool-worker-3  |jvmm                 |WAITING       |0             |0            |
+|34 |ForkJoinPool.commonPool-worker-31 |jvmm                 |TIMED_WAITING |0             |0            |
+|33 |ForkJoinPool.commonPool-worker-13 |jvmm                 |WAITING       |0             |0            |
+|37 |ForkJoinPool.commonPool-worker-21 |jvmm                 |WAITING       |0             |0            |
++---+----------------------------------+---------------------+--------------+--------------+-------------+
+```
+
+你也可以输出线程堆栈（按 CPU Time 降序排序）
+```shell
+metric -t thread_cpu_time -d 3 -f stack
+```
+
+```text
+"jvmm-1-thread-1" Id=22 group='jvmm' pri=5 cpu=1862261000 ns usr=1739576000 ns blocked 10 for -1 ms waited 7 for -1 ms (in native)
+   vm_state: RUNNABLE, os_state: 5
+	locks java.util.concurrent.ThreadPoolExecutor$Worker@f107c50
+	at app//io.netty.channel.kqueue.Native.keventWait(Native Method)
+	at app//io.netty.channel.kqueue.Native.keventWait(Native.java:124)
+	at app//io.netty.channel.kqueue.KQueueEventLoop.kqueueWait(KQueueEventLoop.java:179)
+	at app//io.netty.channel.kqueue.KQueueEventLoop.kqueueWait(KQueueEventLoop.java:171)
+	at app//io.netty.channel.kqueue.KQueueEventLoop.run(KQueueEventLoop.java:240)
+	at app//io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997)
+	at app//io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at java.base@11.0.13/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:515)
+	at java.base@11.0.13/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.base@11.0.13/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:304)
+	at java.base@11.0.13/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base@11.0.13/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base@11.0.13/java.lang.Thread.run(Thread.java:834)
+
+
+"jvmm-1-thread-2" Id=43 group='jvmm' pri=5 cpu=4897000 ns usr=4401000 ns blocked 0 for -1 ms waited 3 for -1 ms
+   vm_state: RUNNABLE, os_state: 5
+	locks java.util.concurrent.ThreadPoolExecutor$Worker@4c00fe3f
+	at java.management@11.0.13/sun.management.ThreadImpl.dumpThreads0(Native Method)
+	at java.management@11.0.13/sun.management.ThreadImpl.dumpAllThreads(ThreadImpl.java:521)
+	at java.management@11.0.13/sun.management.ThreadImpl.dumpAllThreads(ThreadImpl.java:509)
+	at app//org.beifengtz.jvmm.core.DefaultJvmmCollector.lambda$getOrderedThreadTimedStack$3(DefaultJvmmCollector.java:613)
+	at app//org.beifengtz.jvmm.core.DefaultJvmmCollector$$Lambda$150/0x0000000800266440.run(Unknown Source)
+	at java.base@11.0.13/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:515)
+	at java.base@11.0.13/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.base@11.0.13/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:304)
+	at java.base@11.0.13/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base@11.0.13/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base@11.0.13/java.lang.Thread.run(Thread.java:834)
+
+
+"Reference Handler" daemon Id=2 group='system' pri=10 cpu=31806000 ns usr=30622000 ns blocked 6 for -1 ms waited 0 for -1 ms
+   vm_state: RUNNABLE, os_state: 5
+	at java.base@11.0.13/java.lang.ref.Reference.waitForReferencePendingList(Native Method)
+	at java.base@11.0.13/java.lang.ref.Reference.processPendingReferences(Reference.java:241)
+	at java.base@11.0.13/java.lang.ref.Reference$ReferenceHandler.run(Reference.java:213)
+
+
+"Finalizer" daemon Id=3 group='system' pri=8 cpu=235000 ns usr=172000 ns blocked 1 for -1 ms waited 2 for -1 ms
+   vm_state: WAITING, os_state: 401
+	at java.base@11.0.13/java.lang.Object.wait(Native Method)
+	- waiting on (a java.lang.ref.ReferenceQueue$Lock@5da0cc32)
+	at java.base@11.0.13/java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:155)
+	at java.base@11.0.13/java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:176)
+	at java.base@11.0.13/java.lang.ref.Finalizer$FinalizerThread.run(Finalizer.java:170)
+
+
+"Signal Dispatcher" daemon Id=4 group='system' pri=9 cpu=44000 ns usr=16000 ns blocked 0 for -1 ms waited 0 for -1 ms
+   vm_state: RUNNABLE, os_state: 5
+
+
+"Common-Cleaner" daemon Id=19 group='InnocuousThreadGroup' pri=8 cpu=1347000 ns usr=879000 ns blocked 3 for -1 ms waited 18 for -1 ms
+   vm_state: TIMED_WAITING, os_state: 417
+	at java.base@11.0.13/java.lang.Object.wait(Native Method)
+	- waiting on (a java.lang.ref.ReferenceQueue$Lock@626146cf)
+	at java.base@11.0.13/java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:155)
+	at java.base@11.0.13/jdk.internal.ref.CleanerImpl.run(CleanerImpl.java:148)
+	at java.base@11.0.13/java.lang.Thread.run(Thread.java:834)
+	at java.base@11.0.13/jdk.internal.misc.InnocuousThread.run(InnocuousThread.java:134)
+
+
+"DestroyJavaVM" Id=23 group='main' pri=5 cpu=535431000 ns usr=475892000 ns blocked 0 for -1 ms waited 0 for -1 ms
+   vm_state: RUNNABLE, os_state: 5
+
+
+"JNA Cleaner" daemon Id=25 group='jvmm' pri=5 cpu=39948000 ns usr=38175000 ns blocked 623 for -1 ms waited 3 for -1 ms
+   vm_state: WAITING, os_state: 401
+	at java.base@11.0.13/java.lang.Object.wait(Native Method)
+	- waiting on (a java.lang.ref.ReferenceQueue$Lock@45795de3)
+	at java.base@11.0.13/java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:155)
+	at java.base@11.0.13/java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:176)
+	at app//com.sun.jna.internal.Cleaner$1.run(Cleaner.java:58)
+
+
+"pool-1-thread-1" Id=26 group='jvmm' pri=5 cpu=67730000 ns usr=44815000 ns blocked 1 for -1 ms waited 7 for -1 ms
+   vm_state: WAITING, os_state: 657
+	at java.base@11.0.13/jdk.internal.misc.Unsafe.park(Native Method)
+	- waiting on (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject@71c41f)
+	at java.base@11.0.13/java.util.concurrent.locks.LockSupport.park(LockSupport.java:194)
+	at java.base@11.0.13/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:2081)
+	at java.base@11.0.13/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:1170)
+	at java.base@11.0.13/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:899)
+	at java.base@11.0.13/java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1054)
+	at java.base@11.0.13/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1114)
+	at java.base@11.0.13/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base@11.0.13/java.lang.Thread.run(Thread.java:834)
+
+
+"ForkJoinPool.commonPool-worker-23" daemon Id=31 group='jvmm' pri=5 cpu=649000 ns usr=372000 ns blocked 0 for -1 ms waited 3 for -1 ms
+   vm_state: TIMED_WAITING, os_state: 673
+	at java.base@11.0.13/jdk.internal.misc.Unsafe.park(Native Method)
+	- waiting on (a java.util.concurrent.ForkJoinPool@5b6b497f)
+	at java.base@11.0.13/java.util.concurrent.locks.LockSupport.parkUntil(LockSupport.java:275)
+	at java.base@11.0.13/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1619)
+	at java.base@11.0.13/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:183)
+
+
+"ForkJoinPool.commonPool-worker-27" daemon Id=32 group='jvmm' pri=5 cpu=716000 ns usr=355000 ns blocked 0 for -1 ms waited 2 for -1 ms
+   vm_state: WAITING, os_state: 657
+	at java.base@11.0.13/jdk.internal.misc.Unsafe.park(Native Method)
+	- waiting on (a java.util.concurrent.ForkJoinPool@5b6b497f)
+	at java.base@11.0.13/java.util.concurrent.locks.LockSupport.park(LockSupport.java:194)
+	at java.base@11.0.13/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1628)
+	at java.base@11.0.13/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:183)
+
+
+"ForkJoinPool.commonPool-worker-21" daemon Id=37 group='jvmm' pri=5 cpu=352000 ns usr=184000 ns blocked 0 for -1 ms waited 2 for -1 ms
+   vm_state: WAITING, os_state: 657
+	at java.base@11.0.13/jdk.internal.misc.Unsafe.park(Native Method)
+	- waiting on (a java.util.concurrent.ForkJoinPool@5b6b497f)
+	at java.base@11.0.13/java.util.concurrent.locks.LockSupport.park(LockSupport.java:194)
+	at java.base@11.0.13/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1628)
+	at java.base@11.0.13/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:183)
+```
+
+# jad
+
+jad可以查看运行时的Java代码
+
+```shell
+jad -c org.beifengtz.jvmm.common.util.AssertUtil
+```
+
+```java
+/*
+ * Decompiled with CFR.
+ */
+package org.beifengtz.jvmm.common.util;
+
+public class AssertUtil {
+    public static void checkArguments(boolean condition) {
+        AssertUtil.checkArguments(condition, "Invalid argument");
+    }
+
+    public static void checkArguments(boolean condition, String message) {
+        if (!condition) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    public static <T> T notNull(T target, String format, Object ... args) {
+        if (target == null) {
+            throw new NullPointerException(String.format(format, args));
+        }
+        return target;
+    }
+
+    public static <T> T[] notEmpty(T[] array, String message, Object ... values) {
+        if (array == null) {
+            throw new NullPointerException(String.format(message, values));
+        }
+        if (array.length == 0) {
+            throw new IllegalArgumentException(String.format(message, values));
+        }
+        return array;
+    }
+}
+```
+
+# jtool
+
+jtool可以远程执行 jdk tool指令
+
+```shell
+jtool jstat -gc 13121
+```
+
+```text
+S0C    S1C    S0U    S1U      EC       EU        OC         OU       MC     MU    CCSC   CCSU   YGC     YGCT    FGC    FGCT    CGC    CGCT     GCT   
+0.0   3072.0  0.0   3072.0 161792.0  2048.0   97280.0     1687.5   17152.0 16646.1 1792.0 1688.9      1    0.013   0      0.000   0      0.000    0.013
+```
+
+# sw
+
+查看和设置一些采集开关
+
+```shell
+sw
+```
+
+```text
++------------------+----------------+---------------+------------------+
+|Thread Contention |Thread CPU Time |Memory Verbose |Classload Verbose |
++------------------+----------------+---------------+------------------+
+|false             |true            |false          |false             |
++------------------+----------------+---------------+------------------+
+```
+
+关闭某一个开关
+```shell
+sw -close threadCpuTime
+```
+
+打开某一个开关
+```shell
+sw -open threadCpuTime
 ```

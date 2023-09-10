@@ -652,7 +652,7 @@ public class ServerServiceImpl extends ServerService {
     })
     @Order(3)
     @JvmmCmdDesc(
-            headDesc = "Decompile the class source code",
+            headDesc = "Decompile the class source code.This command is only valid on servers running in Java Agent mode, it requires instrumentation.",
             tailDesc = "eg 1: `jad -c java.lang.String`\n" +
                     "eg 2: `jad -c java.lang.String -m equals`"
     )
@@ -692,19 +692,24 @@ public class ServerServiceImpl extends ServerService {
         }
         JsonArray processes = response.getData().getAsJsonArray();
         Gson gson = StringUtil.getGson();
-        TableFormatter table = new TableFormatter();
-        table.setHead("PID", "Main Class", "Arguments");
-
         for (JsonElement ele : processes) {
             JpsResult jps = gson.fromJson(ele, JpsResult.class);
-            table.addRow(
-                    String.valueOf(jps.getPid()),
-                    jps.getMainClass(),
-                    StringUtil.join(";", jps.getArguments())
-            );
-        }
 
-        table.print();
+            int prefixNum = String.valueOf(jps.getPid()).length() + jps.getMainClass().length();
+            String prefix = StringUtil.repeat("", prefixNum);
+            StringBuilder arguments = new StringBuilder();
+            boolean firstLine = true;
+            for (String argument : jps.getArguments()) {
+                if (firstLine) {
+                    arguments.append("\t").append(argument);
+                    firstLine = false;
+                } else {
+                    arguments.append(prefix).append("\t\t\t").append(argument);
+                }
+                arguments.append("\n");
+            }
+            System.out.printf("%d\t%s\t%s", jps.getPid(), jps.getMainClass(), arguments);
+        }
     }
 
     @Order(5)
@@ -852,18 +857,18 @@ public class ServerServiceImpl extends ServerService {
                     name = "open",
                     argName = "switch",
                     order = 1,
-                    desc = "Open target switch"
+                    desc = "Open target switch: \n - classLoadingVerbose\n - memoryVerbose\n - threadCpuTime\n - threadContentionMonitoring"
             ),
             @JvmmOption(
                     name = "close",
                     argName = "switch",
                     order = 2,
-                    desc = "Close target switch"
+                    desc = "Close target switch: \n - classLoadingVerbose\n - memoryVerbose\n - threadCpuTime\n - threadContentionMonitoring"
             )
     })
     @JvmmCmdDesc(
-            headDesc = "Switches status manage: \n - classLoadingVerbose\n - memoryVerbose\n - threadCpuTime\n - threadContentionMonitoring",
-            tailDesc = "eg1: `switches`\n" +
+            headDesc = "Switches status manage.",
+            tailDesc = "eg1: sw\n" +
                     "eg2: sw -open threadCpuTime\n" +
                     "eg3: sw -close threadContentionMonitoring"
     )
@@ -893,7 +898,7 @@ public class ServerServiceImpl extends ServerService {
             if (response == null) {
                 return;
             }
-            System.out.println(response.getData());
+            System.out.println(response.getData().toString());
         } else {
             JvmmRequest request = JvmmRequest.create().setType(RpcType.JVMM_EXECUTE_SWITCHES_GET);
             JvmmResponse response = request(connector, request);
@@ -907,7 +912,7 @@ public class ServerServiceImpl extends ServerService {
                     json.get("threadContentionMonitoring").toString(),
                     json.get("threadCpuTime").toString(),
                     json.get("memoryVerbose").toString(),
-                    json.get("classloadingVerbose").toString()
+                    json.get("classLoadingVerbose").toString()
             );
             table.print();
         }

@@ -1,12 +1,8 @@
 package org.beifengtz.jvmm.common.util;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.nio.ByteBuffer;
 
 /**
  * <p>
@@ -20,7 +16,6 @@ import java.nio.ByteBuffer;
 public class CodingUtil {
 
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
-    private static final ByteBuffer LONG_BUFFER = ByteBuffer.allocate(8);
 
     public static String encodeUrl(String url, String enc) {
         try {
