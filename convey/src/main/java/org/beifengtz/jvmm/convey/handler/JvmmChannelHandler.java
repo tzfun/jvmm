@@ -302,14 +302,17 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Jvm
             }
 
             Object result = method.invoke(instance, parameter);
-            if (result instanceof JvmmResponse) {
-                ctx.channel().writeAndFlush(result);
-            } else if (result != null) {
-                JvmmResponse response = JvmmResponse.create()
-                        .setStatus(RpcStatus.JVMM_STATUS_OK)
-                        .setType(reqMsg.getType())
-                        .setData(HandlerProvider.parseResult2Json(result));
-                ctx.channel().writeAndFlush(response);
+            Channel channel = ctx.channel();
+            if (channel.isActive() && channel.isWritable()) {
+                if (result instanceof JvmmResponse) {
+                    channel.writeAndFlush(result);
+                } else if (result != null) {
+                    JvmmResponse response = JvmmResponse.create()
+                            .setStatus(RpcStatus.JVMM_STATUS_OK)
+                            .setType(reqMsg.getType())
+                            .setData(HandlerProvider.parseResult2Json(result));
+                    channel.writeAndFlush(response);
+                }
             }
         } catch (Throwable e) {
             if (e instanceof AuthenticationFailedException) {

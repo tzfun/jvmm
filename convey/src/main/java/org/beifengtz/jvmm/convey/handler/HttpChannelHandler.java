@@ -305,14 +305,16 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
 
             Object result = method.invoke(instance, parameter);
 
-            if (result instanceof HttpResponse) {
-                ctx.writeAndFlush(result).addListener(ChannelFutureListener.CLOSE);
-            } else if (result instanceof JvmmResponse) {
-                response(ctx, HttpResponseStatus.OK, ((JvmmResponse) result).getData().toString());
-            } else if (result != null) {
-                response(ctx, HttpResponseStatus.OK, HandlerProvider.parseResult2Json(result).toString());
+            Channel channel = ctx.channel();
+            if (channel.isActive() && channel.isWritable()) {
+                if (result instanceof HttpResponse) {
+                    channel.writeAndFlush(result).addListener(ChannelFutureListener.CLOSE);
+                } else if (result instanceof JvmmResponse) {
+                    response(ctx, HttpResponseStatus.OK, ((JvmmResponse) result).getData().toString());
+                } else if (result != null) {
+                    response(ctx, HttpResponseStatus.OK, HandlerProvider.parseResult2Json(result).toString());
+                }
             }
-
         } catch (Exception e) {
             if (e instanceof AuthenticationFailedException) {
                 throw e;
