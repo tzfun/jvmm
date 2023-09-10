@@ -3,8 +3,6 @@ package org.beifengtz.jvmm.convey.entity;
 import io.netty.buffer.ByteBuf;
 import org.beifengtz.jvmm.common.JsonParsable;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 /**
  * description TODO
  * date 16:56 2023/9/8
@@ -27,6 +25,7 @@ public interface JvmmMsg extends JsonParsable {
      * 需校验长度位数
      */
     byte MSG_FLAG_DATA = 7;
+
 
     /**
      * 序列化为byte[]，规则如下：

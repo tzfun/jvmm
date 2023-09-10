@@ -37,17 +37,13 @@ public class JvmmRequest implements JvmmMsg {
         return new JvmmRequest();
     }
 
-    public static long generateContextId() {
-        return generateContextId(1);
-    }
-
     /**
      * 8位ServerId + 32位时间戳 + 24位自增（去重）
      *
      * @param serverId 服务ID
      * @return 雪花ID
      */
-    public static long generateContextId(int serverId) {
+    private static long generateContextId(int serverId) {
         long count = ID_COUNTER.getAndIncrement();
         if (count >= 0xFFFFFFF) {
             count = ID_COUNTER.getAndSet(1);
@@ -101,7 +97,7 @@ public class JvmmRequest implements JvmmMsg {
             throw new MessageSerializeException("Missing required param: 'type'");
         }
         if (contextId == 0) {
-            contextId = generateContextId();
+            contextId = generateContextId(1);
         }
         CompositeByteBuf compositeByteBuf = Unpooled.compositeBuffer();
         //  消息体标志

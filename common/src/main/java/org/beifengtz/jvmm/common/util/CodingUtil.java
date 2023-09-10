@@ -1,5 +1,8 @@
 package org.beifengtz.jvmm.common.util;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -116,6 +119,14 @@ public class CodingUtil {
         return value;
     }
 
+    public static float byteArrayToFloat(byte[] array) {
+        return Float.intBitsToFloat(byteArrayToInt(array));
+    }
+
+    public static double byteArrayToDouble(byte[] array) {
+        return Double.longBitsToDouble(byteArrayToLong(array));
+    }
+
     public static byte[] intToAtomicByteArray(int v) {
         if (v <= Short.MAX_VALUE) {
             return shortToAtomicByteArray((short) v);
@@ -175,5 +186,21 @@ public class CodingUtil {
             array[i] = (byte) (v >> (i * 8));
         }
         return array;
+    }
+
+    public static byte[] floatToByteArray(float v) {
+        return intToByteArray(Float.floatToIntBits(v));
+    }
+
+    public static byte[] floatToAtomicByteArray(float v) {
+        return intToAtomicByteArray(Float.floatToIntBits(v));
+    }
+
+    public static byte[] doubleToByteArray(double v) {
+        return longToByteArray(Double.doubleToLongBits(v));
+    }
+
+    public static byte[] doubleToAtomicByteArray(double v) {
+        return longToAtomicByteArray(Double.doubleToLongBits(v));
     }
 }
