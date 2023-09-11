@@ -31,6 +31,10 @@ public class MethodInfo {
      * 目标方法传入参数
      */
     private Object[] args;
+    /**
+     * 上下文ID，多线程、多进程调用时会用到
+     */
+    private String contextId;
 
     public ClassLoader getClassLoader() {
         return classLoader;
@@ -83,6 +87,15 @@ public class MethodInfo {
 
     MethodInfo setArgs(Object[] args) {
         this.args = args;
+        return this;
+    }
+
+    public String getContextId() {
+        return contextId;
+    }
+
+    public MethodInfo setContextId(String contextId) {
+        this.contextId = contextId;
         return this;
     }
 

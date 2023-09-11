@@ -48,7 +48,8 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
                     .setMethodName(methodName)
                     .setMethodDesc(methodDesc)
                     .setTarget(target)
-                    .setArgs(args);
+                    .setArgs(args)
+                    .setContextId(ExecutorEnhancer.getContextId());
 
             threadMethodAttachStack.get().push(methodAttach);
 

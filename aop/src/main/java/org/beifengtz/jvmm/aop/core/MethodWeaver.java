@@ -6,7 +6,17 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AdviceAdapter;
 import org.objectweb.asm.commons.JSRInlinerAdapter;
-import org.objectweb.asm.commons.Method;
+
+import static org.beifengtz.jvmm.aop.core.WeaverUtil.ASM_METHOD_CLASS_FOR_NAME;
+import static org.beifengtz.jvmm.aop.core.WeaverUtil.ASM_METHOD_CLASS_GET_CLASS_LOADER;
+import static org.beifengtz.jvmm.aop.core.WeaverUtil.ASM_METHOD_OBJECT_GET_CLASS;
+import static org.beifengtz.jvmm.aop.core.WeaverUtil.ASM_METHOD_WEAVER_ON_BEFORE;
+import static org.beifengtz.jvmm.aop.core.WeaverUtil.ASM_METHOD_WEAVER_ON_RETURNING;
+import static org.beifengtz.jvmm.aop.core.WeaverUtil.ASM_METHOD_WEAVER_ON_THROWING;
+import static org.beifengtz.jvmm.aop.core.WeaverUtil.CLASS_TYPE;
+import static org.beifengtz.jvmm.aop.core.WeaverUtil.ENHANCER_TYPE;
+import static org.beifengtz.jvmm.aop.core.WeaverUtil.OBJECT_TYPE;
+import static org.beifengtz.jvmm.aop.core.WeaverUtil.THROWABLE_TYPE;
 
 /**
  * description: TODO
@@ -15,55 +25,6 @@ import org.objectweb.asm.commons.Method;
  * @author beifengtz
  */
 public class MethodWeaver extends AdviceAdapter {
-
-    static final Type ENHANCER_TYPE = Type.getType(MethodEnhancer.class);
-    static final Type CLASS_TYPE = Type.getType(Class.class);
-    static final Type THROWABLE_TYPE = Type.getType(Throwable.class);
-    static final Type OBJECT_TYPE = Type.getType(Object.class);
-    static final Method ASM_METHOD_CLASS_FOR_NAME = getAsmMethod(Class.class, "forName", String.class);
-    static final Method ASM_METHOD_OBJECT_GET_CLASS = getAsmMethod(Object.class, "getClass");
-    static final Method ASM_METHOD_CLASS_GET_CLASS_LOADER = getAsmMethod(Class.class, "getClassLoader");
-    /**
-     * asm invoke {@link MethodEnhancer#methodOnBefore(int, ClassLoader, String, String, String, Object, Object[])}
-     */
-    static final Method ASM_METHOD_WEAVER_ON_BEFORE = getAsmMethod(
-            MethodEnhancer.class,
-            "methodOnBefore",
-            int.class,
-            ClassLoader.class,
-            String.class,
-            String.class,
-            String.class,
-            Object.class,
-            Object[].class);
-    /**
-     * asm invoke {@link MethodEnhancer#methodOnReturning(Object)}
-     */
-    static final Method ASM_METHOD_WEAVER_ON_RETURNING = getAsmMethod(
-            MethodEnhancer.class,
-            "methodOnReturning",
-            Object.class
-    );
-    /**
-     * asm invoke {@link MethodEnhancer#methodOnThrowing(Throwable)}
-     */
-    static final Method ASM_METHOD_WEAVER_ON_THROWING = getAsmMethod(
-            MethodEnhancer.class,
-            "methodOnThrowing",
-            Throwable.class
-    );
-
-    public static Method getAsmMethod(final Class<?> clazz, final String methodName, final Class<?>... parameterTypes) {
-        return Method.getMethod(getJavaMethod(clazz, methodName, parameterTypes));
-    }
-
-    private static java.lang.reflect.Method getJavaMethod(final Class<?> clazz, final String methodName, final Class<?>... parameterTypes) {
-        try {
-            return clazz.getDeclaredMethod(methodName, parameterTypes);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     private final int adviceId;
     private final String className;

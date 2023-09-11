@@ -9,6 +9,7 @@ import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
 import java.security.ProtectionDomain;
+import java.util.concurrent.Executor;
 
 import static org.objectweb.asm.ClassWriter.COMPUTE_FRAMES;
 import static org.objectweb.asm.ClassWriter.COMPUTE_MAXS;
@@ -20,6 +21,10 @@ import static org.objectweb.asm.ClassWriter.COMPUTE_MAXS;
  * @author beifengtz
  */
 public class Enhancer implements ClassFileTransformer {
+
+    public static byte[] enhanceExecutor(Class<? extends Executor> executorClass) throws IOException {
+        return ExecutorEnhancer.enhance(executorClass);
+    }
 
     public static byte[] enhanceMethod(Class<?> targetClass, MethodListener methodListener) throws IOException {
         return enhanceMethod(targetClass, methodListener, null, null);

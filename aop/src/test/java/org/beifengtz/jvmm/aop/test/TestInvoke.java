@@ -1,9 +1,20 @@
 package org.beifengtz.jvmm.aop.test;
 
+import org.beifengtz.jvmm.aop.agent.EnhancedThreadPoolExecutor;
 import org.beifengtz.jvmm.aop.core.Enhancer;
+import org.beifengtz.jvmm.aop.core.ExecutorEnhancer;
 import org.beifengtz.jvmm.aop.core.MethodInfo;
 import org.beifengtz.jvmm.aop.core.MethodListener;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.lang.reflect.Constructor;
+import java.nio.file.Files;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * description: TODO
@@ -68,6 +79,42 @@ public class TestInvoke {
         System.out.println("org.beifengtz.jvmm.asm.Enhancer".matches(classPattern));
         System.out.println("org.beifengtz.jvmm.asm.util.EnhancerUtil".matches(classPattern));
         System.out.println("org.beifengtz.jvmm.util.asm.EnhancerUtil".matches(classPattern));
+    }
+
+    @Test
+    public void testExecutorEnhance() throws Exception {
+        byte[] bytes = ExecutorEnhancer.enhance(ThreadPoolExecutor.class);
+        Files.write(new File("EnhancedExecutor.class").toPath(), bytes);
+
+        TestASMClassLoader classLoader = new TestASMClassLoader(ThreadPoolExecutor.class.getName(), bytes,
+                Thread.currentThread().getContextClassLoader());
+        Class<?> clazz = classLoader.defineClass();
+
+        Constructor<?> constructor = clazz.getConstructor(int.class, int.class, long.class, TimeUnit.class, BlockingQueue.class);
+        ExecutorService executorService = (ExecutorService) constructor.newInstance(2, 2, 0, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+
+        for (int i = 0; i < 10; i++) {
+            executorService.submit(() -> {
+                System.out.println("--> " + Thread.currentThread().getId());
+            });
+        }
+
+        Thread.sleep(5000);
+    }
+
+    @Test
+    public void testExecutorInvoke() throws Exception {
+        System.out.println(ThreadPoolExecutor.class.isAssignableFrom(EnhancedThreadPoolExecutor.class));
+        EnhancedThreadPoolExecutor executor = new EnhancedThreadPoolExecutor(2, 2, 0, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+        System.out.println("==> " + Thread.currentThread().getId());
+        ExecutorEnhancer.setContextId("123ABC");
+        for (int i = 0; i < 10; i++) {
+            executor.submit(() -> {
+                System.out.println("--> " + Thread.currentThread().getId() + " " + ExecutorEnhancer.getContextId());
+            });
+        }
+
+        Thread.sleep(5000);
     }
 
 }
