@@ -161,8 +161,11 @@ public class GuidedRunner {
     }
 
     public static String askServerAddress() {
-        System.out.print("Enter the Jvmm server address (eg. 127.0.0.1:5010): ");
+        System.out.print("Enter the Jvmm server address (default is 127.0.0.1:5010): ");
         String address = scanner.nextLine();
+        if (address.isEmpty()) {
+            address = "127.0.0.1:5010";
+        }
         if (IPUtil.isHost(address)) {
             return address;
         }

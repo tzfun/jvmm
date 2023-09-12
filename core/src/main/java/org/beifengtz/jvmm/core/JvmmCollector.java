@@ -206,6 +206,7 @@ public interface JvmmCollector {
      *
      * @param threadPool {@link ThreadPoolExecutor}
      * @return {@link ThreadPoolInfo}，如果 threadPool 为 null 将返回 null
+     * @throws IllegalArgumentException 如果获取的线程池不是一个 {@link ThreadPoolExecutor}实例，将会抛出此异常
      */
     ThreadPoolInfo getThreadPoolInfo(ThreadPoolExecutor threadPool);
 
@@ -216,6 +217,7 @@ public interface JvmmCollector {
      * @param clazz       类全路径，比如 org.beifengtz.jvmm.common.factory.ExecutorFactory
      * @param filed       属性名，仅支持静态属性！比如 SCHEDULE_THREAD_POOL
      * @return {@link ThreadPoolInfo}，如果反射未找到相应的 threadPool 或其值为 null 将返回 null
+     * @throws IllegalArgumentException 如果获取的线程池不是一个 {@link ThreadPoolExecutor}实例，将会抛出此异常
      */
     ThreadPoolInfo getThreadPoolInfo(ClassLoader classLoader, String clazz, String filed);
 
@@ -227,6 +229,7 @@ public interface JvmmCollector {
      * @param instanceField 指定类实例对象的属性名，比如单例模式中的 INSTANCE
      * @param filed         实例对象中的属性名
      * @return {@link ThreadPoolInfo}，如果反射未找到相应的 threadPool 或其值为 null 将返回 null
+     * @throws IllegalArgumentException 如果获取的线程池不是一个 {@link ThreadPoolExecutor}实例，将会抛出此异常
      */
     ThreadPoolInfo getThreadPoolInfo(ClassLoader classLoader, String clazz, String instanceField, String filed);
 
@@ -236,6 +239,7 @@ public interface JvmmCollector {
      * @param clazz 类全路径，比如 org.beifengtz.jvmm.common.factory.ExecutorFactory
      * @param filed 属性名，仅支持静态属性！比如 SCHEDULE_THREAD_POOL
      * @return {@link ThreadPoolInfo}，如果反射未找到相应的 threadPool 或其值为 null 将返回 null
+     * @throws IllegalArgumentException 如果获取的线程池不是一个 {@link ThreadPoolExecutor}实例，将会抛出此异常
      */
     ThreadPoolInfo getThreadPoolInfo(String clazz, String filed);
 
@@ -246,6 +250,7 @@ public interface JvmmCollector {
      * @param instanceField 指定类实例对象的属性名，比如单例模式中的 INSTANCE
      * @param filed         实例对象中的属性名
      * @return {@link ThreadPoolInfo}，如果反射未找到相应的 threadPool 或其值为 null 将返回 null
+     * @throws IllegalArgumentException 如果获取的线程池不是一个 {@link ThreadPoolExecutor}实例，将会抛出此异常
      */
     ThreadPoolInfo getThreadPoolInfo(String clazz, String instanceField, String filed);
 

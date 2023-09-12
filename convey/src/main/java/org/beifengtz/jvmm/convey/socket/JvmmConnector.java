@@ -331,8 +331,10 @@ public class JvmmConnector implements Closeable {
         send(request);
         try {
             return future.get(timeout, timeunit);
-
         } catch (ExecutionException e) {
+            if (e.getCause() instanceof RpcStatusException) {
+                throw (RpcStatusException) e.getCause();
+            }
             throw new RuntimeException(e);
         }
     }

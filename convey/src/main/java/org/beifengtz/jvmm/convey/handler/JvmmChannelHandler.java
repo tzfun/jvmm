@@ -149,14 +149,16 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Jvm
             ctx.channel().writeAndFlush(JvmmResponse.create()
                     .setType(RpcType.JVMM_AUTHENTICATION)
                     .setStatus(RpcStatus.JVMM_STATUS_AUTHENTICATION_FAILED)
-                    .setMessage("Authentication failed."));
+                    .setMessage("Authentication failed.")
+                    .setContextId(request.getContextId()));
             ctx.close();
             logger().debug("Channel closed by auth failed");
         } catch (JsonSyntaxException e) {
             ctx.channel().writeAndFlush(JvmmResponse.create()
                     .setType(RpcType.JVMM_HANDLE_MSG)
                     .setStatus(RpcStatus.JVMM_STATUS_UNRECOGNIZED_CONTENT)
-                    .setMessage(e.getMessage()));
+                    .setMessage(e.getMessage())
+                    .setContextId(request.getContextId()));
         } catch (Throwable e) {
             ctx.fireExceptionCaught(e);
         }
@@ -263,7 +265,8 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Jvm
                             response = JvmmResponse.create()
                                     .setStatus(RpcStatus.JVMM_STATUS_OK)
                                     .setType(reqMsg.getType())
-                                    .setData(HandlerProvider.parseResult2Json(data));
+                                    .setData(HandlerProvider.parseResult2Json(data))
+                                    .setContextId(reqMsg.getContextId());
                         }
                         ctx.channel().writeAndFlush(response);
                     });
@@ -310,9 +313,12 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Jvm
                     JvmmResponse response = JvmmResponse.create()
                             .setStatus(RpcStatus.JVMM_STATUS_OK)
                             .setType(reqMsg.getType())
-                            .setData(HandlerProvider.parseResult2Json(result));
+                            .setData(HandlerProvider.parseResult2Json(result))
+                            .setContextId(reqMsg.getContextId());
                     channel.writeAndFlush(response);
                 }
+            } else {
+                logger().warn("Can not response because of channel is inactive or un-writable {}", channel);
             }
         } catch (Throwable e) {
             if (e instanceof AuthenticationFailedException) {
@@ -326,18 +332,20 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Jvm
     }
 
     protected void handleException(ChannelHandlerContext ctx, JvmmRequest req, Throwable e) {
-        JvmmResponse response = JvmmResponse.create().setType(req.getType());
+        JvmmResponse response = JvmmResponse.create()
+                .setType(req.getType())
+                .setContextId(req.getContextId());
         if (e instanceof IllegalArgumentException) {
-            logger().error(e.getMessage(), e);
+            logger().error("Handle jvmm request failed: " + e.getMessage(), e);
             response.setStatus(RpcStatus.JVMM_STATUS_ILLEGAL_ARGUMENTS).setMessage(e.getMessage());
         } else {
             logger().error(e.getMessage(), e);
             response.setStatus(RpcStatus.JVMM_STATUS_SERVER_ERROR);
         }
         if (e.getMessage() != null) {
-            response.setMessage(e.getClass().getName() + ": " + e.getMessage());
+            response.setMessage(e.getMessage());
         }
-        ctx.writeAndFlush(response);
+        ctx.channel().writeAndFlush(response);
     }
 
     /**

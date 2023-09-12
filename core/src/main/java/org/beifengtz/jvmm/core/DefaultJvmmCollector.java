@@ -7,44 +7,12 @@ import org.beifengtz.jvmm.common.util.PidUtil;
 import org.beifengtz.jvmm.common.util.PlatformUtil;
 import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
 import org.beifengtz.jvmm.core.driver.OSDriver;
-import org.beifengtz.jvmm.core.entity.info.CPUInfo;
-import org.beifengtz.jvmm.core.entity.info.DiskIOInfo;
-import org.beifengtz.jvmm.core.entity.info.DiskInfo;
-import org.beifengtz.jvmm.core.entity.info.JvmClassLoaderInfo;
-import org.beifengtz.jvmm.core.entity.info.JvmClassLoadingInfo;
-import org.beifengtz.jvmm.core.entity.info.JvmCompilationInfo;
-import org.beifengtz.jvmm.core.entity.info.JvmGCInfo;
-import org.beifengtz.jvmm.core.entity.info.JvmMemoryInfo;
-import org.beifengtz.jvmm.core.entity.info.JvmMemoryManagerInfo;
-import org.beifengtz.jvmm.core.entity.info.JvmMemoryPoolInfo;
-import org.beifengtz.jvmm.core.entity.info.JvmThreadDetailInfo;
-import org.beifengtz.jvmm.core.entity.info.JvmThreadInfo;
-import org.beifengtz.jvmm.core.entity.info.MemoryUsageInfo;
-import org.beifengtz.jvmm.core.entity.info.NetInfo;
-import org.beifengtz.jvmm.core.entity.info.PortInfo;
-import org.beifengtz.jvmm.core.entity.info.ProcessInfo;
-import org.beifengtz.jvmm.core.entity.info.SysFileInfo;
-import org.beifengtz.jvmm.core.entity.info.SysInfo;
-import org.beifengtz.jvmm.core.entity.info.SysMemInfo;
-import org.beifengtz.jvmm.core.entity.info.ThreadPoolInfo;
-import org.beifengtz.jvmm.core.entity.info.ThreadTimedInfo;
+import org.beifengtz.jvmm.core.entity.info.*;
 import org.beifengtz.jvmm.core.entity.result.LinuxMemResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.management.ClassLoadingMXBean;
-import java.lang.management.CompilationMXBean;
-import java.lang.management.GarbageCollectorMXBean;
-import java.lang.management.LockInfo;
-import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryMXBean;
-import java.lang.management.MemoryManagerMXBean;
-import java.lang.management.MemoryPoolMXBean;
-import java.lang.management.MonitorInfo;
-import java.lang.management.OperatingSystemMXBean;
-import java.lang.management.RuntimeMXBean;
-import java.lang.management.ThreadInfo;
-import java.lang.management.ThreadMXBean;
+import java.lang.management.*;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -53,11 +21,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.WeakHashMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 /**
  * <p>
@@ -71,8 +37,6 @@ import java.util.function.Consumer;
 class DefaultJvmmCollector implements JvmmCollector {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultJvmmCollector.class);
-
-    private final WeakHashMap<String, ThreadPoolExecutor> threadPoolCache = new WeakHashMap<>();
 
     DefaultJvmmCollector() {
     }
@@ -427,27 +391,26 @@ class DefaultJvmmCollector implements JvmmCollector {
         if (classLoader == null) {
             classLoader = getClass().getClassLoader();
         }
-        String cacheKey = classLoader.hashCode() + "#" + clazz + "#" + filed;
-        ThreadPoolExecutor pool;
-        synchronized (threadPoolCache) {
-            pool = threadPoolCache.get(cacheKey);
-        }
-        if (pool == null) {
+        ThreadPoolExecutor pool = null;
+        try {
+            Class<?> aClass = Class.forName(clazz, false, classLoader);
+            Field f = aClass.getDeclaredField(filed);
+            f.setAccessible(true);
             try {
-                Class<?> aClass = Class.forName(clazz, false, classLoader);
-                Field f = aClass.getDeclaredField(filed);
-                f.setAccessible(true);
-                try {
-                    pool = (ThreadPoolExecutor) f.get(null);
-                    synchronized (threadPoolCache) {
-                        threadPoolCache.put(cacheKey, pool);
-                    }
-                } finally {
-                    f.setAccessible(false);
+                Object targetPool = f.get(null);
+                if (targetPool == null) {
+                    return null;
                 }
-            } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException | ClassCastException e) {
-                log.debug("Invoke getThreadPoolInfo failed: " + e.getMessage(), e);
+                if (targetPool instanceof ThreadPoolExecutor) {
+                    pool = (ThreadPoolExecutor) targetPool;
+                } else {
+                    throw new IllegalArgumentException("Target thread pool is not a ThreadPoolExecutor instance: "+targetPool.getClass());
+                }
+            } finally {
+                f.setAccessible(false);
             }
+        } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
+            log.error("Get thread pool info by invoke static failed error: " + e.getMessage(), e);
         }
 
         return getThreadPoolInfo(pool);
@@ -458,36 +421,35 @@ class DefaultJvmmCollector implements JvmmCollector {
         if (classLoader == null) {
             classLoader = getClass().getClassLoader();
         }
-        String cacheKey = classLoader.hashCode() + "#" + clazz + "#" + instanceField + "#" + filed;
-        ThreadPoolExecutor pool;
-        synchronized (threadPoolCache) {
-            pool = threadPoolCache.get(cacheKey);
-        }
-        if (pool == null) {
-            try {
-                Class<?> aClass = Class.forName(clazz, false, classLoader);
-                Field instanceF = aClass.getDeclaredField(instanceField);
-                Field f = aClass.getDeclaredField(filed);
-                if (aClass.isAssignableFrom(instanceF.getType())) {
-                    instanceF.setAccessible(true);
+        ThreadPoolExecutor pool = null;
+        try {
+            Class<?> aClass = Class.forName(clazz, false, classLoader);
+            Field instanceF = aClass.getDeclaredField(instanceField);
+            Field f = aClass.getDeclaredField(filed);
+            if (aClass.isAssignableFrom(instanceF.getType())) {
+                instanceF.setAccessible(true);
+                try {
+                    Object instance = instanceF.get(null);
+                    f.setAccessible(true);
                     try {
-                        Object instance = instanceF.get(null);
-                        f.setAccessible(true);
-                        try {
-                            pool = (ThreadPoolExecutor) f.get(instance);
-                            synchronized (threadPoolCache) {
-                                threadPoolCache.put(cacheKey, pool);
-                            }
-                        } finally {
-                            f.setAccessible(false);
+                        Object targetPool = f.get(instance);
+                        if (targetPool == null) {
+                            return null;
+                        }
+                        if (targetPool instanceof ThreadPoolExecutor) {
+                            pool = (ThreadPoolExecutor) targetPool;
+                        } else {
+                            throw new IllegalArgumentException("Target thread pool is not a ThreadPoolExecutor instance: "+targetPool.getClass());
                         }
                     } finally {
-                        instanceF.setAccessible(false);
+                        f.setAccessible(false);
                     }
+                } finally {
+                    instanceF.setAccessible(false);
                 }
-            } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException | ClassCastException e) {
-                log.debug("Invoke getThreadPoolInfo failed: " + e.getMessage(), e);
             }
+        } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException | ClassCastException e) {
+            log.error("Get thread pool info by invoke instance failed error: " + e.getMessage(), e);
         }
 
         return getThreadPoolInfo(pool);
@@ -611,7 +573,7 @@ class DefaultJvmmCollector implements JvmmCollector {
                 ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
 
                 ThreadInfo[] threadInfos = threadMXBean.dumpAllThreads(true, true);
-                Map<Long,ThreadInfo> threadInfoMap = new HashMap<>(threadInfos.length);
+                Map<Long, ThreadInfo> threadInfoMap = new HashMap<>(threadInfos.length);
                 for (ThreadInfo threadInfo : threadInfos) {
                     threadInfoMap.put(threadInfo.getThreadId(), threadInfo);
                 }

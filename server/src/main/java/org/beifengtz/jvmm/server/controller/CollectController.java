@@ -9,28 +9,13 @@ import org.beifengtz.jvmm.convey.annotation.JvmmMapping;
 import org.beifengtz.jvmm.convey.annotation.RequestBody;
 import org.beifengtz.jvmm.convey.annotation.RequestParam;
 import org.beifengtz.jvmm.convey.entity.ResponseFuture;
-import org.beifengtz.jvmm.convey.enums.RpcType;
 import org.beifengtz.jvmm.convey.enums.Method;
-import org.beifengtz.jvmm.core.contanstant.CollectionType;
+import org.beifengtz.jvmm.convey.enums.RpcType;
 import org.beifengtz.jvmm.core.JvmmCollector;
 import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.Unsafe;
-import org.beifengtz.jvmm.core.entity.info.DiskInfo;
-import org.beifengtz.jvmm.core.entity.info.JvmClassLoaderInfo;
-import org.beifengtz.jvmm.core.entity.info.JvmClassLoadingInfo;
-import org.beifengtz.jvmm.core.entity.info.JvmCompilationInfo;
-import org.beifengtz.jvmm.core.entity.info.JvmGCInfo;
-import org.beifengtz.jvmm.core.entity.info.JvmMemoryInfo;
-import org.beifengtz.jvmm.core.entity.info.JvmMemoryManagerInfo;
-import org.beifengtz.jvmm.core.entity.info.JvmMemoryPoolInfo;
-import org.beifengtz.jvmm.core.entity.info.JvmThreadDetailInfo;
-import org.beifengtz.jvmm.core.entity.info.JvmThreadInfo;
-import org.beifengtz.jvmm.core.entity.info.PortInfo;
-import org.beifengtz.jvmm.core.entity.info.ProcessInfo;
-import org.beifengtz.jvmm.core.entity.info.SysFileInfo;
-import org.beifengtz.jvmm.core.entity.info.SysInfo;
-import org.beifengtz.jvmm.core.entity.info.SysMemInfo;
-import org.beifengtz.jvmm.core.entity.info.ThreadPoolInfo;
+import org.beifengtz.jvmm.core.contanstant.CollectionType;
+import org.beifengtz.jvmm.core.entity.info.*;
 import org.beifengtz.jvmm.server.entity.dto.ThreadInfoDTO;
 import org.beifengtz.jvmm.server.service.JvmmService;
 import org.slf4j.Logger;
@@ -208,15 +193,24 @@ public class CollectController {
     @HttpRequest("/collect/jvm/thread_pool")
     public ThreadPoolInfo getThreadPoolInfo(@RequestParam int classLoaderHash, @RequestParam String clazz,
                                             @RequestParam String instanceField, @RequestParam String field) {
-        ClassLoader classLoader = Unsafe.getClassLoader(classLoaderHash);
-        if (classLoader == null) {
-            logger.debug("Can not found target ClassLoader by hashcode: {}", classLoaderHash);
+        ClassLoader classLoader = null;
+        if (classLoaderHash != 0) {
+            classLoader = Unsafe.getClassLoader(classLoaderHash);
+            if (classLoader == null) {
+                logger.debug("Can not found target ClassLoader by hashcode: {}", classLoaderHash);
+            }
         }
+        ThreadPoolInfo info = null;
         if (StringUtil.isEmpty(instanceField)) {
-            return JvmmFactory.getCollector().getThreadPoolInfo(classLoader, clazz, field);
+            info = JvmmFactory.getCollector().getThreadPoolInfo(classLoader, clazz, field);
         } else {
-            return JvmmFactory.getCollector().getThreadPoolInfo(classLoader, clazz, instanceField, field);
+            info = JvmmFactory.getCollector().getThreadPoolInfo(classLoader, clazz, instanceField, field);
         }
+
+        if (info == null) {
+            throw new IllegalArgumentException("Target thread pool is null or is not a ThreadPoolExecutor instance");
+        }
+        return info;
     }
 
     @JvmmMapping(RpcType.JVMM_COLLECT_PORT_STATUS)

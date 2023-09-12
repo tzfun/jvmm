@@ -31,6 +31,7 @@ public class JvmmRequest implements JvmmMsg {
     private long contextId;
 
     private JvmmRequest() {
+        contextId = generateContextId(1);
     }
 
     public static JvmmRequest create() {

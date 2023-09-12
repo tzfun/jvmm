@@ -123,7 +123,7 @@ public class JvmmResponse implements JvmmMsg {
 
         //  消息标志
         if (message != null) {
-            byte[] messageBytes = data.toString().getBytes(StandardCharsets.UTF_8);
+            byte[] messageBytes = message.getBytes(StandardCharsets.UTF_8);
             byte[] lenBytes = CodingUtil.intToAtomicByteArray(messageBytes.length);
             compositeByteBuf.addComponent(true, Unpooled.wrappedBuffer(new byte[]{JvmmMsg.MSG_FLAG_MESSAGE, (byte) lenBytes.length}));
             compositeByteBuf.addComponent(true, Unpooled.wrappedBuffer(lenBytes));
