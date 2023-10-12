@@ -718,7 +718,7 @@ public class ServerServiceImpl extends ServerService {
             headDesc = "Execute java tools(if these commands are supported on your machine). Usage: `jtool <jinfo|jstat|jstack|jamp|jcmd> [params]`"
     )
     public static void jtool(JvmmConnector connector, String command) {
-        if (command.trim().length() == 0) {
+        if (command.trim().isEmpty()) {
             printErr("Can not execute empty command");
             return;
         }

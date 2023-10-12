@@ -1,6 +1,7 @@
 package org.beifengtz.jvmm.aop.core;
 
-import org.beifengtz.jvmm.aop.agent.EnhancedThreadPoolExecutor;
+import org.beifengtz.jvmm.aop.wrapper.WrappedScheduledThreadPoolExecutor;
+import org.beifengtz.jvmm.aop.wrapper.WrappedThreadPoolExecutor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
@@ -44,16 +45,28 @@ public class ExecutorEnhancer extends ClassVisitor implements Opcodes {
         CONTEXT_ID_THREAD_LOCAL.set(id);
     }
 
+    /**
+     * 对{@link Executor}进行增强。只能对<strong>非 JDK 实现</strong>的Executor增强，
+     * 如果要对 JDK 实现的例如{@link java.util.concurrent.ThreadPoolExecutor} 进行增强，
+     * 请直接使用{@link WrappedThreadPoolExecutor} 或 {@link WrappedScheduledThreadPoolExecutor}，
+     * 它们本身就是一个增强过的线程池，不需要增强。
+     *
+     * @param executorClass {@link Executor}的类 {@link Class} 对象
+     * @return 增强后的 class 字节码
+     * @throws IOException 读取 class 字节码错误时抛出
+     */
     public static byte[] enhance(Class<? extends Executor> executorClass) throws IOException {
         String className = executorClass.getName();
-        if (EnhancedThreadPoolExecutor.class.isAssignableFrom(executorClass)) {
-            throw new IOException("Can not enhance class " + EnhancedThreadPoolExecutor.class.getName());
-        }
+
         if (className.startsWith("java.util.concurrent")) {
-            throw new IOException("The executor defined in `java.util.concurrent` package cannot be enhanced, please use EnhancedThreadPoolExecutor");
+            throw new IOException("The executor defined in `java.util.concurrent` package cannot be enhanced, " +
+                    "please use WrappedThreadPoolExecutor or WrappedScheduledThreadPoolExecutor");
         }
         ClassReader cr = new ClassReader(className);
         final ClassWriter cw = new ClassWriter(cr, COMPUTE_FRAMES | COMPUTE_MAXS);
+        if (WrappedThreadPoolExecutor.class.isAssignableFrom(executorClass)) {
+            return cw.toByteArray();
+        }
         cr.accept(new ExecutorEnhancer(cw), ClassReader.EXPAND_FRAMES);
         return cw.toByteArray();
     }
