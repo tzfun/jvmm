@@ -18,10 +18,16 @@ public class MethodExecuteTimeListener extends MethodListener {
     public static class Node {
         MethodInfo info;
         long nanos;
+        long threadId;
 
         public Node(MethodInfo info, long nanos) {
+            this(info, nanos, Thread.currentThread().getId());
+        }
+
+        public Node(MethodInfo info, long nanos, long threadId) {
             this.info = info;
             this.nanos = nanos;
+            this.threadId = threadId;
         }
 
         public MethodInfo getInfo() {
@@ -30,6 +36,10 @@ public class MethodExecuteTimeListener extends MethodListener {
 
         public long getNanos() {
             return nanos;
+        }
+
+        public long getThreadId() {
+            return threadId;
         }
     }
 

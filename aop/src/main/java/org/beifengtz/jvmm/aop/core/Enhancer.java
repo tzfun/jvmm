@@ -22,6 +22,13 @@ import static org.objectweb.asm.ClassWriter.COMPUTE_MAXS;
  */
 public class Enhancer implements ClassFileTransformer {
 
+    /**
+     * 对某个 <strong>非 JDK 实现</strong>的Executor进行增强，且此class中必须有 Override {@link Executor#execute}方法
+     *
+     * @param executorClass 被增强类的{@link Class}
+     * @return 增强后的字节码
+     * @throws IOException 找不到该Class或加载失败时抛出异常
+     */
     public static byte[] enhanceExecutor(Class<? extends Executor> executorClass) throws IOException {
         return ExecutorEnhancer.enhance(executorClass);
     }

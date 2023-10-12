@@ -373,4 +373,8 @@ public class AgentBootStrap {
             bindThread.interrupt();
         }
     }
+
+    public static Instrumentation getInstrumentation() {
+        return instrumentation;
+    }
 }

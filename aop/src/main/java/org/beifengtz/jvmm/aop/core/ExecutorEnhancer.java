@@ -51,7 +51,7 @@ public class ExecutorEnhancer extends ClassVisitor implements Opcodes {
      * 请直接使用{@link WrappedThreadPoolExecutor} 或 {@link WrappedScheduledThreadPoolExecutor}，
      * 它们本身就是一个增强过的线程池，不需要增强。
      *
-     * @param executorClass {@link Executor}的类 {@link Class} 对象
+     * @param executorClass {@link Executor}的类 {@link Class} 对象，此class中必须有 Override {@link Executor#execute}方法
      * @return 增强后的 class 字节码
      * @throws IOException 读取 class 字节码错误时抛出
      */
