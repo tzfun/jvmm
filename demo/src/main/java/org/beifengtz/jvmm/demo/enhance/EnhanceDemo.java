@@ -4,9 +4,9 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.util.concurrent.AbstractEventExecutorGroup;
 import org.beifengtz.jvmm.agent.AgentBootStrap;
 import org.beifengtz.jvmm.aop.AspectInitializer;
+import org.beifengtz.jvmm.aop.agent.AcrossThreadAgent;
 import org.beifengtz.jvmm.aop.core.Enhancer;
-import org.beifengtz.jvmm.aop.core.ExecutorEnhancer;
-import org.beifengtz.jvmm.aop.wrapper.WrappedThreadPoolExecutor;
+import org.beifengtz.jvmm.aop.wrapper.ThreadPoolExecutorWrapper;
 import org.beifengtz.jvmm.common.util.AssertUtil;
 import org.beifengtz.jvmm.convey.channel.ChannelUtil;
 
@@ -50,7 +50,7 @@ public class EnhanceDemo {
     }
 
     private static void testWrappedThreadPoolExecutor(int taskCount) throws Exception {
-        WrappedThreadPoolExecutor executor = new WrappedThreadPoolExecutor(3 * taskCount, Integer.MAX_VALUE, 10,
+        ThreadPoolExecutorWrapper executor = new ThreadPoolExecutorWrapper(3 * taskCount, Integer.MAX_VALUE, 10,
                 TimeUnit.SECONDS, new LinkedBlockingDeque<>());
 
         testTrace(taskCount, executor);
@@ -62,8 +62,8 @@ public class EnhanceDemo {
         CountDownLatch cdl = new CountDownLatch(taskCount);
 
         for (int i = 0; i < taskCount; i++) {
-            ExecutorEnhancer.setContextId("context_" + i);
-            System.out.println("==> post task " + i + ": " + ExecutorEnhancer.getContextId());
+            AcrossThreadAgent.setContextId("context_" + i);
+            System.out.println("==> post task " + i + ": " + AcrossThreadAgent.getContextId());
             executor.execute(new Task1(executor, cdl));
         }
 
@@ -78,6 +78,6 @@ public class EnhanceDemo {
                 result *= i;
             }
         }
-        System.out.println(ExecutorEnhancer.getContextId() + " [" + Thread.currentThread().getId() + "] invoke calculate result " + result);
+        System.out.println(AcrossThreadAgent.getContextId() + " [" + Thread.currentThread().getId() + "] invoke calculate result " + result);
     }
 }

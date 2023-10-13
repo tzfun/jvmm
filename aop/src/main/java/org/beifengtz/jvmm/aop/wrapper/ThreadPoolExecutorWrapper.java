@@ -1,8 +1,5 @@
 package org.beifengtz.jvmm.aop.wrapper;
 
-import org.beifengtz.jvmm.aop.agent.RunnableAgent;
-import org.beifengtz.jvmm.aop.core.ExecutorEnhancer;
-
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
@@ -15,8 +12,8 @@ import java.util.concurrent.TimeUnit;
  *
  * @author beifengtz
  */
-public class WrappedThreadPoolExecutor extends ThreadPoolExecutor {
-    public WrappedThreadPoolExecutor(int corePoolSize,
+public class ThreadPoolExecutorWrapper extends ThreadPoolExecutor {
+    public ThreadPoolExecutorWrapper(int corePoolSize,
                                      int maximumPoolSize,
                                      long keepAliveTime,
                                      TimeUnit unit,
@@ -24,7 +21,7 @@ public class WrappedThreadPoolExecutor extends ThreadPoolExecutor {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue);
     }
 
-    public WrappedThreadPoolExecutor(int corePoolSize,
+    public ThreadPoolExecutorWrapper(int corePoolSize,
                                      int maximumPoolSize,
                                      long keepAliveTime,
                                      TimeUnit unit,
@@ -33,7 +30,7 @@ public class WrappedThreadPoolExecutor extends ThreadPoolExecutor {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory);
     }
 
-    public WrappedThreadPoolExecutor(int corePoolSize,
+    public ThreadPoolExecutorWrapper(int corePoolSize,
                                      int maximumPoolSize,
                                      long keepAliveTime,
                                      TimeUnit unit,
@@ -42,7 +39,7 @@ public class WrappedThreadPoolExecutor extends ThreadPoolExecutor {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, handler);
     }
 
-    public WrappedThreadPoolExecutor(int corePoolSize,
+    public ThreadPoolExecutorWrapper(int corePoolSize,
                                      int maximumPoolSize,
                                      long keepAliveTime,
                                      TimeUnit unit,
@@ -55,6 +52,6 @@ public class WrappedThreadPoolExecutor extends ThreadPoolExecutor {
     @Override
     public void execute(Runnable command) {
         //  将调用线程的context id传递给执行线程
-        super.execute(new RunnableAgent(command, ExecutorEnhancer.getContextId()));
+        super.execute(new RunnableWrapper(command));
     }
 }

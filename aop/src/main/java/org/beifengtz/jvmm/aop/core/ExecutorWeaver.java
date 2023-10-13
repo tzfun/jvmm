@@ -8,7 +8,7 @@ import org.objectweb.asm.commons.JSRInlinerAdapter;
 import org.objectweb.asm.commons.Method;
 
 import static org.beifengtz.jvmm.aop.core.WeaverUtil.ASM_EXECUTOR_ENHANCER_GET_CONTEXT_ID;
-import static org.beifengtz.jvmm.aop.core.WeaverUtil.EXECUTOR_ENHANCER_TYPE;
+import static org.beifengtz.jvmm.aop.core.WeaverUtil.ACROSS_THREAD_AGENT;
 import static org.beifengtz.jvmm.aop.core.WeaverUtil.RUNNABLE_AGENT_TYPE;
 
 /**
@@ -37,8 +37,8 @@ public class ExecutorWeaver extends AdviceAdapter {
         newInstance(RUNNABLE_AGENT_TYPE);
         dup();
         loadArg(0);
-        //  ExecutorEnhancer.getContextId()
-        invokeStatic(EXECUTOR_ENHANCER_TYPE, ASM_EXECUTOR_ENHANCER_GET_CONTEXT_ID);
+        //  AcrossThreadAgent.getContextId()
+        invokeStatic(ACROSS_THREAD_AGENT, ASM_EXECUTOR_ENHANCER_GET_CONTEXT_ID);
         invokeConstructor(RUNNABLE_AGENT_TYPE, Method.getMethod("void <init> (Runnable, String)"));
         storeArg(0);
     }

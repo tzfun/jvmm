@@ -1,10 +1,11 @@
 package org.beifengtz.jvmm.aop.test;
 
-import org.beifengtz.jvmm.aop.wrapper.WrappedThreadPoolExecutor;
+import org.beifengtz.jvmm.aop.agent.AcrossThreadAgent;
 import org.beifengtz.jvmm.aop.core.Enhancer;
 import org.beifengtz.jvmm.aop.core.ExecutorEnhancer;
 import org.beifengtz.jvmm.aop.core.MethodInfo;
 import org.beifengtz.jvmm.aop.core.MethodListener;
+import org.beifengtz.jvmm.aop.wrapper.ThreadPoolExecutorWrapper;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -104,13 +105,13 @@ public class TestInvoke {
 
     @Test
     public void testExecutorInvoke() throws Exception {
-        System.out.println(ThreadPoolExecutor.class.isAssignableFrom(WrappedThreadPoolExecutor.class));
-        WrappedThreadPoolExecutor executor = new WrappedThreadPoolExecutor(2, 2, 0, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+        System.out.println(ThreadPoolExecutor.class.isAssignableFrom(ThreadPoolExecutorWrapper.class));
+        ThreadPoolExecutorWrapper executor = new ThreadPoolExecutorWrapper(2, 2, 0, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
         System.out.println("==> " + Thread.currentThread().getId());
-        ExecutorEnhancer.setContextId("123ABC");
+        AcrossThreadAgent.setContextId("123ABC");
         for (int i = 0; i < 10; i++) {
             executor.submit(() -> {
-                System.out.println("--> " + Thread.currentThread().getId() + " " + ExecutorEnhancer.getContextId());
+                System.out.println("--> " + Thread.currentThread().getId() + " " + AcrossThreadAgent.getContextId());
             });
         }
 

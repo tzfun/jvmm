@@ -1,5 +1,6 @@
 package org.beifengtz.jvmm.aop.core;
 
+import org.beifengtz.jvmm.aop.agent.AcrossThreadAgent;
 import org.beifengtz.jvmm.aop.agent.RunnableAgent;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.Method;
@@ -18,7 +19,7 @@ public class WeaverUtil {
     static final Method ASM_METHOD_CLASS_FOR_NAME = getAsmMethod(Class.class, "forName", String.class);
     static final Method ASM_METHOD_OBJECT_GET_CLASS = getAsmMethod(Object.class, "getClass");
     static final Method ASM_METHOD_CLASS_GET_CLASS_LOADER = getAsmMethod(Class.class, "getClassLoader");
-    static final Type EXECUTOR_ENHANCER_TYPE = Type.getType(ExecutorEnhancer.class);
+    static final Type ACROSS_THREAD_AGENT = Type.getType(AcrossThreadAgent.class);
     static final Type RUNNABLE_AGENT_TYPE = Type.getType(RunnableAgent.class);
 
     /**
