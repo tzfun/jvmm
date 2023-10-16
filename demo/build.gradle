@@ -9,11 +9,17 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
     compileOnly(project(':agent'))
+    compile(project(':aop'))
     compile(project(':server'))
     compile(project(':logger'))
-    compile(project(':aop'))
 }
 
 test {
     useJUnitPlatform()
+}
+
+jar {
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }

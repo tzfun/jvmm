@@ -7,13 +7,17 @@ dependencies {
 jar {
     manifestContentCharset 'utf-8'
     metadataCharset 'utf-8'
+    def jarName = "jvmm-agent.jar"
 
     manifest {
-        attributes("Premain-Class": "org.beifengtz.jvmm.agent.AgentBootStrap",
+        attributes(
+                "Premain-Class": "org.beifengtz.jvmm.agent.AgentBootStrap",
                 "Agent-Class": "org.beifengtz.jvmm.agent.AgentBootStrap",
-                "Can-Redefine-Classes": true, "Can-Retransform-Classes": true)
+                "Can-Redefine-Classes": true,
+                "Can-Retransform-Classes": true,
+                "Boot-Class-Path": "${jarName}"
+        )
     }
-    def jarName = "jvmm-agent.jar"
     archiveName(jarName)
 
     from {

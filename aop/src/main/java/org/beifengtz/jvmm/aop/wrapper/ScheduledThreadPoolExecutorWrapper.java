@@ -30,6 +30,6 @@ public class ScheduledThreadPoolExecutorWrapper extends ScheduledThreadPoolExecu
     @Override
     public void execute(Runnable command) {
         //  将调用线程的context id传递给执行线程
-        super.execute(new RunnableWrapper(command));
+        super.execute(Utils.wrap(command));
     }
 }

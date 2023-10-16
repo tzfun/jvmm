@@ -6,7 +6,7 @@ import org.beifengtz.jvmm.aop.core.Enhancer;
 import org.beifengtz.jvmm.aop.core.ExecutorEnhancer;
 import org.beifengtz.jvmm.aop.core.MethodInfo;
 import org.beifengtz.jvmm.aop.core.MethodListener;
-import org.beifengtz.jvmm.aop.wrapper.ThreadPoolExecutor;
+import org.beifengtz.jvmm.aop.wrapper.ThreadPoolExecutorWrapper;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -105,8 +105,8 @@ public class TestInvoke {
 
     @Test
     public void testExecutorInvoke() throws Exception {
-        System.out.println(java.util.concurrent.ThreadPoolExecutor.class.isAssignableFrom(ThreadPoolExecutor.class));
-        ThreadPoolExecutor executor = new ThreadPoolExecutor(2, 2, 0, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+        System.out.println(java.util.concurrent.ThreadPoolExecutor.class.isAssignableFrom(ThreadPoolExecutorWrapper.class));
+        ThreadPoolExecutorWrapper executor = new ThreadPoolExecutorWrapper(2, 2, 0, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
         System.out.println("==> " + Thread.currentThread().getId());
         ThreadLocalStore.setAttributes(new Attributes().setContextId("123ABC"));
         for (int i = 0; i < 10; i++) {

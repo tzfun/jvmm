@@ -1,8 +1,10 @@
 package org.beifengtz.jvmm.aop.core;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
+import java.nio.file.Files;
 import java.security.ProtectionDomain;
 
 /**

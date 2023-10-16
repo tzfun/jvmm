@@ -7,7 +7,6 @@ import org.beifengtz.jvmm.aop.JvmmAOPInitializer;
 import org.beifengtz.jvmm.aop.core.Attributes;
 import org.beifengtz.jvmm.aop.core.Enhancer;
 import org.beifengtz.jvmm.aop.core.ThreadLocalStore;
-import org.beifengtz.jvmm.aop.wrapper.ThreadPoolExecutor;
 import org.beifengtz.jvmm.common.util.AssertUtil;
 import org.beifengtz.jvmm.convey.channel.ChannelUtil;
 
@@ -16,6 +15,7 @@ import java.lang.instrument.Instrumentation;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -29,13 +29,12 @@ public class EnhanceDemo {
         Instrumentation instrumentation = AgentBootStrap.getInstrumentation();
         AssertUtil.notNull(instrumentation, "Instrumentation is null, please add JVM argument `javaagent`");
         JvmmAOPInitializer.initAspect("org.beifengtz", instrumentation);
-
         int taskCount = 10;
 
         //  测试包装后的 JDK 线程池
-        testThreadPoolExecutor(taskCount);
+//        testThreadPoolExecutor(taskCount);
         //  测试增强第三方自定义线程池
-//        testEnhancedThreadPoolExecutor(taskCount);
+        testEnhancedThreadPoolExecutor(taskCount);
     }
 
     private static void testEnhancedThreadPoolExecutor(int taskCount) throws Exception {
@@ -53,18 +52,16 @@ public class EnhanceDemo {
     private static void testThreadPoolExecutor(int taskCount) throws Exception {
         ThreadPoolExecutor executor = new ThreadPoolExecutor(3 * taskCount, Integer.MAX_VALUE, 10,
                 TimeUnit.SECONDS, new LinkedBlockingDeque<>());
-
         testTrace(taskCount, executor);
         executor.shutdown();
     }
 
     private static void testTrace(int taskCount, Executor executor) throws Exception {
-
         CountDownLatch cdl = new CountDownLatch(taskCount);
 
         for (int i = 0; i < taskCount; i++) {
             ThreadLocalStore.setAttributes(new Attributes().setContextId("context_" + i));
-            System.out.println("==> post task " + i + ": " + ThreadLocalStore.getAttributes());
+            System.out.println("==> post task " + i + ": " + ThreadLocalStore.getAttributes().getContextId());
             executor.execute(new Task1(executor, cdl));
         }
 
@@ -79,6 +76,6 @@ public class EnhanceDemo {
                 result *= i;
             }
         }
-        System.out.println(ThreadLocalStore.getAttributes() + " [" + Thread.currentThread().getId() + "] invoke calculate result " + result);
+        System.out.println(ThreadLocalStore.getAttributes().getContextId() + " [" + Thread.currentThread().getId() + "] invoke calculate result " + result);
     }
 }
