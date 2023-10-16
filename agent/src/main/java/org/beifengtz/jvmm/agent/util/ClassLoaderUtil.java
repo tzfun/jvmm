@@ -1,6 +1,5 @@
 package org.beifengtz.jvmm.agent.util;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;

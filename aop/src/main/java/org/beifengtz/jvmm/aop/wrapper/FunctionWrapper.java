@@ -1,6 +1,7 @@
 package org.beifengtz.jvmm.aop.wrapper;
 
-import org.beifengtz.jvmm.aop.agent.AcrossThreadAgent;
+import org.beifengtz.jvmm.aop.core.Attributes;
+import org.beifengtz.jvmm.aop.core.ThreadLocalStore;
 
 import java.util.function.Function;
 
@@ -17,7 +18,7 @@ import java.util.function.Function;
  */
 public class FunctionWrapper<T, R> implements Function<T, R> {
     private final Function<T, R> function;
-    private final String contextId;
+    private final Attributes attributes;
     private final long parentThreadId;
 
     public FunctionWrapper(Function<T, R> function) {
@@ -25,18 +26,18 @@ public class FunctionWrapper<T, R> implements Function<T, R> {
             throw new NullPointerException("Function can not be null");
         }
         this.function = function;
-        this.contextId = AcrossThreadAgent.getContextId();
         this.parentThreadId = Thread.currentThread().getId();
+        this.attributes = ThreadLocalStore.cloneAttributes();
     }
 
     @Override
     public R apply(T t) {
-        AcrossThreadAgent.setContextId(contextId);
+        ThreadLocalStore.setAttributes(attributes);
         try {
             return function.apply(t);
         } finally {
             if (parentThreadId != Thread.currentThread().getId()) {
-                AcrossThreadAgent.setContextId(null);
+                ThreadLocalStore.setAttributes(null);
             }
         }
     }

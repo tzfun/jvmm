@@ -1,7 +1,6 @@
 package org.beifengtz.jvmm.aop.core;
 
-import org.beifengtz.jvmm.aop.agent.AcrossThreadAgent;
-import org.beifengtz.jvmm.aop.agent.RunnableAgent;
+import org.beifengtz.jvmm.aop.wrapper.Utils;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.Method;
 
@@ -19,8 +18,7 @@ public class WeaverUtil {
     static final Method ASM_METHOD_CLASS_FOR_NAME = getAsmMethod(Class.class, "forName", String.class);
     static final Method ASM_METHOD_OBJECT_GET_CLASS = getAsmMethod(Object.class, "getClass");
     static final Method ASM_METHOD_CLASS_GET_CLASS_LOADER = getAsmMethod(Class.class, "getClassLoader");
-    static final Type ACROSS_THREAD_AGENT = Type.getType(AcrossThreadAgent.class);
-    static final Type RUNNABLE_AGENT_TYPE = Type.getType(RunnableAgent.class);
+    static final Type WRAPPER_UTILS = Type.getType(Utils.class);
 
     /**
      * asm invoke {@link MethodEnhancer#methodOnBefore(int, ClassLoader, String, String, String, Object, Object[])}
@@ -52,11 +50,12 @@ public class WeaverUtil {
             Throwable.class
     );
     /**
-     * asm invoke {@link MethodEnhancer#methodOnThrowing(Throwable)}
+     * asm invoke {@link Utils#wrap(Runnable)}
      */
-    static final Method ASM_EXECUTOR_ENHANCER_GET_CONTEXT_ID = getAsmMethod(
-            ExecutorEnhancer.class,
-            "getContextId"
+    static final Method ASM_UTILS_WRAP_RUNNABLE = getAsmMethod(
+            Utils.class,
+            "wrap",
+            Runnable.class
     );
 
 

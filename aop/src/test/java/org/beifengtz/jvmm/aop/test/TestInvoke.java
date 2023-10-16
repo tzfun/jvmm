@@ -1,11 +1,12 @@
 package org.beifengtz.jvmm.aop.test;
 
-import org.beifengtz.jvmm.aop.agent.AcrossThreadAgent;
+import org.beifengtz.jvmm.aop.core.Attributes;
+import org.beifengtz.jvmm.aop.core.ThreadLocalStore;
 import org.beifengtz.jvmm.aop.core.Enhancer;
 import org.beifengtz.jvmm.aop.core.ExecutorEnhancer;
 import org.beifengtz.jvmm.aop.core.MethodInfo;
 import org.beifengtz.jvmm.aop.core.MethodListener;
-import org.beifengtz.jvmm.aop.wrapper.ThreadPoolExecutorWrapper;
+import org.beifengtz.jvmm.aop.wrapper.ThreadPoolExecutor;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -14,7 +15,6 @@ import java.nio.file.Files;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -84,10 +84,10 @@ public class TestInvoke {
 
     @Test
     public void testExecutorEnhance() throws Exception {
-        byte[] bytes = ExecutorEnhancer.enhance(ThreadPoolExecutor.class);
+        byte[] bytes = ExecutorEnhancer.enhance(java.util.concurrent.ThreadPoolExecutor.class);
         Files.write(new File("EnhancedExecutor.class").toPath(), bytes);
 
-        TestASMClassLoader classLoader = new TestASMClassLoader(ThreadPoolExecutor.class.getName(), bytes,
+        TestASMClassLoader classLoader = new TestASMClassLoader(java.util.concurrent.ThreadPoolExecutor.class.getName(), bytes,
                 Thread.currentThread().getContextClassLoader());
         Class<?> clazz = classLoader.defineClass();
 
@@ -105,13 +105,13 @@ public class TestInvoke {
 
     @Test
     public void testExecutorInvoke() throws Exception {
-        System.out.println(ThreadPoolExecutor.class.isAssignableFrom(ThreadPoolExecutorWrapper.class));
-        ThreadPoolExecutorWrapper executor = new ThreadPoolExecutorWrapper(2, 2, 0, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+        System.out.println(java.util.concurrent.ThreadPoolExecutor.class.isAssignableFrom(ThreadPoolExecutor.class));
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(2, 2, 0, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
         System.out.println("==> " + Thread.currentThread().getId());
-        AcrossThreadAgent.setContextId("123ABC");
+        ThreadLocalStore.setAttributes(new Attributes().setContextId("123ABC"));
         for (int i = 0; i < 10; i++) {
             executor.submit(() -> {
-                System.out.println("--> " + Thread.currentThread().getId() + " " + AcrossThreadAgent.getContextId());
+                System.out.println("--> " + Thread.currentThread().getId() + " " + ThreadLocalStore.getAttributes());
             });
         }
 

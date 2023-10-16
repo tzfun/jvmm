@@ -1,6 +1,7 @@
 package org.beifengtz.jvmm.aop.wrapper;
 
-import org.beifengtz.jvmm.aop.agent.AcrossThreadAgent;
+import org.beifengtz.jvmm.aop.core.Attributes;
+import org.beifengtz.jvmm.aop.core.ThreadLocalStore;
 
 import java.util.function.Supplier;
 
@@ -18,7 +19,7 @@ import java.util.function.Supplier;
 public class SupplierWrapper<V> implements Supplier<V> {
 
     private final Supplier<V> supplier;
-    private final String contextId;
+    private final Attributes attributes;
     private final long parentThreadId;
 
     public SupplierWrapper(Supplier<V> supplier) {
@@ -27,17 +28,17 @@ public class SupplierWrapper<V> implements Supplier<V> {
         }
         this.supplier = supplier;
         this.parentThreadId = Thread.currentThread().getId();
-        this.contextId = AcrossThreadAgent.getContextId();
+        this.attributes = ThreadLocalStore.cloneAttributes();
     }
 
     @Override
     public V get() {
-        AcrossThreadAgent.setContextId(contextId);
+        ThreadLocalStore.setAttributes(attributes);
         try {
             return supplier.get();
         } finally {
             if (parentThreadId != Thread.currentThread().getId()) {
-                AcrossThreadAgent.setContextId(null);
+                ThreadLocalStore.setAttributes(null);
             }
         }
     }

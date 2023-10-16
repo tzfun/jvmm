@@ -1,6 +1,7 @@
 package org.beifengtz.jvmm.aop.wrapper;
 
-import org.beifengtz.jvmm.aop.agent.AcrossThreadAgent;
+import org.beifengtz.jvmm.aop.core.Attributes;
+import org.beifengtz.jvmm.aop.core.ThreadLocalStore;
 
 import java.util.function.Consumer;
 
@@ -16,7 +17,7 @@ import java.util.function.Consumer;
 public class ConsumerWrapper<T> implements Consumer<T> {
 
     private final Consumer<T> consumer;
-    private final String contextId;
+    private final Attributes attributes;
     private final long parentThreadId;
 
     public ConsumerWrapper(Consumer<T> consumer) {
@@ -25,17 +26,17 @@ public class ConsumerWrapper<T> implements Consumer<T> {
         }
         this.consumer = consumer;
         this.parentThreadId = Thread.currentThread().getId();
-        this.contextId = AcrossThreadAgent.getContextId();
+        this.attributes = ThreadLocalStore.cloneAttributes();
     }
 
     @Override
     public void accept(T t) {
-        AcrossThreadAgent.setContextId(contextId);
+        ThreadLocalStore.setAttributes(attributes);
         try {
             consumer.accept(t);
         } finally {
             if (parentThreadId != Thread.currentThread().getId()) {
-                AcrossThreadAgent.setContextId(null);
+                ThreadLocalStore.setAttributes(null);
             }
         }
     }

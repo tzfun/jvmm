@@ -1,6 +1,5 @@
 package org.beifengtz.jvmm.aop.core;
 
-import org.beifengtz.jvmm.aop.agent.AcrossThreadAgent;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -49,8 +48,7 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
                     .setMethodName(methodName)
                     .setMethodDesc(methodDesc)
                     .setTarget(target)
-                    .setArgs(args)
-                    .setContextId(AcrossThreadAgent.getContextId());
+                    .setArgs(args);
 
             threadMethodAttachStack.get().push(methodAttach);
 

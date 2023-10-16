@@ -5,11 +5,9 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AdviceAdapter;
 import org.objectweb.asm.commons.JSRInlinerAdapter;
-import org.objectweb.asm.commons.Method;
 
-import static org.beifengtz.jvmm.aop.core.WeaverUtil.ASM_EXECUTOR_ENHANCER_GET_CONTEXT_ID;
-import static org.beifengtz.jvmm.aop.core.WeaverUtil.ACROSS_THREAD_AGENT;
-import static org.beifengtz.jvmm.aop.core.WeaverUtil.RUNNABLE_AGENT_TYPE;
+import static org.beifengtz.jvmm.aop.core.WeaverUtil.ASM_UTILS_WRAP_RUNNABLE;
+import static org.beifengtz.jvmm.aop.core.WeaverUtil.WRAPPER_UTILS;
 
 /**
  * description TODO
@@ -33,13 +31,9 @@ public class ExecutorWeaver extends AdviceAdapter {
 
     @Override
     protected void onMethodEnter() {
-        //  new RunnableAgent(Runnable, String)
-        newInstance(RUNNABLE_AGENT_TYPE);
-        dup();
         loadArg(0);
-        //  AcrossThreadAgent.getContextId()
-        invokeStatic(ACROSS_THREAD_AGENT, ASM_EXECUTOR_ENHANCER_GET_CONTEXT_ID);
-        invokeConstructor(RUNNABLE_AGENT_TYPE, Method.getMethod("void <init> (Runnable, String)"));
+        //  Utils.wrap(Runnable)
+        invokeStatic(WRAPPER_UTILS, ASM_UTILS_WRAP_RUNNABLE);
         storeArg(0);
     }
 }

@@ -1,6 +1,8 @@
 package org.beifengtz.jvmm.demo.enhance;
 
 import org.beifengtz.jvmm.aop.annotation.AspectJoin;
+import org.beifengtz.jvmm.aop.core.Attributes;
+import org.beifengtz.jvmm.aop.core.ThreadLocalStore;
 import org.beifengtz.jvmm.aop.listener.MethodExecuteTimeListener;
 
 import java.util.LinkedList;
@@ -24,9 +26,12 @@ public class Listener extends MethodExecuteTimeListener {
 
     @Override
     protected void onMethodExecute(Node node) {
-        List<Node> invokeList = invokeInfoMap.computeIfAbsent(node.getInfo().getContextId(), o -> new LinkedList<>());
-        synchronized (invokeList) {
-            invokeList.add(node);
+        Attributes attributes = ThreadLocalStore.getAttributes();
+        if (attributes != null) {
+            List<Node> invokeList = invokeInfoMap.computeIfAbsent(attributes.getContextId(), o -> new LinkedList<>());
+            synchronized (invokeList) {
+                invokeList.add(node);
+            }
         }
     }
 

@@ -1,8 +1,9 @@
 package org.beifengtz.jvmm.aop;
 
 import org.beifengtz.jvmm.aop.annotation.AspectJoin;
-import org.beifengtz.jvmm.aop.core.Enhancer;
+import org.beifengtz.jvmm.aop.core.ExecutorTransformer;
 import org.beifengtz.jvmm.aop.core.MethodListener;
+import org.beifengtz.jvmm.aop.core.MethodTransformer;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,9 +27,10 @@ import java.util.jar.JarFile;
  *
  * @author beifengtz
  */
-public class AspectInitializer {
+public class JvmmAOPInitializer {
 
     private static final Map<String, Object> instanceMap = new HashMap<>();
+    private static volatile boolean ADDED_EXECUTOR_TRANSFORMER = false;
 
     /**
      * 初始化并扫描AOP相关注解
@@ -37,7 +39,7 @@ public class AspectInitializer {
      * @param instrumentation {@link Instrumentation}实例
      * @throws Exception 初始化失败时抛出
      */
-    public static synchronized void init(String packagePrefix, Instrumentation instrumentation) throws Exception {
+    public static synchronized void initAspect(String packagePrefix, Instrumentation instrumentation) throws Exception {
         Set<Class<?>> classes = scanAnnotation(packagePrefix, AspectJoin.class);
 
         for (Class<?> clazz : classes) {
@@ -49,7 +51,7 @@ public class AspectInitializer {
                 instanceMap.put(className, o = clazz.newInstance());
             }
 
-            new Enhancer(
+            new MethodTransformer(
                     aj.classPattern(),
                     aj.classIgnorePattern().isEmpty() ? null : aj.classIgnorePattern(),
                     aj.methodPattern(),
@@ -57,6 +59,21 @@ public class AspectInitializer {
                     (MethodListener) o
             ).enhance(instrumentation);
         }
+    }
+
+    /**
+     * 初始化Tracing，其中会对线程池进行增强。
+     * 注意！如果你的工程实现依赖于JDK的线程池，此方法应该在加载Executor之前调用。
+     *
+     * @param instrumentation {@link Instrumentation}
+     */
+    public static synchronized void initTracing(Instrumentation instrumentation) {
+        if (ADDED_EXECUTOR_TRANSFORMER) {
+            System.err.println("Jvmm tracing already initialized");
+            return;
+        }
+        instrumentation.addTransformer(new ExecutorTransformer());
+        ADDED_EXECUTOR_TRANSFORMER = true;
     }
 
     /**

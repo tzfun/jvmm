@@ -1,6 +1,7 @@
 package org.beifengtz.jvmm.aop.wrapper;
 
-import org.beifengtz.jvmm.aop.agent.AcrossThreadAgent;
+import org.beifengtz.jvmm.aop.core.Attributes;
+import org.beifengtz.jvmm.aop.core.ThreadLocalStore;
 
 import java.util.concurrent.Callable;
 
@@ -16,7 +17,7 @@ import java.util.concurrent.Callable;
 public class CallableWrapper<V> implements Callable<V> {
 
     private final Callable<V> callable;
-    private final String contextId;
+    private final Attributes attributes;
     private final long parentThreadId;
 
     public CallableWrapper(Callable<V> callable) {
@@ -25,17 +26,17 @@ public class CallableWrapper<V> implements Callable<V> {
         }
         this.callable = callable;
         this.parentThreadId = Thread.currentThread().getId();
-        this.contextId = AcrossThreadAgent.getContextId();
+        this.attributes = ThreadLocalStore.cloneAttributes();
     }
 
     @Override
     public V call() throws Exception {
-        AcrossThreadAgent.setContextId(contextId);
+        ThreadLocalStore.setAttributes(attributes);
         try {
             return callable.call();
         } finally {
             if (parentThreadId != Thread.currentThread().getId()) {
-                AcrossThreadAgent.setContextId(null);
+                ThreadLocalStore.setAttributes(null);
             }
         }
     }

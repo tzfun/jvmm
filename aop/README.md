@@ -58,7 +58,7 @@ public class AopHandler extends MethodListener {
 
 初始化并扫描 AspectJoin 注解
 ```java
-import org.beifengtz.jvmm.aop.AspectInitializer;
+import org.beifengtz.jvmm.aop.JvmmAOPInitializer;
 import java.lang.instrument.Instrumentation;
 
 public class TestAgent {
