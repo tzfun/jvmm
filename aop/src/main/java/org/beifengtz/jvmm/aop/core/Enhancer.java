@@ -1,5 +1,6 @@
 package org.beifengtz.jvmm.aop.core;
 
+import org.beifengtz.jvmm.aop.listener.MethodListener;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 
@@ -17,30 +18,6 @@ import static org.objectweb.asm.ClassWriter.COMPUTE_MAXS;
  * @author beifengtz
  */
 public class Enhancer {
-
-    /**
-     * 对某个 <strong>非 JDK 实现</strong>的Executor进行增强，且此class中必须有 Override {@link Executor#execute}方法。
-     *
-     * @param executorClass 被增强类的{@link Class}
-     * @return 增强后的字节码
-     * @throws IOException 找不到该Class或加载失败时抛出异常
-     */
-    public static byte[] enhanceExecutor(Class<? extends Executor> executorClass) throws IOException {
-        return ExecutorEnhancer.enhance(executorClass);
-    }
-
-    /**
-     * 对某个 Executor进行增强，且此class中必须有 Override {@link Executor#execute}方法。
-     * 注意！如果你增强的是jdk的类，需要在加载它之前进行增强
-     *
-     * @param className 类名，例如：java.util.concurrent.ThreadPoolExecutor
-     * @param bytes     类字节码
-     * @return 增强后的字节码
-     * @throws IOException 读取或操作类数据失败时抛出此异常
-     */
-    public static byte[] enhanceExecutor(String className, byte[] bytes) throws IOException {
-        return ExecutorEnhancer.enhance(className, bytes);
-    }
 
     public static byte[] enhanceMethod(Class<?> targetClass, MethodListener methodListener) throws IOException {
         return enhanceMethod(targetClass, methodListener, null, null);
@@ -87,5 +64,29 @@ public class Enhancer {
         final ClassWriter cw = new ClassWriter(cr, COMPUTE_FRAMES | COMPUTE_MAXS);
         cr.accept(new MethodEnhancer(methodListener, className, cw, methodRegex, methodIgnoreRegex), ClassReader.EXPAND_FRAMES);
         return cw.toByteArray();
+    }
+
+    /**
+     * 对某个 <strong>非 JDK 实现</strong>的Executor进行增强，且此class中必须有 Override {@link Executor#execute}方法。
+     *
+     * @param executorClass 被增强类的{@link Class}
+     * @return 增强后的字节码
+     * @throws IOException 找不到该Class或加载失败时抛出异常
+     */
+    public static byte[] enhanceExecutor(Class<? extends Executor> executorClass) throws IOException {
+        return ExecutorEnhancer.enhance(executorClass);
+    }
+
+    /**
+     * 对某个 Executor进行增强，且此class中必须有 Override {@link Executor#execute}方法。
+     * 注意！如果你增强的是jdk的类，需要在加载它之前进行增强
+     *
+     * @param className 类名，例如：java.util.concurrent.ThreadPoolExecutor
+     * @param bytes     类字节码
+     * @return 增强后的字节码
+     * @throws IOException 读取或操作类数据失败时抛出此异常
+     */
+    public static byte[] enhanceExecutor(String className, byte[] bytes) throws IOException {
+        return ExecutorEnhancer.enhance(className, bytes);
     }
 }

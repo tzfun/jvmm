@@ -1,9 +1,10 @@
 package org.beifengtz.jvmm.aop;
 
 import org.beifengtz.jvmm.aop.annotation.AspectJoin;
-import org.beifengtz.jvmm.aop.core.ExecutorTransformer;
-import org.beifengtz.jvmm.aop.core.MethodListener;
-import org.beifengtz.jvmm.aop.core.MethodTransformer;
+import org.beifengtz.jvmm.aop.core.transformer.ExecutorTransformer;
+import org.beifengtz.jvmm.aop.core.transformer.ForkJoinTaskTransformer;
+import org.beifengtz.jvmm.aop.listener.MethodListener;
+import org.beifengtz.jvmm.aop.core.transformer.MethodTransformer;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,6 +74,7 @@ public class JvmmAOPInitializer {
             return;
         }
         instrumentation.addTransformer(new ExecutorTransformer());
+        instrumentation.addTransformer(new ForkJoinTaskTransformer());
         ADDED_EXECUTOR_TRANSFORMER = true;
     }
 

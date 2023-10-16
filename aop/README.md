@@ -23,7 +23,7 @@ maven或gradle引入
 
 对所有 util 包下的方法切入
 ```java
-import org.beifengtz.jvmm.aop.core.MethodListener;
+import org.beifengtz.jvmm.aop.listener.MethodListener;
 import org.beifengtz.jvmm.aop.core.MethodInfo;
 
 @AspectJoin(

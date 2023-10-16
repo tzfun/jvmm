@@ -1,12 +1,14 @@
 package org.beifengtz.jvmm.aop.annotation;
 
+import org.beifengtz.jvmm.aop.listener.MethodListener;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * description: 此注解需添加在一个 {@link org.beifengtz.jvmm.aop.core.MethodListener} 实现类上，此类会被解析为单例
+ * description: 此注解需添加在一个 {@link MethodListener} 实现类上，此类会被解析为单例
  * date: 15:09 2023/6/30
  *
  * @author beifengtz

@@ -1,5 +1,6 @@
-package org.beifengtz.jvmm.aop.core;
+package org.beifengtz.jvmm.aop.core.weaver;
 
+import org.beifengtz.jvmm.aop.core.MethodEnhancer;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -7,16 +8,7 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AdviceAdapter;
 import org.objectweb.asm.commons.JSRInlinerAdapter;
 
-import static org.beifengtz.jvmm.aop.core.WeaverUtil.ASM_METHOD_CLASS_FOR_NAME;
-import static org.beifengtz.jvmm.aop.core.WeaverUtil.ASM_METHOD_CLASS_GET_CLASS_LOADER;
-import static org.beifengtz.jvmm.aop.core.WeaverUtil.ASM_METHOD_OBJECT_GET_CLASS;
-import static org.beifengtz.jvmm.aop.core.WeaverUtil.ASM_METHOD_WEAVER_ON_BEFORE;
-import static org.beifengtz.jvmm.aop.core.WeaverUtil.ASM_METHOD_WEAVER_ON_RETURNING;
-import static org.beifengtz.jvmm.aop.core.WeaverUtil.ASM_METHOD_WEAVER_ON_THROWING;
-import static org.beifengtz.jvmm.aop.core.WeaverUtil.CLASS_TYPE;
-import static org.beifengtz.jvmm.aop.core.WeaverUtil.ENHANCER_TYPE;
-import static org.beifengtz.jvmm.aop.core.WeaverUtil.OBJECT_TYPE;
-import static org.beifengtz.jvmm.aop.core.WeaverUtil.THROWABLE_TYPE;
+import static org.beifengtz.jvmm.aop.core.weaver.WeaverUtil.*;
 
 /**
  * description: TODO
@@ -40,7 +32,7 @@ public class MethodWeaver extends AdviceAdapter {
      * @param name   the method's name.
      * @param desc   the method's descriptor (see {@link Type Type}).
      */
-    protected MethodWeaver(int adviceId, String className, MethodVisitor mv, int access, String name,
+    public MethodWeaver(int adviceId, String className, MethodVisitor mv, int access, String name,
                            String desc, String signature, String[] exceptions) {
         super(ASM9, new JSRInlinerAdapter(mv, access, name, desc, signature, exceptions), access, name, desc);
         this.adviceId = adviceId;
@@ -116,7 +108,7 @@ public class MethodWeaver extends AdviceAdapter {
     }
 
     private void loadThisOrNullIfStatic() {
-        if (MethodEnhancer.isStatic(methodAccess)) {
+        if (WeaverUtil.isStatic(methodAccess)) {
             push((Type) null);
         } else {
             loadThis();
@@ -148,7 +140,7 @@ public class MethodWeaver extends AdviceAdapter {
     }
 
     private void loadClassLoader() {
-        if (MethodEnhancer.isStatic(methodAccess)) {
+        if (WeaverUtil.isStatic(methodAccess)) {
             //  Class.forName(clazz);
             visitLdcInsn(className);
             invokeStatic(CLASS_TYPE, ASM_METHOD_CLASS_FOR_NAME);

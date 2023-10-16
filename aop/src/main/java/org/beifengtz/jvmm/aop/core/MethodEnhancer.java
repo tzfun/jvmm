@@ -1,5 +1,8 @@
 package org.beifengtz.jvmm.aop.core;
 
+import org.beifengtz.jvmm.aop.core.weaver.MethodWeaver;
+import org.beifengtz.jvmm.aop.core.weaver.WeaverUtil;
+import org.beifengtz.jvmm.aop.listener.MethodListener;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -131,33 +134,6 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
         }
     }
 
-    static boolean isAbstract(int access) {
-        return (ACC_ABSTRACT & access) == ACC_ABSTRACT;
-    }
-
-    static boolean isFinal(int access) {
-        return (ACC_FINAL & access) == ACC_FINAL;
-    }
-
-    static boolean isStatic(int access) {
-        return (ACC_STATIC & access) == ACC_STATIC;
-    }
-
-    static boolean isInterface(int access) {
-        return (ACC_INTERFACE & access) == ACC_INTERFACE;
-    }
-
-    static boolean isNative(int access) {
-        return (ACC_NATIVE & access) == ACC_NATIVE;
-    }
-
-    static boolean isBridge(int access) {
-        return (ACC_BRIDGE & access) == ACC_BRIDGE;
-    }
-
-    static boolean isSynthetic(int access) {
-        return (ACC_SYNTHETIC & access) == ACC_SYNTHETIC;
-    }
 
     private final String className;
     private final String methodRegex;
@@ -211,11 +187,11 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
 
     private boolean isIgnore(MethodVisitor mv, int access, String methodName) {
         return mv == null
-                || isAbstract(access)
-                || isFinal(access)
-                || isNative(access)
-                || isBridge(access)
-                || isSynthetic(access)
+                || WeaverUtil.isAbstract(access)
+                || WeaverUtil.isFinal(access)
+                || WeaverUtil.isNative(access)
+                || WeaverUtil.isBridge(access)
+                || WeaverUtil.isSynthetic(access)
                 || "<clinit>".equals(methodName)
                 || "<init>".equals(methodName)
                 || (methodIgnoreRegex != null && methodName.matches(methodIgnoreRegex))

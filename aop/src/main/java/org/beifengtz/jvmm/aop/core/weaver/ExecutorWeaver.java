@@ -1,4 +1,4 @@
-package org.beifengtz.jvmm.aop.core;
+package org.beifengtz.jvmm.aop.core.weaver;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -6,8 +6,8 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AdviceAdapter;
 import org.objectweb.asm.commons.JSRInlinerAdapter;
 
-import static org.beifengtz.jvmm.aop.core.WeaverUtil.ASM_UTILS_WRAP_RUNNABLE;
-import static org.beifengtz.jvmm.aop.core.WeaverUtil.WRAPPER_UTILS;
+import static org.beifengtz.jvmm.aop.core.weaver.WeaverUtil.ASM_UTILS_WRAP_RUNNABLE;
+import static org.beifengtz.jvmm.aop.core.weaver.WeaverUtil.WRAPPER_UTILS;
 
 /**
  * description TODO
@@ -25,7 +25,7 @@ public class ExecutorWeaver extends AdviceAdapter {
      * @param name   the method's name.
      * @param desc   the method's descriptor (see {@link Type Type}).
      */
-    protected ExecutorWeaver(MethodVisitor mv, int access, String name, String desc, String signature, String[] exceptions) {
+    public ExecutorWeaver(MethodVisitor mv, int access, String name, String desc, String signature, String[] exceptions) {
         super(ASM9, new JSRInlinerAdapter(mv, access, name, desc, signature, exceptions), access, name, desc);
     }
 

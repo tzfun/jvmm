@@ -1,4 +1,6 @@
-package org.beifengtz.jvmm.aop.core;
+package org.beifengtz.jvmm.aop.listener;
+
+import org.beifengtz.jvmm.aop.core.MethodInfo;
 
 import java.util.Objects;
 import java.util.Set;
@@ -14,7 +16,7 @@ public abstract class MethodListener implements Comparable<MethodListener> {
 
     private final Set<MethodListener> listenerList = new TreeSet<>();
 
-    synchronized void addListener(MethodListener methodListener) {
+    public synchronized void addListener(MethodListener methodListener) {
         if (methodListener == this) {
             return;
         }

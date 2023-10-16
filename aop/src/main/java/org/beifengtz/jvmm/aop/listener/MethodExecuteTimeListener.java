@@ -1,7 +1,6 @@
 package org.beifengtz.jvmm.aop.listener;
 
 import org.beifengtz.jvmm.aop.core.MethodInfo;
-import org.beifengtz.jvmm.aop.core.MethodListener;
 
 import java.util.Deque;
 import java.util.HashMap;

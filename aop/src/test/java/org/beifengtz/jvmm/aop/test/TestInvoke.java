@@ -5,7 +5,7 @@ import org.beifengtz.jvmm.aop.core.ThreadLocalStore;
 import org.beifengtz.jvmm.aop.core.Enhancer;
 import org.beifengtz.jvmm.aop.core.ExecutorEnhancer;
 import org.beifengtz.jvmm.aop.core.MethodInfo;
-import org.beifengtz.jvmm.aop.core.MethodListener;
+import org.beifengtz.jvmm.aop.listener.MethodListener;
 import org.beifengtz.jvmm.aop.wrapper.ThreadPoolExecutorWrapper;
 import org.junit.jupiter.api.Test;
 
