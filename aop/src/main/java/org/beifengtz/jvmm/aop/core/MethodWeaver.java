@@ -1,6 +1,5 @@
-package org.beifengtz.jvmm.aop.core.weaver;
+package org.beifengtz.jvmm.aop.core;
 
-import org.beifengtz.jvmm.aop.core.MethodEnhancer;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -8,7 +7,7 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AdviceAdapter;
 import org.objectweb.asm.commons.JSRInlinerAdapter;
 
-import static org.beifengtz.jvmm.aop.core.weaver.WeaverUtil.*;
+import static org.beifengtz.jvmm.aop.core.WeaverUtil.*;
 
 /**
  * description: TODO

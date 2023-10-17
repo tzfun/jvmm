@@ -1,7 +1,5 @@
 package org.beifengtz.jvmm.aop.core;
 
-import org.beifengtz.jvmm.aop.core.weaver.MethodWeaver;
-import org.beifengtz.jvmm.aop.core.weaver.WeaverUtil;
 import org.beifengtz.jvmm.aop.listener.MethodListener;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
