@@ -14,7 +14,8 @@ import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.Instrumentation;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ForkJoinTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -35,13 +36,13 @@ public class EnhanceDemo {
         //  测试包装后的 JDK 线程池
 //        testThreadPoolExecutor(taskCount);
         //  测试增强第三方自定义线程池
-        testEnhancedThreadPoolExecutor(taskCount);
-
+//        testEnhancedThreadPoolExecutor(taskCount);
+        //  测试增强ForkJoin
         testForkJoinTask(taskCount);
     }
 
-    private static void testForkJoinTask(int taskCount) {
-
+    private static void testForkJoinTask(int taskCount) throws Exception {
+        testTrace(taskCount, command -> ForkJoinPool.commonPool().execute(command));
     }
 
     private static void testEnhancedThreadPoolExecutor(int taskCount) throws Exception {

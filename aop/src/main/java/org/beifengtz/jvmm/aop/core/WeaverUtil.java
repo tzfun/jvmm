@@ -4,13 +4,13 @@ import org.beifengtz.jvmm.aop.wrapper.Utils;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.Method;
 
-import static jdk.internal.org.objectweb.asm.Opcodes.ACC_ABSTRACT;
-import static jdk.internal.org.objectweb.asm.Opcodes.ACC_BRIDGE;
-import static jdk.internal.org.objectweb.asm.Opcodes.ACC_FINAL;
-import static jdk.internal.org.objectweb.asm.Opcodes.ACC_INTERFACE;
-import static jdk.internal.org.objectweb.asm.Opcodes.ACC_NATIVE;
-import static jdk.internal.org.objectweb.asm.Opcodes.ACC_STATIC;
-import static jdk.internal.org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
+import static org.objectweb.asm.Opcodes.ACC_ABSTRACT;
+import static org.objectweb.asm.Opcodes.ACC_BRIDGE;
+import static org.objectweb.asm.Opcodes.ACC_FINAL;
+import static org.objectweb.asm.Opcodes.ACC_INTERFACE;
+import static org.objectweb.asm.Opcodes.ACC_NATIVE;
+import static org.objectweb.asm.Opcodes.ACC_STATIC;
+import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
 
 /**
  * description TODO
@@ -30,7 +30,7 @@ class WeaverUtil {
     static final Method ASM_METHOD_CLASS_GET_CLASS_LOADER = getAsmMethod(Class.class, "getClassLoader");
     static final Type WRAPPER_UTILS = Type.getType(Utils.class);
     static final Type THREAD_LOCAL_STORE = Type.getType(ThreadLocalStore.class);
-    static final Type FORK_JOIN_TASK = Type.getType("Ljava/util/concurrent/ForkJoinTask");
+    static final Type FORK_JOIN_TASK = Type.getType("Ljava/util/concurrent/ForkJoinTask;");
 
     /**
      * asm invoke {@link MethodEnhancer#methodOnBefore(int, ClassLoader, String, String, String, Object, Object[])}

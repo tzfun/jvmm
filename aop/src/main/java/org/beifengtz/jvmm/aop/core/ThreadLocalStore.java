@@ -39,4 +39,8 @@ public class ThreadLocalStore {
     public static void setAttributes(Attributes attributes) {
         CONTEXT_ID_THREAD_LOCAL.set(attributes);
     }
+
+    public static void clear() {
+        CONTEXT_ID_THREAD_LOCAL.remove();
+    }
 }
