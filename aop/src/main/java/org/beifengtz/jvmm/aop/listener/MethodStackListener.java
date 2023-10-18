@@ -107,7 +107,7 @@ public class MethodStackListener extends MethodExecuteTimeListener {
     /**
      * 当一个方法执行结束时触发此函数
      *
-     * @param stack {@link MethodStack}包含此方法执行期间调用过的所有【已被增强过的方法】的堆栈以及其{@link Node}信息
+     * @param stack {@link MethodStack}包含此方法执行期间调用过的所有【已被增强过的方法】的堆栈以及其 Node 信息
      */
     protected void onMethodStack(MethodStack stack) {
         StringBuilder sb = new StringBuilder("Execute stack:\n");

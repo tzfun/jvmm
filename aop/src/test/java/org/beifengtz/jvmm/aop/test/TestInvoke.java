@@ -13,8 +13,10 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.nio.file.Files;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -83,39 +85,18 @@ public class TestInvoke {
     }
 
     @Test
-    public void testExecutorEnhance() throws Exception {
-        byte[] bytes = ExecutorEnhancer.enhance(java.util.concurrent.ThreadPoolExecutor.class);
-        Files.write(new File("EnhancedExecutor.class").toPath(), bytes);
-
-        TestASMClassLoader classLoader = new TestASMClassLoader(java.util.concurrent.ThreadPoolExecutor.class.getName(), bytes,
-                Thread.currentThread().getContextClassLoader());
-        Class<?> clazz = classLoader.defineClass();
-
-        Constructor<?> constructor = clazz.getConstructor(int.class, int.class, long.class, TimeUnit.class, BlockingQueue.class);
-        ExecutorService executorService = (ExecutorService) constructor.newInstance(2, 2, 0, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
-
-        for (int i = 0; i < 10; i++) {
-            executorService.submit(() -> {
-                System.out.println("--> " + Thread.currentThread().getId());
-            });
-        }
-
-        Thread.sleep(5000);
-    }
-
-    @Test
     public void testExecutorInvoke() throws Exception {
-        System.out.println(java.util.concurrent.ThreadPoolExecutor.class.isAssignableFrom(ThreadPoolExecutorWrapper.class));
         ThreadPoolExecutorWrapper executor = new ThreadPoolExecutorWrapper(2, 2, 0, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
         System.out.println("==> " + Thread.currentThread().getId());
+        CountDownLatch cdl = new CountDownLatch(10);
         ThreadLocalStore.setAttributes(new Attributes().setContextId("123ABC"));
         for (int i = 0; i < 10; i++) {
             executor.submit(() -> {
                 System.out.println("--> " + Thread.currentThread().getId() + " " + ThreadLocalStore.getAttributes());
+                cdl.countDown();
             });
         }
-
-        Thread.sleep(5000);
+        cdl.await();
     }
 
 }

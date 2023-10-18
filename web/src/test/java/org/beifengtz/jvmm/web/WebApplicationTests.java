@@ -22,11 +22,11 @@ class WebApplicationTests {
         CountDownLatch latch = new CountDownLatch(5);
         client.registerListener((response) -> {
             System.out.println("==> " + response.toJsonStr());
-            if (response.getType().equals(RpcType.JVMM_COLLECT_JVM_MEMORY_INFO.name())) {
+            if (response.getType().equals(RpcType.JVMM_COLLECT_JVM_MEMORY_INFO)) {
                 latch.countDown();
             }
         });
-        if (client.connect().await(3, TimeUnit.SECONDS)) {
+        if (client.connect().get(3, TimeUnit.SECONDS)) {
             System.out.println(client.ping());
             client.send(JvmmRequest.create().setType(RpcType.JVMM_COLLECT_SYS_INFO));
             client.send(JvmmRequest.create().setType(RpcType.JVMM_COLLECT_PROCESS_INFO));

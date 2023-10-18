@@ -29,11 +29,13 @@ tasks.compileJava.configure {
 
         delete 'src/main/resources/jvmm-logger.jar'
 
-        // 发布时去掉
-        println("copy logger jar file to resources")
-        copy {
-            from '../logger/build/libs/jvmm-logger.jar'
-            into 'src/main/resources'
+        //  发布时去掉
+        if (env != 'publish') {
+            println("copy logger jar file to resources")
+            copy {
+                from '../logger/build/libs/jvmm-logger.jar'
+                into 'src/main/resources'
+            }
         }
     }
 }
@@ -42,15 +44,17 @@ jar {
     manifestContentCharset 'utf-8'
     metadataCharset 'utf-8'
 
-    archiveName("jvmm-server.jar")
+    archiveName("${projectName}.jar")
 
     manifest {
         attributes 'Main-Class': 'org.beifengtz.jvmm.server.ServerApplication'
     }
 
     //  发布时去掉
-    from {
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    if (env != 'publish') {
+        from {
+            configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+        }
     }
 
     doLast {
@@ -65,10 +69,19 @@ jar {
     }
 }
 
+javadoc {
+    options.addStringOption("charset", "UTF-8")
+}
+
 task sourcesJar(type: Jar, dependsOn: classes) {
-    archiveName("jvmm-server-sources.jar")
+    archiveName("${projectName}-sources.jar")
     getArchiveClassifier().set('sources')
     from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar) {
+    from javadoc
+    getArchiveClassifier().set('javadoc')
 }
 
 tasks.jar.configure {
@@ -77,13 +90,4 @@ tasks.jar.configure {
 
 artifacts {
     archives sourcesJar
-}
-
-task javadocJar(type: Jar) {
-    from javadoc
-    getArchiveClassifier().set('javadoc')
-}
-
-javadoc {
-    options.addStringOption("charset", "UTF-8")
 }
