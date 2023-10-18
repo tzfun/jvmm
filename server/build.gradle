@@ -89,5 +89,54 @@ tasks.jar.configure {
 }
 
 artifacts {
-    archives sourcesJar
+    archives sourcesJar, javadocJar
+}
+
+if(env == 'publish') {
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    authentication(userName: sonatypeUsername, password: sonatypePassword)
+                }
+
+                snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+                    authentication(userName: sonatypeUsername, password: sonatypePassword)
+                }
+
+                pom.project {
+                    name projectName
+                    packaging 'jar'
+                    description 'Provides access to operating system, process, thread and other information during Java runtime.'
+                    url 'https://github.com/tzfun/jvmm'
+
+                    scm {
+                        url = 'https://github.com/tzfun/jvmm'
+                        connection = 'scm:git:git://github.com/tzfun/jvmm.git'
+                        developerConnection = 'scm:git:ssh://git@github.com/tzfun/jvmm.git'
+                    }
+
+                    licenses {
+                        license {
+                            name 'The Apache License, Version 2.0'
+                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            name 'beifengtz'
+                            email 'beifengtz@163.com'
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    signing {
+        sign configurations.archives
+    }
 }
