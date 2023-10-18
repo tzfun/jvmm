@@ -41,7 +41,7 @@ JVM（内存、线程、线程池、内存池、GC、类加载器等），还提
 
 请前往[releases](https://github.com/tzfun/jvmm/releases)下载最新版的jvmm，然后将其解压
 
-> 小Tips：Jvmm 部分功能依赖于本地环境中的 jdk，请确保你的环境中安装的是jdk而不只是 jre，简单验证：在你的环境中执行`jps -l`，
+> 小Tips：Jvmm 部分功能依赖于本地环境中的 jdk，请确保你的环境中安装的是 jdk 而不只是 jre，简单验证：在你的环境中执行`jps -l`，
 > 如果可正常执行并输出结果则表示环境OK，否则在运行jvmm时可能会出现报错
 
 首先执行下面指令生成服务jar包

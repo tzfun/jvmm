@@ -4,7 +4,6 @@ import org.beifengtz.jvmm.agent.util.AppUtil;
 import org.beifengtz.jvmm.agent.util.ClassLoaderUtil;
 import org.beifengtz.jvmm.agent.util.FileUtil;
 import org.beifengtz.jvmm.agent.util.LoggerUtil;
-import org.beifengtz.jvmm.aop.JvmmAOPInitializer;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -56,7 +55,7 @@ public class AgentBootStrap {
     }
 
     public static void premain(String agentArgs, Instrumentation inst) {
-        JvmmAOPInitializer.initTracing(inst);
+//        JvmmAOPInitializer.initTracing(inst);
         main(agentArgs, inst, "premain");
     }
 
