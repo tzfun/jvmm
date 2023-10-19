@@ -898,7 +898,7 @@ public class ServerServiceImpl extends ServerService {
             if (response == null) {
                 return;
             }
-            System.out.println(response.getData().toString());
+            System.out.println(response.getData().getAsString());
         } else {
             JvmmRequest request = JvmmRequest.create().setType(RpcType.JVMM_EXECUTE_SWITCHES_GET);
             JvmmResponse response = request(connector, request);

@@ -613,10 +613,10 @@ class DefaultJvmmCollector implements JvmmCollector {
             }
             sb.append(" pri=").append(thread.getPriority());
         }
-        sb.append(" cpu=").append(threadMXBean.getThreadCpuTime(ti.getThreadId())).append(" ns");
-        sb.append(" usr=").append(threadMXBean.getThreadUserTime(ti.getThreadId())).append(" ns");
-        sb.append(" blocked ").append(ti.getBlockedCount()).append(" for ").append(ti.getBlockedTime()).append(" ms");
-        sb.append(" waited ").append(ti.getWaitedCount()).append(" for ").append(ti.getWaitedTime()).append(" ms");
+        sb.append(" cpu=").append(threadMXBean.getThreadCpuTime(ti.getThreadId())).append("(ns)");
+        sb.append(" usr=").append(threadMXBean.getThreadUserTime(ti.getThreadId())).append("(ns)");
+        sb.append(" blocked ").append(ti.getBlockedCount()).append(" times for ").append(ti.getBlockedTime()).append(" ms");
+        sb.append(" waited ").append(ti.getWaitedCount()).append(" times for ").append(ti.getWaitedTime()).append(" ms");
 
         if (ti.isSuspended()) {
             sb.append(" (suspended)");
