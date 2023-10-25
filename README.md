@@ -55,7 +55,11 @@ java -jar jvmm.jar -m jar -s
 java -jar jvmm-server.jar
 
 # jdk 9+ 请使用下面命令
-java -jar --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens jdk.zipfs/jdk.nio.zipfs=ALL-UNNAMED --add-opens java.management/sun.management=ALL-UNNAMED jvmm-server.jar
+java -jar --add-opens java.base/jdk.internal.loader=ALL-UNNAMED \
+          --add-opens jdk.zipfs/jdk.nio.zipfs=ALL-UNNAMED \
+          --add-opens java.base/java.net=ALL-UNNAMED \
+          --add-opens java.management/sun.management=ALL-UNNAMED \
+          jvmm-server.jar
 ```
 
 如果启动成功 Jvmm Server 将会默认运行在 5010 端口，然后你需要在当前目录新起一个窗口执行：
@@ -675,8 +679,13 @@ java.lang.reflect.InaccessibleObjectException: Unable to make field final jdk.in
 # JDK 9+开始不允许动态加载依赖，需要设置以下几个虚拟机参数
 # --add-opens java.base/jdk.internal.loader=ALL-UNNAMED 
 # --add-opens jdk.zipfs/jdk.nio.zipfs=ALL-UNNAMED 
+# --add-opens java.base/java.net=ALL-UNNAMED
 # --add-opens java.management/sun.management=ALL-UNNAMED
-java -jar --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens jdk.zipfs/jdk.nio.zipfs=ALL-UNNAMED --add-opens java.management/sun.management=ALL-UNNAMED jvmm-server.jar ./config.yml
+java -jar --add-opens java.base/jdk.internal.loader=ALL-UNNAMED \
+          --add-opens jdk.zipfs/jdk.nio.zipfs=ALL-UNNAMED \
+          --add-opens java.base/java.net=ALL-UNNAMED \
+          --add-opens java.management/sun.management=ALL-UNNAMED \
+          jvmm-server.jar ./config.yml
 ```
 
 ## kernel.perf_event_paranoid权限开关
