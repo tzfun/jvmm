@@ -70,8 +70,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
-    private final Map<Class<?>, Object> controllerInstance = new ConcurrentHashMap<>(controllers.size());
-    private static Set<Class<?>> controllers;
+    private final Map<Class<?>, Object> controllerInstance = new ConcurrentHashMap<>();
     private static Map<String, Method> mappings;
     private static Map<String, HttpMethod> methodMappings;
     private static final ChannelGroup channels = new DefaultChannelGroup(ImmediateEventExecutor.INSTANCE);
@@ -79,7 +78,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
 
     public static void init() {
         String scanPackage = SystemPropertyUtil.get(SystemPropertyUtil.PROPERTY_JVMM_SCAN_PACKAGE, "org.beifengtz.jvmm");
-        controllers = ReflexUtil.scanAnnotation(scanPackage, HttpController.class);
+        Set<Class<?>> controllers = ReflexUtil.scanAnnotation(scanPackage, HttpController.class);
         mappings = new HashMap<>(controllers.size() * 5);
         methodMappings = new HashMap<>(controllers.size() * 5);
         globalHeaders = new MultiMap<>();
