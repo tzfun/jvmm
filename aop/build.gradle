@@ -19,8 +19,23 @@ dependencies {
 jar {
     manifestContentCharset 'utf-8'
     metadataCharset 'utf-8'
+    def jarName = "${projectName}.jar"
 
-    archiveName("${projectName}.jar")
+    manifest {
+        attributes(
+                "Premain-Class": "org.beifengtz.jvmm.aop.JvmmAgent",
+                "Agent-Class": "org.beifengtz.jvmm.aop.JvmmAgent",
+                "Can-Redefine-Classes": true,
+                "Can-Retransform-Classes": true,
+                "Boot-Class-Path": "${jarName}"
+        )
+    }
+
+    archiveName(jarName)
+
+//    from {
+//        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+//    }
 }
 
 javadoc {

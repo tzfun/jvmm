@@ -2,8 +2,9 @@ package org.beifengtz.jvmm.aop.core.transformer;
 
 import org.beifengtz.jvmm.aop.core.ExecutorEnhancer;
 
-import java.io.IOException;
+import java.io.File;
 import java.lang.instrument.ClassFileTransformer;
+import java.nio.file.Files;
 import java.security.ProtectionDomain;
 
 /**
@@ -24,7 +25,9 @@ public class ExecutorTransformer implements ClassFileTransformer {
         if (THREAD_POOL_EXECUTOR_CLASS_NAME.equals(className) || SCHEDULED_THREAD_POOL_EXECUTOR_CLASS_NAME.equals(className)) {
             try {
                 System.out.println("Jvmm enhance executor: " + className);
-                return ExecutorEnhancer.enhance(className, classfileBuffer);
+                byte[] bytes =  ExecutorEnhancer.enhance(className, classfileBuffer);
+                Files.write(new File(className + ".class").toPath(), bytes);
+                return bytes;
             } catch (Throwable e) {
                 e.printStackTrace();
             }

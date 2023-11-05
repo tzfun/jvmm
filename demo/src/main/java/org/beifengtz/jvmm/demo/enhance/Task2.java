@@ -21,7 +21,7 @@ public class Task2 implements Runnable {
 
     @Override
     public void run() {
-        EnhanceDemo.calculate(new Random(System.currentTimeMillis()).nextInt(20));
+        EnhanceDemo.calculate(new Random(hashCode()).nextInt(20));
         executor.execute(new Task3(cdl));
     }
 }

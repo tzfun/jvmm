@@ -30,7 +30,7 @@ tasks.compileJava.configure {
         delete 'src/main/resources/jvmm-logger.jar'
 
         //  发布时去掉
-        if (env != 'publish') {
+        if (env != 'publish' && env != 'install') {
             println("copy logger jar file to resources")
             copy {
                 from '../logger/build/libs/jvmm-logger.jar'
@@ -51,7 +51,7 @@ jar {
     }
 
     //  发布时去掉
-    if (env != 'publish') {
+    if (env != 'publish' && env != 'install') {
         from {
             configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
         }

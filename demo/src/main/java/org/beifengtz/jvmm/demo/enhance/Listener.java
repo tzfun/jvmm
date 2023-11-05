@@ -4,6 +4,7 @@ import org.beifengtz.jvmm.aop.annotation.AspectJoin;
 import org.beifengtz.jvmm.aop.core.Attributes;
 import org.beifengtz.jvmm.aop.core.ThreadLocalStore;
 import org.beifengtz.jvmm.aop.listener.MethodExecuteTimeListener;
+import org.beifengtz.jvmm.common.util.StringUtil;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -40,16 +41,19 @@ public class Listener extends MethodExecuteTimeListener {
             List<Node> list = entry.getValue();
             StringBuilder sb = new StringBuilder(entry.getKey());
             sb.append(" trace:");
+            int tab = 1;
             for (Node node : list) {
-                sb.append(" ==> ")
-                        .append("[")
+                sb.append("\n");
+                sb.append(StringUtil.repeat("\t", tab++));
+                sb.append("--> ")
+                        .append("[thread ")
                         .append(node.getThreadId())
-                        .append("] ")
+                        .append("] invoke method ")
                         .append(node.getInfo().getMethodName())
                         .append(node.getInfo().getMethodDesc())
-                        .append(" {")
+                        .append(" use ")
                         .append(node.getNanos())
-                        .append("ns}");
+                        .append(" ns");
             }
             System.out.println(sb);
         }

@@ -10,11 +10,12 @@ import org.beifengtz.jvmm.aop.core.ThreadLocalStore;
 import org.beifengtz.jvmm.common.util.AssertUtil;
 import org.beifengtz.jvmm.convey.channel.ChannelUtil;
 
+import java.io.File;
 import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.Instrumentation;
+import java.nio.file.Files;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -30,15 +31,15 @@ public class EnhanceDemo {
     public static void main(String[] args) throws Exception {
         Instrumentation instrumentation = AgentBootStrap.getInstrumentation();
         AssertUtil.notNull(instrumentation, "Instrumentation is null, please add JVM argument `javaagent`");
-        JvmmAOPInitializer.initAspect("org.beifengtz", instrumentation);
+        JvmmAOPInitializer.initAspect("org.beifengtz.jvmm.demo", instrumentation);
         int taskCount = 10;
 
         //  测试包装后的 JDK 线程池
 //        testThreadPoolExecutor(taskCount);
         //  测试增强第三方自定义线程池
-//        testEnhancedThreadPoolExecutor(taskCount);
+        testEnhancedThreadPoolExecutor(taskCount);
         //  测试增强ForkJoin
-        testForkJoinTask(taskCount);
+//        testForkJoinTask(taskCount);
     }
 
     private static void testForkJoinTask(int taskCount) throws Exception {
@@ -51,7 +52,9 @@ public class EnhanceDemo {
         //  对 netty 的executor增强，其实际实现的execute是在 AbstractEventExecutorGroup 类中实现的
         Class<AbstractEventExecutorGroup> clazz = AbstractEventExecutorGroup.class;
         Instrumentation instrumentation = AgentBootStrap.getInstrumentation();
-        instrumentation.redefineClasses(new ClassDefinition(clazz, Enhancer.enhanceExecutor(clazz)));
+        byte[] bytes = Enhancer.enhanceExecutor(clazz);
+        Files.write(new File("AbstractEventExecutorGroup.class").toPath(), bytes);
+        instrumentation.redefineClasses(new ClassDefinition(clazz, bytes));
 
         testTrace(taskCount, executor);
         executor.shutdownGracefully();
@@ -68,8 +71,8 @@ public class EnhanceDemo {
         CountDownLatch cdl = new CountDownLatch(taskCount);
 
         for (int i = 0; i < taskCount; i++) {
-            ThreadLocalStore.setAttributes(new Attributes().setContextId("context_" + i));
-            System.out.println("==> post task " + i + ": " + ThreadLocalStore.getAttributes().getContextId());
+            ThreadLocalStore.setAttributes(new Attributes().setContextId("task_context_" + i));
+            System.out.println("main thread post task " + i + " with trace id " + ThreadLocalStore.getAttributes().getContextId());
             executor.execute(new Task1(executor, cdl));
         }
 
@@ -84,6 +87,6 @@ public class EnhanceDemo {
                 result *= i;
             }
         }
-        System.out.println(ThreadLocalStore.getAttributes().getContextId() + " [" + Thread.currentThread().getId() + "] invoke calculate result " + result);
+        System.out.println("thread " + Thread.currentThread().getId() + " execute task " + ThreadLocalStore.getAttributes().getContextId() + " and got result " + result);
     }
 }
