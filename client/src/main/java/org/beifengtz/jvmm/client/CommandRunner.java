@@ -393,14 +393,13 @@ public class CommandRunner {
 
         if (cmd.hasArg("s")) {
             serverFilePath = cmd.getArg("s");
-            FileUtil.delFromJar(serverFilePath, SLF4J_API_REGEX);
+//            FileUtil.delFromJar(serverFilePath, SLF4J_API_REGEX);
         } else if (canGenerateServerJar()) {
-            //  通过agent载入的server包不需要包含slf4j依赖，否则可能会导致LinkageError
-            generateServerJar(FileUtil.getTempPath(), false);
+            generateServerJar(FileUtil.getTempPath(), true);
             serverFilePath = new File(FileUtil.getTempPath(), "jvmm-server.jar").getAbsolutePath();
         } else {
             serverFilePath = GuidedRunner.askServerFilePath();
-            FileUtil.delFromJar(serverFilePath, SLF4J_API_REGEX);
+//            FileUtil.delFromJar(serverFilePath, SLF4J_API_REGEX);
         }
 
         if (cmd.hasArg("c")) {

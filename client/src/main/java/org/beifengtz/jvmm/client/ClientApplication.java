@@ -21,6 +21,6 @@ public class ClientApplication {
     public static void main(String[] args) throws Throwable {
         initLogger();
         CommandRunner.run(args);
-//        CommandRunner.run(new String[]{"-m", "client", "-a", "127.0.0.1:5010"});
+//        CommandRunner.run(new String[]{"-m", "jar"});
     }
 }
