@@ -316,7 +316,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
             } else {
                 logger().warn("Can not response because of channel is inactive or un-writable {}", channel);
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             if (e instanceof AuthenticationFailedException) {
                 throw e;
             } else if (e instanceof InvocationTargetException) {
@@ -324,6 +324,8 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
             } else {
                 handleException(ctx, msg, e);
             }
+        } finally {
+            handleFinally(ctx, msg);
         }
     }
 
@@ -390,10 +392,6 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
         return null;
     }
 
-    public abstract Logger logger();
-
-    protected abstract boolean handleBefore(ChannelHandlerContext ctx, String uri, FullHttpRequest msg);
-
     protected void handleException(ChannelHandlerContext ctx, FullHttpRequest req, Throwable e) {
         if (e instanceof IllegalArgumentException) {
             response400(ctx, e.getMessage());
@@ -414,4 +412,10 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
     protected boolean handleUnmapping(ChannelHandlerContext ctx, String path, FullHttpRequest msg) {
         return false;
     }
+
+    public abstract Logger logger();
+
+    protected abstract boolean handleBefore(ChannelHandlerContext ctx, String uri, FullHttpRequest msg);
+
+    protected abstract void handleFinally(ChannelHandlerContext ctx, FullHttpRequest msg);
 }

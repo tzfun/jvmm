@@ -53,4 +53,9 @@ public class HttpServerHandler extends HttpChannelHandler {
         }
         return true;
     }
+
+    @Override
+    protected void handleFinally(ChannelHandlerContext ctx, FullHttpRequest msg) {
+
+    }
 }

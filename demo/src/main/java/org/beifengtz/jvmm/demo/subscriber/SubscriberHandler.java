@@ -28,4 +28,9 @@ public class SubscriberHandler extends HttpChannelHandler {
     protected boolean handleBefore(ChannelHandlerContext ctx, String uri, FullHttpRequest msg) {
         return true;
     }
+
+    @Override
+    protected void handleFinally(ChannelHandlerContext ctx, FullHttpRequest msg) {
+
+    }
 }
