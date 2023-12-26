@@ -26,9 +26,12 @@ public class JvmmAgentClassLoader extends URLClassLoader {
         if (resource != null) {
             return resource;
         }
-        resource = getClass().getClassLoader().getResource(name);
-        if (resource != null) {
-            return resource;
+        ClassLoader cl = getClass().getClassLoader();
+        if(cl != null) {
+            resource = cl.getResource(name);
+            if (resource != null) {
+                return resource;
+            }
         }
         return super.getResource(name);
     }
@@ -39,10 +42,12 @@ public class JvmmAgentClassLoader extends URLClassLoader {
         if (resources.hasMoreElements()) {
             return resources;
         }
-
-        resources = getClass().getClassLoader().getResources(name);
-        if (resources.hasMoreElements()) {
-            return resources;
+        ClassLoader cl = getClass().getClassLoader();
+        if (cl != null) {
+            resources = cl.getResources(name);
+            if (resources.hasMoreElements()) {
+                return resources;
+            }
         }
         return super.getResources(name);
     }
