@@ -47,7 +47,8 @@ import java.util.jar.JarFile;
 public class CommandRunner {
 
     private static final Logger logger = LoggerFactory.getLogger(CommandRunner.class);
-    private static final String SLF4J_API_REGEX = "org/slf4j/(?!impl).*";
+//    private static final String SLF4J_API_REGEX = "org/slf4j/(?!impl).*";
+    private static final String SLF4J_API_REGEX = "org/slf4j/.*";
 
     private static final CmdLineGroup cmdGroup;
 
@@ -203,9 +204,6 @@ public class CommandRunner {
     private static void generateServerJar(String dir, boolean containsSlf4j) throws IOException {
         if (canGenerateServerJar()) {
             File serverJarFile = new File(dir, "jvmm-server.jar");
-            if (checkJarVersion(dir) && serverJarFile.exists()) {
-                return;
-            }
             logger.info("Starting to generate server jar...");
             String path = CommandRunner.class.getProtectionDomain().getCodeSource().getLocation().getPath();
             try {
@@ -221,7 +219,7 @@ public class CommandRunner {
                 }
                 String regex = "async-profiler/.*|com/.*|io/.*|org/benf.*|META-INF/maven/.*" +
                         "|META-INF/native/.*|META-INF/native-image/.*|io.netty.versions.propeties|server-source/.*|" +
-                        ".*jvmm/common/.*|.*jvmm/convey/.*|.*jvmm/core/.*|oshi/.*|oshi.*|org/yaml.*";
+                        ".*jvmm/common/.*|.*jvmm/convey/.*|.*jvmm/core/.*|.*jvmm/log/.*|oshi/.*|oshi.*|org/yaml.*";
                 if (containsSlf4j) {
                     regex += ("|" + SLF4J_API_REGEX);
                 }
@@ -371,7 +369,7 @@ public class CommandRunner {
                 password = GuidedRunner.askServerAuthPassword();
                 return tryConnect(host, port, group, username, password);
             }
-        } catch (ExecutionException| TimeoutException e) {
+        } catch (ExecutionException | TimeoutException e) {
             logger.error("Connect server failed! case: time out");
             System.exit(1);
         }

@@ -35,7 +35,7 @@ public class LoggerUtil {
 
     private static volatile boolean LOADED_LOGGER = false;
     private static boolean CONTAINS_SLF4J = false;
-    private static DefaultImplLogger DEFAULT_LOGGER = null;
+    private static final DefaultImplLogger DEFAULT_LOGGER = new DefaultImplLogger();
     private static Method SLF4J_LOGGER_FACTORY = null;
     private static Map<Slf4jLoggerMethod, Method> methodCache = null;
 
@@ -44,6 +44,7 @@ public class LoggerUtil {
     }
 
     public static void init() {
+        loggerDefault("info", "Try to init logger...");
         if (!LOADED_LOGGER) {
             synchronized (LoggerUtil.class) {
                 if (!LOADED_LOGGER) {
@@ -52,8 +53,9 @@ public class LoggerUtil {
                         SLF4J_LOGGER_FACTORY = clazz.getDeclaredMethod("getLogger", String.class);
                         CONTAINS_SLF4J = true;
                         methodCache = new ConcurrentHashMap<>();
+                        loggerDefault("info", "Loaded SLF4J logger");
                     } catch (ClassNotFoundException | NoSuchMethodException ignored) {
-                        DEFAULT_LOGGER = new DefaultImplLogger();
+                        loggerDefault("info", "Can not found SLF4J logger, try to use default jvmm logger");
                     }
                 }
             }
@@ -122,23 +124,7 @@ public class LoggerUtil {
     }
 
     private static void loggerDefault(String methodName, String message) {
-        switch (methodName) {
-            case "trace":
-                DEFAULT_LOGGER.trace(message);
-                break;
-            case "info":
-                DEFAULT_LOGGER.info(message);
-                break;
-            case "warn":
-                DEFAULT_LOGGER.warn(message);
-                break;
-            case "debug":
-                DEFAULT_LOGGER.debug(message);
-                break;
-            case "error":
-                DEFAULT_LOGGER.error(message);
-                break;
-        }
+        loggerDefault(methodName, message, (Throwable)null);
     }
 
     private static void loggerDefault(String methodName, String message, Throwable t) {
