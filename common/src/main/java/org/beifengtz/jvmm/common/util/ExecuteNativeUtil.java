@@ -1,7 +1,7 @@
 package org.beifengtz.jvmm.common.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,7 +21,7 @@ import java.util.Scanner;
  */
 public class ExecuteNativeUtil {
 
-    private static final Logger log = LoggerFactory.getLogger(ExecuteNativeUtil.class);
+    private static final InternalLogger logger = InternalLoggerFactory.getInstance(ExecuteNativeUtil.class);
 
     public static List<String> execute(String command) {
         return execute(command.split(" "));
@@ -39,14 +39,14 @@ public class ExecuteNativeUtil {
             process.waitFor();
             return result;
         } catch (Exception e) {
-            log.error("Execute command with some problem: " + Arrays.toString(command), e);
+            logger.error("Execute command with some problem: " + Arrays.toString(command), e);
             return new ArrayList<>();
         }
     }
 
     public static String executeForFirstLine(String command) {
         List<String> result = execute(command);
-        if (result.size() > 0) {
+        if (!result.isEmpty()) {
             return result.get(0);
         }
         return "";

@@ -1,5 +1,7 @@
 package org.beifengtz.jvmm.core;
 
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.exception.ProfilerNotSupportedException;
 import org.beifengtz.jvmm.common.factory.ExecutorFactory;
 import org.beifengtz.jvmm.common.util.meta.ListenableFuture;
@@ -7,8 +9,6 @@ import org.beifengtz.jvmm.core.entity.profiler.ProfilerAction;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerCommander;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerCounter;
 import org.beifengtz.jvmm.core.ext.profiler.AsyncProfiler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
  */
 class DefaultJvmmProfiler implements JvmmProfiler {
 
-    private static final Logger log = LoggerFactory.getLogger(DefaultJvmmProfiler.class);
+    private static final InternalLogger log = InternalLoggerFactory.getInstance(DefaultJvmmProfiler.class);
 
     /**
      * 默认采样间隔，单位纳秒ns

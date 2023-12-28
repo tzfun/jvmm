@@ -13,9 +13,9 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.util.PlatformUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -31,7 +31,7 @@ import java.util.concurrent.Executor;
  * @author beifengtz
  */
 public class ChannelUtil {
-    private static final Logger logger = LoggerFactory.getLogger(ChannelUtil.class);
+    private static final InternalLogger logger = InternalLoggerFactory.getInstance(ChannelUtil.class);
 
     public static final String IDLE_STATE_HANDLER = "idleStateHandler";
     public static final String LEN_DECODER_HANDLER = "lenDecoderHandler";

@@ -1,6 +1,8 @@
 package org.beifengtz.jvmm.client;
 
 import io.netty.channel.EventLoopGroup;
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.client.cli.CmdLine;
 import org.beifengtz.jvmm.client.cli.CmdLineGroup;
 import org.beifengtz.jvmm.client.cli.CmdOption;
@@ -13,8 +15,6 @@ import org.beifengtz.jvmm.common.util.meta.PairKey;
 import org.beifengtz.jvmm.convey.channel.ChannelUtil;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 import org.beifengtz.jvmm.core.driver.VMDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,8 +46,8 @@ import java.util.jar.JarFile;
  */
 public class CommandRunner {
 
-    private static final Logger logger = LoggerFactory.getLogger(CommandRunner.class);
-//    private static final String SLF4J_API_REGEX = "org/slf4j/(?!impl).*";
+    private static final InternalLogger logger = InternalLoggerFactory.getInstance(CommandRunner.class);
+    //    private static final String SLF4J_API_REGEX = "org/slf4j/(?!impl).*";
     private static final String SLF4J_API_REGEX = "org/slf4j/.*";
 
     private static final CmdLineGroup cmdGroup;
@@ -152,7 +152,7 @@ public class CommandRunner {
                 return;
             }
 
-            String mode = null;
+            String mode =  null;
             if (cmd.hasArg("m")) {
                 mode = cmd.getArg("m");
             } else {

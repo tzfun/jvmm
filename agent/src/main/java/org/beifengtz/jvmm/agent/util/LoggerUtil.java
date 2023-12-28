@@ -124,7 +124,7 @@ public class LoggerUtil {
     }
 
     private static void loggerDefault(String methodName, String message) {
-        loggerDefault(methodName, message, (Throwable)null);
+        loggerDefault(methodName, message, (Throwable) null);
     }
 
     private static void loggerDefault(String methodName, String message, Throwable t) {

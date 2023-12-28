@@ -2,13 +2,9 @@ package org.beifengtz.jvmm.demo.subscriber;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
-import org.beifengtz.jvmm.convey.annotation.HttpRequest;
-import org.beifengtz.jvmm.convey.annotation.RequestBody;
-import org.beifengtz.jvmm.convey.enums.Method;
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.convey.handler.HttpChannelHandler;
-import org.beifengtz.jvmm.core.entity.JvmmData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * description TODO
@@ -17,10 +13,10 @@ import org.slf4j.LoggerFactory;
  * @author beifengtz
  */
 public class SubscriberHandler extends HttpChannelHandler {
-    private static final Logger logger = LoggerFactory.getLogger(SubscriberHandler.class);
+    private static final InternalLogger logger = InternalLoggerFactory.getInstance(SubscriberHandler.class);
 
     @Override
-    public Logger logger() {
+    public InternalLogger logger() {
         return logger;
     }
 

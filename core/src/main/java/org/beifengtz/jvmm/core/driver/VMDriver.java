@@ -2,13 +2,13 @@ package org.beifengtz.jvmm.core.driver;
 
 import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.util.ClassLoaderUtil;
 import org.beifengtz.jvmm.common.util.IOUtil;
 import org.beifengtz.jvmm.common.util.JavaEnvUtil;
 import org.beifengtz.jvmm.common.util.JavaVersionUtils;
 import org.beifengtz.jvmm.common.util.PidUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import sun.tools.attach.HotSpotVirtualMachine;
 
 import java.io.File;
@@ -29,7 +29,7 @@ import java.util.Properties;
  */
 public class VMDriver {
 
-    private static final Logger log = LoggerFactory.getLogger(VMDriver.class);
+    private static final InternalLogger logger = InternalLoggerFactory.getInstance(VMDriver.class);
 
     private static volatile VMDriver INSTANCE;
 
@@ -57,11 +57,11 @@ public class VMDriver {
                 }
                 try {
                     toolsClassLoader = ClassLoaderUtil.systemLoadJar(toolsJar.toURI().toURL());
-                    log.debug("Init tools classes successful.");
+                    logger.debug("Init tools classes successful.");
                 } catch (MalformedURLException e) {
                     //  ignored
                 } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
-                    log.error("Init class loader failed. " + e.getMessage(), e);
+                    logger.error("Init class loader failed. " + e.getMessage(), e);
                     throw e;
                 }
             } else {
@@ -95,9 +95,9 @@ public class VMDriver {
             String currentJavaVersion = JavaVersionUtils.javaVersionStr();
             if (targetJavaVersion != null && currentJavaVersion != null) {
                 if (!targetJavaVersion.equals(currentJavaVersion)) {
-                    log.warn("Current VM java version: {} do not match target VM java version: {}, attach may fail.",
+                    logger.warn("Current VM java version: {} do not match target VM java version: {}, attach may fail.",
                             currentJavaVersion, targetJavaVersion);
-                    log.warn("Target VM JAVA_HOME is {}, jvmm-server JAVA_HOME is {}, try to set the same JAVA_HOME.",
+                    logger.warn("Target VM JAVA_HOME is {}, jvmm-server JAVA_HOME is {}, try to set the same JAVA_HOME.",
                             targetSystemProperties.getProperty("java.home"), System.getProperty("java.home"));
                 }
             }
@@ -105,7 +105,7 @@ public class VMDriver {
                     serverJarPath.replaceAll("\\\\", "/") + ";" + args);
         } catch (IOException e) {
             if (e.getMessage() != null && e.getMessage().startsWith("Non-numeric value found")) {
-                log.warn("An exception occurred when attaching: {}", e.getMessage());
+                logger.warn("An exception occurred when attaching: {}", e.getMessage());
             }
         } finally {
             if (virtualMachine != null) {

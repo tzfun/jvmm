@@ -1,6 +1,8 @@
 package org.beifengtz.jvmm.server.service;
 
 import io.netty.util.concurrent.Promise;
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.QuickFailManager;
 import org.beifengtz.jvmm.common.factory.ExecutorFactory;
 import org.beifengtz.jvmm.common.util.CommonUtil;
@@ -11,8 +13,6 @@ import org.beifengtz.jvmm.server.entity.conf.AuthOptionConf;
 import org.beifengtz.jvmm.server.entity.conf.SentinelConf;
 import org.beifengtz.jvmm.server.entity.conf.SentinelSubscriberConf;
 import org.beifengtz.jvmm.server.entity.conf.ServerConf;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
  */
 public class JvmmSentinelService implements JvmmService {
 
-    private static final Logger logger = LoggerFactory.getLogger(JvmmSentinelService.class);
+    private static final InternalLogger logger = InternalLoggerFactory.getInstance(JvmmSentinelService.class);
     protected static final Map<String, String> globalHeaders = CommonUtil.hasMapOf("Content-Type", "application/json;charset=UTF-8");
 
     protected ScheduledExecutorService executor;

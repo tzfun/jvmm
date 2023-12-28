@@ -21,6 +21,8 @@ import io.netty.util.AsciiString;
 import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.EventExecutor;
 import io.netty.util.concurrent.ImmediateEventExecutor;
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
 import org.beifengtz.jvmm.common.exception.InvalidJvmmMappingException;
 import org.beifengtz.jvmm.common.util.HttpUtil;
@@ -37,8 +39,6 @@ import org.beifengtz.jvmm.convey.annotation.RequestParam;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.entity.ResponseFuture;
 import org.beifengtz.jvmm.convey.enums.RpcStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
@@ -89,7 +89,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
         globalHeaders.put(HttpHeaderNames.VARY, "Access-Control-Request-Method");
         globalHeaders.put(HttpHeaderNames.VARY, "Origin");
 
-        Logger logger = LoggerFactory.getLogger(HttpChannelHandler.class);
+        InternalLogger logger = InternalLoggerFactory.getInstance(HttpChannelHandler.class);
 
         for (Class<?> controller : controllers) {
             Set<Method> methods = ReflexUtil.scanMethodAnnotation(controller, HttpRequest.class);
@@ -413,7 +413,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
         return false;
     }
 
-    public abstract Logger logger();
+    public abstract InternalLogger logger();
 
     protected abstract boolean handleBefore(ChannelHandlerContext ctx, String uri, FullHttpRequest msg);
 

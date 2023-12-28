@@ -1,9 +1,9 @@
 package org.beifengtz.jvmm.core;
 
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.exception.ExecutionException;
 import org.beifengtz.jvmm.core.entity.info.JvmClassLoaderInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -33,7 +33,7 @@ public final class Unsafe {
         String DOUBLE = "D";
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(Unsafe.class);
+    private static final InternalLogger logger = InternalLoggerFactory.getInstance(Unsafe.class);
 
     private static Method threadsMethod;
     private static Method findLoadedClassMethod;

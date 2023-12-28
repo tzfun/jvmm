@@ -1,8 +1,8 @@
 package org.beifengtz.jvmm.common.factory;
 
+import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -41,10 +41,10 @@ public class ExecutorFactory {
 
     public static void releaseThreadPool() {
         if (SCHEDULE_THREAD_POOL != null) {
-            LoggerFactory.getLogger(ExecutorFactory.class).info("Trigger to shutdown jvmm thread pool...");
+            InternalLoggerFactory.getInstance(ExecutorFactory.class).info("Trigger to shutdown jvmm thread pool...");
             SCHEDULE_THREAD_POOL.shutdown();
             SCHEDULE_THREAD_POOL = null;
-            LoggerFactory.getLogger(ExecutorFactory.class).info("Jvmm thread pool has been shutdown");
+            InternalLoggerFactory.getInstance(ExecutorFactory.class).info("Jvmm thread pool has been shutdown");
         }
     }
 

@@ -7,14 +7,14 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.Promise;
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.convey.channel.ChannelUtil;
 import org.beifengtz.jvmm.convey.channel.JvmmServerChannelInitializer;
 import org.beifengtz.jvmm.convey.handler.JvmmChannelHandler;
 import org.beifengtz.jvmm.server.ServerContext;
 import org.beifengtz.jvmm.server.entity.conf.JvmmServerConf;
 import org.beifengtz.jvmm.server.handler.JvmmServerHandlerProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  */
 public class JvmmServerService extends AbstractListenerServerService {
 
-    private static final Logger logger = LoggerFactory.getLogger(JvmmServerService.class);
+    private static final InternalLogger logger = InternalLoggerFactory.getInstance(JvmmServerService.class);
 
     protected volatile Channel channel;
 
@@ -37,7 +37,7 @@ public class JvmmServerService extends AbstractListenerServerService {
     }
 
     @Override
-    protected Logger logger() {
+    protected InternalLogger logger() {
         return logger;
     }
 

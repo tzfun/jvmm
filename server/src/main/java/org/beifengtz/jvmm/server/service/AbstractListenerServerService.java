@@ -2,10 +2,10 @@ package org.beifengtz.jvmm.server.service;
 
 import io.netty.channel.unix.Errors;
 import io.netty.util.concurrent.Promise;
+import io.netty.util.internal.logging.InternalLogger;
 import org.beifengtz.jvmm.common.util.PlatformUtil;
 import org.beifengtz.jvmm.server.ServerContext;
 import org.beifengtz.jvmm.server.entity.conf.JvmmServerConf;
-import org.slf4j.Logger;
 
 import java.net.BindException;
 import java.util.HashSet;
@@ -107,7 +107,7 @@ public abstract class AbstractListenerServerService implements JvmmService {
 
     protected abstract JvmmServerConf getConf();
 
-    protected abstract Logger logger();
+    protected abstract InternalLogger logger();
 
     protected abstract void startUp(Promise<Integer> promise) throws Exception;
 

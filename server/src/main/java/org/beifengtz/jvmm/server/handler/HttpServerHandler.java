@@ -2,13 +2,13 @@ package org.beifengtz.jvmm.server.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.convey.handler.HttpChannelHandler;
+import org.beifengtz.jvmm.server.ServerContext;
 import org.beifengtz.jvmm.server.entity.conf.AuthOptionConf;
 import org.beifengtz.jvmm.server.entity.conf.HttpServerConf;
-import org.beifengtz.jvmm.server.ServerContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -24,10 +24,11 @@ import java.util.Objects;
  * @author beifengtz
  */
 public class HttpServerHandler extends HttpChannelHandler {
+    private static final InternalLogger logger = InternalLoggerFactory.getInstance(HttpServerHandler.class);
 
     @Override
-    public Logger logger() {
-        return LoggerFactory.getLogger(HttpServerHandler.class);
+    public InternalLogger logger() {
+        return logger;
     }
 
     @Override

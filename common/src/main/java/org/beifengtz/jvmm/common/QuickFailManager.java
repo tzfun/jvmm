@@ -1,7 +1,8 @@
 package org.beifengtz.jvmm.common;
 
-import com.sun.org.slf4j.internal.Logger;
-import com.sun.org.slf4j.internal.LoggerFactory;
+
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class QuickFailManager<T> {
 
-    private static final Logger logger = LoggerFactory.getLogger(QuickFailManager.class);
+    private static final InternalLogger logger = InternalLoggerFactory.getInstance(QuickFailManager.class);
 
     static class FailedInfo {
         private int times;

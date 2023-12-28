@@ -15,6 +15,7 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.concurrent.EventExecutor;
 import io.netty.util.concurrent.ImmediateEventExecutor;
+import io.netty.util.internal.logging.InternalLogger;
 import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
 import org.beifengtz.jvmm.common.exception.InvalidJvmmMappingException;
 import org.beifengtz.jvmm.common.exception.InvalidMsgException;
@@ -33,7 +34,6 @@ import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.entity.ResponseFuture;
 import org.beifengtz.jvmm.convey.enums.RpcStatus;
 import org.beifengtz.jvmm.convey.enums.RpcType;
-import org.slf4j.Logger;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -191,7 +191,7 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Jvm
         }
     }
 
-    public abstract Logger logger();
+    public abstract InternalLogger logger();
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     public void handleRequest(ChannelHandlerContext ctx, JvmmRequest reqMsg) {

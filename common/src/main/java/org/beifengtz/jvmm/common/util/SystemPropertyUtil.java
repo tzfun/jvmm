@@ -1,7 +1,7 @@
 package org.beifengtz.jvmm.common.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -32,8 +32,8 @@ public class SystemPropertyUtil {
     public static final String PROPERTY_JVMM_SERVER_APPLICATION = "jvmm.server.app";
 
 
-    private static Logger logger() {
-        return LoggerFactory.getLogger(SystemPropertyUtil.class);
+    private static InternalLogger logger() {
+        return InternalLoggerFactory.getInstance(SystemPropertyUtil.class);
     }
 
     public static boolean contains(String key) {

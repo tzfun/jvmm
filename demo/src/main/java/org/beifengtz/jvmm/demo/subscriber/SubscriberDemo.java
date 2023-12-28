@@ -5,12 +5,12 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.EventLoopGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.convey.channel.ChannelUtil;
 import org.beifengtz.jvmm.convey.channel.HttpServerChannelInitializer;
 import org.beifengtz.jvmm.convey.handler.HandlerProvider;
 import org.beifengtz.jvmm.server.ServerContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * description TODO
@@ -20,7 +20,8 @@ import org.slf4j.LoggerFactory;
  */
 public class SubscriberDemo {
 
-    private static final Logger logger = LoggerFactory.getLogger(SubscriberDemo.class);
+    private static final InternalLogger logger = InternalLoggerFactory.getInstance(SubscriberDemo.class);
+
     public static void main(String[] args) {
         int port = 8081;
         EventLoopGroup group = ServerContext.getWorkerGroup();

@@ -1,6 +1,8 @@
 package org.beifengtz.jvmm.server.controller;
 
 import com.google.gson.JsonPrimitive;
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.util.FileUtil;
 import org.beifengtz.jvmm.common.util.meta.ListenableFuture;
 import org.beifengtz.jvmm.convey.annotation.HttpController;
@@ -11,14 +13,12 @@ import org.beifengtz.jvmm.convey.annotation.RequestBody;
 import org.beifengtz.jvmm.convey.annotation.RequestParam;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.entity.ResponseFuture;
+import org.beifengtz.jvmm.convey.enums.Method;
 import org.beifengtz.jvmm.convey.enums.RpcStatus;
 import org.beifengtz.jvmm.convey.enums.RpcType;
-import org.beifengtz.jvmm.convey.enums.Method;
 import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerCounter;
 import org.beifengtz.jvmm.server.entity.dto.ProfilerSampleDTO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
 @HttpController
 public class ProfilerController {
 
-    private static final Logger logger = LoggerFactory.getLogger(ProfilerController.class);
+    private static final InternalLogger logger = InternalLoggerFactory.getInstance(ProfilerController.class);
     private static volatile boolean PROFILER_STARTED = false;
 
     @JvmmMapping(RpcType.JVMM_PROFILER_EXECUTE)

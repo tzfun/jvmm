@@ -1,5 +1,7 @@
 package org.beifengtz.jvmm.core;
 
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.exception.ExecutionException;
 import org.beifengtz.jvmm.common.factory.ExecutorFactory;
 import org.beifengtz.jvmm.common.util.IPUtil;
@@ -9,8 +11,6 @@ import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
 import org.beifengtz.jvmm.core.driver.OSDriver;
 import org.beifengtz.jvmm.core.entity.info.*;
 import org.beifengtz.jvmm.core.entity.result.LinuxMemResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.management.*;
 import java.lang.reflect.Field;
@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
  */
 class DefaultJvmmCollector implements JvmmCollector {
 
-    private static final Logger log = LoggerFactory.getLogger(DefaultJvmmCollector.class);
+    private static final InternalLogger logger = InternalLoggerFactory.getInstance(DefaultJvmmCollector.class);
 
     DefaultJvmmCollector() {
     }
@@ -71,7 +71,7 @@ class DefaultJvmmCollector implements JvmmCollector {
                 info.setShared(linuxMemoryResult.getShared());
             }
         } catch (Throwable e) {
-            log.warn("Get system dynamic info failed. " + e.getMessage(), e);
+            logger.warn("Get system dynamic info failed. " + e.getMessage(), e);
         }
         return info;
     }
@@ -258,7 +258,7 @@ class DefaultJvmmCollector implements JvmmCollector {
                 info.increaseStateCount(thread.getState());
             }
         } catch (Exception e) {
-            log.error("Collect thread info failed: " + e.getMessage(), e);
+            logger.error("Collect thread info failed: " + e.getMessage(), e);
         }
         return info;
     }
@@ -404,13 +404,13 @@ class DefaultJvmmCollector implements JvmmCollector {
                 if (targetPool instanceof ThreadPoolExecutor) {
                     pool = (ThreadPoolExecutor) targetPool;
                 } else {
-                    throw new IllegalArgumentException("Target thread pool is not a ThreadPoolExecutor instance: "+targetPool.getClass());
+                    throw new IllegalArgumentException("Target thread pool is not a ThreadPoolExecutor instance: " + targetPool.getClass());
                 }
             } finally {
                 f.setAccessible(false);
             }
         } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
-            log.error("Get thread pool info by invoke static failed error: " + e.getMessage(), e);
+            logger.error("Get thread pool info by invoke static failed error: " + e.getMessage(), e);
         }
 
         return getThreadPoolInfo(pool);
@@ -439,7 +439,7 @@ class DefaultJvmmCollector implements JvmmCollector {
                         if (targetPool instanceof ThreadPoolExecutor) {
                             pool = (ThreadPoolExecutor) targetPool;
                         } else {
-                            throw new IllegalArgumentException("Target thread pool is not a ThreadPoolExecutor instance: "+targetPool.getClass());
+                            throw new IllegalArgumentException("Target thread pool is not a ThreadPoolExecutor instance: " + targetPool.getClass());
                         }
                     } finally {
                         f.setAccessible(false);
@@ -449,7 +449,7 @@ class DefaultJvmmCollector implements JvmmCollector {
                 }
             }
         } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException | ClassCastException e) {
-            log.error("Get thread pool info by invoke instance failed error: " + e.getMessage(), e);
+            logger.error("Get thread pool info by invoke instance failed error: " + e.getMessage(), e);
         }
 
         return getThreadPoolInfo(pool);

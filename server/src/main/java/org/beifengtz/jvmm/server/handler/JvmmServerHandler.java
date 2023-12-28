@@ -2,17 +2,16 @@ package org.beifengtz.jvmm.server.handler;
 
 import com.google.gson.JsonObject;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.exception.AuthenticationFailedException;
 import org.beifengtz.jvmm.common.util.SignatureUtil;
-import org.beifengtz.jvmm.convey.enums.RpcStatus;
-import org.beifengtz.jvmm.convey.enums.RpcType;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
+import org.beifengtz.jvmm.convey.enums.RpcType;
 import org.beifengtz.jvmm.convey.handler.JvmmChannelHandler;
-import org.beifengtz.jvmm.server.entity.conf.JvmmServerConf;
 import org.beifengtz.jvmm.server.ServerContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.beifengtz.jvmm.server.entity.conf.JvmmServerConf;
 
 import java.util.Objects;
 
@@ -26,12 +25,12 @@ import java.util.Objects;
  * @author beifengtz
  */
 public class JvmmServerHandler extends JvmmChannelHandler {
-    private static final Logger logger = LoggerFactory.getLogger(JvmmServerHandler.class);
+    private static final InternalLogger logger = InternalLoggerFactory.getInstance(JvmmServerHandler.class);
 
     private boolean authed = !ServerContext.getConfiguration().getServer().getJvmm().getAuth().isEnable();
 
     @Override
-    public Logger logger() {
+    public InternalLogger logger() {
         return logger;
     }
 

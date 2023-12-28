@@ -1,8 +1,8 @@
 package org.beifengtz.jvmm.common.util;
 
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.PlatformEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -22,7 +22,7 @@ import java.util.concurrent.RejectedExecutionException;
  */
 public class PlatformUtil {
 
-    private static final Logger log = LoggerFactory.getLogger(PlatformUtil.class);
+    private static final InternalLogger logger = InternalLoggerFactory.getInstance(PlatformUtil.class);
 
     private static final String OPERATING_SYSTEM_NAME = SystemPropertyUtil.get("os.name").toLowerCase(Locale.ENGLISH);
     private static final String OPERATING_SYSTEM_ARCH = SystemPropertyUtil.get("os.arch").toLowerCase(Locale.ENGLISH);
@@ -181,7 +181,7 @@ public class PlatformUtil {
                 return false;
             }
         } catch (RejectedExecutionException e) {
-            log.error(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             SocketAddress socketAddress = new InetSocketAddress("127.0.0.1", port);
             try (Socket socket = new Socket()) {
                 socket.connect(socketAddress, 50);

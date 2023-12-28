@@ -7,14 +7,14 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.Promise;
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.convey.channel.ChannelUtil;
 import org.beifengtz.jvmm.convey.channel.HttpServerChannelInitializer;
 import org.beifengtz.jvmm.convey.handler.HttpChannelHandler;
 import org.beifengtz.jvmm.server.ServerContext;
 import org.beifengtz.jvmm.server.entity.conf.HttpServerConf;
 import org.beifengtz.jvmm.server.handler.HttpServerHandlerProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  */
 public class JvmmHttpServerService extends AbstractListenerServerService {
 
-    private static final Logger logger = LoggerFactory.getLogger(JvmmHttpServerService.class);
+    private static final InternalLogger logger = InternalLoggerFactory.getInstance(JvmmHttpServerService.class);
 
     protected Channel channel;
 
@@ -37,7 +37,7 @@ public class JvmmHttpServerService extends AbstractListenerServerService {
     }
 
     @Override
-    protected Logger logger() {
+    protected InternalLogger logger() {
         return logger;
     }
 

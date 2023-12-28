@@ -1,14 +1,14 @@
 package org.beifengtz.jvmm.demo;
 
 import io.netty.channel.EventLoopGroup;
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.exception.JvmmConnectFailedException;
 import org.beifengtz.jvmm.convey.channel.ChannelUtil;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.enums.RpcType;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -22,10 +22,10 @@ import java.util.concurrent.TimeUnit;
  */
 public class ServerConveyDemo {
 
-    private static Logger logger;
+    private static InternalLogger logger;
 
     public static void main(String[] args) throws Exception {
-        logger = LoggerFactory.getLogger(ServerConveyDemo.class);
+        logger = InternalLoggerFactory.getInstance(ServerConveyDemo.class);
 
         EventLoopGroup executor = ChannelUtil.newEventLoopGroup(1);
 
