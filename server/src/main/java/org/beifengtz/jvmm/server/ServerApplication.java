@@ -47,6 +47,6 @@ public class ServerApplication {
     }
 
     public static void main(String[] args) throws Exception {
-        ServerBootstrap.getInstance(loadConf(args)).start();
+        ServerBootstrap.getInstance(loadConf(args)).start(ServerBootstrap.class);
     }
 }

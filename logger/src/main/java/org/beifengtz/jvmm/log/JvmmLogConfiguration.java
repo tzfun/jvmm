@@ -1,6 +1,6 @@
 package org.beifengtz.jvmm.log;
 
-import org.beifengtz.jvmm.common.logger.LoggerLevel;
+import io.netty.util.internal.logging.InternalLogLevel;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,8 +16,8 @@ public class JvmmLogConfiguration {
     /**
      * 日志等级
      */
-    private LoggerLevel level = LoggerLevel.INFO;
-    private Map<String,LoggerLevel> levels = new HashMap<>(0);
+    private InternalLogLevel level = InternalLogLevel.INFO;
+    private Map<String,InternalLogLevel> levels = new HashMap<>(0);
     /**
      * 日志文件输出目录
      */
@@ -39,11 +39,11 @@ public class JvmmLogConfiguration {
      */
     private String printers = "std,file";
 
-    public LoggerLevel getLevel() {
+    public InternalLogLevel getLevel() {
         return level;
     }
 
-    public void setLevel(LoggerLevel level) {
+    public void setLevel(InternalLogLevel level) {
         this.level = level;
     }
 
@@ -87,11 +87,11 @@ public class JvmmLogConfiguration {
         this.printers = printers;
     }
 
-    public Map<String, LoggerLevel> getLevels() {
+    public Map<String, InternalLogLevel> getLevels() {
         return levels;
     }
 
-    public JvmmLogConfiguration setLevels(Map<String, LoggerLevel> levels) {
+    public JvmmLogConfiguration setLevels(Map<String, InternalLogLevel> levels) {
         this.levels = levels;
         return this;
     }

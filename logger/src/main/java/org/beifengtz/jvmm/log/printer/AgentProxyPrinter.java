@@ -1,6 +1,6 @@
 package org.beifengtz.jvmm.log.printer;
 
-import org.beifengtz.jvmm.common.logger.LoggerEvent;
+import org.beifengtz.jvmm.log.LoggerEvent;
 
 import java.util.Map;
 

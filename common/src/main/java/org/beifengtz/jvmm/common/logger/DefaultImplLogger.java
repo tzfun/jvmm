@@ -1,7 +1,6 @@
 package org.beifengtz.jvmm.common.logger;
 
-import org.slf4j.Logger;
-import org.slf4j.Marker;
+import org.beifengtz.jvmm.log.LoggerLevel;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -83,36 +82,6 @@ public class DefaultImplLogger implements Logger {
     }
 
     @Override
-    public boolean isTraceEnabled(Marker marker) {
-        return false;
-    }
-
-    @Override
-    public void trace(Marker marker, String msg) {
-
-    }
-
-    @Override
-    public void trace(Marker marker, String format, Object arg) {
-
-    }
-
-    @Override
-    public void trace(Marker marker, String format, Object arg1, Object arg2) {
-
-    }
-
-    @Override
-    public void trace(Marker marker, String format, Object... argArray) {
-
-    }
-
-    @Override
-    public void trace(Marker marker, String msg, Throwable t) {
-
-    }
-
-    @Override
     public boolean isDebugEnabled() {
         return level.getValue() >= LoggerLevel.DEBUG.getValue();
     }
@@ -154,36 +123,6 @@ public class DefaultImplLogger implements Logger {
             System.out.format(DEBUG_PATTERN, msg);
             t.printStackTrace();
         }
-    }
-
-    @Override
-    public boolean isDebugEnabled(Marker marker) {
-        return false;
-    }
-
-    @Override
-    public void debug(Marker marker, String msg) {
-
-    }
-
-    @Override
-    public void debug(Marker marker, String format, Object arg) {
-
-    }
-
-    @Override
-    public void debug(Marker marker, String format, Object arg1, Object arg2) {
-
-    }
-
-    @Override
-    public void debug(Marker marker, String format, Object... arguments) {
-
-    }
-
-    @Override
-    public void debug(Marker marker, String msg, Throwable t) {
-
     }
 
     @Override
@@ -231,36 +170,6 @@ public class DefaultImplLogger implements Logger {
     }
 
     @Override
-    public boolean isInfoEnabled(Marker marker) {
-        return false;
-    }
-
-    @Override
-    public void info(Marker marker, String msg) {
-
-    }
-
-    @Override
-    public void info(Marker marker, String format, Object arg) {
-
-    }
-
-    @Override
-    public void info(Marker marker, String format, Object arg1, Object arg2) {
-
-    }
-
-    @Override
-    public void info(Marker marker, String format, Object... arguments) {
-
-    }
-
-    @Override
-    public void info(Marker marker, String msg, Throwable t) {
-
-    }
-
-    @Override
     public boolean isWarnEnabled() {
         return level.getValue() >= LoggerLevel.WARN.getValue();
     }
@@ -305,36 +214,6 @@ public class DefaultImplLogger implements Logger {
     }
 
     @Override
-    public boolean isWarnEnabled(Marker marker) {
-        return false;
-    }
-
-    @Override
-    public void warn(Marker marker, String msg) {
-
-    }
-
-    @Override
-    public void warn(Marker marker, String format, Object arg) {
-
-    }
-
-    @Override
-    public void warn(Marker marker, String format, Object arg1, Object arg2) {
-
-    }
-
-    @Override
-    public void warn(Marker marker, String format, Object... arguments) {
-
-    }
-
-    @Override
-    public void warn(Marker marker, String msg, Throwable t) {
-
-    }
-
-    @Override
     public boolean isErrorEnabled() {
         return level.getValue() >= LoggerLevel.ERROR.getValue();
     }
@@ -376,36 +255,6 @@ public class DefaultImplLogger implements Logger {
             System.out.format(ERROR_PATTERN, msg);
             t.printStackTrace();
         }
-    }
-
-    @Override
-    public boolean isErrorEnabled(Marker marker) {
-        return false;
-    }
-
-    @Override
-    public void error(Marker marker, String msg) {
-
-    }
-
-    @Override
-    public void error(Marker marker, String format, Object arg) {
-
-    }
-
-    @Override
-    public void error(Marker marker, String format, Object arg1, Object arg2) {
-
-    }
-
-    @Override
-    public void error(Marker marker, String format, Object... arguments) {
-
-    }
-
-    @Override
-    public void error(Marker marker, String msg, Throwable t) {
-
     }
 
     public void setLevel(LoggerLevel level) {

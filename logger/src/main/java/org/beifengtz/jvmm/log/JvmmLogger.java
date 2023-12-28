@@ -1,10 +1,8 @@
 package org.beifengtz.jvmm.log;
 
-import org.beifengtz.jvmm.common.logger.LoggerEvent;
-import org.beifengtz.jvmm.common.logger.LoggerLevel;
+import io.netty.util.internal.logging.InternalLogLevel;
+import io.netty.util.internal.logging.InternalLogger;
 import org.beifengtz.jvmm.log.printer.Printer;
-import org.slf4j.Marker;
-import org.slf4j.impl.StaticLoggerBinder;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -15,18 +13,19 @@ import java.util.List;
 import java.util.Map.Entry;
 
 /**
- * Description: TODO
- * <p>
- * Created in 16:35 2021/12/9
+ * description: TODO
+ * date: 14:49 2023/12/28
  *
  * @author beifengtz
  */
-public class Logger implements org.slf4j.Logger {
+public class JvmmLogger implements InternalLogger {
+
+    private static final String DEFAULT_MESSAGE = "Uncaught exception:";
 
     protected String name;
     protected List<Printer> printers = new ArrayList<>();
 
-    public Logger(String name) {
+    public JvmmLogger(String name) {
         this.name = name;
     }
 
@@ -38,7 +37,7 @@ public class Logger implements org.slf4j.Logger {
         this.printers.addAll(printers);
     }
 
-    private String formatPattern(String msg, String pattern, LoggerLevel level, boolean ignoreAnsi) {
+    private String formatPattern(String msg, String pattern, InternalLogLevel level, boolean ignoreAnsi) {
         StringBuilder result = new StringBuilder();
         char[] chars = pattern.toCharArray();
         for (int i = 0; i < chars.length; i++) {
@@ -104,17 +103,19 @@ public class Logger implements org.slf4j.Logger {
         return result.toString();
     }
 
-    private void print(LoggerEvent event) {
-        JvmmLogConfiguration config = StaticLoggerBinder.getSingleton().getConfig();
-        LoggerLevel targetLevel = null;
-        for (Entry<String, LoggerLevel> entry : config.getLevels().entrySet()) {
+    private void pushEvent(LoggerEvent event) {
+        JvmmLogConfiguration config = JvmmLoggerFactory.getInstance().getConfig();
+        InternalLogLevel targetLevel = null;
+        for (Entry<String, InternalLogLevel> entry : config.getLevels().entrySet()) {
             if (event.getName().startsWith(entry.getKey())) {
                 targetLevel = entry.getValue();
             }
         }
-        if (targetLevel != null && targetLevel.getValue() < event.getType().getValue()) {
+
+        if (targetLevel != null && !isEnabled(targetLevel)) {
             return;
         }
+
         for (Printer printer : printers) {
             if (printer.preformat()) {
                 String msg = event.getMsg() == null
@@ -138,358 +139,386 @@ public class Logger implements org.slf4j.Logger {
         return writer.toString();
     }
 
+    public InternalLogLevel level() {
+        return JvmmLoggerFactory.getInstance().getConfig().getLevel();
+    }
+
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
     @Override
     public boolean isTraceEnabled() {
-        return StaticLoggerBinder.getSingleton().getConfig().getLevel().getValue() >= LoggerLevel.TRACE.getValue();
+        return isEnabled(InternalLogLevel.TRACE);
     }
 
     @Override
     public void trace(String msg) {
         if (isTraceEnabled()) {
-            print(LoggerEvent.create(LoggerLevel.TRACE, msg).setName(name));
+            pushEvent(LoggerEvent.create(InternalLogLevel.TRACE, msg).setName(name));
         }
     }
 
     @Override
     public void trace(String format, Object arg) {
         if (isTraceEnabled()) {
-            print(LoggerEvent.create(LoggerLevel.TRACE, format, arg).setName(name));
+            pushEvent(LoggerEvent.create(InternalLogLevel.TRACE, format, arg).setName(name));
         }
     }
 
     @Override
     public void trace(String format, Object arg1, Object arg2) {
         if (isTraceEnabled()) {
-            print(LoggerEvent.create(LoggerLevel.TRACE, format, arg1, arg2).setName(name));
+            pushEvent(LoggerEvent.create(InternalLogLevel.TRACE, format, arg1, arg2).setName(name));
         }
     }
 
     @Override
     public void trace(String format, Object... arguments) {
         if (isTraceEnabled()) {
-            print(LoggerEvent.create(LoggerLevel.TRACE, format, arguments).setName(name));
+            pushEvent(LoggerEvent.create(InternalLogLevel.TRACE, format, arguments).setName(name));
         }
     }
 
     @Override
     public void trace(String msg, Throwable t) {
         if (isTraceEnabled()) {
-            print(LoggerEvent.create(LoggerLevel.TRACE, msg, t).setName(name));
+            pushEvent(LoggerEvent.create(InternalLogLevel.TRACE, msg, t).setName(name));
         }
     }
 
     @Override
-    public boolean isTraceEnabled(Marker marker) {
-        return false;
-    }
-
-    @Override
-    public void trace(Marker marker, String msg) {
-
-    }
-
-    @Override
-    public void trace(Marker marker, String format, Object arg) {
-
-    }
-
-    @Override
-    public void trace(Marker marker, String format, Object arg1, Object arg2) {
-
-    }
-
-    @Override
-    public void trace(Marker marker, String format, Object... argArray) {
-
-    }
-
-    @Override
-    public void trace(Marker marker, String msg, Throwable t) {
-
+    public void trace(Throwable t) {
+        trace(DEFAULT_MESSAGE, t);
     }
 
     @Override
     public boolean isDebugEnabled() {
-        return StaticLoggerBinder.getSingleton().getConfig().getLevel().getValue() >= LoggerLevel.DEBUG.getValue();
+        return isEnabled(InternalLogLevel.DEBUG);
     }
 
     @Override
     public void debug(String msg) {
         if (isDebugEnabled()) {
-            print(LoggerEvent.create(LoggerLevel.DEBUG, msg).setName(name));
+            pushEvent(LoggerEvent.create(InternalLogLevel.DEBUG, msg).setName(name));
         }
     }
 
     @Override
     public void debug(String format, Object arg) {
         if (isDebugEnabled()) {
-            print(LoggerEvent.create(LoggerLevel.DEBUG, format, arg).setName(name));
+            pushEvent(LoggerEvent.create(InternalLogLevel.DEBUG, format, arg).setName(name));
         }
     }
 
     @Override
     public void debug(String format, Object arg1, Object arg2) {
         if (isDebugEnabled()) {
-            print(LoggerEvent.create(LoggerLevel.DEBUG, format, arg1, arg2).setName(name));
+            pushEvent(LoggerEvent.create(InternalLogLevel.DEBUG, format, arg1, arg2).setName(name));
         }
     }
 
     @Override
     public void debug(String format, Object... arguments) {
         if (isDebugEnabled()) {
-            print(LoggerEvent.create(LoggerLevel.DEBUG, format, arguments).setName(name));
+            pushEvent(LoggerEvent.create(InternalLogLevel.DEBUG, format, arguments).setName(name));
         }
     }
 
     @Override
     public void debug(String msg, Throwable t) {
         if (isDebugEnabled()) {
-            print(LoggerEvent.create(LoggerLevel.DEBUG, msg, t).setName(name));
+            pushEvent(LoggerEvent.create(InternalLogLevel.DEBUG, msg, t).setName(name));
         }
     }
 
     @Override
-    public boolean isDebugEnabled(Marker marker) {
-        return false;
-    }
-
-    @Override
-    public void debug(Marker marker, String msg) {
-
-    }
-
-    @Override
-    public void debug(Marker marker, String format, Object arg) {
-
-    }
-
-    @Override
-    public void debug(Marker marker, String format, Object arg1, Object arg2) {
-
-    }
-
-    @Override
-    public void debug(Marker marker, String format, Object... arguments) {
-
-    }
-
-    @Override
-    public void debug(Marker marker, String msg, Throwable t) {
-
+    public void debug(Throwable t) {
+        debug(DEFAULT_MESSAGE, t);
     }
 
     @Override
     public boolean isInfoEnabled() {
-        return StaticLoggerBinder.getSingleton().getConfig().getLevel().getValue() >= LoggerLevel.INFO.getValue();
+        return isEnabled(InternalLogLevel.INFO);
     }
 
     @Override
     public void info(String msg) {
         if (isInfoEnabled()) {
-            print(LoggerEvent.create(LoggerLevel.INFO, msg).setName(name));
+            pushEvent(LoggerEvent.create(InternalLogLevel.INFO, msg).setName(name));
         }
     }
 
     @Override
     public void info(String format, Object arg) {
         if (isInfoEnabled()) {
-            print(LoggerEvent.create(LoggerLevel.INFO, format, arg).setName(name));
+            pushEvent(LoggerEvent.create(InternalLogLevel.INFO, format, arg).setName(name));
         }
     }
 
     @Override
     public void info(String format, Object arg1, Object arg2) {
         if (isInfoEnabled()) {
-            print(LoggerEvent.create(LoggerLevel.INFO, format, arg1, arg2).setName(name));
+            pushEvent(LoggerEvent.create(InternalLogLevel.INFO, format, arg1, arg2).setName(name));
         }
     }
 
     @Override
     public void info(String format, Object... arguments) {
         if (isInfoEnabled()) {
-            print(LoggerEvent.create(LoggerLevel.INFO, format, arguments).setName(name));
+            pushEvent(LoggerEvent.create(InternalLogLevel.INFO, format, arguments).setName(name));
         }
     }
 
     @Override
     public void info(String msg, Throwable t) {
         if (isInfoEnabled()) {
-            print(LoggerEvent.create(LoggerLevel.INFO, msg, t).setName(name));
+            pushEvent(LoggerEvent.create(InternalLogLevel.INFO, msg, t).setName(name));
         }
     }
 
     @Override
-    public boolean isInfoEnabled(Marker marker) {
-        return false;
-    }
-
-    @Override
-    public void info(Marker marker, String msg) {
-
-    }
-
-    @Override
-    public void info(Marker marker, String format, Object arg) {
-
-    }
-
-    @Override
-    public void info(Marker marker, String format, Object arg1, Object arg2) {
-
-    }
-
-    @Override
-    public void info(Marker marker, String format, Object... arguments) {
-
-    }
-
-    @Override
-    public void info(Marker marker, String msg, Throwable t) {
-
+    public void info(Throwable t) {
+        info(DEFAULT_MESSAGE, t);
     }
 
     @Override
     public boolean isWarnEnabled() {
-        return StaticLoggerBinder.getSingleton().getConfig().getLevel().getValue() >= LoggerLevel.WARN.getValue();
+        return isEnabled(InternalLogLevel.WARN);
     }
 
     @Override
     public void warn(String msg) {
         if (isWarnEnabled()) {
-            print(LoggerEvent.create(LoggerLevel.WARN, msg).setName(name));
+            pushEvent(LoggerEvent.create(InternalLogLevel.WARN, msg).setName(name));
         }
     }
 
     @Override
     public void warn(String format, Object arg) {
         if (isWarnEnabled()) {
-            print(LoggerEvent.create(LoggerLevel.WARN, format, arg).setName(name));
+            pushEvent(LoggerEvent.create(InternalLogLevel.WARN, format, arg).setName(name));
         }
     }
 
     @Override
     public void warn(String format, Object... arguments) {
         if (isWarnEnabled()) {
-            print(LoggerEvent.create(LoggerLevel.WARN, format, arguments).setName(name));
+            pushEvent(LoggerEvent.create(InternalLogLevel.WARN, format, arguments).setName(name));
         }
     }
 
     @Override
     public void warn(String format, Object arg1, Object arg2) {
         if (isWarnEnabled()) {
-            print(LoggerEvent.create(LoggerLevel.WARN, format, arg1, arg2).setName(name));
+            pushEvent(LoggerEvent.create(InternalLogLevel.WARN, format, arg1, arg2).setName(name));
         }
     }
 
     @Override
     public void warn(String msg, Throwable t) {
         if (isWarnEnabled()) {
-            print(LoggerEvent.create(LoggerLevel.WARN, msg, t).setName(name));
+            pushEvent(LoggerEvent.create(InternalLogLevel.WARN, msg, t).setName(name));
         }
     }
 
     @Override
-    public boolean isWarnEnabled(Marker marker) {
-        return false;
-    }
-
-    @Override
-    public void warn(Marker marker, String msg) {
-
-    }
-
-    @Override
-    public void warn(Marker marker, String format, Object arg) {
-
-    }
-
-    @Override
-    public void warn(Marker marker, String format, Object arg1, Object arg2) {
-
-    }
-
-    @Override
-    public void warn(Marker marker, String format, Object... arguments) {
-
-    }
-
-    @Override
-    public void warn(Marker marker, String msg, Throwable t) {
-
+    public void warn(Throwable t) {
+        warn(DEFAULT_MESSAGE, t);
     }
 
     @Override
     public boolean isErrorEnabled() {
-        return StaticLoggerBinder.getSingleton().getConfig().getLevel().getValue() >= LoggerLevel.ERROR.getValue();
+        return isEnabled(InternalLogLevel.ERROR);
     }
 
     @Override
     public void error(String msg) {
         if (isErrorEnabled()) {
-            print(LoggerEvent.create(LoggerLevel.ERROR, msg).setName(name));
+            pushEvent(LoggerEvent.create(InternalLogLevel.ERROR, msg).setName(name));
         }
     }
 
     @Override
     public void error(String format, Object arg) {
         if (isErrorEnabled()) {
-            print(LoggerEvent.create(LoggerLevel.ERROR, format, arg).setName(name));
+            pushEvent(LoggerEvent.create(InternalLogLevel.ERROR, format, arg).setName(name));
         }
     }
 
     @Override
     public void error(String format, Object arg1, Object arg2) {
         if (isErrorEnabled()) {
-            print(LoggerEvent.create(LoggerLevel.ERROR, format, arg1, arg2).setName(name));
+            pushEvent(LoggerEvent.create(InternalLogLevel.ERROR, format, arg1, arg2).setName(name));
         }
     }
 
     @Override
     public void error(String format, Object... arguments) {
         if (isErrorEnabled()) {
-            print(LoggerEvent.create(LoggerLevel.ERROR, format, arguments).setName(name));
+            pushEvent(LoggerEvent.create(InternalLogLevel.ERROR, format, arguments).setName(name));
         }
     }
 
     @Override
     public void error(String msg, Throwable t) {
         if (isErrorEnabled()) {
-            print(LoggerEvent.create(LoggerLevel.ERROR, msg, t).setName(name));
+            pushEvent(LoggerEvent.create(InternalLogLevel.ERROR, msg, t).setName(name));
         }
     }
 
     @Override
-    public boolean isErrorEnabled(Marker marker) {
-        return false;
+    public void error(Throwable t) {
+        error(DEFAULT_MESSAGE, t);
     }
 
     @Override
-    public void error(Marker marker, String msg) {
-
+    public boolean isEnabled(InternalLogLevel level) {
+        int target = levelCode(level);
+        int limit = levelCode(level());
+        return target >= limit;
     }
 
     @Override
-    public void error(Marker marker, String format, Object arg) {
-
+    public void log(InternalLogLevel level, String msg) {
+        switch (level) {
+            case TRACE:
+                trace(msg);
+                break;
+            case DEBUG:
+                debug(msg);
+                break;
+            case INFO:
+                info(msg);
+                break;
+            case WARN:
+                warn(msg);
+                break;
+            case ERROR:
+                error(msg);
+                break;
+        }
     }
 
     @Override
-    public void error(Marker marker, String format, Object arg1, Object arg2) {
-
+    public void log(InternalLogLevel level, String format, Object arg) {
+        switch (level) {
+            case TRACE:
+                trace(format, arg);
+                break;
+            case DEBUG:
+                debug(format, arg);
+                break;
+            case INFO:
+                info(format, arg);
+                break;
+            case WARN:
+                warn(format, arg);
+                break;
+            case ERROR:
+                error(format, arg);
+                break;
+        }
     }
 
     @Override
-    public void error(Marker marker, String format, Object... arguments) {
-
+    public void log(InternalLogLevel level, String format, Object argA, Object argB) {
+        switch (level) {
+            case TRACE:
+                trace(format, argA, argB);
+                break;
+            case DEBUG:
+                debug(format, argA, argB);
+                break;
+            case INFO:
+                info(format, argA, argB);
+                break;
+            case WARN:
+                warn(format, argA, argB);
+                break;
+            case ERROR:
+                error(format, argA, argB);
+                break;
+        }
     }
 
     @Override
-    public void error(Marker marker, String msg, Throwable t) {
+    public void log(InternalLogLevel level, String format, Object... arguments) {
+        switch (level) {
+            case TRACE:
+                trace(format, arguments);
+                break;
+            case DEBUG:
+                debug(format, arguments);
+                break;
+            case INFO:
+                info(format, arguments);
+                break;
+            case WARN:
+                warn(format, arguments);
+                break;
+            case ERROR:
+                error(format, arguments);
+                break;
+        }
+    }
 
+    @Override
+    public void log(InternalLogLevel level, String msg, Throwable t) {
+        switch (level) {
+            case TRACE:
+                trace(msg, t);
+                break;
+            case DEBUG:
+                debug(msg, t);
+                break;
+            case INFO:
+                info(msg, t);
+                break;
+            case WARN:
+                warn(msg, t);
+                break;
+            case ERROR:
+                error(msg, t);
+                break;
+        }
+    }
+
+    @Override
+    public void log(InternalLogLevel level, Throwable t) {
+        switch (level) {
+            case TRACE:
+                trace(t);
+                break;
+            case DEBUG:
+                debug(t);
+                break;
+            case INFO:
+                info(t);
+                break;
+            case WARN:
+                warn(t);
+                break;
+            case ERROR:
+                error(t);
+                break;
+        }
+    }
+
+    private int levelCode(InternalLogLevel level) {
+        switch (level) {
+            case TRACE:
+                return 1;
+            case DEBUG:
+                return 2;
+            case INFO:
+                return 3;
+            case WARN:
+                return 4;
+            case ERROR:
+                return 5;
+        }
+        return 0;
     }
 }

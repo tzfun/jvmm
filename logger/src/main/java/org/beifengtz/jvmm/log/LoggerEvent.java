@@ -1,4 +1,6 @@
-package org.beifengtz.jvmm.common.logger;
+package org.beifengtz.jvmm.log;
+
+import io.netty.util.internal.logging.InternalLogLevel;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,20 +14,20 @@ import java.util.Map;
  */
 public class LoggerEvent {
 
-    private LoggerLevel type;
+    private InternalLogLevel type;
     private String msg;
     private Object[] args;
     private Throwable throwable;
     private String name;
 
-    public static LoggerEvent create(LoggerLevel type, String msg) {
+    public static LoggerEvent create(InternalLogLevel type, String msg) {
         LoggerEvent info = new LoggerEvent();
         info.type = type;
         info.msg = msg;
         return info;
     }
 
-    public static LoggerEvent create(LoggerLevel type, String format, Object... args) {
+    public static LoggerEvent create(InternalLogLevel type, String format, Object... args) {
         LoggerEvent info = new LoggerEvent();
         info.type = type;
         info.msg = format;
@@ -33,7 +35,7 @@ public class LoggerEvent {
         return info;
     }
 
-    public static LoggerEvent create(LoggerLevel type, String msg, Throwable e) {
+    public static LoggerEvent create(InternalLogLevel type, String msg, Throwable e) {
         LoggerEvent info = new LoggerEvent();
         info.type = type;
         info.msg = msg;
@@ -41,7 +43,7 @@ public class LoggerEvent {
         return info;
     }
 
-    public LoggerLevel getType() {
+    public InternalLogLevel getType() {
         return type;
     }
 

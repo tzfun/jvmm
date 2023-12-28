@@ -1,7 +1,7 @@
 package org.beifengtz.jvmm.log.printer;
 
 import org.beifengtz.jvmm.log.JvmmLogConfiguration;
-import org.slf4j.impl.StaticLoggerBinder;
+import org.beifengtz.jvmm.log.JvmmLoggerFactory;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -31,7 +31,7 @@ public class FilePrinter implements Printer {
 
     @Override
     public synchronized void print(Object content) {
-        JvmmLogConfiguration config = StaticLoggerBinder.getSingleton().getConfig();
+        JvmmLogConfiguration config = JvmmLoggerFactory.getInstance().getConfig();
         File file = new File(config.getFile(), config.getFileName() + ".log");
         try {
             if (!file.exists()) {

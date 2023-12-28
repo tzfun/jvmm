@@ -5,7 +5,6 @@ ext {
     nettyVersion = "4.1.92.Final"
     nettyNativeSslVersion = "2.0.41.Final"
     junitJupiterVersion = "5.7.0"
-    slf4jVersion = "1.7.30"
     gsonVersoion = "2.10.1"
     cfrVersion = "0.152"
     oshiVersion = "6.4.5"

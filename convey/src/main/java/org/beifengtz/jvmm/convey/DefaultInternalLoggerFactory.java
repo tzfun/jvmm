@@ -4,7 +4,7 @@ import io.netty.util.internal.logging.InternalLogLevel;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.logger.DefaultImplLogger;
-import org.beifengtz.jvmm.common.logger.LoggerLevel;
+import org.beifengtz.jvmm.log.LoggerLevel;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

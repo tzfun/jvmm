@@ -4,6 +4,8 @@ import io.netty.util.concurrent.DefaultPromise;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.Promise;
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.util.IPUtil;
 import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
@@ -14,8 +16,6 @@ import org.beifengtz.jvmm.server.service.JvmmHttpServerService;
 import org.beifengtz.jvmm.server.service.JvmmSentinelService;
 import org.beifengtz.jvmm.server.service.JvmmServerService;
 import org.beifengtz.jvmm.server.service.JvmmService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.Instrumentation;
@@ -100,15 +100,19 @@ public class ServerBootstrap {
         return bootstrap;
     }
 
-    private static Logger logger() {
-        return LoggerFactory.getLogger(ServerBootstrap.class);
+    private static InternalLogger logger() {
+        return InternalLoggerFactory.getInstance(ServerBootstrap.class);
+    }
+
+    public void start() {
+        start(ServerBootstrap.class);
     }
 
     /**
      * 启动Server，使用默认的callback处理逻辑
      */
-    public void start() {
-        Logger logger = LoggerFactory.getLogger(ServerApplication.class);
+    public void start(Class<?> clazz) {
+        InternalLogger logger = InternalLoggerFactory.getInstance(clazz);
         long start = System.currentTimeMillis();
         Function<Object, Object> callback = msg -> {
             String content = msg.toString();

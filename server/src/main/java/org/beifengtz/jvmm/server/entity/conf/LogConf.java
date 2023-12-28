@@ -1,8 +1,7 @@
 package org.beifengtz.jvmm.server.entity.conf;
 
-import org.beifengtz.jvmm.common.logger.LoggerLevel;
+import io.netty.util.internal.logging.InternalLogLevel;
 import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
-import org.beifengtz.jvmm.common.util.meta.PairKey;
 
 import java.util.Map;
 
@@ -16,19 +15,19 @@ import java.util.Map;
  * @author beifengtz
  */
 public class LogConf {
-    private LoggerLevel level;
+    private InternalLogLevel level;
     private String file;
     private String fileName;
     private Integer fileLimitSize;
     private String pattern;
     private String printers;
-    private Map<String,LoggerLevel> levels;
+    private Map<String, InternalLogLevel> levels;
 
-    public LoggerLevel getLevel() {
+    public InternalLogLevel getLevel() {
         return level;
     }
 
-    public LogConf setLevel(LoggerLevel level) {
+    public LogConf setLevel(InternalLogLevel level) {
         this.level = level;
         return this;
     }
@@ -83,11 +82,11 @@ public class LogConf {
         return this;
     }
 
-    public Map<String, LoggerLevel> getLevels() {
+    public Map<String, InternalLogLevel> getLevels() {
         return levels;
     }
 
-    public LogConf setLevels(Map<String, LoggerLevel> levels) {
+    public LogConf setLevels(Map<String, InternalLogLevel> levels) {
         this.levels = levels;
         return this;
     }
@@ -119,7 +118,7 @@ public class LogConf {
 
         if (levels != null && !levels.isEmpty()) {
             StringBuilder sb = new StringBuilder();
-            levels.forEach((k,v) -> {
+            levels.forEach((k, v) -> {
                 sb.append(k).append(":").append(v).append(",");
             });
             sb.deleteCharAt(sb.length() - 1);

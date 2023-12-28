@@ -13,7 +13,7 @@ apply plugin: 'application'
 
 dependencies {
     compile "com.google.code.gson:gson:${gsonVersoion}"
-    compile "org.slf4j:slf4j-api:${slf4jVersion}"
+    compile "io.netty:netty-common:${nettyVersion}"
 }
 
 jar {

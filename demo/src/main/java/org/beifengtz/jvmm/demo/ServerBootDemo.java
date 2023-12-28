@@ -1,6 +1,8 @@
 package org.beifengtz.jvmm.demo;
 
-import org.beifengtz.jvmm.common.logger.LoggerLevel;
+import io.netty.util.internal.logging.InternalLogLevel;
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.util.IOUtil;
 import org.beifengtz.jvmm.common.util.IPUtil;
 import org.beifengtz.jvmm.server.ServerBootstrap;
@@ -12,8 +14,6 @@ import org.beifengtz.jvmm.server.entity.conf.LogConf;
 import org.beifengtz.jvmm.server.entity.conf.SentinelConf;
 import org.beifengtz.jvmm.server.entity.conf.SentinelSubscriberConf;
 import org.beifengtz.jvmm.server.entity.conf.ServerConf;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,7 +31,7 @@ public class ServerBootDemo {
         server.start(msg -> transformServerCallback(msg.toString()));
     }
 
-    private static Configuration readConfigFromClassPath() throws IOException  {
+    private static Configuration readConfigFromClassPath() throws IOException {
         InputStream is = ServerBootDemo.class.getResourceAsStream("/config.yml");
         if (is != null) {
             String yml = IOUtil.toString(is);
@@ -68,7 +68,7 @@ public class ServerBootDemo {
         return new Configuration()
                 .setName("jvmm-server")
                 .setWorkThread(2)
-                .setLog(new LogConf().setLevel(LoggerLevel.INFO))
+                .setLog(new LogConf().setLevel(InternalLogLevel.INFO))
                 .setServer(new ServerConf()
                         .setType("jvmm,sentinel")
                         .setJvmm(jvmmServer)
@@ -77,7 +77,7 @@ public class ServerBootDemo {
     }
 
     private static Object transformServerCallback(String content) {
-        Logger logger = LoggerFactory.getLogger(ServerBootDemo.class);
+        InternalLogger logger = InternalLoggerFactory.getInstance(ServerBootDemo.class);
         if ("start".equals(content)) {
             logger.info("Try to start or stop services...");
         } else if (content.startsWith("info:")) {
