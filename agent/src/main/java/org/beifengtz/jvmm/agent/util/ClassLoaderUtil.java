@@ -26,7 +26,7 @@ public class ClassLoaderUtil {
                             "\t1. --add-opens java.base/jdk.internal.loader=ALL-UNNAMED\n" +
                             "\t2. --add-opens jdk.zipfs/jdk.nio.zipfs=ALL-UNNAMED\n" +
                             "\t3. --add-opens java.management/sun.management=ALL-UNNAMED\n" +
-                            "See https://github.com/tzfun/jvmm#%E5%90%AF%E5%8A%A8jvmm%E6%97%B6%E6%8A%A5%E9%94%99-javalangillegalargumentexception-can-not-found-java-program-jps for more information.");
+                            "See https://github.com/tzfun/jvmm#%E5%90%AF%E5%8A%A8jvmm%E6%97%B6%E6%8A%A5%E9%94%99-javalangillegalargumentexception-can-not-found-java-program-jps for more information");
                 }
                 e.printStackTrace();
                 throw e;

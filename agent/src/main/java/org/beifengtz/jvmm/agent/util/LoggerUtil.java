@@ -1,6 +1,11 @@
 package org.beifengtz.jvmm.agent.util;
 
+import org.apache.log4j.LogManager;
 import org.beifengtz.jvmm.agent.DefaultImplLogger;
+import org.beifengtz.jvmm.log.JvmmLoggerFactory;
+import org.slf4j.ILoggerFactory;
+import org.slf4j.LoggerFactory;
+import org.slf4j.helpers.NOPLoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -36,7 +41,7 @@ public class LoggerUtil {
     private static volatile boolean LOADED_LOGGER = false;
     private static boolean CONTAINS_LOGGER_FRAME = false;
     private static final DefaultImplLogger DEFAULT_LOGGER = new DefaultImplLogger();
-    private static Method FRAME_GET_LOGGER_METHOD = null;
+    private static Method GET_LOGGER_METHOD = null;
     private static Map<LoggerMethod, Method> methodCache = null;
 
     static {
@@ -48,25 +53,11 @@ public class LoggerUtil {
         if (!LOADED_LOGGER) {
             synchronized (LoggerUtil.class) {
                 if (!LOADED_LOGGER) {
-                    try {
-                        Class<?> clazz = Class.forName("io.netty.util.internal.logging.InternalLoggerFactory");
-
-                        Method newDefaultFactory = clazz.getDeclaredMethod("newDefaultFactory", String.class);
-                        newDefaultFactory.setAccessible(true);
-
-                        Object factory = newDefaultFactory.invoke(null, "jvmm");
-                        //  没有默认的logger框架，尝试设置 JvmmLogger
-                        if (factory.getClass().getName().equals("io.netty.util.internal.logging.JdkLoggerFactory")) {
-                            Method setDefaultFactory = clazz.getMethod("setDefaultFactory", clazz);
-                            Class<?> jvmmLoggerFactoryClass = Class.forName("org.beifengtz.jvmm.log.JvmmLoggerFactory");
-                            setDefaultFactory.invoke(null, jvmmLoggerFactoryClass.getMethod("getInstance").invoke(null));
-                        }
-
-                        FRAME_GET_LOGGER_METHOD = clazz.getMethod("getInstance", String.class);
+                    if (findSl4jLogger() || findLog4j2Logger() || findLog4jLogger() || findJvmmLogger()) {
                         methodCache = new ConcurrentHashMap<>();
                         CONTAINS_LOGGER_FRAME = true;
                         loggerDefault("info", "Loaded default logging framework");
-                    } catch (Exception e) {
+                    } else {
                         loggerDefault("info", "No logging framework found, jvmm logger will be used");
                     }
                 }
@@ -75,10 +66,49 @@ public class LoggerUtil {
         }
     }
 
+    private static boolean findSl4jLogger() {
+        try {
+            if (LoggerFactory.getILoggerFactory() instanceof NOPLoggerFactory) {
+                return false;
+            }
+            GET_LOGGER_METHOD = ILoggerFactory.class.getMethod("getLogger", String.class);
+            return true;
+        } catch (LinkageError | Exception ignore) {
+            return false;
+        }
+    }
+
+    private static boolean findLog4j2Logger() {
+        try {
+            GET_LOGGER_METHOD = LogManager.class.getMethod("getLogger", String.class);
+            return true;
+        } catch (LinkageError | Exception ignore) {
+            return false;
+        }
+    }
+
+    private static boolean findLog4jLogger() {
+        try {
+            GET_LOGGER_METHOD = org.apache.log4j.Logger.class.getMethod("getLogger", String.class);
+            return true;
+        } catch (LinkageError | Exception ignore) {
+            return false;
+        }
+    }
+
+    private static boolean findJvmmLogger() {
+        try {
+            GET_LOGGER_METHOD = JvmmLoggerFactory.class.getMethod("getLogger", String.class);
+            return true;
+        } catch (LinkageError | Exception ignore) {
+            return false;
+        }
+    }
+
     public static void logger(String name, String methodName, String message) {
         if (CONTAINS_LOGGER_FRAME) {
             try {
-                Object logger = FRAME_GET_LOGGER_METHOD.invoke(null, name);
+                Object logger = GET_LOGGER_METHOD.invoke(null, name);
                 Method method = methodCache.computeIfAbsent(LoggerMethod.valueOf(methodName + "_str"), o -> {
                     try {
                         return logger.getClass().getDeclaredMethod(methodName, String.class);
@@ -98,7 +128,7 @@ public class LoggerUtil {
     public static void logger(String name, String methodName, String message, Throwable throwable) {
         if (CONTAINS_LOGGER_FRAME) {
             try {
-                Object logger = FRAME_GET_LOGGER_METHOD.invoke(null, name);
+                Object logger = GET_LOGGER_METHOD.invoke(null, name);
                 Method method = methodCache.computeIfAbsent(LoggerMethod.valueOf(methodName + "_str_t"), o -> {
                     try {
                         return logger.getClass().getDeclaredMethod(methodName, String.class, Throwable.class);
@@ -118,7 +148,7 @@ public class LoggerUtil {
     public static void logger(String name, String methodName, String message, Object... args) {
         if (CONTAINS_LOGGER_FRAME) {
             try {
-                Object logger = FRAME_GET_LOGGER_METHOD.invoke(null, name);
+                Object logger = GET_LOGGER_METHOD.invoke(null, name);
                 Method method = methodCache.computeIfAbsent(LoggerMethod.valueOf(methodName + "_str_arg"), o -> {
                     try {
                         return logger.getClass().getDeclaredMethod(methodName, String.class, Object[].class);

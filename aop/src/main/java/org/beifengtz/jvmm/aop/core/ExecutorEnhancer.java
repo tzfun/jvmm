@@ -35,7 +35,7 @@ public class ExecutorEnhancer extends ClassVisitor implements Opcodes {
     public static byte[] enhance(Class<? extends Executor> executorClass) throws IOException {
         String className = executorClass.getName();
         if (className.startsWith("java.util.concurrent")) {
-            throw new IOException("The executor defined in `java.util.concurrent` package cannot be enhanced before class load.");
+            throw new IOException("The executor defined in `java.util.concurrent` package cannot be enhanced before class load");
         }
         if ("org.beifengtz.jvmm.aop.wrapper.ThreadPoolExecutorWrapper".equals(className)
                 || "org.beifengtz.jvmm.aop.wrapper.ScheduledThreadPoolExecutorWrapper".equals(className)) {

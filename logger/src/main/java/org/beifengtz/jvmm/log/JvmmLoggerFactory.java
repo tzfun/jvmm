@@ -28,7 +28,8 @@ public class JvmmLoggerFactory extends InternalLoggerFactory {
 
     private JvmmLogConfiguration config;
 
-    private JvmmLoggerFactory(){}
+    private JvmmLoggerFactory() {
+    }
 
     public static JvmmLoggerFactory getInstance() {
         if (INSTANCE == null) {
@@ -110,7 +111,12 @@ public class JvmmLoggerFactory extends InternalLoggerFactory {
         loggerMap.clear();
     }
 
-    public InternalLogger getLogger(String name) {
+    public JvmmLogConfiguration getConfig() {
+        return config;
+    }
+
+    @Override
+    protected InternalLogger newInstance(String name) {
         InternalLogger logger = loggerMap.get(name);
         if (logger != null) {
             return logger;
@@ -122,12 +128,7 @@ public class JvmmLoggerFactory extends InternalLoggerFactory {
         }
     }
 
-    public JvmmLogConfiguration getConfig() {
-        return config;
-    }
-
-    @Override
-    protected InternalLogger newInstance(String name) {
-        return getLogger(name);
+    public static InternalLogger getLogger(String name) {
+        return getInstance().newInstance(name);
     }
 }

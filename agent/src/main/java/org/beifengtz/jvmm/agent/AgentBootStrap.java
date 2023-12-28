@@ -130,19 +130,19 @@ public class AgentBootStrap {
             //  1. 目标程序根目录下的 jvmm-server.jar 包
             //  2. agent的资源目录下的 jvmm-server.jar 包
 
-            LoggerUtil.info(AgentBootStrap.class, "Try to find jvmm-server.jar file from target program directory.");
+            LoggerUtil.info(AgentBootStrap.class, "Try to find jvmm-server.jar file from target program directory");
             serverJarFile = new File(AppUtil.getHomePath(), JVMM_SERVER_JAR);
             if (!serverJarFile.exists()) {
-                LoggerUtil.warn(LoggerUtil.class, "Can not found jvmm-server.jar file from target program directory.");
+                LoggerUtil.warn(LoggerUtil.class, "Can not found jvmm-server.jar file from target program directory");
 
-                LoggerUtil.info(LoggerUtil.class, "Try to find jvmm-server.jar file from agent jar directory.");
+                LoggerUtil.info(LoggerUtil.class, "Try to find jvmm-server.jar file from agent jar directory");
                 CodeSource codeSource = AgentBootStrap.class.getProtectionDomain().getCodeSource();
                 if (codeSource != null) {
                     try {
                         File agentJarFile = new File(codeSource.getLocation().toURI().getSchemeSpecificPart());
                         serverJarFile = new File(agentJarFile.getParentFile(), JVMM_SERVER_JAR);
                         if (!serverJarFile.exists()) {
-                            LoggerUtil.error(AgentBootStrap.class, "Can not found jvmm-server.jar file from agent jar directory.");
+                            LoggerUtil.error(AgentBootStrap.class, "Can not found jvmm-server.jar file from agent jar directory");
                         }
                     } catch (Throwable e) {
                         LoggerUtil.error(AgentBootStrap.class, String.format("Can not found jvmm-server.jar file from %s. %s", codeSource.getLocation(), e.getMessage()), e);
@@ -186,11 +186,11 @@ public class AgentBootStrap {
             Class<?> springLauncher = null;
             try {
                 springLauncher = Class.forName("org.springframework.boot.loader.JarLauncher", false, systemClassLoader);
-                LoggerUtil.debug(AgentBootStrap.class, "The target program is a spring application and is started as a jar.");
+                LoggerUtil.debug(AgentBootStrap.class, "The target program is a spring application and is started as a jar");
             } catch (NoClassDefFoundError | ClassNotFoundException ignored1) {
                 try {
                     springLauncher = Class.forName("org.springframework.boot.loader.WarLauncher", false, systemClassLoader);
-                    LoggerUtil.debug(AgentBootStrap.class, "The target program is a spring application and is started as a war.");
+                    LoggerUtil.debug(AgentBootStrap.class, "The target program is a spring application and is started as a war");
                 } catch (NoClassDefFoundError | ClassNotFoundException ignored2) {
                 }
             }
@@ -351,7 +351,7 @@ public class AgentBootStrap {
         });
         thread.setName("jvmm-logger");
         thread.start();
-        LoggerUtil.info(AgentBootStrap.class, "Log agent thread started successfully.");
+        LoggerUtil.info(AgentBootStrap.class, "Log agent thread started successfully");
     }
 
     /**

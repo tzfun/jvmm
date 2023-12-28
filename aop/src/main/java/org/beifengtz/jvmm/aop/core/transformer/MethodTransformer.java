@@ -86,7 +86,7 @@ public class MethodTransformer  implements ClassFileTransformer {
                     }
                 } else {
                     throw new UnsupportedOperationException("Can not retransform class by instrumentation: retransform classes not supported. " +
-                            "If you still want to use the enhancement, please enable Can-Retransform-Classes in the manifest to true.");
+                            "If you still want to use the enhancement, please enable Can-Retransform-Classes in the manifest to true");
                 }
             }
         }
