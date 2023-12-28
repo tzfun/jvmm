@@ -155,7 +155,7 @@ public class GuidedRunner {
             return jpsList;
         } else {
             System.out.println("Can not get local java processes, case: " + pairKey.getRight());
-            System.exit(-1);
+            System.exit(1);
         }
         return null;
     }

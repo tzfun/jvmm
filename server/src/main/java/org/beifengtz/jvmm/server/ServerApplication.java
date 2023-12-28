@@ -23,7 +23,7 @@ public class ServerApplication {
                 return Configuration.parseFromUrl(args[0]);
             } else {
                 System.err.println("Config file not exists: " + args[0]);
-                System.exit(-1);
+                System.exit(1);
             }
         } else {
             File file = new File(System.getProperty("user.dir") + "/config.yml");

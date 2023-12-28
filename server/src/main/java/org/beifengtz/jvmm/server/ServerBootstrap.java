@@ -83,15 +83,14 @@ public class ServerBootstrap {
         }
         ServerContext.setConfiguration(config);
 
-        if (ServerContext.isFromAgent()) {
+//        if (ServerContext.isFromAgent()) {
             //  如果从agent启动，则取消默认的标注输出和文件输出
-            System.setProperty(SystemPropertyUtil.PROPERTY_JVMM_LOG_PRINTERS, "agentProxy");
-        }
+//            System.setProperty(SystemPropertyUtil.PROPERTY_JVMM_LOG_PRINTERS, "agentProxy");
+//        }
 
         try {
             ServerContext.loadLoggerLib();
         } catch (Throwable t) {
-            System.err.println("The implementation of SLF4J was not found in the startup environment, and the Jvmm log dependency failed to load: " + t.getMessage());
             t.printStackTrace();
         }
 

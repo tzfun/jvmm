@@ -208,6 +208,7 @@ public class ServerContext {
             Class<?> clazz = Class.forName("org.beifengtz.jvmm.log.JvmmLoggerFactory");
             InternalLoggerFactory instance = (InternalLoggerFactory) clazz.getMethod("getInstance").invoke(null);
             InternalLoggerFactory.setDefaultFactory(instance);
+            InternalLoggerFactory.getInstance(ServerContext.class).info("Initialized jvmm logger as default logger");
         } catch (NoClassDefFoundError | ClassNotFoundException ignored) {
         }
 

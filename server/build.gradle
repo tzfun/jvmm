@@ -9,9 +9,9 @@ group = rootProject.group
 version = rootProject.version
 
 dependencies {
-    implementation project(path: ':logger')
-    compile(project(':core'))
-    compile(project(':convey'))
+    compile project(':logger')
+    compile project(':core')
+    compile project(':convey')
     compile "org.yaml:snakeyaml:${snakeyamlVersion}"
 }
 

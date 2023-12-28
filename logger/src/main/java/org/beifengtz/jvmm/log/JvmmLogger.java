@@ -112,7 +112,7 @@ public class JvmmLogger implements InternalLogger {
             }
         }
 
-        if (targetLevel != null && !isEnabled(targetLevel)) {
+        if (targetLevel != null && levelCode(targetLevel) >= levelCode(level())) {
             return;
         }
 
