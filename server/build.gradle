@@ -15,32 +15,6 @@ dependencies {
     compile "org.yaml:snakeyaml:${snakeyamlVersion}"
 }
 
-task cleanJar(type: Delete) {
-    delete 'src/main/resources/jvmm-logger.jar'
-}
-
-tasks.clean.configure {
-    dependsOn cleanJar
-}
-
-tasks.compileJava.configure {
-    dependsOn project(':logger').tasks.jar
-
-    doLast {
-
-        delete 'src/main/resources/jvmm-logger.jar'
-
-        //  发布时去掉
-        if (env != 'publish' && env != 'install') {
-            println("copy logger jar file to resources")
-            copy {
-                from '../logger/build/libs/jvmm-logger.jar'
-                into 'src/main/resources'
-            }
-        }
-    }
-}
-
 jar {
     manifestContentCharset 'utf-8'
     metadataCharset 'utf-8'

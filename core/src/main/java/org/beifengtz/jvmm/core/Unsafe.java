@@ -22,17 +22,6 @@ import java.util.Set;
  */
 public final class Unsafe {
 
-    public interface TypeCode {
-        String BOOLEAN = "Z";
-        String BYTE = "B";
-        String CHAR = "C";
-        String SHORT = "S";
-        String INT = "I";
-        String LONG = "J";
-        String FLOAT = "F";
-        String DOUBLE = "D";
-    }
-
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(Unsafe.class);
 
     private static Method threadsMethod;

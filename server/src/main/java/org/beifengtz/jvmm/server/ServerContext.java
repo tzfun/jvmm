@@ -4,9 +4,6 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.util.concurrent.Promise;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.factory.ExecutorFactory;
-import org.beifengtz.jvmm.common.util.ClassLoaderUtil;
-import org.beifengtz.jvmm.common.util.FileUtil;
-import org.beifengtz.jvmm.common.util.IOUtil;
 import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
 import org.beifengtz.jvmm.convey.channel.ChannelUtil;
 import org.beifengtz.jvmm.server.entity.conf.Configuration;
@@ -14,7 +11,6 @@ import org.beifengtz.jvmm.server.enums.ServerType;
 import org.beifengtz.jvmm.server.service.JvmmService;
 
 import java.io.File;
-import java.io.InputStream;
 import java.lang.instrument.Instrumentation;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -213,22 +209,6 @@ public class ServerContext {
             InternalLoggerFactory instance = (InternalLoggerFactory) clazz.getMethod("getInstance").invoke(null);
             InternalLoggerFactory.setDefaultFactory(instance);
         } catch (NoClassDefFoundError | ClassNotFoundException ignored) {
-        }
-
-        try {
-            Class.forName("org.slf4j.impl.StaticLoggerBinder");
-            InternalLoggerFactory.getInstance(ServerContext.class).info("The SLF4J implementation already exists in the Jvmm startup environment, this log framework is used by default");
-        } catch (NoClassDefFoundError | ClassNotFoundException e) {
-            final String jarName = "jvmm-logger.jar";
-            InputStream is = ServerApplication.class.getResourceAsStream("/" + jarName);
-            if (is == null) {
-                throw new RuntimeException("Can not load jvmm logger library, case: jar not found");
-            }
-            File file = new File(FileUtil.getTempPath(), jarName);
-            FileUtil.writeByteArrayToFile(file, IOUtil.toByteArray(is));
-
-            ClassLoaderUtil.loadJar(ServerContext.class.getClassLoader(), file.toPath().toUri().toURL());
-            InternalLoggerFactory.getInstance(ServerContext.class).info("Using jvmm logger framework as the implementation of SLF4J");
         }
 
         loadedLogLib = true;

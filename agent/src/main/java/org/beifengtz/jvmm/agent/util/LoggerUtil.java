@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class LoggerUtil {
 
-    private enum Slf4jLoggerMethod {
+    private enum LoggerMethod {
         trace_str,
         trace_str_t,
         trace_str_arg,
@@ -34,28 +34,40 @@ public class LoggerUtil {
     }
 
     private static volatile boolean LOADED_LOGGER = false;
-    private static boolean CONTAINS_SLF4J = false;
+    private static boolean CONTAINS_LOGGER_FRAME = false;
     private static final DefaultImplLogger DEFAULT_LOGGER = new DefaultImplLogger();
-    private static Method SLF4J_LOGGER_FACTORY = null;
-    private static Map<Slf4jLoggerMethod, Method> methodCache = null;
+    private static Method FRAME_GET_LOGGER_METHOD = null;
+    private static Map<LoggerMethod, Method> methodCache = null;
 
     static {
         init();
     }
 
     public static void init() {
-        loggerDefault("info", "Try to init logger...");
+        loggerDefault("info", "Initializing logger...");
         if (!LOADED_LOGGER) {
             synchronized (LoggerUtil.class) {
                 if (!LOADED_LOGGER) {
                     try {
-                        Class<?> clazz = Class.forName("org.slf4j.LoggerFactory");
-                        SLF4J_LOGGER_FACTORY = clazz.getDeclaredMethod("getLogger", String.class);
-                        CONTAINS_SLF4J = true;
+                        Class<?> clazz = Class.forName("io.netty.util.internal.logging.InternalLoggerFactory");
+
+                        Method newDefaultFactory = clazz.getDeclaredMethod("newDefaultFactory", String.class);
+                        newDefaultFactory.setAccessible(true);
+
+                        Object factory = newDefaultFactory.invoke(null, "jvmm");
+                        //  没有默认的logger框架，尝试设置 JvmmLogger
+                        if (factory.getClass().getName().equals("io.netty.util.internal.logging.JdkLoggerFactory")) {
+                            Method setDefaultFactory = clazz.getMethod("setDefaultFactory", clazz);
+                            Class<?> jvmmLoggerFactoryClass = Class.forName("org.beifengtz.jvmm.log.JvmmLoggerFactory");
+                            setDefaultFactory.invoke(null, jvmmLoggerFactoryClass.getMethod("getInstance").invoke(null));
+                        }
+
+                        FRAME_GET_LOGGER_METHOD = clazz.getMethod("getInstance", String.class);
                         methodCache = new ConcurrentHashMap<>();
-                        loggerDefault("info", "Loaded SLF4J logger");
-                    } catch (ClassNotFoundException | NoSuchMethodException ignored) {
-                        loggerDefault("info", "Can not found SLF4J logger, try to use default jvmm logger");
+                        CONTAINS_LOGGER_FRAME = true;
+                        loggerDefault("info", "Loaded default logging framework");
+                    } catch (Exception e) {
+                        loggerDefault("info", "No logging framework found, jvmm logger will be used");
                     }
                 }
             }
@@ -64,10 +76,10 @@ public class LoggerUtil {
     }
 
     public static void logger(String name, String methodName, String message) {
-        if (CONTAINS_SLF4J) {
+        if (CONTAINS_LOGGER_FRAME) {
             try {
-                Object logger = SLF4J_LOGGER_FACTORY.invoke(null, name);
-                Method method = methodCache.computeIfAbsent(Slf4jLoggerMethod.valueOf(methodName + "_str"), o -> {
+                Object logger = FRAME_GET_LOGGER_METHOD.invoke(null, name);
+                Method method = methodCache.computeIfAbsent(LoggerMethod.valueOf(methodName + "_str"), o -> {
                     try {
                         return logger.getClass().getDeclaredMethod(methodName, String.class);
                     } catch (NoSuchMethodException e) {
@@ -76,7 +88,7 @@ public class LoggerUtil {
                 });
                 method.invoke(logger, message);
             } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
+                loggerDefault("error", "Internal logger invoke error", e);
             }
         } else {
             loggerDefault(methodName, message);
@@ -84,10 +96,10 @@ public class LoggerUtil {
     }
 
     public static void logger(String name, String methodName, String message, Throwable throwable) {
-        if (CONTAINS_SLF4J) {
+        if (CONTAINS_LOGGER_FRAME) {
             try {
-                Object logger = SLF4J_LOGGER_FACTORY.invoke(null, name);
-                Method method = methodCache.computeIfAbsent(Slf4jLoggerMethod.valueOf(methodName + "_str_t"), o -> {
+                Object logger = FRAME_GET_LOGGER_METHOD.invoke(null, name);
+                Method method = methodCache.computeIfAbsent(LoggerMethod.valueOf(methodName + "_str_t"), o -> {
                     try {
                         return logger.getClass().getDeclaredMethod(methodName, String.class, Throwable.class);
                     } catch (NoSuchMethodException e) {
@@ -96,7 +108,7 @@ public class LoggerUtil {
                 });
                 method.invoke(logger, message, throwable);
             } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
+                loggerDefault("error", "Internal logger invoke error", e);
             }
         } else {
             loggerDefault(methodName, message, throwable);
@@ -104,10 +116,10 @@ public class LoggerUtil {
     }
 
     public static void logger(String name, String methodName, String message, Object... args) {
-        if (CONTAINS_SLF4J) {
+        if (CONTAINS_LOGGER_FRAME) {
             try {
-                Object logger = SLF4J_LOGGER_FACTORY.invoke(null, name);
-                Method method = methodCache.computeIfAbsent(Slf4jLoggerMethod.valueOf(methodName + "_str_arg"), o -> {
+                Object logger = FRAME_GET_LOGGER_METHOD.invoke(null, name);
+                Method method = methodCache.computeIfAbsent(LoggerMethod.valueOf(methodName + "_str_arg"), o -> {
                     try {
                         return logger.getClass().getDeclaredMethod(methodName, String.class, Object[].class);
                     } catch (NoSuchMethodException e) {
@@ -116,7 +128,7 @@ public class LoggerUtil {
                 });
                 method.invoke(logger, message, args);
             } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
+                loggerDefault("error", "Internal logger invoke error", e);
             }
         } else {
             loggerDefault(methodName, message, args);

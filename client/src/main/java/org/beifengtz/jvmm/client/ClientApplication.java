@@ -1,6 +1,8 @@
 package org.beifengtz.jvmm.client;
 
+import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
+import org.beifengtz.jvmm.log.JvmmLoggerFactory;
 
 /**
  * <p>
@@ -16,6 +18,7 @@ public class ClientApplication {
     private static void initLogger() {
         System.setProperty(SystemPropertyUtil.PROPERTY_JVMM_LOG_LEVEL, "info");
         System.setProperty(SystemPropertyUtil.PROPERTY_JVMM_LOG_PATTERN, "[%ansi{%level}{ERROR=31,INFO=32,WARN=33,DEBUG=34,TRACE=35}] %msg");
+        InternalLoggerFactory.setDefaultFactory(JvmmLoggerFactory.getInstance());
     }
 
     public static void main(String[] args) throws Throwable {
