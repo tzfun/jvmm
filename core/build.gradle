@@ -15,7 +15,9 @@ dependencies {
     compile(project(':common'))
     compileOnly(files(((URLClassLoader) ToolProvider.getSystemToolClassLoader()).getURLs()))
     compile "org.benf:cfr:${cfrVersion}"
-    compile "com.github.oshi:oshi-core:${oshiVersion}"
+    compile("com.github.oshi:oshi-core:${oshiVersion}") {
+        exclude group: 'org.slf4j'
+    }
 }
 
 jar {
@@ -48,7 +50,7 @@ artifacts {
     archives sourcesJar, javadocJar
 }
 
-if(env == 'publish') {
+if (env == 'publish') {
     uploadArchives {
         repositories {
             mavenDeployer {

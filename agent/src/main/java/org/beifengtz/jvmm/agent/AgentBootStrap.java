@@ -282,7 +282,7 @@ public class AgentBootStrap {
 
     private static void bootServer(Instrumentation inst, List<URL> needPreLoad, String agentArgs) throws InterruptedException {
         //  启动日志打印代理消费线程
-//        runLoggerConsumer();
+        runLoggerConsumer();
         running = true;
         bindThread = new Thread(() -> {
             int listenerPort = findListenerPortFromArgs(agentArgs);

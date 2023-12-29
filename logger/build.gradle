@@ -11,7 +11,7 @@ version = rootProject.version
 
 dependencies {
     compile(project(":common"))
-    compileOnly "org.slf4j:slf4j-api:1.7.30"
+    compile "org.slf4j:slf4j-api:1.7.36"
 }
 
 jar {

@@ -83,10 +83,10 @@ public class ServerBootstrap {
         }
         ServerContext.setConfiguration(config);
 
-//        if (ServerContext.isFromAgent()) {
+        if (ServerContext.isFromAgent()) {
             //  如果从agent启动，则取消默认的标注输出和文件输出
-//            System.setProperty(SystemPropertyUtil.PROPERTY_JVMM_LOG_PRINTERS, "agentProxy");
-//        }
+            System.setProperty(SystemPropertyUtil.PROPERTY_JVMM_LOG_PRINTERS, "agentProxy");
+        }
 
         try {
             ServerContext.loadLoggerLib();

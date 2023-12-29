@@ -336,7 +336,7 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Jvm
                 .setType(req.getType())
                 .setContextId(req.getContextId());
         if (e instanceof IllegalArgumentException) {
-            logger().error("Handle jvmm request failed: " + e.getMessage(), e);
+            logger().warn("Handle jvmm request failed: " + e.getMessage(), logger().isDebugEnabled() ? e : null);
             response.setStatus(RpcStatus.JVMM_STATUS_ILLEGAL_ARGUMENTS).setMessage(e.getMessage());
         } else {
             logger().error(e.getMessage(), e);
