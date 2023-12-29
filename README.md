@@ -42,7 +42,7 @@ JVM（内存、线程、线程池、内存池、GC、类加载器等），还提
 请前往[releases](https://github.com/tzfun/jvmm/releases)下载最新版的jvmm，然后将其解压
 
 > 小Tips：Jvmm 部分功能依赖于本地环境中的 jdk，请确保你的环境中安装的是 jdk 而不只是 jre，简单验证：在你的环境中执行`jps -l`，
-> 如果可正常执行并输出结果则表示环境OK，否则在运行jvmm时可能会出现报错
+> 如果可正常执行并输出结果则表示环境OK，否则可能无法运行Jvmm。
 
 首先执行下面指令生成服务jar包
 ```shell
@@ -62,7 +62,7 @@ java -jar --add-opens java.base/jdk.internal.loader=ALL-UNNAMED \
           jvmm-server.jar
 ```
 
-如果启动成功 Jvmm Server 将会默认运行在 5010 端口，然后你需要在当前目录新起一个窗口执行：
+如果启动成功 Jvmm Server 将会默认运行在 **5010** 端口，然后你需要在当前目录新起一个窗口执行：
 ```shell
 java -jar jvmm.jar -m client -a 127.0.0.1:5010
 ```
@@ -104,9 +104,9 @@ server:
     # ...
 ```
 
-### 二、Server配置
+### 二、配置文件
 
-默认配置 [config.yml](server/src/main/resources/config.yml)内容如下：
+默认配置请见 [config.yml](server/src/main/resources/config.yml)，其中配置信息请见配置文件中的注释。
 
 ```yaml
 # Node name, used to identify the current host machine, will be used in sentry mode
@@ -279,49 +279,47 @@ workThread: 2
 Jvmm提供了四种方式来启动你的 server：
 
 1. Attach方式启动：使用客户端工具本地 attach 到目标 Java 进程
-2. Java Agent方式启动：目标Java进程启动时以 Java Agent 的方式
-3. 直接启动（不支持反编译和代码热更功能）
-4. 项目中启动：在你的项目中引入 jvmm-server 依赖，一行代码即可启动
+2. Java Agent方式启动：目标Java进程启动时以 Java Agent 的方式载入（`-javaagent`参数）
+3. 直接启动`jvmm-server.jar`（不支持反编译和代码热更功能）
+4. 自己项目中引入 maven 或 gradle依赖，一行代码即可启动
 
 > 注意！！！
 >
-> 无论是你用哪种方式启动Server，如果你的运行环境是jdk 9+以上，需要在你的应用启动时添加以下三个JVM参数
+> 无论是你用哪种方式启动Server，如果你的运行环境是jdk 9+以上，需要在你的应用启动时添加以下JVM参数
 ```shell
---add-opens java.base/jdk.internal.loader=ALL-UNNAMED 
+--add-opens java.base/jdk.internal.loader=ALL-UNNAMED
 --add-opens jdk.zipfs/jdk.nio.zipfs=ALL-UNNAMED
+--add-opens java.base/java.net=ALL-UNNAMED
 --add-opens java.management/sun.management=ALL-UNNAMED
 ```
 
 #### I. Attach方式启动
 
-运行 jvmm.jar， `-m`选择attach模式
+运行 jvmm.jar，选择**attach**模式
 
 ```shell
 java -jar jvmm.jar -m attach -c ./config
 ```
 
-然后会提示你选择目标进程的序号，选择后便会再目标进程中启动server。
+然后会提示你选择目标进程的序号，选择后便会在目标进程中启动server。
 
-如果你提前知道目标进程的 pid，你可以直接指定它：
+如果你已经知道目标进程的 pid，你可以直接指定它：
 ```shell
 java -jar jvmm.jar -m attach -c ./config -pid 80080
 ```
 
 #### II. Java Agent方式启动
 
-Agent方式你需要先生成所需的jar包，执行：
+Java Agent方式你需要先生成所需的jar包：
 ```shell
-// 如果你的宿主程序中包含了 SLF4J 的依赖 建议在生成时使用 -e 参数排除掉自带的 logger 实现
-java -jar jvmm.jar -m jar -e logger
-
-// 如果你的宿主程序中没有 SLF4J 依赖 无需排除 logger
 java -jar jvmm.jar -m jar
 ```
 
-执行之后会在同级目录下生成两个文件：`jvmm-agent.jar`和`jvmm-server.jar`，然后在启动目标程序（假设为app.jar）时用指定上javaagent参数，格式如下
+执行之后会在同级目录下生成两个文件：`jvmm-agent.jar`和`jvmm-server.jar`，然后在启动目标程序（假设为app.jar）时
+添加`-javaagent`参数，格式如下：
 
-```shell
-java -javaagent:[jvmm-agent.jar路径]=[jvmm-server.jar路径];config=[config.yml路径] -jar app.jar
+```textmate
+java -javaagent:<jvmm-agent.jar路径>=<jvmm-server.jar路径>;config=<config.yml路径> -jar your-app.jar
 ```
 
 例如：
@@ -329,7 +327,7 @@ java -javaagent:[jvmm-agent.jar路径]=[jvmm-server.jar路径];config=[config.ym
 java -javaagent:/path/jvmm-agent.jar=/path/jvmm-server.jar;config=/path/config.yml -jar app.jar
 ```
 
-当你的程序启动之后Jvmm server就会随之启动
+当你的程序启动之后Jvmm server就会以Agent的方式启动
 
 #### III. 直接启动
 
@@ -340,7 +338,7 @@ java -javaagent:/path/jvmm-agent.jar=/path/jvmm-server.jar;config=/path/config.y
 java -jar jvmm.jar -s
 ```
 
-执行结束后会在同级目录生成一个 jvmm-server.jar，然后启动server，启动时请注意你的jdk版本
+执行结束后会在同级目录生成一个 `jvmm-server.jar`，然后启动server，启动时请注意你的jdk版本
 
 ```shell
 # 启动server，jdk 8使用下面命令
@@ -362,7 +360,7 @@ java -jar --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens jdk.
     <version>${jvmm-version}</version>
   </dependency>
 
-<!-- SLF4J 规范的 Jvmm 实现，如果你的项目中有默认实现，可以去掉此依赖 -->
+<!-- jvmm日志依赖，如果你的项目中有 SLF4J、Log4J2、Log4J中任意一个依赖，可以去掉此依赖 -->
   <dependency>
     <groupId>io.github.tzfun.jvmm</groupId>
     <artifactId>jvmm-logger</artifactId>
@@ -390,24 +388,31 @@ public class Jvmm {
 package org.beifengtz.jvmm.demo;
 
 import io.netty.channel.EventLoopGroup;
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.exception.JvmmConnectFailedException;
 import org.beifengtz.jvmm.convey.channel.ChannelUtil;
 import org.beifengtz.jvmm.convey.entity.JvmmRequest;
 import org.beifengtz.jvmm.convey.entity.JvmmResponse;
 import org.beifengtz.jvmm.convey.enums.RpcType;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Description: TODO
+ * <p>
+ * Created in 17:16 2021/12/15
+ *
+ * @author beifengtz
+ */
 public class ServerConveyDemo {
 
-  private static Logger logger;
+  private static InternalLogger logger;
 
   public static void main(String[] args) throws Exception {
-    logger = LoggerFactory.getLogger(ServerConveyDemo.class);
+    logger = InternalLoggerFactory.getInstance(ServerConveyDemo.class);
 
     EventLoopGroup executor = ChannelUtil.newEventLoopGroup(1);
 
@@ -471,7 +476,6 @@ public class ServerConveyDemo {
     }
   }
 }
-
 ```
 
 ### 四、Server接口文档
