@@ -146,7 +146,7 @@ log:
   # Custom prefix level: OFF, FATAL, ERROR, WARN, INFO, DEBUG, TRACE, ALL
   levels:
     io.netty: INFO
-    org.beifengtz: DEBUG
+    org.beifengtz: INFO
   # Log file output directory
   file: logs
   # Log file prefix

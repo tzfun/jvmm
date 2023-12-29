@@ -7,44 +7,44 @@ import java.util.Map;
 
 /**
  * Description: TODO
- *
+ * <p>
  * Created in 15:53 2021/12/9
  *
  * @author beifengtz
  */
 public class LoggerEvent {
 
-    private InternalLogLevel type;
+    private InternalLogLevel level;
     private String msg;
     private Object[] args;
     private Throwable throwable;
     private String name;
 
-    public static LoggerEvent create(InternalLogLevel type, String msg) {
+    public static LoggerEvent create(InternalLogLevel level, String msg) {
         LoggerEvent info = new LoggerEvent();
-        info.type = type;
+        info.level = level;
         info.msg = msg;
         return info;
     }
 
-    public static LoggerEvent create(InternalLogLevel type, String format, Object... args) {
+    public static LoggerEvent create(InternalLogLevel level, String format, Object... args) {
         LoggerEvent info = new LoggerEvent();
-        info.type = type;
+        info.level = level;
         info.msg = format;
         info.args = args;
         return info;
     }
 
-    public static LoggerEvent create(InternalLogLevel type, String msg, Throwable e) {
+    public static LoggerEvent create(InternalLogLevel level, String msg, Throwable e) {
         LoggerEvent info = new LoggerEvent();
-        info.type = type;
+        info.level = level;
         info.msg = msg;
         info.throwable = e;
         return info;
     }
 
-    public InternalLogLevel getType() {
-        return type;
+    public InternalLogLevel getLevel() {
+        return level;
     }
 
     public String getMsg() {
@@ -77,7 +77,7 @@ public class LoggerEvent {
         HashMap<String, Object> map = new HashMap<>();
 
         map.put("throwable", throwable);
-        map.put("type", type.name());
+        map.put("level", level.name());
         map.put("msg", msg);
         map.put("args", args);
         map.put("name", name);

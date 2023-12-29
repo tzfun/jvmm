@@ -105,16 +105,6 @@ public class JvmmLogger implements InternalLogger {
 
     private void pushEvent(LoggerEvent event) {
         JvmmLogConfiguration config = JvmmLoggerFactory.getInstance().getConfig();
-        InternalLogLevel targetLevel = null;
-        for (Entry<String, InternalLogLevel> entry : config.getLevels().entrySet()) {
-            if (event.getName().startsWith(entry.getKey())) {
-                targetLevel = entry.getValue();
-            }
-        }
-
-        if (targetLevel != null && levelCode(targetLevel) >= levelCode(level())) {
-            return;
-        }
 
         for (Printer printer : printers) {
             if (printer.preformat()) {
@@ -124,7 +114,7 @@ public class JvmmLogger implements InternalLogger {
                 if (event.getThrowable() != null) {
                     msg += ('\n' + throwableToString(event.getThrowable()));
                 }
-                printer.print(formatPattern(msg, config.getPattern(), event.getType(), printer.ignoreAnsi()));
+                printer.print(formatPattern(msg, config.getPattern(), event.getLevel(), printer.ignoreAnsi()));
             } else {
                 printer.print(event);
             }
@@ -375,6 +365,17 @@ public class JvmmLogger implements InternalLogger {
 
     @Override
     public boolean isEnabled(InternalLogLevel level) {
+        JvmmLogConfiguration config = JvmmLoggerFactory.getInstance().getConfig();
+        InternalLogLevel targetLevel = null;
+        for (Entry<String, InternalLogLevel> entry : config.getLevels().entrySet()) {
+            if (name.startsWith(entry.getKey())) {
+                targetLevel = entry.getValue();
+            }
+        }
+        if (targetLevel != null && levelCode(level) < levelCode(targetLevel)) {
+            return false;
+        }
+
         int target = levelCode(level);
         int limit = levelCode(level());
         return target >= limit;

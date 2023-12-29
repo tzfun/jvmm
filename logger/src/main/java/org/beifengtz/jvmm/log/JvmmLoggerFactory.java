@@ -97,13 +97,10 @@ public class JvmmLoggerFactory extends InternalLoggerFactory {
         String ps = config.getPrinters();
         for (String p : ps.split(",")) {
             if ("std".equalsIgnoreCase(p.trim())) {
-                System.out.println("Use std printer");
                 printers.add(new StdPrinter());
             } else if ("file".equalsIgnoreCase(p.trim())) {
-                System.out.println("Use file printer");
                 printers.add(new FilePrinter(config));
             } else if ("agentProxy".equalsIgnoreCase(p.trim())) {
-                System.out.println("Use agent proxy printer");
                 printers.add(new AgentProxyPrinter());
             }
         }

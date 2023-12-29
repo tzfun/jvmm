@@ -43,7 +43,6 @@ tasks.compileJava.configure {
                 include 'module-info.class'
                 include 'org/beifengtz/jvmm/server/**'
                 include 'org/yaml/**'
-                include 'org/slf4j/**'
                 include 'META-INF/INDEX.LIST'
                 include 'META-INF/MANIFEST.MF'
             }

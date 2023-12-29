@@ -47,7 +47,7 @@ import java.util.jar.JarFile;
 public class CommandRunner {
 
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(CommandRunner.class);
-
+    private static final String SLF4J_API_REGEX = "org/slf4j/.*";
     private static final CmdLineGroup cmdGroup;
 
     static {
@@ -133,6 +133,11 @@ public class CommandRunner {
                         .setName("s")
                         .setOrder(2)
                         .setDesc("Generate jvmm-server.jar"))
+                .addOption(CmdOption.create()
+                        .setName("e")
+                        .setOrder(3)
+                        .setArgName("exclude")
+                        .setDesc("Specifies the name of the dependency to be excluded in the generated jar. Optional value: logger"))
         );
     }
 
@@ -179,7 +184,7 @@ public class CommandRunner {
 
         if (generateAll || cmd.hasArg("s")) {
             if (canGenerateServerJar()) {
-                generateServerJar(null);
+                generateServerJar(null, !cmd.hasArg("e") || !cmd.getArg("e").contains("logger"));
             } else {
                 logger.error("Can not generate server jar file, case: no runtime source.");
             }
@@ -193,12 +198,12 @@ public class CommandRunner {
         return CommandRunner.class.getResourceAsStream("/server-source") != null && path.endsWith(".jar");
     }
 
-    private static void generateServerJar(String dir) throws IOException {
+    private static void generateServerJar(String dir, boolean containsSlf4j) throws IOException {
         if (canGenerateServerJar()) {
             File serverJarFile = new File(dir, "jvmm-server.jar");
-            if (checkJarVersion(dir) && serverJarFile.exists()) {
-                return;
-            }
+//            if (checkJarVersion(dir) && serverJarFile.exists()) {
+//                return;
+//            }
             logger.info("Starting to generate server jar...");
             String path = CommandRunner.class.getProtectionDomain().getCodeSource().getLocation().getPath();
             try {
@@ -214,7 +219,12 @@ public class CommandRunner {
                 }
                 String regex = "async-profiler/.*|com/.*|io/.*|org/benf.*|META-INF/maven/.*" +
                         "|META-INF/native/.*|META-INF/native-image/.*|io.netty.versions.propeties|server-source/.*|" +
-                        ".*jvmm/common/.*|.*jvmm/convey/.*|.*jvmm/core/.*|.*jvmm/log/.*|oshi/.*|oshi.*|org/yaml.*|org/slf4j/.*";
+                        ".*jvmm/common/.*|.*jvmm/convey/.*|.*jvmm/core/.*|.*jvmm/log/.*|oshi/.*|oshi.*|org/yaml.*";
+                if (containsSlf4j) {
+                    regex += ("|" + SLF4J_API_REGEX);
+                } else {
+                    logger.info("Ignored slf4j dependency");
+                }
                 FileUtil.copyFromJar(new JarFile(path), tempDir, regex, fileName -> {
                     if (fileName.startsWith("server-source")) {
                         return fileName.replace("server-source/", "");
@@ -385,7 +395,7 @@ public class CommandRunner {
             serverFilePath = cmd.getArg("s");
 //            FileUtil.delFromJar(serverFilePath, JVMM_LOGGER_REGEX);
         } else if (canGenerateServerJar()) {
-            generateServerJar(FileUtil.getTempPath());
+            generateServerJar(FileUtil.getTempPath(), true);
             serverFilePath = new File(FileUtil.getTempPath(), "jvmm-server.jar").getAbsolutePath();
         } else {
             serverFilePath = GuidedRunner.askServerFilePath();

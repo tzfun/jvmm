@@ -40,6 +40,7 @@ public class AgentBootStrap {
     private static volatile Instrumentation instrumentation;
 
     private static volatile boolean running;
+    private static volatile boolean initializedAgentLogger;
     private static volatile Thread bindThread;
     private static volatile JvmmAgentClassLoader agentClassLoader;
     /**
@@ -281,9 +282,9 @@ public class AgentBootStrap {
     }
 
     private static void bootServer(Instrumentation inst, List<URL> needPreLoad, String agentArgs) throws InterruptedException {
+        running = true;
         //  启动日志打印代理消费线程
         runLoggerConsumer();
-        running = true;
         bindThread = new Thread(() -> {
             int listenerPort = findListenerPortFromArgs(agentArgs);
             try {
@@ -326,23 +327,22 @@ public class AgentBootStrap {
      * 为了应用宿主程序的日志配置，启动一个日志消费者线程去Agent Server内部的处理日志
      */
     private static void runLoggerConsumer() {
-        if (running) {
+        if (initializedAgentLogger) {
             return;
         }
         Thread thread = new Thread(() -> {
             while (running) {
                 try {
                     LoggerEvent info = logQueue.take();
-
-                    String type = info.getType().toLowerCase();
+                    String level = info.getLevel().toLowerCase();
                     if (info.getArgs() == null) {
                         if (info.getThrowable() == null) {
-                            LoggerUtil.logger(info.getName(), type, info.getMsg());
+                            LoggerUtil.logger(info.getName(), level, info.getMsg());
                         } else {
-                            LoggerUtil.logger(info.getName(), type, info.getMsg(), info.getThrowable());
+                            LoggerUtil.logger(info.getName(), level, info.getMsg(), info.getThrowable());
                         }
                     } else {
-                        LoggerUtil.logger(info.getName(), type, info.getMsg(), info.getArgs());
+                        LoggerUtil.logger(info.getName(), level, info.getMsg(), info.getArgs());
                     }
                 } catch (Throwable e) {
                     LoggerUtil.error(AgentBootStrap.class, "Consume log failed", e);
@@ -351,7 +351,8 @@ public class AgentBootStrap {
         });
         thread.setName("jvmm-logger");
         thread.start();
-        LoggerUtil.info(AgentBootStrap.class, "Log agent thread started successfully");
+        initializedAgentLogger = true;
+        LoggerUtil.info(AgentBootStrap.class, "Agent logger thread started");
     }
 
     /**
