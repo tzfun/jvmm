@@ -1,9 +1,6 @@
 //  为了缩小agent的体积，不直接依赖common包，尽可能少的引入依赖
 
 dependencies {
-    compileOnly "org.slf4j:slf4j-api:1.7.30"
-    compileOnly "org.apache.logging.log4j:log4j-1.2-api:2.17.2"
-    compileOnly project(":logger")
 }
 
 jar {

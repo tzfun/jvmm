@@ -152,7 +152,7 @@ public class AgentBootStrap {
         }
 
         if (!serverJarFile.exists()) {
-            notifyListener(findListenerPortArg(agentArgs), "Jvmm server jar file not found");
+            notifyListener(findListenerPortFromArgs(agentArgs), "Jvmm server jar file not found");
             return;
         }
 
@@ -172,7 +172,7 @@ public class AgentBootStrap {
 
         } catch (Throwable e) {
             LoggerUtil.error(AgentBootStrap.class, e.getMessage(), e);
-            notifyListener(findListenerPortArg(agentArgs), e.getMessage());
+            notifyListener(findListenerPortFromArgs(agentArgs), e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -252,7 +252,7 @@ public class AgentBootStrap {
         return false;
     }
 
-    private static int findListenerPortArg(String args) {
+    private static int findListenerPortFromArgs(String args) {
         String[] argKv = args.split(";");
         for (String s : argKv) {
             String[] split = s.split("=");
@@ -285,7 +285,7 @@ public class AgentBootStrap {
 //        runLoggerConsumer();
         running = true;
         bindThread = new Thread(() -> {
-            int listenerPort = findListenerPortArg(agentArgs);
+            int listenerPort = findListenerPortFromArgs(agentArgs);
             try {
                 if (needPreLoad != null && !needPreLoad.isEmpty()) {
                     for (URL url : needPreLoad) {

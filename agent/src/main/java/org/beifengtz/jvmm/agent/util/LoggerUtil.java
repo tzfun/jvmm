@@ -1,11 +1,6 @@
 package org.beifengtz.jvmm.agent.util;
 
-import org.apache.log4j.LogManager;
-import org.beifengtz.jvmm.agent.DefaultImplLogger;
-import org.beifengtz.jvmm.log.JvmmLoggerFactory;
-import org.slf4j.ILoggerFactory;
-import org.slf4j.LoggerFactory;
-import org.slf4j.helpers.NOPLoggerFactory;
+import org.beifengtz.jvmm.agent.JvmmAgentLogger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -40,7 +35,7 @@ public class LoggerUtil {
 
     private static volatile boolean LOADED_LOGGER = false;
     private static boolean CONTAINS_LOGGER_FRAME = false;
-    private static final DefaultImplLogger DEFAULT_LOGGER = new DefaultImplLogger();
+    private static final JvmmAgentLogger DEFAULT_LOGGER = new JvmmAgentLogger();
     private static Method GET_LOGGER_METHOD = null;
     private static Map<LoggerMethod, Method> methodCache = null;
 
@@ -49,16 +44,15 @@ public class LoggerUtil {
     }
 
     public static void init() {
-        loggerDefault("info", "Initializing logger...");
         if (!LOADED_LOGGER) {
             synchronized (LoggerUtil.class) {
                 if (!LOADED_LOGGER) {
                     if (findSl4jLogger() || findLog4j2Logger() || findLog4jLogger() || findJvmmLogger()) {
                         methodCache = new ConcurrentHashMap<>();
                         CONTAINS_LOGGER_FRAME = true;
-                        loggerDefault("info", "Loaded default logging framework");
+                        info(LoggerUtil.class, "Loaded default logging framework");
                     } else {
-                        loggerDefault("info", "No logging framework found, jvmm logger will be used");
+                        loggerDefault("info", "No logging framework found in agent environment, jvmm logger will be used");
                     }
                 }
             }
@@ -68,10 +62,13 @@ public class LoggerUtil {
 
     private static boolean findSl4jLogger() {
         try {
-            if (LoggerFactory.getILoggerFactory() instanceof NOPLoggerFactory) {
-                return false;
+            ClassLoader classLoader = LoggerUtil.class.getClassLoader();
+            if (classLoader == null) {
+                classLoader = ClassLoader.getSystemClassLoader();
             }
-            GET_LOGGER_METHOD = ILoggerFactory.class.getMethod("getLogger", String.class);
+
+            Class<?> clazz = Class.forName("org.slf4j.LoggerFactory", false, classLoader);
+            GET_LOGGER_METHOD = clazz.getMethod("getLogger", String.class);
             return true;
         } catch (LinkageError | Exception ignore) {
             return false;
@@ -80,7 +77,12 @@ public class LoggerUtil {
 
     private static boolean findLog4j2Logger() {
         try {
-            GET_LOGGER_METHOD = LogManager.class.getMethod("getLogger", String.class);
+            ClassLoader classLoader = LoggerUtil.class.getClassLoader();
+            if (classLoader == null) {
+                classLoader = ClassLoader.getSystemClassLoader();
+            }
+            Class<?> clazz = Class.forName("org.apache.logging.log4j.LogManager", false, classLoader);
+            GET_LOGGER_METHOD = clazz.getMethod("getLogger", String.class);
             return true;
         } catch (LinkageError | Exception ignore) {
             return false;
@@ -89,7 +91,12 @@ public class LoggerUtil {
 
     private static boolean findLog4jLogger() {
         try {
-            GET_LOGGER_METHOD = org.apache.log4j.Logger.class.getMethod("getLogger", String.class);
+            ClassLoader classLoader = LoggerUtil.class.getClassLoader();
+            if (classLoader == null) {
+                classLoader = ClassLoader.getSystemClassLoader();
+            }
+            Class<?> clazz = Class.forName("org.apache.log4j.Logger", false, classLoader);
+            GET_LOGGER_METHOD = clazz.getMethod("getLogger", String.class);
             return true;
         } catch (LinkageError | Exception ignore) {
             return false;
@@ -98,7 +105,12 @@ public class LoggerUtil {
 
     private static boolean findJvmmLogger() {
         try {
-            GET_LOGGER_METHOD = JvmmLoggerFactory.class.getMethod("getLogger", String.class);
+            ClassLoader classLoader = LoggerUtil.class.getClassLoader();
+            if (classLoader == null) {
+                classLoader = ClassLoader.getSystemClassLoader();
+            }
+            Class<?> clazz = Class.forName("org.beifengtz.jvmm.log.JvmmLoggerFactory", false, classLoader);
+            GET_LOGGER_METHOD = clazz.getMethod("getLogger", String.class);
             return true;
         } catch (LinkageError | Exception ignore) {
             return false;

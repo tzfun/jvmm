@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets;
  *
  * @author beifengtz
  */
-public class DefaultImplLogger {
+public class JvmmAgentLogger {
 
     protected static String TRACE_PATTERN = "[\33[36;1mJvmm\33[30;0m] [\33[35;1mTrace\33[30;0m] %s%n";
     protected static String DEBUG_PATTERN = "[\33[36;1mJvmm\33[30;0m] [\33[34;1mDebug\33[30;0m] %s%n";

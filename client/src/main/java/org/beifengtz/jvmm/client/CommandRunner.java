@@ -196,6 +196,9 @@ public class CommandRunner {
     private static void generateServerJar(String dir) throws IOException {
         if (canGenerateServerJar()) {
             File serverJarFile = new File(dir, "jvmm-server.jar");
+            if (checkJarVersion(dir) && serverJarFile.exists()) {
+                return;
+            }
             logger.info("Starting to generate server jar...");
             String path = CommandRunner.class.getProtectionDomain().getCodeSource().getLocation().getPath();
             try {
