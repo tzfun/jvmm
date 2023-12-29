@@ -35,7 +35,7 @@ public class LoggerUtil {
 
     private static volatile boolean LOADED_LOGGER = false;
     private static boolean CONTAINS_LOGGER_FRAME = false;
-    private static final JvmmAgentLogger DEFAULT_LOGGER = new JvmmAgentLogger();
+    private static JvmmAgentLogger DEFAULT_LOGGER;
     private static Method GET_LOGGER_METHOD = null;
     private static Map<LoggerMethod, Method> methodCache = null;
 
@@ -52,6 +52,7 @@ public class LoggerUtil {
                         CONTAINS_LOGGER_FRAME = true;
                         info(LoggerUtil.class, "Loaded default logging framework");
                     } else {
+                        DEFAULT_LOGGER = new JvmmAgentLogger();
                         loggerDefault("info", "No logging framework found in agent environment, jvmm logger will be used");
                     }
                 }

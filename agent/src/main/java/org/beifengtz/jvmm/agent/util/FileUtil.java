@@ -1,22 +1,13 @@
 package org.beifengtz.jvmm.agent.util;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -28,70 +19,6 @@ import java.util.jar.JarFile;
 public class FileUtil {
 
     private static final int SAFE_BYTE_LENGTH = 2048;
-
-    public static void writeByteArrayToFile(File file, byte[] data) throws IOException {
-        writeByteArrayToFile(file, data, false);
-    }
-
-    public static void writeByteArrayToFile(File file, byte[] data, boolean append) throws IOException {
-        try (OutputStream out = openOutputStream(file, append)) {
-            out.write(data);
-        }
-    }
-
-    public static FileOutputStream openOutputStream(File file, boolean append) throws IOException {
-        if (file.exists()) {
-            if (file.isDirectory()) {
-                throw new IOException("File '" + file + "' exists but is a directory");
-            }
-            if (!file.canWrite()) {
-                throw new IOException("File '" + file + "' cannot be written to");
-            }
-        } else {
-            File parent = file.getParentFile();
-            if (parent != null) {
-                if (!parent.mkdirs() && !parent.isDirectory()) {
-                    throw new IOException("Directory '" + parent + "' could not be created");
-                }
-            }
-        }
-        return new FileOutputStream(file, append);
-    }
-
-    public static String readFileToString(File file, Charset encoding) throws IOException {
-        try (FileInputStream stream = new FileInputStream(file)) {
-            Reader reader = new BufferedReader(new InputStreamReader(stream, encoding));
-            StringBuilder builder = new StringBuilder();
-            char[] buffer = new char[8192];
-            int read;
-            while ((read = reader.read(buffer, 0, buffer.length)) > 0) {
-                builder.append(buffer, 0, read);
-            }
-            return builder.toString();
-        }
-    }
-
-    public static Map<String, String> readProperties(String file) throws IOException {
-        return readProperties(file, null);
-    }
-
-    public static Map<String, String> readProperties(String file, String globalPrefix) throws IOException {
-        Properties properties = new Properties();
-        try (FileInputStream in = new FileInputStream(file)) {
-            properties.load(in);
-            Map<String, String> map = new HashMap<>(properties.size());
-            properties.forEach((k, v) -> {
-                String key;
-                if (globalPrefix != null) {
-                    key = k.toString().replaceFirst(globalPrefix, "");
-                } else {
-                    key = k.toString();
-                }
-                map.put(key, v.toString());
-            });
-            return map;
-        }
-    }
 
     /**
      * 从网络中读取数据并写入文件
@@ -219,25 +146,5 @@ public class FileUtil {
             }
         }
         return false;
-    }
-
-    /**
-     * 删除文件，如果file是目录，递归删除目录下所有文件
-     *
-     * @param file 被删除的文件或文件目录
-     * @return 是否删除成功
-     */
-    public static boolean delFile(File file) {
-        if (!file.exists()) {
-            return true;
-        }
-
-        if (file.isDirectory()) {
-            File[] files = file.listFiles();
-            for (File f : files) {
-                delFile(f);
-            }
-        }
-        return file.delete();
     }
 }
