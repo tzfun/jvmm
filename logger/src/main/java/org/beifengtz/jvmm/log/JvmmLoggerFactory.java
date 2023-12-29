@@ -21,14 +21,14 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author beifengtz
  */
 public class JvmmLoggerFactory extends InternalLoggerFactory {
-    static ConcurrentHashMap<String, InternalLogger> loggerMap = new ConcurrentHashMap<>();
+    protected static ConcurrentHashMap<String, JvmmLogger> loggerMap = new ConcurrentHashMap<>();
     static volatile JvmmLoggerFactory INSTANCE;
 
-    private final List<Printer> printers = new ArrayList<>(2);
+    protected final List<Printer> printers = new ArrayList<>(2);
 
     private JvmmLogConfiguration config;
 
-    private JvmmLoggerFactory() {
+    protected JvmmLoggerFactory() {
     }
 
     public static JvmmLoggerFactory getInstance() {
@@ -116,19 +116,19 @@ public class JvmmLoggerFactory extends InternalLoggerFactory {
     }
 
     @Override
-    protected InternalLogger newInstance(String name) {
-        InternalLogger logger = loggerMap.get(name);
+    protected JvmmLogger newInstance(String name) {
+        JvmmLogger logger = loggerMap.get(name);
         if (logger != null) {
             return logger;
         } else {
             JvmmLogger newInstance = new JvmmLogger(name);
             newInstance.addAllPrinter(printers);
-            InternalLogger oldInstance = loggerMap.putIfAbsent(name, newInstance);
+            JvmmLogger oldInstance = loggerMap.putIfAbsent(name, newInstance);
             return oldInstance == null ? newInstance : oldInstance;
         }
     }
 
-    public static InternalLogger getLogger(String name) {
+    public static InternalLogger getInstance(String name) {
         return getInstance().newInstance(name);
     }
 }

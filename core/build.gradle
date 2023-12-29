@@ -15,9 +15,7 @@ dependencies {
     compile(project(':common'))
     compileOnly(files(((URLClassLoader) ToolProvider.getSystemToolClassLoader()).getURLs()))
     compile "org.benf:cfr:${cfrVersion}"
-    compile("com.github.oshi:oshi-core:${oshiVersion}") {
-        exclude group: 'org.slf4j'
-    }
+    compile "com.github.oshi:oshi-core:${oshiVersion}"
 }
 
 jar {
