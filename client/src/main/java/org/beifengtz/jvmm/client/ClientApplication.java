@@ -25,5 +25,6 @@ public class ClientApplication {
         initLogger();
         CommandRunner.run(args);
 //        CommandRunner.run(new String[]{"-m", "jar", "-e", "logger"});
+//        CommandRunner.run(new String[]{"-h"});
     }
 }
