@@ -9,10 +9,12 @@ group = rootProject.group
 version = rootProject.version
 
 dependencies {
-    compile project(':logger')
     compile project(':core')
     compile project(':convey')
     compile "org.yaml:snakeyaml:${snakeyamlVersion}"
+    if(env == 'dev') {
+        compile project(':logger')
+    }
 }
 
 jar {
@@ -25,8 +27,8 @@ jar {
         attributes 'Main-Class': 'org.beifengtz.jvmm.server.ServerApplication'
     }
 
-    //  发布时去掉
-    if (env != 'publish' && env != 'install') {
+    //  仅dev打包时使用，发布时去掉
+    if (env == 'dev') {
         from {
             configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
         }
