@@ -192,10 +192,17 @@ public class CommandRunner {
                     String exclude = cmd.getArg("e");
                     if (exclude.contains("slf4j-api")) {
                         containsSlf4jApi = false;
+                    } else {
+                        containsSlf4jApi = GuidedRunner.askImportSlf4jApi();
                     }
                     if (exclude.contains("slf4j-impl")) {
                         containsSlf4jImpl = false;
+                    } else {
+                        containsSlf4jImpl = GuidedRunner.askImportSlf4jImpl();
                     }
+                } else {
+                    containsSlf4jApi = GuidedRunner.askImportSlf4jApi();
+                    containsSlf4jImpl = GuidedRunner.askImportSlf4jImpl();
                 }
                 generateServerJar(null, containsSlf4jApi, containsSlf4jImpl);
             } else {
@@ -422,7 +429,9 @@ public class CommandRunner {
             serverFilePath = cmd.getArg("s");
 //            FileUtil.delFromJar(serverFilePath, JVMM_LOGGER_REGEX);
         } else if (canGenerateServerJar()) {
-            generateServerJar(FileUtil.getTempPath(), true, true);
+            boolean containsSlf4jApi = GuidedRunner.askImportSlf4jApi();
+            boolean containsSlf4jImpl = GuidedRunner.askImportSlf4jImpl();
+            generateServerJar(FileUtil.getTempPath(), containsSlf4jApi, containsSlf4jImpl);
             serverFilePath = new File(FileUtil.getTempPath(), "jvmm-server.jar").getAbsolutePath();
         } else {
             serverFilePath = GuidedRunner.askServerFilePath();

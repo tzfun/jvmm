@@ -27,7 +27,7 @@ public class JvmmAgentClassLoader extends URLClassLoader {
             return resource;
         }
         ClassLoader cl = getClass().getClassLoader();
-        if(cl != null) {
+        if (cl != null) {
             resource = cl.getResource(name);
             if (resource != null) {
                 return resource;
@@ -59,6 +59,9 @@ public class JvmmAgentClassLoader extends URLClassLoader {
 
     @Override
     public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+        if (name != null && name.startsWith("org.slf4j")) {
+            System.out.println("load " + name);
+        }
         final Class<?> loadedClass = findLoadedClass(name);
         if (loadedClass != null) {
             return loadedClass;
