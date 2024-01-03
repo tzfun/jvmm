@@ -23,6 +23,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.ParseException;
 import java.util.Objects;
@@ -136,9 +137,7 @@ public class CommandRunner {
                         .setName("e")
                         .setOrder(3)
                         .setArgName("exclude")
-                        .setDesc("Specifies the name of the dependency to be excluded in the generated jar. Optional value: " +
-                                "\n- slf4j-api" +
-                                "\n- slf4j-impl"))
+                        .setDesc("Specifies the name of the dependency to be excluded in the generated jar, optional value: slf4j"))
         );
     }
 
@@ -185,26 +184,19 @@ public class CommandRunner {
 
         if (generateAll || cmd.hasArg("s")) {
             if (canGenerateServerJar()) {
-                boolean containsSlf4jApi = true;
-                boolean containsSlf4jImpl = true;
+                boolean containsSlf4j = true;
                 boolean excluded = cmd.hasArg("e");
                 if (excluded) {
                     String exclude = cmd.getArg("e");
-                    if (exclude.contains("slf4j-api")) {
-                        containsSlf4jApi = false;
+                    if (exclude.contains("logger")) {
+                        containsSlf4j = false;
                     } else {
-                        containsSlf4jApi = GuidedRunner.askImportSlf4jApi();
-                    }
-                    if (exclude.contains("slf4j-impl")) {
-                        containsSlf4jImpl = false;
-                    } else {
-                        containsSlf4jImpl = GuidedRunner.askImportSlf4jImpl();
+                        containsSlf4j = GuidedRunner.askImportSlf4j();
                     }
                 } else {
-                    containsSlf4jApi = GuidedRunner.askImportSlf4jApi();
-                    containsSlf4jImpl = GuidedRunner.askImportSlf4jImpl();
+                    containsSlf4j = GuidedRunner.askImportSlf4j();
                 }
-                generateServerJar(null, containsSlf4jApi, containsSlf4jImpl);
+                generateServerJar(null, containsSlf4j);
             } else {
                 logger.error("Can not generate server jar file, case: no runtime source");
             }
@@ -222,17 +214,17 @@ public class CommandRunner {
      * 生成server的jar包
      *
      * @param outputDir         输出目录
-     * @param containsSlf4jApi  是否包含SLF4J的API
+     * @param containsSlf4j     是否包含SLF4J的API
      * @param containsSlf4jImpl 是否包含SLF4J的Jvmm实现
      * @throws IOException IO异常
      */
-    private static void generateServerJar(String outputDir, boolean containsSlf4jApi, boolean containsSlf4jImpl) throws IOException {
+    private static void generateServerJar(String outputDir, boolean containsSlf4j) throws IOException {
         if (canGenerateServerJar()) {
             File serverJarFile = new File(outputDir, "jvmm-server.jar");
-//            if (checkJarVersion(dir) && serverJarFile.exists()) {
-//            logger.info("The same version of jvmm-server.jar already exists in the output directory");
-//                return;
-//            }
+            if (checkJarVersion(outputDir) && serverJarFile.exists() && checkServerSign(outputDir, containsSlf4j)) {
+                logger.info("The same version of jvmm-server.jar already exists in the output directory");
+                return;
+            }
             logger.info("Starting to generate server jar...");
             String path = CommandRunner.class.getProtectionDomain().getCodeSource().getLocation().getPath();
             try {
@@ -249,14 +241,11 @@ public class CommandRunner {
                 String regex = "async-profiler/.*|com/.*|io/.*|org/benf.*|META-INF/maven/.*" +
                         "|META-INF/native/.*|META-INF/native-image/.*|io.netty.versions.propeties|server-source/.*|" +
                         ".*jvmm/common/.*|.*jvmm/convey/.*|.*jvmm/core/.*|.*jvmm/log/.*|oshi/.*|oshi.*|org/yaml.*";
-                if (containsSlf4jApi && containsSlf4jImpl) {
+                if (containsSlf4j) {
                     regex += ("|org/slf4j/.*");
-                } else if (containsSlf4jImpl) {
-                    regex += "|org/slf4j/impl/.*";
-                    logger.info("The jvmm implementation of slf4j is put into the jar package");
-                } else if (containsSlf4jApi) {
-                    regex += "|org/slf4j/(?!impl).*";
-                    logger.info("The api of slf4j is put into the jar package");
+                    logger.info("The slf4j dependency is put into jvmm-server.jar");
+                } else {
+                    logger.info("The slf4j dependency is removed");
                 }
                 FileUtil.copyFromJar(new JarFile(path), tempDir, regex, fileName -> {
                     if (fileName.startsWith("server-source")) {
@@ -272,6 +261,9 @@ public class CommandRunner {
                 try {
                     File versionFile = getVersionFile(outputDir);
                     FileUtil.writeByteArrayToFile(versionFile, IOUtil.toByteArray(CommandRunner.class.getResourceAsStream("/version.txt")));
+
+                    File serverSignFile = getServerSignFile(outputDir);
+                    FileUtil.writeByteArrayToFile(serverSignFile, String.valueOf(containsSlf4j).getBytes(StandardCharsets.UTF_8));
                 } catch (IOException e) {
                     logger.warn("Write version file failed: " + e.getMessage());
                 }
@@ -299,6 +291,14 @@ public class CommandRunner {
         return false;
     }
 
+    private static boolean checkServerSign(String dir, boolean containsSlf4j) throws IOException {
+        File serverSignFile = getServerSignFile(dir);
+        if (serverSignFile.exists()) {
+            return Objects.equals(String.valueOf(containsSlf4j), FileUtil.readFileToString(serverSignFile, StandardCharsets.UTF_8).trim());
+        }
+        return false;
+    }
+
     private static File getVersionFile(String dir) {
         if (StringUtil.isEmpty(dir)) {
             return new File(FileUtil.getTempPath(), ".version");
@@ -309,6 +309,18 @@ public class CommandRunner {
         }
 
         return new File(dir.endsWith(FileUtil.getTempPath()) ? dir : (dir + "/" + FileUtil.getTempPath()), ".version");
+    }
+
+    private static File getServerSignFile(String dir) {
+        if (StringUtil.isEmpty(dir)) {
+            return new File(FileUtil.getTempPath(), "server.sign");
+        }
+        dir = dir.replaceAll("\\\\", "/");
+        if (dir.endsWith("/")) {
+            dir = dir.substring(0, dir.length() - 1);
+        }
+
+        return new File(dir.endsWith(FileUtil.getTempPath()) ? dir : (dir + "/" + FileUtil.getTempPath()), "server.sign");
     }
 
     private static boolean canGenerateAgentJar() {
@@ -429,9 +441,7 @@ public class CommandRunner {
             serverFilePath = cmd.getArg("s");
 //            FileUtil.delFromJar(serverFilePath, JVMM_LOGGER_REGEX);
         } else if (canGenerateServerJar()) {
-            boolean containsSlf4jApi = GuidedRunner.askImportSlf4jApi();
-            boolean containsSlf4jImpl = GuidedRunner.askImportSlf4jImpl();
-            generateServerJar(FileUtil.getTempPath(), containsSlf4jApi, containsSlf4jImpl);
+            generateServerJar(FileUtil.getTempPath(), GuidedRunner.askImportSlf4j());
             serverFilePath = new File(FileUtil.getTempPath(), "jvmm-server.jar").getAbsolutePath();
         } else {
             serverFilePath = GuidedRunner.askServerFilePath();

@@ -312,10 +312,10 @@ java -jar jvmm.jar -m attach -c ./config -pid 80080
 
 Java Agent方式你需要先生成所需的jar包：
 ```shell
-# 如果你的宿主程序中包含了 SLF4J 的实现（例如 logback），需要在生成时使用 -e 参数排除掉自带的 logger 实现
-java -jar jvmm.jar -m jar -e logger
+# 如果你的宿主程序中包含了 SLF4J 的实现（例如 logback），需要在生成时使用 -e 参数排除掉jvmm自带的 slf4j 实现
+java -jar jvmm.jar -m jar -e slf4j
 
-# 如果你的宿主程序中没有 SLF4J 的实现，无需排除 logger
+# 如果你的宿主程序中没有 SLF4J 的实现，无需排除 slf4j
 java -jar jvmm.jar -m jar
 ```
 

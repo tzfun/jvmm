@@ -189,14 +189,8 @@ public class GuidedRunner {
         }
     }
 
-    public static boolean askImportSlf4jApi() {
-        System.out.print("Do you want to introduce slf4j-api dependency to jvmm-server.jar? (y/n, default yes): ");
-        String result = scanner.nextLine();
-        return result.isEmpty() || Objects.equals(result, "y");
-    }
-
-    public static boolean askImportSlf4jImpl() {
-        System.out.print("Do you want to introduce implementation of slf4j to jvmm-server.jar? (y/n, default yes): ");
+    public static boolean askImportSlf4j() {
+        System.out.print("Do you want to introduce slf4j dependency to jvmm-server.jar? (y/n, default yes): ");
         String result = scanner.nextLine();
         return result.isEmpty() || Objects.equals(result, "y");
     }
