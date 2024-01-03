@@ -1,9 +1,13 @@
 package org.beifengtz.jvmm.agent;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created in 16:34 2021/5/22
@@ -59,9 +63,6 @@ public class JvmmAgentClassLoader extends URLClassLoader {
 
     @Override
     public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-        if (name != null && name.startsWith("org.slf4j")) {
-            System.out.println("load " + name);
-        }
         final Class<?> loadedClass = findLoadedClass(name);
         if (loadedClass != null) {
             return loadedClass;
@@ -79,12 +80,44 @@ public class JvmmAgentClassLoader extends URLClassLoader {
             return clazz;
         } catch (Exception ignored) {
         }
-
-        return super.loadClass(name, resolve);
+        if (name != null && name.startsWith("org.slf4j")) {
+            return searchFromOtherClassLoader(name);
+        } else {
+            return super.loadClass(name, resolve);
+        }
     }
 
     @Override
     public void addURL(URL url) {
         super.addURL(url);
+    }
+
+    private Class<?> searchFromOtherClassLoader(String name) throws ClassNotFoundException {
+        System.out.println("search from other classloader: " + name);
+
+        try {
+            Method method = Class.forName("sun.management.ThreadImpl").getDeclaredMethod("getThreads");
+            method.setAccessible(true);
+            Thread[] threads = (Thread[]) method.invoke(null);
+            Set<ClassLoader> scannedClassLoader = new HashSet<>();
+            ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
+            for (Thread thread : threads) {
+                ClassLoader classLoader = thread.getContextClassLoader();
+                if (classLoader == null || classLoader == this) {
+                    continue;
+                }
+                //  只找app classloader的子节点
+                if (classLoader == systemClassLoader || classLoader.getParent() == systemClassLoader && scannedClassLoader.add(classLoader)) {
+                    try {
+                        return classLoader.loadClass(name);
+                    } catch (ClassNotFoundException ignored) {
+                    }
+                }
+            }
+        } catch (NoSuchMethodException | ClassNotFoundException | IllegalAccessException |
+                 InvocationTargetException e) {
+            throw new ClassNotFoundException("Class " + name + " not found", e);
+        }
+        throw new ClassNotFoundException("Class " + name + " not found");
     }
 }

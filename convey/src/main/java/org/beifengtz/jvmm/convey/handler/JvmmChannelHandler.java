@@ -318,7 +318,7 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Jvm
                     channel.writeAndFlush(response);
                 }
             } else {
-                logger().warn("Can not response because of channel is inactive or un-writable {}", channel);
+                logger().debug("Can not response because of channel is inactive or un-writable {}", channel);
             }
         } catch (Throwable e) {
             if (e instanceof AuthenticationFailedException) {

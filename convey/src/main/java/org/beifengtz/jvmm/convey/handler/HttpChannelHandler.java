@@ -314,7 +314,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
                     response(ctx, HttpResponseStatus.OK, HandlerProvider.parseResult2Json(result).toString());
                 }
             } else {
-                logger().warn("Can not response because of channel is inactive or un-writable {}", channel);
+                logger().debug("Can not response because of channel is inactive or un-writable {}", channel);
             }
         } catch (Throwable e) {
             if (e instanceof AuthenticationFailedException) {
