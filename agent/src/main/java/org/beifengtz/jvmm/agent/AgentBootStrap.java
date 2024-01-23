@@ -6,12 +6,14 @@ import org.beifengtz.jvmm.agent.util.FileUtil;
 import org.beifengtz.jvmm.agent.util.LoggerUtil;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -35,6 +37,8 @@ import java.util.jar.JarFile;
  * @author beifengtz
  */
 public class AgentBootStrap {
+
+    private static final String TEMP_PATH = ".jvmm";
     private static final String JVMM_SERVER_JAR = "jvmm-server.jar";
     private static final String SERVER_MAIN_CLASS = "org.beifengtz.jvmm.server.ServerBootstrap";
     private static volatile Instrumentation instrumentation;
@@ -55,12 +59,12 @@ public class AgentBootStrap {
 //        tryFindSpringClassLoader();
     }
 
-    public static void premain(String agentArgs, Instrumentation inst) {
+    public static void premain(String agentArgs, Instrumentation inst) throws Exception {
 //        JvmmAOPInitializer.initTracing(inst);
         main(agentArgs, inst, "premain");
     }
 
-    public static void agentmain(String agentArgs, Instrumentation inst) {
+    public static void agentmain(String agentArgs, Instrumentation inst) throws Exception {
         main(agentArgs, inst, "agentmain");
     }
 
@@ -72,35 +76,38 @@ public class AgentBootStrap {
      * 如果 jvmm-server.jar 已加载过，并且 server 未启动，将会执行：解析参数、启动服务、启动日志处理线程；
      * 如果 jvmm-server.jar 已加载过，并且 server 已启动，操作将被禁止；
      *
-     * @param args 参数
+     * @param args 参数，由 ; 分割，例如： server=/home/beifengtz/jvmm/server.jar;config=E:\Project\jvmm-dev\jvmm-dev\config.yml;fromAgent=true
      * @param inst {@link Instrumentation}
      * @param type 载入类型：
      *             agentmain - 运行时动态载入
      *             premain - 启动时载入
      */
-    private static synchronized void main(String args, final Instrumentation inst, String type) {
+    private static synchronized void main(String args, final Instrumentation inst, String type) throws Exception {
         instrumentation = inst;
-        LoggerUtil.info(AgentBootStrap.class, "Jvm monitor Agent attached by " + type);
+        LoggerUtil.info(AgentBootStrap.class, "Jvm monitor agent attached by " + type);
+        LoggerUtil.debug(AgentBootStrap.class, "Jvmm agent args: " + args);
 
         if (Objects.isNull(args)) {
             args = "";
         }
 
-        int idx = args.indexOf(";");
-        String serverJar;
-        final String agentArgs;
-        if (idx < 0) {
-            serverJar = "";
-            agentArgs = args.trim() + ";fromAgent=true";
-        } else {
-            serverJar = args.substring(0, idx).trim();
-            agentArgs = args.substring(idx).trim() + ";fromAgent=true";
+        String serverJar = "";
+
+        String[] split = args.split(";");
+        for (String s : split) {
+            String[] kv = s.split("=");
+            if ("server".equalsIgnoreCase(kv[0])) {
+                serverJar = kv[1];
+                break;
+            }
         }
+        args += ";fromAgent=true";
+
         if ("agentmain".equals(type)) {
             if (agentAttached) {
                 try {
                     LoggerUtil.info(AgentBootStrap.class, "The jvmm agent has been loaded once and enters the server startup phase...");
-                    bootServer(inst, null, agentArgs);
+                    bootServer(inst, null, args);
                 } catch (InterruptedException e) {
                     LoggerUtil.error(AgentBootStrap.class, e.getMessage(), e);
                     throw new RuntimeException(e);
@@ -120,17 +127,32 @@ public class AgentBootStrap {
                 serverJarFile = new File("");
             }
         } else {
-            //  从本地读取jar
-            serverJarFile = new File(serverJar);
+            if (serverJar.isEmpty()) {
+                //  从agent中读取jar
+                InputStream serverStream = AgentBootStrap.class.getResourceAsStream("/jvmm-server.jar");
+                if (serverStream == null) {
+                    LoggerUtil.warn(AgentBootStrap.class, "Can not found jvmm-server.jar file from agent");
+                    serverJarFile = new File("");
+                } else {
+                    serverJarFile = new File(TEMP_PATH, JVMM_SERVER_JAR);
+                    LoggerUtil.info(AgentBootStrap.class, "Copy jvmm server dependency from agent...");
+                    serverJarFile.getParentFile().mkdirs();
+                    if (serverJarFile.exists()) {
+                        serverJarFile.delete();
+                    }
+                    Files.copy(serverStream, serverJarFile.toPath());
+                }
+            } else {
+                serverJarFile = new File(serverJar);
+            }
         }
 
         if (!serverJarFile.exists()) {
-            LoggerUtil.warn(AgentBootStrap.class, "Can not found jvmm-server.jar file from args: " + serverJar);
+            LoggerUtil.warn(AgentBootStrap.class, "Can not found jvmm-server.jar file from args: " + args);
 
             //  如果从参数中未成功读取jar包，依次按以下路径去寻找jar包
             //  1. 目标程序根目录下的 jvmm-server.jar 包
             //  2. agent的资源目录下的 jvmm-server.jar 包
-
             LoggerUtil.info(AgentBootStrap.class, "Try to find jvmm-server.jar file from target program directory");
             serverJarFile = new File(AppUtil.getHomePath(), JVMM_SERVER_JAR);
             if (!serverJarFile.exists()) {
@@ -153,7 +175,7 @@ public class AgentBootStrap {
         }
 
         if (!serverJarFile.exists()) {
-            notifyListener(findListenerPortFromArgs(agentArgs), "Jvmm server jar file not found");
+            notifyListener(findListenerPortFromArgs(args), "ERROR: Jvmm server jar file not found");
             return;
         }
 
@@ -169,11 +191,11 @@ public class AgentBootStrap {
                 agentClassLoader = new JvmmAgentClassLoader(urlList.toArray(new URL[0]), ClassLoader.getSystemClassLoader());
             }
 
-            bootServer(inst, needPreLoad, agentArgs);
+            bootServer(inst, needPreLoad, args);
 
         } catch (Throwable e) {
             LoggerUtil.error(AgentBootStrap.class, e.getMessage(), e);
-            notifyListener(findListenerPortFromArgs(agentArgs), e.getMessage());
+            notifyListener(findListenerPortFromArgs(args), "ERROR: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -224,7 +246,7 @@ public class AgentBootStrap {
             String[] jars = jarFilePath.split("!/");
             if (jars.length > 0) {
                 String baseJarPath = jars[0];
-                String tmpPath = AppUtil.getTempPath();
+                String tmpPath = TEMP_PATH;
                 String tmpJar = null;
                 //  递归的解析jar包
                 for (int i = 1; i < jars.length; ++i) {
@@ -313,7 +335,7 @@ public class AgentBootStrap {
                 }
                 running = false;
                 LoggerUtil.error(AgentBootStrap.class, throwable.getMessage(), throwable);
-                notifyListener(listenerPort, e.getClass().getName() + ":" + throwable.getMessage());
+                notifyListener(listenerPort, "ERROR: " + e.getClass().getName() + ":" + throwable.getMessage());
             }
         });
 

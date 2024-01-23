@@ -253,7 +253,7 @@ public class CommandRunner {
                         ".*jvmm/common/.*|.*jvmm/convey/.*|.*jvmm/core/.*|.*jvmm/log/.*|oshi/.*|oshi.*|org/yaml.*";
                 if (containsSlf4j) {
                     regex += ("|org/slf4j/.*");
-                    logger.info("The slf4j dependencies is put into jvmm-server.jar");
+                    logger.info("The slf4j dependencies is put into server");
                 } else {
                     logger.info("The slf4j dependencies is removed");
                 }
@@ -281,7 +281,7 @@ public class CommandRunner {
                 }
             }
         } else {
-            logger.error("The jvmm-server.jar cannot be generated. You can try the following: 1. select the appropriate jvmm version, 2. run in jar mode");
+            logger.error("The jvmm server cannot be generated. You can try the following: 1. select the appropriate jvmm version, 2. run in jar mode");
         }
     }
 

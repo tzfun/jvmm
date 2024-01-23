@@ -197,19 +197,16 @@ public class GuidedRunner {
 
     public static char askGenerateJarType() {
         System.out.print("\n[1] Jvmm Agent\n[2] Jvmm Server\n\nPlease select the jar you need to generate(serial number): ");
-        int result;
         char type = '0';
         while (scanner.hasNextLine()) {
-            try {
-                result = Integer.parseInt(scanner.nextLine());
-                if (result == 1) {
-                    type = 'a';
-                    break;
-                } else if (result == 2) {
-                    type = 's';
-                    break;
-                }
-            } catch (NumberFormatException ignored) {
+            String str = scanner.nextLine();
+            int result = str.matches("\\d+") ? Integer.parseInt(str) : 0;
+            if (result == 1) {
+                type = 'a';
+                break;
+            } else if (result == 2) {
+                type = 's';
+                break;
             }
             System.out.println("Wrong serial number.");
             System.out.print("Please select the jar you need to generate(serial number): ");

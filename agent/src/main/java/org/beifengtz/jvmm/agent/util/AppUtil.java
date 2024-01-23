@@ -37,8 +37,4 @@ public class AppUtil {
     public static String getHomePath() {
         return HOME_PATH;
     }
-
-    public static String getTempPath() {
-        return ".jvmm";
-    }
 }
