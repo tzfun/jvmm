@@ -190,8 +190,30 @@ public class GuidedRunner {
     }
 
     public static boolean askImportSlf4j() {
-        System.out.print("Do you want to introduce slf4j dependency to jvmm-server.jar? (y/n, default yes): ");
+        System.out.print("Do you want to introduce slf4j dependencies to jvmm server? (y/n, default yes): ");
         String result = scanner.nextLine();
         return result.isEmpty() || Objects.equals(result, "y");
+    }
+
+    public static char askGenerateJarType() {
+        System.out.print("\n[1] Jvmm Agent\n[2] Jvmm Server\n\nPlease select the jar you need to generate(serial number): ");
+        int result;
+        char type = '0';
+        while (scanner.hasNextLine()) {
+            try {
+                result = Integer.parseInt(scanner.nextLine());
+                if (result == 1) {
+                    type = 'a';
+                    break;
+                } else if (result == 2) {
+                    type = 's';
+                    break;
+                }
+            } catch (NumberFormatException ignored) {
+            }
+            System.out.println("Wrong serial number.");
+            System.out.print("Please select the jar you need to generate(serial number): ");
+        }
+        return type;
     }
 }

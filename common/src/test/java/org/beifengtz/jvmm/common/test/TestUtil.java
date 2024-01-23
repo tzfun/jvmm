@@ -41,4 +41,12 @@ public class TestUtil {
 
         FileUtil.copyFromJar(jar, target, regex);
     }
+
+    @Test
+    public void testUnJar() throws Exception {
+        File file = new File("E:\\Project\\jvmm-dev\\jvmm-agent.jar");
+        if (file.exists()) {
+            FileUtil.unJar(file, new File("E:\\Project\\jvmm-dev\\jvmm-agent-dir"));
+        }
+    }
 }

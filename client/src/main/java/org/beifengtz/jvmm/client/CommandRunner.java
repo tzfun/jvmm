@@ -137,7 +137,7 @@ public class CommandRunner {
                         .setName("e")
                         .setOrder(3)
                         .setArgName("exclude")
-                        .setDesc("Specifies the name of the dependency to be excluded in the generated jar, optional value: slf4j"))
+                        .setDesc("Specifies the name of the dependencies to be excluded in the generated jar, optional value: slf4j"))
         );
     }
 
@@ -172,30 +172,41 @@ public class CommandRunner {
     }
 
     private static void handleGenerateJar(CmdParser cmd) throws IOException {
-        boolean generateAll = !cmd.hasArg("a") && !cmd.hasArg("s");
+        boolean generateAgent = cmd.hasArg("a");
+        boolean generateServer = cmd.hasArg("s");
 
-        if (generateAll || cmd.hasArg("a")) {
+        if (!generateAgent && !generateServer) {
+            char type = GuidedRunner.askGenerateJarType();
+            if (type == 'a') {
+                generateAgent = true;
+            } else {
+                generateServer = true;
+            }
+        }
+
+        boolean containsSlf4j = true;
+        boolean excluded = cmd.hasArg("e");
+        if (excluded) {
+            String exclude = cmd.getArg("e");
+            if (exclude.contains("logger")) {
+                containsSlf4j = false;
+            } else {
+                containsSlf4j = GuidedRunner.askImportSlf4j();
+            }
+        } else {
+            containsSlf4j = GuidedRunner.askImportSlf4j();
+        }
+
+        if (generateAgent) {
             if (canGenerateAgentJar()) {
-                generateAgentJar(null);
+                generateAgentJar(null, containsSlf4j);
             } else {
                 logger.error("Can not generate agent jar file, case: no runtime source.");
             }
         }
 
-        if (generateAll || cmd.hasArg("s")) {
+        if (generateServer) {
             if (canGenerateServerJar()) {
-                boolean containsSlf4j = true;
-                boolean excluded = cmd.hasArg("e");
-                if (excluded) {
-                    String exclude = cmd.getArg("e");
-                    if (exclude.contains("logger")) {
-                        containsSlf4j = false;
-                    } else {
-                        containsSlf4j = GuidedRunner.askImportSlf4j();
-                    }
-                } else {
-                    containsSlf4j = GuidedRunner.askImportSlf4j();
-                }
                 generateServerJar(null, containsSlf4j);
             } else {
                 logger.error("Can not generate server jar file, case: no runtime source");
@@ -213,15 +224,14 @@ public class CommandRunner {
     /**
      * 生成server的jar包
      *
-     * @param outputDir         输出目录
-     * @param containsSlf4j     是否包含SLF4J的API
-     * @param containsSlf4jImpl 是否包含SLF4J的Jvmm实现
+     * @param outputDir     输出目录
+     * @param containsSlf4j 是否包含SLF4J的API
      * @throws IOException IO异常
      */
     private static void generateServerJar(String outputDir, boolean containsSlf4j) throws IOException {
         if (canGenerateServerJar()) {
             File serverJarFile = new File(outputDir, "jvmm-server.jar");
-            if (checkJarVersion(outputDir) && serverJarFile.exists() && checkServerSign(outputDir, containsSlf4j)) {
+            if (checkJarVersion(outputDir) && serverJarFile.exists() && checkJarSign(outputDir, "server", containsSlf4j)) {
                 logger.info("The same version of jvmm-server.jar already exists in the output directory");
                 return;
             }
@@ -243,9 +253,9 @@ public class CommandRunner {
                         ".*jvmm/common/.*|.*jvmm/convey/.*|.*jvmm/core/.*|.*jvmm/log/.*|oshi/.*|oshi.*|org/yaml.*";
                 if (containsSlf4j) {
                     regex += ("|org/slf4j/.*");
-                    logger.info("The slf4j dependency is put into jvmm-server.jar");
+                    logger.info("The slf4j dependencies is put into jvmm-server.jar");
                 } else {
-                    logger.info("The slf4j dependency is removed");
+                    logger.info("The slf4j dependencies is removed");
                 }
                 FileUtil.copyFromJar(new JarFile(path), tempDir, regex, fileName -> {
                     if (fileName.startsWith("server-source")) {
@@ -261,9 +271,7 @@ public class CommandRunner {
                 try {
                     File versionFile = getVersionFile(outputDir);
                     FileUtil.writeByteArrayToFile(versionFile, IOUtil.toByteArray(CommandRunner.class.getResourceAsStream("/version.txt")));
-
-                    File serverSignFile = getServerSignFile(outputDir);
-                    FileUtil.writeByteArrayToFile(serverSignFile, String.valueOf(containsSlf4j).getBytes(StandardCharsets.UTF_8));
+                    FileUtil.writeByteArrayToFile(getJarSignFile(outputDir, "server"), String.valueOf(containsSlf4j).getBytes(StandardCharsets.UTF_8));
                 } catch (IOException e) {
                     logger.warn("Write version file failed: " + e.getMessage());
                 }
@@ -291,10 +299,10 @@ public class CommandRunner {
         return false;
     }
 
-    private static boolean checkServerSign(String dir, boolean containsSlf4j) throws IOException {
-        File serverSignFile = getServerSignFile(dir);
-        if (serverSignFile.exists()) {
-            return Objects.equals(String.valueOf(containsSlf4j), FileUtil.readFileToString(serverSignFile, StandardCharsets.UTF_8).trim());
+    private static boolean checkJarSign(String dir, String name, boolean containsSlf4j) throws IOException {
+        File signFile = getJarSignFile(dir, name);
+        if (signFile.exists()) {
+            return Objects.equals(String.valueOf(containsSlf4j), FileUtil.readFileToString(signFile, StandardCharsets.UTF_8).trim());
         }
         return false;
     }
@@ -311,9 +319,9 @@ public class CommandRunner {
         return new File(dir.endsWith(FileUtil.getTempPath()) ? dir : (dir + "/" + FileUtil.getTempPath()), ".version");
     }
 
-    private static File getServerSignFile(String dir) {
+    private static File getJarSignFile(String dir, String name) {
         if (StringUtil.isEmpty(dir)) {
-            return new File(FileUtil.getTempPath(), "server.sign");
+            return new File(FileUtil.getTempPath(), name + ".sign");
         }
         dir = dir.replaceAll("\\\\", "/");
         if (dir.endsWith("/")) {
@@ -327,16 +335,38 @@ public class CommandRunner {
         return CommandRunner.class.getResourceAsStream("/jvmm-agent.jar") != null;
     }
 
-    private static void generateAgentJar(String dir) throws IOException {
+    private static void generateAgentJar(String outputDir, boolean containsSlf4j) throws IOException {
         if (canGenerateAgentJar()) {
-            File agentJarFile = new File(dir, "jvmm-agent.jar");
+            File agentJarFile = new File(outputDir, "jvmm-agent.jar");
             logger.info("Starting to generate agent jar...");
-            if (checkJarVersion(dir) && agentJarFile.exists()) {
+            if (checkJarVersion(outputDir) && agentJarFile.exists() && checkJarSign(outputDir, "agent", containsSlf4j)) {
                 logger.info("The same version of jvmm-agent.jar already exists in the output directory");
                 return;
             }
-            FileUtil.writeByteArrayToFile(agentJarFile, IOUtil.toByteArray(CommandRunner.class.getResourceAsStream("/jvmm-agent.jar")));
+            File tempFile = FileUtil.createTempFile("jvmm-agent.jar.tmp");
+            File tempDir = FileUtil.createTempDir("jvmm-agent.tmp");
+            try {
+                FileUtil.writeByteArrayToFile(tempFile, IOUtil.toByteArray(CommandRunner.class.getResourceAsStream("/jvmm-agent.jar")));
+                //  解压 agent
+                FileUtil.unJar(tempFile, tempDir);
+                generateServerJar(tempDir.getAbsolutePath(), containsSlf4j);
+                //  删除 server 生成的签名文件
+                FileUtil.delFile(new File(tempDir, FileUtil.getTempPath()));
+                logger.info("Copy server jar to agent...");
+                FileUtil.zip(tempDir, agentJarFile, false);
+            } finally {
+                FileUtil.delFile(tempFile);
+                FileUtil.delFile(tempDir);
+            }
+
             logger.info("Generated agent jar to " + agentJarFile.getAbsolutePath());
+
+            try {
+                FileUtil.writeByteArrayToFile(getVersionFile(outputDir), IOUtil.toByteArray(CommandRunner.class.getResourceAsStream("/version.txt")));
+                FileUtil.writeByteArrayToFile(getJarSignFile(outputDir, "agent"), String.valueOf(containsSlf4j).getBytes(StandardCharsets.UTF_8));
+            } catch (IOException e) {
+                logger.warn("Write version file failed: " + e.getMessage());
+            }
         } else {
             logger.error("The jvmm-agent.jar cannot be generated, please select the appropriate jvmm version.");
         }
@@ -425,28 +455,19 @@ public class CommandRunner {
     }
 
     private static void handleAttach(CmdParser cmd) throws Throwable {
-        String agentFilePath = null, serverFilePath = null, configFilePath = null;
+        String agentFilePath = null, configFilePath = null;
         int pid = -1;
 
         if (cmd.hasArg("a")) {
             agentFilePath = cmd.getArg("a");
         } else if (canGenerateAgentJar()) {
-            generateAgentJar(FileUtil.getTempPath());
+            generateAgentJar(FileUtil.getTempPath(), GuidedRunner.askImportSlf4j());
             agentFilePath = new File(FileUtil.getTempPath(), "jvmm-agent.jar").getAbsolutePath();
         } else {
             agentFilePath = GuidedRunner.askAgentFilePath();
         }
 
-        if (cmd.hasArg("s")) {
-            serverFilePath = cmd.getArg("s");
 //            FileUtil.delFromJar(serverFilePath, JVMM_LOGGER_REGEX);
-        } else if (canGenerateServerJar()) {
-            generateServerJar(FileUtil.getTempPath(), GuidedRunner.askImportSlf4j());
-            serverFilePath = new File(FileUtil.getTempPath(), "jvmm-server.jar").getAbsolutePath();
-        } else {
-            serverFilePath = GuidedRunner.askServerFilePath();
-//            FileUtil.delFromJar(serverFilePath, JVMM_LOGGER_REGEX);
-        }
 
         if (cmd.hasArg("c")) {
             configFilePath = cmd.getArg("c");
@@ -494,24 +515,6 @@ public class CommandRunner {
             }
         }
 
-        File serverFile;
-        if (serverFilePath.startsWith("http://") || serverFilePath.startsWith("https://")) {
-            logger.info("Start downloading jar file from {}", serverFilePath);
-            boolean loaded = FileUtil.readFileFromNet(serverFilePath, FileUtil.getTempPath(), "jvmm-server.jar");
-            if (loaded) {
-                serverFile = new File(FileUtil.getTempPath(), "jvmm-server.jar");
-            } else {
-                logger.error("Can not download 'jvmm-server.jar'");
-                return;
-            }
-        } else {
-            serverFile = new File(serverFilePath);
-            if (!serverFile.exists()) {
-                logger.error("Server jar file not exists! " + serverFile.getAbsolutePath());
-                return;
-            }
-        }
-
         //  开启目标服务启动状态监听
         PairKey<Integer, Thread> pair = startAttachListener();
         if (pair.getLeft() <= 0) {
@@ -522,7 +525,7 @@ public class CommandRunner {
 
         logger.info("Start to attach program {} ...", pid);
         try {
-            VMDriver.get().attachAgent(pid, agentFile.getAbsolutePath(), serverFile.getAbsolutePath(), args);
+            VMDriver.get().attachAgent(pid, agentFile.getAbsolutePath(), args);
             pair.getRight().join(30000);
         } catch (Exception e) {
             logger.warn("An error was encountered while attaching: " + e.getMessage(), e);

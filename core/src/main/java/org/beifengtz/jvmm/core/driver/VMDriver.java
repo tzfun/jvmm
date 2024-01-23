@@ -70,7 +70,7 @@ public class VMDriver {
         }
     }
 
-    public void attachAgent(long targetPid, String agentJarPath, String serverJarPath, String args) throws Exception {
+    public void attachAgent(long targetPid, String agentJarPath, String args) throws Exception {
         if (targetPid <= 0) {
             throw new IllegalArgumentException("Can not attach to virtual machine with illegal pid " + targetPid);
         }
@@ -101,8 +101,7 @@ public class VMDriver {
                             targetSystemProperties.getProperty("java.home"), System.getProperty("java.home"));
                 }
             }
-            virtualMachine.loadAgent(agentJarPath.replaceAll("\\\\", "/"),
-                    serverJarPath.replaceAll("\\\\", "/") + ";" + args);
+            virtualMachine.loadAgent(agentJarPath.replaceAll("\\\\", "/"), args);
         } catch (IOException e) {
             if (e.getMessage() != null && e.getMessage().startsWith("Non-numeric value found")) {
                 logger.warn("An exception occurred when attaching: {}", e.getMessage());

@@ -43,6 +43,29 @@ public class FileUtil {
         return TEMP_PATH;
     }
 
+    public static File createTempFile(String filename) throws IOException {
+        File file = new File(TEMP_PATH, filename);
+        if (!file.exists()) {
+            if (file.getParentFile() != null) {
+                file.getParentFile().mkdirs();
+            }
+            if (!file.createNewFile()) {
+                throw new IOException("Can not create temp file");
+            }
+        }
+        return file;
+    }
+
+    public static File createTempDir(String dirname) throws IOException {
+        File dir = new File(TEMP_PATH, dirname);
+        if (!dir.exists()) {
+            if (!dir.mkdirs()) {
+                throw new IOException("Can not create temp file");
+            }
+        }
+        return dir;
+    }
+
     public static void writeByteArrayToFile(File file, byte[] data) throws IOException {
         writeByteArrayToFile(file, data, false);
     }
@@ -321,6 +344,43 @@ public class FileUtil {
             zipOut.write(bytes, 0, length);
         }
         fis.close();
+    }
+
+    /**
+     * 解压jar文件到指定目录
+     *
+     * @param file      jar文件
+     * @param outputDir 输出目录
+     * @throws IOException IO error
+     */
+    public static void unJar(File file, File outputDir) throws IOException {
+        if (outputDir.exists() && outputDir.listFiles() != null) {
+            delFile(outputDir);
+        }
+        if (outputDir.isFile()) {
+            throw new IOException("Can not write to file " + outputDir + " (must be directory)");
+        }
+        outputDir.mkdirs();
+        try (JarFile jarFile = new JarFile(file)) {
+            Enumeration<JarEntry> entries = jarFile.entries();
+            while (entries.hasMoreElements()) {
+                JarEntry entry = entries.nextElement();
+                if (!entry.isDirectory()) {
+                    File f = new File(outputDir, entry.getName());
+                    if (f.getParentFile() != null) {
+                        f.getParentFile().mkdirs();
+                    }
+                    try (InputStream is = jarFile.getInputStream(entry);
+                         FileOutputStream fos = new FileOutputStream(f)) {
+                        byte[] bytes = new byte[SAFE_BYTE_LENGTH];
+                        int read = 0;
+                        while ((read = is.read(bytes, 0, bytes.length)) > 0) {
+                            fos.write(bytes, 0, read);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
