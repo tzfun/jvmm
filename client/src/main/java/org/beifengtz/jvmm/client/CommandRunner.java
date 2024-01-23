@@ -185,15 +185,16 @@ public class CommandRunner {
         }
 
         boolean containsSlf4j = true;
+        //  生成 agent 才需要询问，生成 server 一般情况都需要包含
         boolean excluded = cmd.hasArg("e");
         if (excluded) {
             String exclude = cmd.getArg("e");
             if (exclude.contains("logger")) {
                 containsSlf4j = false;
-            } else {
+            } else if (generateAgent) {
                 containsSlf4j = GuidedRunner.askImportSlf4j();
             }
-        } else {
+        } else if (generateAgent) {
             containsSlf4j = GuidedRunner.askImportSlf4j();
         }
 

@@ -54,7 +54,7 @@ java -jar jvmm.jar -m jar -s
 # 启动server，jdk 8使用下面命令
 java -jar jvmm-server.jar
 
-# jdk 9+ 请使用下面命令
+# jdk 9+ 为确保成功运行建议使用下面命令
 java -jar --add-opens java.base/jdk.internal.loader=ALL-UNNAMED \
           --add-opens jdk.zipfs/jdk.nio.zipfs=ALL-UNNAMED \
           --add-opens java.base/java.net=ALL-UNNAMED \
@@ -108,172 +108,6 @@ server:
 
 默认配置请见 [config.yml](server/src/main/resources/config.yml)，其中配置信息请见配置文件中的注释。
 
-```yaml
-# Node name, used to identify the current host machine, will be used in sentry mode
-name: jvmm_server
-
-server:
-  # Config server type, jvmm is the default type. You can enable multiple options like this: http,sentinel,jvmm
-  type: jvmm,http
-
-  # Jvmm server config options
-  # The difference between jvmm server and http server is that jvmm server provides the encryption function of communication messages,
-  # the client must use a private protocol to communicate with the server.
-  # And jvmm server is a tcp long connection, the client and the server can communicate in both directions.
-  # --------------------------------------------------------------------------------------------------------------------------------------------------------
-  jvmm:
-    # Jvmm server running port
-    port: 5010
-    # Whether to allow adaptive search for available ports, if the port you configured is already occupied, after enabling this option,
-    # it will automatically increase the search for available ports, but this operation can be performed up to 5 times.
-    adaptivePort: true
-    adaptivePortLimit: 5
-    # Communication authentication related configuration
-    auth:
-      enable: false
-      username: 123456
-      password: 123456
-    maxChunkSize: 52428800
-
-  # Http server config options.
-  # The configuration of opening the http segment will start the http server, and you can call the relevant api through http requests.
-  # --------------------------------------------------------------------------------------------------------------------------------------------------------
-  http:
-    # Http server running port
-    port: 8080
-    # Whether to allow adaptive search for available ports, if the port you configured is already occupied, after enabling this option,
-    # it will automatically increase the search for available ports, but this operation can be performed up to 5 times.
-    adaptivePort: true
-    adaptivePortLimit: 5
-    # Configure Basic authentication for http server
-    auth:
-      enable: true
-      username: 123456
-      password: 123456
-    maxChunkSize: 52428800
-    # Https related configuration
-    ssl:
-      enable: false
-      # Trusted CA certificate, this configuration can be deleted if not specified
-      certCa: ./config/cert-ca.pem
-      # Configure the certificate file path
-      cert: ./config/cert.pem
-      # Configure the path to the certificate key file
-      certKey: ./config/cert.key
-      # Configure the password of the secret key, if there is no password, you can not configure it
-      keyPassword: 123456
-      # Whether to use openssl implementation, the default is true, if false, the implementation provided by JDK will be used
-      openssl: true
-
-  # Sentinel config options.
-  # Enabling the sentinel segment configuration will start the Jvmm sentinel mode, and the sentinel will regularly push monitoring data to subscribers
-  # --------------------------------------------------------------------------------------------------------------------------------------------------------
-  sentinel:
-    # Subscriber list, if this item is not configured or the list is empty, the sentry mode cannot be started
-    # The subscriber's push interface only supports Basic authentication, which is configured through the auth segment
-    - subscribers:
-        - url: http://127.0.0.1:9999/monitor/subscriber
-          auth:
-            enable: true
-            username: 123456
-            password: 123456
-        - url: http://monitor.example.com:9999/monitor/subscriber
-      # The interval between sentinels executing tasks, unit is second.
-      # Notice! Some collection items take time, it is recommended that the interval be greater than 1 second.
-      interval: 15
-      # Total sending times, -1 means unlimited
-      count: 20
-      # The collection items executed by the sentinel, the sentinel will collect the data and send it to subscribers.
-      # Optional values: process|disk|disk_io|cpu|network|sys|sys_memory|sys_file|port|jvm_classloading|jvm_classloader|
-      #                  jvm_compilation|jvm_gc|jvm_memory|jvm_memory_manager|jvm_memory_pool|jvm_thread|jvm_thread_stack|
-      #                  jvm_thread_detail|jvm_thread_pool
-      #
-      tasks:
-        - process
-        - disk
-        - disk_io
-        - cpu
-        - port
-      # If the 'port' task is configured, you need configure listened port list.
-      listenedPorts:
-        - 6379
-        - 3306
-    # You can define multiple sentinels, which perform different tasks
-    - subscribers:
-        - url: http://monitor.example.com:9999/monitor/subscriber
-      interval: 15
-      count: -1
-      tasks:
-        - jvm_gc
-        - jvm_memory
-        - jvm_memory_pool
-        - jvm_memory_manager
-        - jvm_thread
-        - jvm_classloader
-        - jvm_classloading
-        - jvm_thread_pool
-      # If the 'jvm_thread_pool' task is configured, configure the thread pool information to be monitored here.
-      # Jvmm obtains the thread pool instance object through reflection, you need to specify the static attribute
-      # of the class where the monitoring target is located or the field name in an object instance
-      #
-      # Example 1:
-      #
-      # class com.example.demo.Singleton {
-      #   public static final Singleton INSTANCE = new Singleton();
-      #   public final ExecutorService THREAD_POOL = Executors.newSingleThreadExecutor();
-      # }
-      #
-      # You need to config like this
-      #
-      # name: singleton-pool
-      # classPath: com.example.demo.Singleton
-      # instanceField: INSTANCE
-      # field:  THREAD_POOL
-      #
-      #
-      #
-      # Example 2:
-      #
-      # If your thread pool is defined with a static field (like 'ExecutorFactory' in jvmm), you just config like this:
-      #
-      # name: jvmm-thread-pool
-      # classPath: org.beifengtz.jvmm.common.factory.ExecutorFactory
-      # filed: SCHEDULE_THREAD_POOL
-      #
-      listenedThreadPools:
-        - name: jvmm-thread-pool
-          classPath: org.beifengtz.jvmm.common.factory.ExecutorFactory
-          filed: SCHEDULE_THREAD_POOL
-  # If the third-party interface fails 'requestFastFailStart' times in a row, it will enter the fast-failure logic, and the request will not actually be requested again,
-  # but will directly return failure, and the actual request will not be made until 'requestFastFailTimeout' time later.
-  requestFastFailStart: 5
-  # Exit this logic after entering the 'requestFastFailTimeout' time of the fast-failure logic. Unit milliseconds.
-  requestFastFailTimeout: 120000
-
-# The default Jvmm log configuration, if no SLF4J log implementation is found in the startup environment, use this configuration.
-log:
-  # Log level: OFF, FATAL, ERROR, WARN, INFO, DEBUG, TRACE, ALL
-  level: DEBUG
-  # Custom prefix level: OFF, FATAL, ERROR, WARN, INFO, DEBUG, TRACE, ALL
-  levels:
-    io.netty: INFO
-    org.beifengtz: DEBUG
-  # Log file output directory
-  file: logs
-  # Log file prefix
-  fileName: jvmm
-  # If the current log file size exceeds this value, a new log file will be generated, in MB.
-  fileLimitSize: 10
-  # Log output formatting matching rules.
-  # The color output supports ANSI code, but it will only appear in the standard output of the console, and will not pollute the log file.
-  pattern: "%ansi{%date{yyyy-MM-dd HH:mm:ss}}{36} %ansi{%level}{ERROR=31,INFO=32,WARN=33,DEBUG=34,TRACE=35} %ansi{%class}{38;5;14} : %msg"
-  # Output type, support standard output and file output.
-  printers: std,file
-
-# The number of worker threads for the service
-workThread: 2
-```
-
 ### 三、启动Server
 
 Jvmm提供了四种方式来启动你的 server：
@@ -285,7 +119,7 @@ Jvmm提供了四种方式来启动你的 server：
 
 > 注意！！！
 >
-> 无论是你用哪种方式启动Server，如果你的运行环境是jdk 9+以上，需要在你的应用启动时添加以下JVM参数
+> 无论是你用哪种方式启动Server，如果你的运行环境是jdk 9+以上，为确保成功运行建议在启动时添加以下JVM参数
 ```shell
 --add-opens java.base/jdk.internal.loader=ALL-UNNAMED
 --add-opens jdk.zipfs/jdk.nio.zipfs=ALL-UNNAMED
@@ -298,46 +132,50 @@ Jvmm提供了四种方式来启动你的 server：
 运行 jvmm.jar，选择**attach**模式
 
 ```shell
-java -jar jvmm.jar -m attach -c ./config
+java -jar jvmm.jar -m attach -c ./config.yml
 ```
 
 然后会提示你选择目标进程的序号，选择后便会在目标进程中启动server。
 
 如果你已经知道目标进程的 pid，你可以直接指定它：
 ```shell
-java -jar jvmm.jar -m attach -c ./config -pid 80080
+java -jar jvmm.jar -m attach -c ./config.yml -pid 80080
 ```
 
 #### II. Java Agent方式启动
 
-Java Agent方式你需要先生成所需的jar包：
+Java Agent方式你需要先生成所需的jar包，使用 `-a` 参数指定生成 `agent`：
 ```shell
 # 如果你的宿主程序中包含了 SLF4J 的实现（例如 logback），需要在生成时使用 -e 参数排除掉jvmm自带的 slf4j 实现
-java -jar jvmm.jar -m jar -e slf4j
+java -jar jvmm.jar -m jar -a -e logger
 
-# 如果你的宿主程序中没有 SLF4J 的实现，无需排除 slf4j
-java -jar jvmm.jar -m jar
+# 如果你的宿主程序中没有 SLF4J 的实现，无需排除 logger
+java -jar jvmm.jar -m jar -a
 ```
 
-执行之后会在同级目录下生成两个文件：`jvmm-agent.jar`和`jvmm-server.jar`，然后在启动目标程序（假设为app.jar）时
+执行之后会在同级目录下生成对应的文件：`jvmm-agent.jar`，然后在启动目标程序（假设为app.jar）时
 添加`-javaagent`参数，格式如下：
 
 ```textmate
-java -javaagent:<jvmm-agent.jar路径>=<jvmm-server.jar路径>;config=<config.yml路径> -jar your-app.jar
+java -javaagent:<jvmm-agent.jar路径>=config=<config.yml路径> -jar your-app.jar
 ```
 
 例如：
 ```shell
-java -javaagent:/path/jvmm-agent.jar=/path/jvmm-server.jar;config=/path/config.yml -jar app.jar
+java -javaagent:/path/jvmm-agent.jar=config=/path/config.yml -jar app.jar
 ```
 
-当你的程序启动之后Jvmm server就会以Agent的方式启动
+> 为兼容使用外部 server 的功能，完整的javaagent格式为：
+> 
+> `-javaagent:<jvmm-agent.jar路径>=server=<jvmm-server.jar路径>;config=<config.yml路径>`
+
+当你的程序启动之后 Jvmm 就会以Agent的方式启动
 
 #### III. 直接启动
 
 如果你不想依附于任何宿主程序，可以选择单独启动一个 Jvmm server，比如在监控物理机器的场景下。
 
-首先需要生成启动的jar依赖
+首先需要生成启动的jar依赖，使用 `-s` 参数指定生成 `server`：
 ```shell
 java -jar jvmm.jar -s
 ```
@@ -348,8 +186,12 @@ java -jar jvmm.jar -s
 # 启动server，jdk 8使用下面命令
 java -jar jvmm-server.jar
 
-# jdk 9+ 请使用下面命令
-java -jar --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens jdk.zipfs/jdk.nio.zipfs=ALL-UNNAMED --add-opens java.management/sun.management=ALL-UNNAMED jvmm-server.jar
+# jdk 9+ 为确保成功运行建议使用下面命令
+java -jar --add-opens java.base/jdk.internal.loader=ALL-UNNAMED \
+          --add-opens jdk.zipfs/jdk.nio.zipfs=ALL-UNNAMED \
+          --add-opens java.base/java.net=ALL-UNNAMED \
+          --add-opens java.management/sun.management=ALL-UNNAMED \
+          jvmm-server.jar
 ```
 
 #### IV. 引入项目工程启动
@@ -578,6 +420,22 @@ Http Service提供了以下API接口：
 
 哨兵模式的运作逻辑是**定期采集指定数据项然后向订阅者推送**，你需要提供一个可接收数据的订阅服务（http接口），如果接口访问需要进行身份认证， 订阅者Http接口目前仅支持**Basic**方式认证。
 
+哨兵模式配置
+```yaml
+server:
+  type: sentinel
+  sentinel:
+    - subscribers:
+      - url: http://127.0.0.1:9999/monitor/subscriber
+        auth:
+          enable: true
+          username: 123456
+          password: 123456
+      - url: http://monitor.example.com:9999/monitor/subscriber
+      interval: 15
+...
+```
+
 总共支持以下采集项，其中`disk_io`、`cpu`、`network`执行需要耗时，程序内部为异步回调实现，因此哨兵执行间隔不能小于`1s`。
 
 ```json
@@ -675,7 +533,7 @@ Dashboard应用示例
 
 ## 启动server时报错 java.lang.reflect.InaccessibleObjectException
 
-如果你在启动 jvmm-server.jar 时报下面错，原因是你使用了 **JDK 9**及以上版本，在JDK 9+开始Java禁止了动态加载依赖。
+如果你在启动 jvmm-server.jar 时报下面错，原因是你使用了 **JDK 9** 及以上版本，在JDK 9+开始Java禁止了部分类的反射访问。
 
 ```log
 java.lang.reflect.InaccessibleObjectException: Unable to make field final jdk.internal.loader.URLClassPath jdk.internal.loader.ClassLoaders$AppClassLoader.ucp accessible: module java.base does not "opens jdk.internal.loader" to unnamed module @2d127a61
@@ -684,7 +542,7 @@ java.lang.reflect.InaccessibleObjectException: Unable to make field final jdk.in
 解决办法：添加下面几个虚拟机参数
 
 ```shell
-# JDK 9+开始不允许动态加载依赖，需要设置以下几个虚拟机参数
+# JDK 9+ 为确保成功运行建议设置以下几个虚拟机参数
 # --add-opens java.base/jdk.internal.loader=ALL-UNNAMED 
 # --add-opens jdk.zipfs/jdk.nio.zipfs=ALL-UNNAMED 
 # --add-opens java.base/java.net=ALL-UNNAMED
