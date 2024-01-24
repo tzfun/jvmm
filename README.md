@@ -129,6 +129,8 @@ Jvmm提供了四种方式来启动你的 server：
 
 #### I. Attach方式启动
 
+![jvmm-attach.png](doc/jvmm-attach.png)
+
 运行 jvmm.jar，选择**attach**模式
 
 ```shell
@@ -143,6 +145,8 @@ java -jar jvmm.jar -m attach -c ./config.yml -pid 80080
 ```
 
 #### II. Java Agent方式启动
+
+![jvmm-agent.png](doc/jvmm-agent.png)
 
 Java Agent方式你需要先生成所需的jar包，使用 `-a` 参数指定生成 `agent`：
 ```shell
@@ -172,6 +176,8 @@ java -javaagent:/path/jvmm-agent.jar=config=/path/config.yml -jar app.jar
 当你的程序启动之后 Jvmm 就会以Agent的方式启动
 
 #### III. 直接启动
+
+![jvmm-direct-start.png](doc/jvmm-direct-start.png)
 
 如果你不想依附于任何宿主程序，可以选择单独启动一个 Jvmm server，比如在监控物理机器的场景下。
 
@@ -330,6 +336,8 @@ public class ServerConveyDemo {
 
 #### I. Jvmm接口
 
+![jvmm-protocol-server.png](doc/jvmm-protocol-server.png)
+
 Jvmm Service提供了以下API接口：
 
 | Type                                     | Data                                                                                                                                      | Description                                                                           |
@@ -374,6 +382,8 @@ Jvmm Service提供了以下API接口：
 
 #### II. Http接口
 
+![jvmm-http-protocol-server.png](doc/jvmm-http-protocol-server.png)
+
 Http Service提供了以下API接口：
 
 | Uri                                  | 方法   | 参数                                                                                                        | Body                                                                                                                                      | 描述                                                                                    |
@@ -417,6 +427,8 @@ Http Service提供了以下API接口：
 | /server/shutdown                     | GET  | target(String)                                                                                            | /                                                                                                                                         | 关闭服务，data为服务类型                                                                        |
 
 #### III. 哨兵模式
+
+![jvmm-sentinel-server.png](doc/jvmm-sentinel-server.png)
 
 哨兵模式的运作逻辑是**定期采集指定数据项然后向订阅者推送**，你需要提供一个可接收数据的订阅服务（http接口），如果接口访问需要进行身份认证， 订阅者Http接口目前仅支持**Basic**方式认证。
 
