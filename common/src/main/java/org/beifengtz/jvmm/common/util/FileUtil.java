@@ -397,7 +397,9 @@ public class FileUtil {
         if (file.isDirectory()) {
             File[] files = file.listFiles();
             for (File f : files) {
-                delFile(f);
+                if (!delFile(f)) {
+                    return false;
+                }
             }
         }
         return file.delete();

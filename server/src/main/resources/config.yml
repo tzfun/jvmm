@@ -133,11 +133,6 @@ server:
         - name: jvmm-thread-pool
           classPath: org.beifengtz.jvmm.common.factory.ExecutorFactory
           filed: SCHEDULE_THREAD_POOL
-  # If the third-party interface fails 'requestFastFailStart' times in a row, it will enter the fast-failure logic, and the request will not actually be requested again,
-  # but will directly return failure, and the actual request will not be made until 'requestFastFailTimeout' time later.
-  requestFastFailStart: 5
-  # Exit this logic after entering the 'requestFastFailTimeout' time of the fast-failure logic. Unit milliseconds.
-  requestFastFailTimeout: 120000
 
 # The default Jvmm log configuration, if no SLF4J log implementation is found in the startup environment, use this configuration.
 log:

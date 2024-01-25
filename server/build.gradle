@@ -15,6 +15,7 @@ dependencies {
     if(env == 'dev') {
         compile project(':logger')
     }
+    compile "com.google.protobuf:protobuf-java:${protobufVersion}"
 }
 
 jar {

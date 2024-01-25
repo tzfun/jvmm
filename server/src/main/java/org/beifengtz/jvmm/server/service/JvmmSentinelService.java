@@ -3,25 +3,21 @@ package org.beifengtz.jvmm.server.service;
 import io.netty.util.concurrent.Promise;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
-import org.beifengtz.jvmm.common.QuickFailManager;
 import org.beifengtz.jvmm.common.factory.ExecutorFactory;
-import org.beifengtz.jvmm.common.util.CommonUtil;
-import org.beifengtz.jvmm.common.util.HttpUtil;
 import org.beifengtz.jvmm.core.entity.JvmmData;
 import org.beifengtz.jvmm.server.ServerContext;
-import org.beifengtz.jvmm.server.entity.conf.AuthOptionConf;
 import org.beifengtz.jvmm.server.entity.conf.SentinelConf;
 import org.beifengtz.jvmm.server.entity.conf.SentinelSubscriberConf;
-import org.beifengtz.jvmm.server.entity.conf.ServerConf;
+import org.beifengtz.jvmm.server.entity.conf.SentinelSubscriberConf.SubscriberType;
+import org.beifengtz.jvmm.server.exporter.HttpExporter;
+import org.beifengtz.jvmm.server.exporter.PrometheusExporter;
+import org.beifengtz.jvmm.prometheus.Remote;
+import org.beifengtz.jvmm.prometheus.Types;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -42,22 +38,16 @@ import java.util.stream.Collectors;
 public class JvmmSentinelService implements JvmmService {
 
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(JvmmSentinelService.class);
-    protected static final Map<String, String> globalHeaders = CommonUtil.hasMapOf("Content-Type", "application/json;charset=UTF-8");
 
     protected ScheduledExecutorService executor;
     protected ScheduledFuture<?> scheduledFuture;
 
-    /**
-     * 连续失败超过{@link ServerConf#getRequestFastFailStart()}次数后进入快失败冷却时间{@link ServerConf#getRequestFastFailTimeout()}
-     */
-    protected final QuickFailManager<String> quickFailManager = new QuickFailManager<>(
-            ServerContext.getConfiguration().getServer().getRequestFastFailStart(),
-            (int) ServerContext.getConfiguration().getServer().getRequestFastFailTimeout()
-    );
+    protected final Set<ShutdownListener> shutdownListeners = new HashSet<>();
 
-    protected Set<ShutdownListener> shutdownListeners = new HashSet<>();
+    protected final Queue<SentinelTask> taskList = new ConcurrentLinkedQueue<>();
 
-    protected Queue<SentinelTask> taskList = new ConcurrentLinkedQueue<>();
+    protected volatile HttpExporter httpExporter;
+    protected volatile PrometheusExporter prometheusExporter;
 
     public JvmmSentinelService() {
         this(ExecutorFactory.getThreadPool());
@@ -70,17 +60,18 @@ public class JvmmSentinelService implements JvmmService {
     @Override
     public void start(Promise<Integer> promise) {
         List<SentinelConf> sentinels = ServerContext.getConfiguration().getServer().getSentinel();
-        sentinels = sentinels.stream().filter(o -> o.getSubscribers().size() > 0 && o.getTasks().size() > 0).collect(Collectors.toList());
-        if (sentinels.size() > 0) {
+        sentinels = sentinels.stream().filter(o -> !o.getSubscribers().isEmpty() && !o.getTasks().isEmpty()).collect(Collectors.toList());
+        if (!sentinels.isEmpty()) {
 
             //  初始化任务
             taskList.clear();
+            httpExporter = null;
+            prometheusExporter = null;
 
             long now = System.currentTimeMillis();
             int minInterval = Integer.MAX_VALUE;
             for (SentinelConf conf : sentinels) {
-                SentinelTask task = new SentinelTask();
-                task.conf = conf;
+                SentinelTask task = new SentinelTask(conf);
                 task.execTime = now;
                 minInterval = Math.min(minInterval, conf.getInterval());
                 taskList.add(task);
@@ -127,42 +118,30 @@ public class JvmmSentinelService implements JvmmService {
         return (T) this;
     }
 
-    protected void publish(SentinelSubscriberConf subscriber, String body) {
-        String url = subscriber.getUrl();
-        if (quickFailManager.check(url)) {
-            boolean success = false;
-            try {
-                Map<String, String> headers;
-                AuthOptionConf auth = subscriber.getAuth();
-                if (auth != null && auth.isEnable()) {
-                    headers = new HashMap<>(globalHeaders);
-                    String authKey = Base64.getEncoder().encodeToString((auth.getUsername() + ":" + auth.getPassword()).getBytes(StandardCharsets.UTF_8));
-                    headers.put("Authorization", "Basic " + authKey);
-                } else {
-                    headers = globalHeaders;
-                }
-
-                HttpUtil.post(url, body, headers);
-                success = true;
-            } catch (IOException e) {
-                logger.warn("Can not connect monitor subscriber '{}': {}", url, e.getMessage());
-            } catch (Throwable e) {
-                logger.error("Monitor publish to " + url + " failed: " + e.getMessage(), e);
-            } finally {
-                quickFailManager.result(url, success);
-            }
-        }
-    }
-
     @Override
     public int hashCode() {
         return 3;
     }
 
     class SentinelTask {
-        public SentinelConf conf;
+        public final SentinelConf conf;
         public long execTime;
         public int counter = 0;
+        private boolean hasHttpSubscriber;
+        private boolean hasPrometheusSubscriber;
+
+        public SentinelTask(SentinelConf conf) {
+            for (SentinelSubscriberConf subscriber : conf.getSubscribers()) {
+                if (subscriber.getType() == SubscriberType.http && httpExporter == null) {
+                    httpExporter = new HttpExporter();
+                    hasHttpSubscriber = true;
+                } else if (subscriber.getType() == SubscriberType.prometheus && prometheusExporter == null) {
+                    prometheusExporter = new PrometheusExporter();
+                    hasPrometheusSubscriber = true;
+                }
+            }
+            this.conf = conf;
+        }
 
         /**
          * 执行任务
@@ -179,9 +158,14 @@ public class JvmmSentinelService implements JvmmService {
                     JvmmService.collectByOptions(conf.getTasks(), conf.getListenedPorts(), conf.getListenedThreadPools(), pair -> {
                         if (pair.getLeft().get() <= 0) {
                             JvmmData data = pair.getRight().setNode(ServerContext.getConfiguration().getName());
-                            String body = data.toJsonStr();
+                            String dataStr = hasHttpSubscriber ? data.toJsonStr() : null;
+                            byte[] dataBytes = hasPrometheusSubscriber ? parsePrometheusData(data) : null;
                             for (SentinelSubscriberConf subscriber : conf.getSubscribers()) {
-                                executor.submit(() -> publish(subscriber, body));
+                                if (subscriber.getType() == SubscriberType.http && httpExporter != null) {
+                                    executor.submit(() -> httpExporter.export(subscriber, dataStr));
+                                } else if (subscriber.getType() == SubscriberType.prometheus && prometheusExporter != null) {
+                                    executor.submit(() -> prometheusExporter.export(subscriber, dataBytes));
+                                }
                             }
                             execTime = System.currentTimeMillis() + conf.getInterval() * 1000L;
                         }
@@ -191,6 +175,34 @@ public class JvmmSentinelService implements JvmmService {
                 }
             });
             return false;
+        }
+
+        private byte[] parsePrometheusData(JvmmData data) {
+            Remote.WriteRequest.Builder writeRequestBuilder = Remote.WriteRequest.newBuilder();
+            Types.MetricMetadata.Builder builder = Types.MetricMetadata.newBuilder();
+            builder.setType(Types.MetricMetadata.MetricType.UNKNOWN);
+            builder.setMetricFamilyName(data.getNode());
+            builder.setHelp("helper");
+            Types.MetricMetadata metricMetadata = builder.build();
+            writeRequestBuilder.addMetadata(metricMetadata);
+
+            List<Types.Label> labels = new ArrayList<>();
+            Types.TimeSeries.Builder timeSeriesBuilder = Types.TimeSeries.newBuilder();
+            //  自定义标签信息
+            Types.Label nameLabel = Types.Label.newBuilder().setName("__name__").setValue(data.getNode()).build();
+            labels.add(nameLabel);
+
+            //  写入的时间戳到毫秒级
+            Types.Sample sample = Types.Sample.newBuilder()
+                    .setTimestamp(System.currentTimeMillis())
+                    .setValue(Double.parseDouble(resultValues[1])).build();
+
+            // 远程写入prometheus
+            timeSeriesBuilder.addAllLabels(labels);
+            timeSeriesBuilder.addSamples(sample);
+            writeRequestBuilder.addTimeseries(timeSeriesBuilder.build());
+
+            return writeRequestBuilder.build().toByteArray();
         }
     }
 }
