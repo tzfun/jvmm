@@ -14,7 +14,7 @@
 syntax = "proto3";
 package prometheus;
 
-option java_package = "org.beifengtz.jvmm.prometheus";
+option java_package = "org.beifengtz.jvmm.server.prometheus";
 
 message MetricMetadata {
   enum MetricType {

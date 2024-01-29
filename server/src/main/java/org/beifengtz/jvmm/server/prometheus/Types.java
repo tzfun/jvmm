@@ -2,7 +2,7 @@
 // source: types.proto
 
 // Protobuf Java Version: 3.25.2
-package org.beifengtz.jvmm.prometheus;
+package org.beifengtz.jvmm.server.prometheus;
 
 public final class Types {
   private Types() {}
@@ -38,7 +38,7 @@ public final class Types {
      * <code>.prometheus.MetricMetadata.MetricType type = 1;</code>
      * @return The type.
      */
-    org.beifengtz.jvmm.prometheus.Types.MetricMetadata.MetricType getType();
+    org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.MetricType getType();
 
     /**
      * <code>string metric_family_name = 2;</code>
@@ -104,15 +104,15 @@ public final class Types {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_MetricMetadata_descriptor;
+      return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_MetricMetadata_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_MetricMetadata_fieldAccessorTable
+      return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_MetricMetadata_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.beifengtz.jvmm.prometheus.Types.MetricMetadata.class, org.beifengtz.jvmm.prometheus.Types.MetricMetadata.Builder.class);
+              org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.class, org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.Builder.class);
     }
 
     /**
@@ -251,7 +251,7 @@ public final class Types {
       }
       public static final com.google.protobuf.Descriptors.EnumDescriptor
           getDescriptor() {
-        return org.beifengtz.jvmm.prometheus.Types.MetricMetadata.getDescriptor().getEnumTypes().get(0);
+        return org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.getDescriptor().getEnumTypes().get(0);
       }
 
       private static final MetricType[] VALUES = values();
@@ -300,9 +300,9 @@ public final class Types {
      * <code>.prometheus.MetricMetadata.MetricType type = 1;</code>
      * @return The type.
      */
-    @java.lang.Override public org.beifengtz.jvmm.prometheus.Types.MetricMetadata.MetricType getType() {
-      org.beifengtz.jvmm.prometheus.Types.MetricMetadata.MetricType result = org.beifengtz.jvmm.prometheus.Types.MetricMetadata.MetricType.forNumber(type_);
-      return result == null ? org.beifengtz.jvmm.prometheus.Types.MetricMetadata.MetricType.UNRECOGNIZED : result;
+    @java.lang.Override public org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.MetricType getType() {
+      org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.MetricType result = org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.MetricType.forNumber(type_);
+      return result == null ? org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.MetricType.UNRECOGNIZED : result;
     }
 
     public static final int METRIC_FAMILY_NAME_FIELD_NUMBER = 2;
@@ -436,7 +436,7 @@ public final class Types {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (type_ != org.beifengtz.jvmm.prometheus.Types.MetricMetadata.MetricType.UNKNOWN.getNumber()) {
+      if (type_ != org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.MetricType.UNKNOWN.getNumber()) {
         output.writeEnum(1, type_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(metricFamilyName_)) {
@@ -457,7 +457,7 @@ public final class Types {
       if (size != -1) return size;
 
       size = 0;
-      if (type_ != org.beifengtz.jvmm.prometheus.Types.MetricMetadata.MetricType.UNKNOWN.getNumber()) {
+      if (type_ != org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.MetricType.UNKNOWN.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(1, type_);
       }
@@ -480,10 +480,10 @@ public final class Types {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.beifengtz.jvmm.prometheus.Types.MetricMetadata)) {
+      if (!(obj instanceof org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata)) {
         return super.equals(obj);
       }
-      org.beifengtz.jvmm.prometheus.Types.MetricMetadata other = (org.beifengtz.jvmm.prometheus.Types.MetricMetadata) obj;
+      org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata other = (org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata) obj;
 
       if (type_ != other.type_) return false;
       if (!getMetricFamilyName()
@@ -516,44 +516,44 @@ public final class Types {
       return hash;
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.MetricMetadata parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.MetricMetadata parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.MetricMetadata parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.MetricMetadata parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.MetricMetadata parseFrom(byte[] data)
+    public static org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.MetricMetadata parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.MetricMetadata parseFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.MetricMetadata parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -561,26 +561,26 @@ public final class Types {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.MetricMetadata parseDelimitedFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.MetricMetadata parseDelimitedFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.MetricMetadata parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.MetricMetadata parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -593,7 +593,7 @@ public final class Types {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.beifengtz.jvmm.prometheus.Types.MetricMetadata prototype) {
+    public static Builder newBuilder(org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -614,21 +614,21 @@ public final class Types {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:prometheus.MetricMetadata)
-        org.beifengtz.jvmm.prometheus.Types.MetricMetadataOrBuilder {
+        org.beifengtz.jvmm.server.prometheus.Types.MetricMetadataOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_MetricMetadata_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_MetricMetadata_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_MetricMetadata_fieldAccessorTable
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_MetricMetadata_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.beifengtz.jvmm.prometheus.Types.MetricMetadata.class, org.beifengtz.jvmm.prometheus.Types.MetricMetadata.Builder.class);
+                org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.class, org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.Builder.class);
       }
 
-      // Construct using org.beifengtz.jvmm.prometheus.Types.MetricMetadata.newBuilder()
+      // Construct using org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.newBuilder()
       private Builder() {
 
       }
@@ -652,17 +652,17 @@ public final class Types {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_MetricMetadata_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_MetricMetadata_descriptor;
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.MetricMetadata getDefaultInstanceForType() {
-        return org.beifengtz.jvmm.prometheus.Types.MetricMetadata.getDefaultInstance();
+      public org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata getDefaultInstanceForType() {
+        return org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.getDefaultInstance();
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.MetricMetadata build() {
-        org.beifengtz.jvmm.prometheus.Types.MetricMetadata result = buildPartial();
+      public org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata build() {
+        org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -670,14 +670,14 @@ public final class Types {
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.MetricMetadata buildPartial() {
-        org.beifengtz.jvmm.prometheus.Types.MetricMetadata result = new org.beifengtz.jvmm.prometheus.Types.MetricMetadata(this);
+      public org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata buildPartial() {
+        org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata result = new org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(org.beifengtz.jvmm.prometheus.Types.MetricMetadata result) {
+      private void buildPartial0(org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.type_ = type_;
@@ -727,16 +727,16 @@ public final class Types {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.beifengtz.jvmm.prometheus.Types.MetricMetadata) {
-          return mergeFrom((org.beifengtz.jvmm.prometheus.Types.MetricMetadata)other);
+        if (other instanceof org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata) {
+          return mergeFrom((org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.beifengtz.jvmm.prometheus.Types.MetricMetadata other) {
-        if (other == org.beifengtz.jvmm.prometheus.Types.MetricMetadata.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata other) {
+        if (other == org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.getDefaultInstance()) return this;
         if (other.type_ != 0) {
           setTypeValue(other.getTypeValue());
         }
@@ -857,9 +857,9 @@ public final class Types {
        * @return The type.
        */
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.MetricMetadata.MetricType getType() {
-        org.beifengtz.jvmm.prometheus.Types.MetricMetadata.MetricType result = org.beifengtz.jvmm.prometheus.Types.MetricMetadata.MetricType.forNumber(type_);
-        return result == null ? org.beifengtz.jvmm.prometheus.Types.MetricMetadata.MetricType.UNRECOGNIZED : result;
+      public org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.MetricType getType() {
+        org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.MetricType result = org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.MetricType.forNumber(type_);
+        return result == null ? org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.MetricType.UNRECOGNIZED : result;
       }
       /**
        * <pre>
@@ -871,7 +871,7 @@ public final class Types {
        * @param value The type to set.
        * @return This builder for chaining.
        */
-      public Builder setType(org.beifengtz.jvmm.prometheus.Types.MetricMetadata.MetricType value) {
+      public Builder setType(org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.MetricType value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -1128,12 +1128,12 @@ public final class Types {
     }
 
     // @@protoc_insertion_point(class_scope:prometheus.MetricMetadata)
-    private static final org.beifengtz.jvmm.prometheus.Types.MetricMetadata DEFAULT_INSTANCE;
+    private static final org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.beifengtz.jvmm.prometheus.Types.MetricMetadata();
+      DEFAULT_INSTANCE = new org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata();
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.MetricMetadata getDefaultInstance() {
+    public static org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -1169,7 +1169,7 @@ public final class Types {
     }
 
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.MetricMetadata getDefaultInstanceForType() {
+    public org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -1220,15 +1220,15 @@ public final class Types {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_Sample_descriptor;
+      return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_Sample_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_Sample_fieldAccessorTable
+      return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_Sample_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.beifengtz.jvmm.prometheus.Types.Sample.class, org.beifengtz.jvmm.prometheus.Types.Sample.Builder.class);
+              org.beifengtz.jvmm.server.prometheus.Types.Sample.class, org.beifengtz.jvmm.server.prometheus.Types.Sample.Builder.class);
     }
 
     public static final int VALUE_FIELD_NUMBER = 1;
@@ -1305,10 +1305,10 @@ public final class Types {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.beifengtz.jvmm.prometheus.Types.Sample)) {
+      if (!(obj instanceof org.beifengtz.jvmm.server.prometheus.Types.Sample)) {
         return super.equals(obj);
       }
-      org.beifengtz.jvmm.prometheus.Types.Sample other = (org.beifengtz.jvmm.prometheus.Types.Sample) obj;
+      org.beifengtz.jvmm.server.prometheus.Types.Sample other = (org.beifengtz.jvmm.server.prometheus.Types.Sample) obj;
 
       if (java.lang.Double.doubleToLongBits(getValue())
           != java.lang.Double.doubleToLongBits(
@@ -1337,44 +1337,44 @@ public final class Types {
       return hash;
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.Sample parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Sample parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Sample parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Sample parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Sample parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Sample parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Sample parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Sample parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Sample parseFrom(byte[] data)
+    public static org.beifengtz.jvmm.server.prometheus.Types.Sample parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Sample parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Sample parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Sample parseFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Types.Sample parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Sample parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Sample parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -1382,26 +1382,26 @@ public final class Types {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.Sample parseDelimitedFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Types.Sample parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.Sample parseDelimitedFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Sample parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Sample parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Sample parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Sample parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Sample parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -1414,7 +1414,7 @@ public final class Types {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.beifengtz.jvmm.prometheus.Types.Sample prototype) {
+    public static Builder newBuilder(org.beifengtz.jvmm.server.prometheus.Types.Sample prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -1435,21 +1435,21 @@ public final class Types {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:prometheus.Sample)
-        org.beifengtz.jvmm.prometheus.Types.SampleOrBuilder {
+        org.beifengtz.jvmm.server.prometheus.Types.SampleOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_Sample_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_Sample_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_Sample_fieldAccessorTable
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_Sample_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.beifengtz.jvmm.prometheus.Types.Sample.class, org.beifengtz.jvmm.prometheus.Types.Sample.Builder.class);
+                org.beifengtz.jvmm.server.prometheus.Types.Sample.class, org.beifengtz.jvmm.server.prometheus.Types.Sample.Builder.class);
       }
 
-      // Construct using org.beifengtz.jvmm.prometheus.Types.Sample.newBuilder()
+      // Construct using org.beifengtz.jvmm.server.prometheus.Types.Sample.newBuilder()
       private Builder() {
 
       }
@@ -1471,17 +1471,17 @@ public final class Types {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_Sample_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_Sample_descriptor;
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.Sample getDefaultInstanceForType() {
-        return org.beifengtz.jvmm.prometheus.Types.Sample.getDefaultInstance();
+      public org.beifengtz.jvmm.server.prometheus.Types.Sample getDefaultInstanceForType() {
+        return org.beifengtz.jvmm.server.prometheus.Types.Sample.getDefaultInstance();
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.Sample build() {
-        org.beifengtz.jvmm.prometheus.Types.Sample result = buildPartial();
+      public org.beifengtz.jvmm.server.prometheus.Types.Sample build() {
+        org.beifengtz.jvmm.server.prometheus.Types.Sample result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -1489,14 +1489,14 @@ public final class Types {
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.Sample buildPartial() {
-        org.beifengtz.jvmm.prometheus.Types.Sample result = new org.beifengtz.jvmm.prometheus.Types.Sample(this);
+      public org.beifengtz.jvmm.server.prometheus.Types.Sample buildPartial() {
+        org.beifengtz.jvmm.server.prometheus.Types.Sample result = new org.beifengtz.jvmm.server.prometheus.Types.Sample(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(org.beifengtz.jvmm.prometheus.Types.Sample result) {
+      private void buildPartial0(org.beifengtz.jvmm.server.prometheus.Types.Sample result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.value_ = value_;
@@ -1540,16 +1540,16 @@ public final class Types {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.beifengtz.jvmm.prometheus.Types.Sample) {
-          return mergeFrom((org.beifengtz.jvmm.prometheus.Types.Sample)other);
+        if (other instanceof org.beifengtz.jvmm.server.prometheus.Types.Sample) {
+          return mergeFrom((org.beifengtz.jvmm.server.prometheus.Types.Sample)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.beifengtz.jvmm.prometheus.Types.Sample other) {
-        if (other == org.beifengtz.jvmm.prometheus.Types.Sample.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.beifengtz.jvmm.server.prometheus.Types.Sample other) {
+        if (other == org.beifengtz.jvmm.server.prometheus.Types.Sample.getDefaultInstance()) return this;
         if (other.getValue() != 0D) {
           setValue(other.getValue());
         }
@@ -1704,12 +1704,12 @@ public final class Types {
     }
 
     // @@protoc_insertion_point(class_scope:prometheus.Sample)
-    private static final org.beifengtz.jvmm.prometheus.Types.Sample DEFAULT_INSTANCE;
+    private static final org.beifengtz.jvmm.server.prometheus.Types.Sample DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.beifengtz.jvmm.prometheus.Types.Sample();
+      DEFAULT_INSTANCE = new org.beifengtz.jvmm.server.prometheus.Types.Sample();
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.Sample getDefaultInstance() {
+    public static org.beifengtz.jvmm.server.prometheus.Types.Sample getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -1745,7 +1745,7 @@ public final class Types {
     }
 
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.Sample getDefaultInstanceForType() {
+    public org.beifengtz.jvmm.server.prometheus.Types.Sample getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -1762,7 +1762,7 @@ public final class Types {
      *
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
-    java.util.List<org.beifengtz.jvmm.prometheus.Types.Label> 
+    java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Label> 
         getLabelsList();
     /**
      * <pre>
@@ -1771,7 +1771,7 @@ public final class Types {
      *
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.Label getLabels(int index);
+    org.beifengtz.jvmm.server.prometheus.Types.Label getLabels(int index);
     /**
      * <pre>
      * Optional, can be empty.
@@ -1787,7 +1787,7 @@ public final class Types {
      *
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
-    java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder> 
+    java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder> 
         getLabelsOrBuilderList();
     /**
      * <pre>
@@ -1796,7 +1796,7 @@ public final class Types {
      *
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder getLabelsOrBuilder(
+    org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder getLabelsOrBuilder(
         int index);
 
     /**
@@ -1841,20 +1841,20 @@ public final class Types {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_Exemplar_descriptor;
+      return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_Exemplar_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_Exemplar_fieldAccessorTable
+      return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_Exemplar_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.beifengtz.jvmm.prometheus.Types.Exemplar.class, org.beifengtz.jvmm.prometheus.Types.Exemplar.Builder.class);
+              org.beifengtz.jvmm.server.prometheus.Types.Exemplar.class, org.beifengtz.jvmm.server.prometheus.Types.Exemplar.Builder.class);
     }
 
     public static final int LABELS_FIELD_NUMBER = 1;
     @SuppressWarnings("serial")
-    private java.util.List<org.beifengtz.jvmm.prometheus.Types.Label> labels_;
+    private java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Label> labels_;
     /**
      * <pre>
      * Optional, can be empty.
@@ -1863,7 +1863,7 @@ public final class Types {
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
     @java.lang.Override
-    public java.util.List<org.beifengtz.jvmm.prometheus.Types.Label> getLabelsList() {
+    public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Label> getLabelsList() {
       return labels_;
     }
     /**
@@ -1874,7 +1874,7 @@ public final class Types {
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
     @java.lang.Override
-    public java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder> 
+    public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder> 
         getLabelsOrBuilderList() {
       return labels_;
     }
@@ -1897,7 +1897,7 @@ public final class Types {
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.Label getLabels(int index) {
+    public org.beifengtz.jvmm.server.prometheus.Types.Label getLabels(int index) {
       return labels_.get(index);
     }
     /**
@@ -1908,7 +1908,7 @@ public final class Types {
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder getLabelsOrBuilder(
+    public org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder getLabelsOrBuilder(
         int index) {
       return labels_.get(index);
     }
@@ -1994,10 +1994,10 @@ public final class Types {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.beifengtz.jvmm.prometheus.Types.Exemplar)) {
+      if (!(obj instanceof org.beifengtz.jvmm.server.prometheus.Types.Exemplar)) {
         return super.equals(obj);
       }
-      org.beifengtz.jvmm.prometheus.Types.Exemplar other = (org.beifengtz.jvmm.prometheus.Types.Exemplar) obj;
+      org.beifengtz.jvmm.server.prometheus.Types.Exemplar other = (org.beifengtz.jvmm.server.prometheus.Types.Exemplar) obj;
 
       if (!getLabelsList()
           .equals(other.getLabelsList())) return false;
@@ -2032,44 +2032,44 @@ public final class Types {
       return hash;
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.Exemplar parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Exemplar parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Exemplar parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Exemplar parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Exemplar parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Exemplar parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Exemplar parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Exemplar parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Exemplar parseFrom(byte[] data)
+    public static org.beifengtz.jvmm.server.prometheus.Types.Exemplar parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Exemplar parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Exemplar parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Exemplar parseFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Types.Exemplar parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Exemplar parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Exemplar parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -2077,26 +2077,26 @@ public final class Types {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.Exemplar parseDelimitedFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Types.Exemplar parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.Exemplar parseDelimitedFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Exemplar parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Exemplar parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Exemplar parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Exemplar parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Exemplar parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -2109,7 +2109,7 @@ public final class Types {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.beifengtz.jvmm.prometheus.Types.Exemplar prototype) {
+    public static Builder newBuilder(org.beifengtz.jvmm.server.prometheus.Types.Exemplar prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -2130,21 +2130,21 @@ public final class Types {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:prometheus.Exemplar)
-        org.beifengtz.jvmm.prometheus.Types.ExemplarOrBuilder {
+        org.beifengtz.jvmm.server.prometheus.Types.ExemplarOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_Exemplar_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_Exemplar_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_Exemplar_fieldAccessorTable
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_Exemplar_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.beifengtz.jvmm.prometheus.Types.Exemplar.class, org.beifengtz.jvmm.prometheus.Types.Exemplar.Builder.class);
+                org.beifengtz.jvmm.server.prometheus.Types.Exemplar.class, org.beifengtz.jvmm.server.prometheus.Types.Exemplar.Builder.class);
       }
 
-      // Construct using org.beifengtz.jvmm.prometheus.Types.Exemplar.newBuilder()
+      // Construct using org.beifengtz.jvmm.server.prometheus.Types.Exemplar.newBuilder()
       private Builder() {
 
       }
@@ -2173,17 +2173,17 @@ public final class Types {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_Exemplar_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_Exemplar_descriptor;
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.Exemplar getDefaultInstanceForType() {
-        return org.beifengtz.jvmm.prometheus.Types.Exemplar.getDefaultInstance();
+      public org.beifengtz.jvmm.server.prometheus.Types.Exemplar getDefaultInstanceForType() {
+        return org.beifengtz.jvmm.server.prometheus.Types.Exemplar.getDefaultInstance();
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.Exemplar build() {
-        org.beifengtz.jvmm.prometheus.Types.Exemplar result = buildPartial();
+      public org.beifengtz.jvmm.server.prometheus.Types.Exemplar build() {
+        org.beifengtz.jvmm.server.prometheus.Types.Exemplar result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -2191,15 +2191,15 @@ public final class Types {
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.Exemplar buildPartial() {
-        org.beifengtz.jvmm.prometheus.Types.Exemplar result = new org.beifengtz.jvmm.prometheus.Types.Exemplar(this);
+      public org.beifengtz.jvmm.server.prometheus.Types.Exemplar buildPartial() {
+        org.beifengtz.jvmm.server.prometheus.Types.Exemplar result = new org.beifengtz.jvmm.server.prometheus.Types.Exemplar(this);
         buildPartialRepeatedFields(result);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartialRepeatedFields(org.beifengtz.jvmm.prometheus.Types.Exemplar result) {
+      private void buildPartialRepeatedFields(org.beifengtz.jvmm.server.prometheus.Types.Exemplar result) {
         if (labelsBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0)) {
             labels_ = java.util.Collections.unmodifiableList(labels_);
@@ -2211,7 +2211,7 @@ public final class Types {
         }
       }
 
-      private void buildPartial0(org.beifengtz.jvmm.prometheus.Types.Exemplar result) {
+      private void buildPartial0(org.beifengtz.jvmm.server.prometheus.Types.Exemplar result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000002) != 0)) {
           result.value_ = value_;
@@ -2255,16 +2255,16 @@ public final class Types {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.beifengtz.jvmm.prometheus.Types.Exemplar) {
-          return mergeFrom((org.beifengtz.jvmm.prometheus.Types.Exemplar)other);
+        if (other instanceof org.beifengtz.jvmm.server.prometheus.Types.Exemplar) {
+          return mergeFrom((org.beifengtz.jvmm.server.prometheus.Types.Exemplar)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.beifengtz.jvmm.prometheus.Types.Exemplar other) {
-        if (other == org.beifengtz.jvmm.prometheus.Types.Exemplar.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.beifengtz.jvmm.server.prometheus.Types.Exemplar other) {
+        if (other == org.beifengtz.jvmm.server.prometheus.Types.Exemplar.getDefaultInstance()) return this;
         if (labelsBuilder_ == null) {
           if (!other.labels_.isEmpty()) {
             if (labels_.isEmpty()) {
@@ -2324,9 +2324,9 @@ public final class Types {
                 done = true;
                 break;
               case 10: {
-                org.beifengtz.jvmm.prometheus.Types.Label m =
+                org.beifengtz.jvmm.server.prometheus.Types.Label m =
                     input.readMessage(
-                        org.beifengtz.jvmm.prometheus.Types.Label.parser(),
+                        org.beifengtz.jvmm.server.prometheus.Types.Label.parser(),
                         extensionRegistry);
                 if (labelsBuilder_ == null) {
                   ensureLabelsIsMutable();
@@ -2363,17 +2363,17 @@ public final class Types {
       }
       private int bitField0_;
 
-      private java.util.List<org.beifengtz.jvmm.prometheus.Types.Label> labels_ =
+      private java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Label> labels_ =
         java.util.Collections.emptyList();
       private void ensureLabelsIsMutable() {
         if (!((bitField0_ & 0x00000001) != 0)) {
-          labels_ = new java.util.ArrayList<org.beifengtz.jvmm.prometheus.Types.Label>(labels_);
+          labels_ = new java.util.ArrayList<org.beifengtz.jvmm.server.prometheus.Types.Label>(labels_);
           bitField0_ |= 0x00000001;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.Label, org.beifengtz.jvmm.prometheus.Types.Label.Builder, org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder> labelsBuilder_;
+          org.beifengtz.jvmm.server.prometheus.Types.Label, org.beifengtz.jvmm.server.prometheus.Types.Label.Builder, org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder> labelsBuilder_;
 
       /**
        * <pre>
@@ -2382,7 +2382,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Types.Label> getLabelsList() {
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Label> getLabelsList() {
         if (labelsBuilder_ == null) {
           return java.util.Collections.unmodifiableList(labels_);
         } else {
@@ -2410,7 +2410,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Label getLabels(int index) {
+      public org.beifengtz.jvmm.server.prometheus.Types.Label getLabels(int index) {
         if (labelsBuilder_ == null) {
           return labels_.get(index);
         } else {
@@ -2425,7 +2425,7 @@ public final class Types {
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
       public Builder setLabels(
-          int index, org.beifengtz.jvmm.prometheus.Types.Label value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Label value) {
         if (labelsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -2446,7 +2446,7 @@ public final class Types {
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
       public Builder setLabels(
-          int index, org.beifengtz.jvmm.prometheus.Types.Label.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Label.Builder builderForValue) {
         if (labelsBuilder_ == null) {
           ensureLabelsIsMutable();
           labels_.set(index, builderForValue.build());
@@ -2463,7 +2463,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public Builder addLabels(org.beifengtz.jvmm.prometheus.Types.Label value) {
+      public Builder addLabels(org.beifengtz.jvmm.server.prometheus.Types.Label value) {
         if (labelsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -2484,7 +2484,7 @@ public final class Types {
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
       public Builder addLabels(
-          int index, org.beifengtz.jvmm.prometheus.Types.Label value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Label value) {
         if (labelsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -2505,7 +2505,7 @@ public final class Types {
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
       public Builder addLabels(
-          org.beifengtz.jvmm.prometheus.Types.Label.Builder builderForValue) {
+          org.beifengtz.jvmm.server.prometheus.Types.Label.Builder builderForValue) {
         if (labelsBuilder_ == null) {
           ensureLabelsIsMutable();
           labels_.add(builderForValue.build());
@@ -2523,7 +2523,7 @@ public final class Types {
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
       public Builder addLabels(
-          int index, org.beifengtz.jvmm.prometheus.Types.Label.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Label.Builder builderForValue) {
         if (labelsBuilder_ == null) {
           ensureLabelsIsMutable();
           labels_.add(index, builderForValue.build());
@@ -2541,7 +2541,7 @@ public final class Types {
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
       public Builder addAllLabels(
-          java.lang.Iterable<? extends org.beifengtz.jvmm.prometheus.Types.Label> values) {
+          java.lang.Iterable<? extends org.beifengtz.jvmm.server.prometheus.Types.Label> values) {
         if (labelsBuilder_ == null) {
           ensureLabelsIsMutable();
           com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -2593,7 +2593,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Label.Builder getLabelsBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.Label.Builder getLabelsBuilder(
           int index) {
         return getLabelsFieldBuilder().getBuilder(index);
       }
@@ -2604,7 +2604,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder getLabelsOrBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder getLabelsOrBuilder(
           int index) {
         if (labelsBuilder_ == null) {
           return labels_.get(index);  } else {
@@ -2618,7 +2618,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder> 
+      public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder> 
            getLabelsOrBuilderList() {
         if (labelsBuilder_ != null) {
           return labelsBuilder_.getMessageOrBuilderList();
@@ -2633,9 +2633,9 @@ public final class Types {
        *
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Label.Builder addLabelsBuilder() {
+      public org.beifengtz.jvmm.server.prometheus.Types.Label.Builder addLabelsBuilder() {
         return getLabelsFieldBuilder().addBuilder(
-            org.beifengtz.jvmm.prometheus.Types.Label.getDefaultInstance());
+            org.beifengtz.jvmm.server.prometheus.Types.Label.getDefaultInstance());
       }
       /**
        * <pre>
@@ -2644,10 +2644,10 @@ public final class Types {
        *
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Label.Builder addLabelsBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.Label.Builder addLabelsBuilder(
           int index) {
         return getLabelsFieldBuilder().addBuilder(
-            index, org.beifengtz.jvmm.prometheus.Types.Label.getDefaultInstance());
+            index, org.beifengtz.jvmm.server.prometheus.Types.Label.getDefaultInstance());
       }
       /**
        * <pre>
@@ -2656,16 +2656,16 @@ public final class Types {
        *
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Types.Label.Builder> 
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Label.Builder> 
            getLabelsBuilderList() {
         return getLabelsFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.Label, org.beifengtz.jvmm.prometheus.Types.Label.Builder, org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder> 
+          org.beifengtz.jvmm.server.prometheus.Types.Label, org.beifengtz.jvmm.server.prometheus.Types.Label.Builder, org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder> 
           getLabelsFieldBuilder() {
         if (labelsBuilder_ == null) {
           labelsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-              org.beifengtz.jvmm.prometheus.Types.Label, org.beifengtz.jvmm.prometheus.Types.Label.Builder, org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder>(
+              org.beifengtz.jvmm.server.prometheus.Types.Label, org.beifengtz.jvmm.server.prometheus.Types.Label.Builder, org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder>(
                   labels_,
                   ((bitField0_ & 0x00000001) != 0),
                   getParentForChildren(),
@@ -2770,12 +2770,12 @@ public final class Types {
     }
 
     // @@protoc_insertion_point(class_scope:prometheus.Exemplar)
-    private static final org.beifengtz.jvmm.prometheus.Types.Exemplar DEFAULT_INSTANCE;
+    private static final org.beifengtz.jvmm.server.prometheus.Types.Exemplar DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.beifengtz.jvmm.prometheus.Types.Exemplar();
+      DEFAULT_INSTANCE = new org.beifengtz.jvmm.server.prometheus.Types.Exemplar();
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.Exemplar getDefaultInstance() {
+    public static org.beifengtz.jvmm.server.prometheus.Types.Exemplar getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -2811,7 +2811,7 @@ public final class Types {
     }
 
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.Exemplar getDefaultInstanceForType() {
+    public org.beifengtz.jvmm.server.prometheus.Types.Exemplar getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -2908,7 +2908,7 @@ public final class Types {
      *
      * <code>repeated .prometheus.BucketSpan negative_spans = 8;</code>
      */
-    java.util.List<org.beifengtz.jvmm.prometheus.Types.BucketSpan> 
+    java.util.List<org.beifengtz.jvmm.server.prometheus.Types.BucketSpan> 
         getNegativeSpansList();
     /**
      * <pre>
@@ -2917,7 +2917,7 @@ public final class Types {
      *
      * <code>repeated .prometheus.BucketSpan negative_spans = 8;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.BucketSpan getNegativeSpans(int index);
+    org.beifengtz.jvmm.server.prometheus.Types.BucketSpan getNegativeSpans(int index);
     /**
      * <pre>
      * Negative Buckets.
@@ -2933,7 +2933,7 @@ public final class Types {
      *
      * <code>repeated .prometheus.BucketSpan negative_spans = 8;</code>
      */
-    java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.BucketSpanOrBuilder> 
+    java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.BucketSpanOrBuilder> 
         getNegativeSpansOrBuilderList();
     /**
      * <pre>
@@ -2942,7 +2942,7 @@ public final class Types {
      *
      * <code>repeated .prometheus.BucketSpan negative_spans = 8;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.BucketSpanOrBuilder getNegativeSpansOrBuilder(
+    org.beifengtz.jvmm.server.prometheus.Types.BucketSpanOrBuilder getNegativeSpansOrBuilder(
         int index);
 
     /**
@@ -3016,7 +3016,7 @@ public final class Types {
      *
      * <code>repeated .prometheus.BucketSpan positive_spans = 11;</code>
      */
-    java.util.List<org.beifengtz.jvmm.prometheus.Types.BucketSpan> 
+    java.util.List<org.beifengtz.jvmm.server.prometheus.Types.BucketSpan> 
         getPositiveSpansList();
     /**
      * <pre>
@@ -3025,7 +3025,7 @@ public final class Types {
      *
      * <code>repeated .prometheus.BucketSpan positive_spans = 11;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.BucketSpan getPositiveSpans(int index);
+    org.beifengtz.jvmm.server.prometheus.Types.BucketSpan getPositiveSpans(int index);
     /**
      * <pre>
      * Positive Buckets.
@@ -3041,7 +3041,7 @@ public final class Types {
      *
      * <code>repeated .prometheus.BucketSpan positive_spans = 11;</code>
      */
-    java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.BucketSpanOrBuilder> 
+    java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.BucketSpanOrBuilder> 
         getPositiveSpansOrBuilderList();
     /**
      * <pre>
@@ -3050,7 +3050,7 @@ public final class Types {
      *
      * <code>repeated .prometheus.BucketSpan positive_spans = 11;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.BucketSpanOrBuilder getPositiveSpansOrBuilder(
+    org.beifengtz.jvmm.server.prometheus.Types.BucketSpanOrBuilder getPositiveSpansOrBuilder(
         int index);
 
     /**
@@ -3126,7 +3126,7 @@ public final class Types {
      * <code>.prometheus.Histogram.ResetHint reset_hint = 14;</code>
      * @return The resetHint.
      */
-    org.beifengtz.jvmm.prometheus.Types.Histogram.ResetHint getResetHint();
+    org.beifengtz.jvmm.server.prometheus.Types.Histogram.ResetHint getResetHint();
 
     /**
      * <pre>
@@ -3139,9 +3139,9 @@ public final class Types {
      */
     long getTimestamp();
 
-    org.beifengtz.jvmm.prometheus.Types.Histogram.CountCase getCountCase();
+    org.beifengtz.jvmm.server.prometheus.Types.Histogram.CountCase getCountCase();
 
-    org.beifengtz.jvmm.prometheus.Types.Histogram.ZeroCountCase getZeroCountCase();
+    org.beifengtz.jvmm.server.prometheus.Types.Histogram.ZeroCountCase getZeroCountCase();
   }
   /**
    * <pre>
@@ -3183,15 +3183,15 @@ public final class Types {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_Histogram_descriptor;
+      return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_Histogram_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_Histogram_fieldAccessorTable
+      return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_Histogram_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.beifengtz.jvmm.prometheus.Types.Histogram.class, org.beifengtz.jvmm.prometheus.Types.Histogram.Builder.class);
+              org.beifengtz.jvmm.server.prometheus.Types.Histogram.class, org.beifengtz.jvmm.server.prometheus.Types.Histogram.Builder.class);
     }
 
     /**
@@ -3326,7 +3326,7 @@ public final class Types {
       }
       public static final com.google.protobuf.Descriptors.EnumDescriptor
           getDescriptor() {
-        return org.beifengtz.jvmm.prometheus.Types.Histogram.getDescriptor().getEnumTypes().get(0);
+        return org.beifengtz.jvmm.server.prometheus.Types.Histogram.getDescriptor().getEnumTypes().get(0);
       }
 
       private static final ResetHint[] VALUES = values();
@@ -3573,7 +3573,7 @@ public final class Types {
 
     public static final int NEGATIVE_SPANS_FIELD_NUMBER = 8;
     @SuppressWarnings("serial")
-    private java.util.List<org.beifengtz.jvmm.prometheus.Types.BucketSpan> negativeSpans_;
+    private java.util.List<org.beifengtz.jvmm.server.prometheus.Types.BucketSpan> negativeSpans_;
     /**
      * <pre>
      * Negative Buckets.
@@ -3582,7 +3582,7 @@ public final class Types {
      * <code>repeated .prometheus.BucketSpan negative_spans = 8;</code>
      */
     @java.lang.Override
-    public java.util.List<org.beifengtz.jvmm.prometheus.Types.BucketSpan> getNegativeSpansList() {
+    public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.BucketSpan> getNegativeSpansList() {
       return negativeSpans_;
     }
     /**
@@ -3593,7 +3593,7 @@ public final class Types {
      * <code>repeated .prometheus.BucketSpan negative_spans = 8;</code>
      */
     @java.lang.Override
-    public java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.BucketSpanOrBuilder> 
+    public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.BucketSpanOrBuilder> 
         getNegativeSpansOrBuilderList() {
       return negativeSpans_;
     }
@@ -3616,7 +3616,7 @@ public final class Types {
      * <code>repeated .prometheus.BucketSpan negative_spans = 8;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.BucketSpan getNegativeSpans(int index) {
+    public org.beifengtz.jvmm.server.prometheus.Types.BucketSpan getNegativeSpans(int index) {
       return negativeSpans_.get(index);
     }
     /**
@@ -3627,7 +3627,7 @@ public final class Types {
      * <code>repeated .prometheus.BucketSpan negative_spans = 8;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.BucketSpanOrBuilder getNegativeSpansOrBuilder(
+    public org.beifengtz.jvmm.server.prometheus.Types.BucketSpanOrBuilder getNegativeSpansOrBuilder(
         int index) {
       return negativeSpans_.get(index);
     }
@@ -3724,7 +3724,7 @@ public final class Types {
 
     public static final int POSITIVE_SPANS_FIELD_NUMBER = 11;
     @SuppressWarnings("serial")
-    private java.util.List<org.beifengtz.jvmm.prometheus.Types.BucketSpan> positiveSpans_;
+    private java.util.List<org.beifengtz.jvmm.server.prometheus.Types.BucketSpan> positiveSpans_;
     /**
      * <pre>
      * Positive Buckets.
@@ -3733,7 +3733,7 @@ public final class Types {
      * <code>repeated .prometheus.BucketSpan positive_spans = 11;</code>
      */
     @java.lang.Override
-    public java.util.List<org.beifengtz.jvmm.prometheus.Types.BucketSpan> getPositiveSpansList() {
+    public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.BucketSpan> getPositiveSpansList() {
       return positiveSpans_;
     }
     /**
@@ -3744,7 +3744,7 @@ public final class Types {
      * <code>repeated .prometheus.BucketSpan positive_spans = 11;</code>
      */
     @java.lang.Override
-    public java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.BucketSpanOrBuilder> 
+    public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.BucketSpanOrBuilder> 
         getPositiveSpansOrBuilderList() {
       return positiveSpans_;
     }
@@ -3767,7 +3767,7 @@ public final class Types {
      * <code>repeated .prometheus.BucketSpan positive_spans = 11;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.BucketSpan getPositiveSpans(int index) {
+    public org.beifengtz.jvmm.server.prometheus.Types.BucketSpan getPositiveSpans(int index) {
       return positiveSpans_.get(index);
     }
     /**
@@ -3778,7 +3778,7 @@ public final class Types {
      * <code>repeated .prometheus.BucketSpan positive_spans = 11;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.BucketSpanOrBuilder getPositiveSpansOrBuilder(
+    public org.beifengtz.jvmm.server.prometheus.Types.BucketSpanOrBuilder getPositiveSpansOrBuilder(
         int index) {
       return positiveSpans_.get(index);
     }
@@ -3886,9 +3886,9 @@ public final class Types {
      * <code>.prometheus.Histogram.ResetHint reset_hint = 14;</code>
      * @return The resetHint.
      */
-    @java.lang.Override public org.beifengtz.jvmm.prometheus.Types.Histogram.ResetHint getResetHint() {
-      org.beifengtz.jvmm.prometheus.Types.Histogram.ResetHint result = org.beifengtz.jvmm.prometheus.Types.Histogram.ResetHint.forNumber(resetHint_);
-      return result == null ? org.beifengtz.jvmm.prometheus.Types.Histogram.ResetHint.UNRECOGNIZED : result;
+    @java.lang.Override public org.beifengtz.jvmm.server.prometheus.Types.Histogram.ResetHint getResetHint() {
+      org.beifengtz.jvmm.server.prometheus.Types.Histogram.ResetHint result = org.beifengtz.jvmm.server.prometheus.Types.Histogram.ResetHint.forNumber(resetHint_);
+      return result == null ? org.beifengtz.jvmm.server.prometheus.Types.Histogram.ResetHint.UNRECOGNIZED : result;
     }
 
     public static final int TIMESTAMP_FIELD_NUMBER = 15;
@@ -3981,7 +3981,7 @@ public final class Types {
       for (int i = 0; i < positiveCounts_.size(); i++) {
         output.writeDoubleNoTag(positiveCounts_.getDouble(i));
       }
-      if (resetHint_ != org.beifengtz.jvmm.prometheus.Types.Histogram.ResetHint.UNKNOWN.getNumber()) {
+      if (resetHint_ != org.beifengtz.jvmm.server.prometheus.Types.Histogram.ResetHint.UNKNOWN.getNumber()) {
         output.writeEnum(14, resetHint_);
       }
       if (timestamp_ != 0L) {
@@ -4086,7 +4086,7 @@ public final class Types {
         }
         positiveCountsMemoizedSerializedSize = dataSize;
       }
-      if (resetHint_ != org.beifengtz.jvmm.prometheus.Types.Histogram.ResetHint.UNKNOWN.getNumber()) {
+      if (resetHint_ != org.beifengtz.jvmm.server.prometheus.Types.Histogram.ResetHint.UNKNOWN.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(14, resetHint_);
       }
@@ -4104,10 +4104,10 @@ public final class Types {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.beifengtz.jvmm.prometheus.Types.Histogram)) {
+      if (!(obj instanceof org.beifengtz.jvmm.server.prometheus.Types.Histogram)) {
         return super.equals(obj);
       }
-      org.beifengtz.jvmm.prometheus.Types.Histogram other = (org.beifengtz.jvmm.prometheus.Types.Histogram) obj;
+      org.beifengtz.jvmm.server.prometheus.Types.Histogram other = (org.beifengtz.jvmm.server.prometheus.Types.Histogram) obj;
 
       if (java.lang.Double.doubleToLongBits(getSum())
           != java.lang.Double.doubleToLongBits(
@@ -4241,44 +4241,44 @@ public final class Types {
       return hash;
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.Histogram parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Histogram parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Histogram parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Histogram parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Histogram parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Histogram parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Histogram parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Histogram parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Histogram parseFrom(byte[] data)
+    public static org.beifengtz.jvmm.server.prometheus.Types.Histogram parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Histogram parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Histogram parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Histogram parseFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Types.Histogram parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Histogram parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Histogram parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -4286,26 +4286,26 @@ public final class Types {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.Histogram parseDelimitedFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Types.Histogram parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.Histogram parseDelimitedFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Histogram parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Histogram parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Histogram parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Histogram parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Histogram parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -4318,7 +4318,7 @@ public final class Types {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.beifengtz.jvmm.prometheus.Types.Histogram prototype) {
+    public static Builder newBuilder(org.beifengtz.jvmm.server.prometheus.Types.Histogram prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -4348,21 +4348,21 @@ public final class Types {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:prometheus.Histogram)
-        org.beifengtz.jvmm.prometheus.Types.HistogramOrBuilder {
+        org.beifengtz.jvmm.server.prometheus.Types.HistogramOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_Histogram_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_Histogram_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_Histogram_fieldAccessorTable
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_Histogram_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.beifengtz.jvmm.prometheus.Types.Histogram.class, org.beifengtz.jvmm.prometheus.Types.Histogram.Builder.class);
+                org.beifengtz.jvmm.server.prometheus.Types.Histogram.class, org.beifengtz.jvmm.server.prometheus.Types.Histogram.Builder.class);
       }
 
-      // Construct using org.beifengtz.jvmm.prometheus.Types.Histogram.newBuilder()
+      // Construct using org.beifengtz.jvmm.server.prometheus.Types.Histogram.newBuilder()
       private Builder() {
 
       }
@@ -4409,17 +4409,17 @@ public final class Types {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_Histogram_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_Histogram_descriptor;
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.Histogram getDefaultInstanceForType() {
-        return org.beifengtz.jvmm.prometheus.Types.Histogram.getDefaultInstance();
+      public org.beifengtz.jvmm.server.prometheus.Types.Histogram getDefaultInstanceForType() {
+        return org.beifengtz.jvmm.server.prometheus.Types.Histogram.getDefaultInstance();
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.Histogram build() {
-        org.beifengtz.jvmm.prometheus.Types.Histogram result = buildPartial();
+      public org.beifengtz.jvmm.server.prometheus.Types.Histogram build() {
+        org.beifengtz.jvmm.server.prometheus.Types.Histogram result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -4427,8 +4427,8 @@ public final class Types {
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.Histogram buildPartial() {
-        org.beifengtz.jvmm.prometheus.Types.Histogram result = new org.beifengtz.jvmm.prometheus.Types.Histogram(this);
+      public org.beifengtz.jvmm.server.prometheus.Types.Histogram buildPartial() {
+        org.beifengtz.jvmm.server.prometheus.Types.Histogram result = new org.beifengtz.jvmm.server.prometheus.Types.Histogram(this);
         buildPartialRepeatedFields(result);
         if (bitField0_ != 0) { buildPartial0(result); }
         buildPartialOneofs(result);
@@ -4436,7 +4436,7 @@ public final class Types {
         return result;
       }
 
-      private void buildPartialRepeatedFields(org.beifengtz.jvmm.prometheus.Types.Histogram result) {
+      private void buildPartialRepeatedFields(org.beifengtz.jvmm.server.prometheus.Types.Histogram result) {
         if (negativeSpansBuilder_ == null) {
           if (((bitField0_ & 0x00000080) != 0)) {
             negativeSpans_ = java.util.Collections.unmodifiableList(negativeSpans_);
@@ -4457,7 +4457,7 @@ public final class Types {
         }
       }
 
-      private void buildPartial0(org.beifengtz.jvmm.prometheus.Types.Histogram result) {
+      private void buildPartial0(org.beifengtz.jvmm.server.prometheus.Types.Histogram result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000004) != 0)) {
           result.sum_ = sum_;
@@ -4492,7 +4492,7 @@ public final class Types {
         }
       }
 
-      private void buildPartialOneofs(org.beifengtz.jvmm.prometheus.Types.Histogram result) {
+      private void buildPartialOneofs(org.beifengtz.jvmm.server.prometheus.Types.Histogram result) {
         result.countCase_ = countCase_;
         result.count_ = this.count_;
         result.zeroCountCase_ = zeroCountCase_;
@@ -4533,16 +4533,16 @@ public final class Types {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.beifengtz.jvmm.prometheus.Types.Histogram) {
-          return mergeFrom((org.beifengtz.jvmm.prometheus.Types.Histogram)other);
+        if (other instanceof org.beifengtz.jvmm.server.prometheus.Types.Histogram) {
+          return mergeFrom((org.beifengtz.jvmm.server.prometheus.Types.Histogram)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.beifengtz.jvmm.prometheus.Types.Histogram other) {
-        if (other == org.beifengtz.jvmm.prometheus.Types.Histogram.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.beifengtz.jvmm.server.prometheus.Types.Histogram other) {
+        if (other == org.beifengtz.jvmm.server.prometheus.Types.Histogram.getDefaultInstance()) return this;
         if (other.getSum() != 0D) {
           setSum(other.getSum());
         }
@@ -4742,9 +4742,9 @@ public final class Types {
                 break;
               } // case 57
               case 66: {
-                org.beifengtz.jvmm.prometheus.Types.BucketSpan m =
+                org.beifengtz.jvmm.server.prometheus.Types.BucketSpan m =
                     input.readMessage(
-                        org.beifengtz.jvmm.prometheus.Types.BucketSpan.parser(),
+                        org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.parser(),
                         extensionRegistry);
                 if (negativeSpansBuilder_ == null) {
                   ensureNegativeSpansIsMutable();
@@ -4788,9 +4788,9 @@ public final class Types {
                 break;
               } // case 82
               case 90: {
-                org.beifengtz.jvmm.prometheus.Types.BucketSpan m =
+                org.beifengtz.jvmm.server.prometheus.Types.BucketSpan m =
                     input.readMessage(
-                        org.beifengtz.jvmm.prometheus.Types.BucketSpan.parser(),
+                        org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.parser(),
                         extensionRegistry);
                 if (positiveSpansBuilder_ == null) {
                   ensurePositiveSpansIsMutable();
@@ -5208,17 +5208,17 @@ public final class Types {
         return this;
       }
 
-      private java.util.List<org.beifengtz.jvmm.prometheus.Types.BucketSpan> negativeSpans_ =
+      private java.util.List<org.beifengtz.jvmm.server.prometheus.Types.BucketSpan> negativeSpans_ =
         java.util.Collections.emptyList();
       private void ensureNegativeSpansIsMutable() {
         if (!((bitField0_ & 0x00000080) != 0)) {
-          negativeSpans_ = new java.util.ArrayList<org.beifengtz.jvmm.prometheus.Types.BucketSpan>(negativeSpans_);
+          negativeSpans_ = new java.util.ArrayList<org.beifengtz.jvmm.server.prometheus.Types.BucketSpan>(negativeSpans_);
           bitField0_ |= 0x00000080;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.BucketSpan, org.beifengtz.jvmm.prometheus.Types.BucketSpan.Builder, org.beifengtz.jvmm.prometheus.Types.BucketSpanOrBuilder> negativeSpansBuilder_;
+          org.beifengtz.jvmm.server.prometheus.Types.BucketSpan, org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.Builder, org.beifengtz.jvmm.server.prometheus.Types.BucketSpanOrBuilder> negativeSpansBuilder_;
 
       /**
        * <pre>
@@ -5227,7 +5227,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.BucketSpan negative_spans = 8;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Types.BucketSpan> getNegativeSpansList() {
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.BucketSpan> getNegativeSpansList() {
         if (negativeSpansBuilder_ == null) {
           return java.util.Collections.unmodifiableList(negativeSpans_);
         } else {
@@ -5255,7 +5255,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.BucketSpan negative_spans = 8;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.BucketSpan getNegativeSpans(int index) {
+      public org.beifengtz.jvmm.server.prometheus.Types.BucketSpan getNegativeSpans(int index) {
         if (negativeSpansBuilder_ == null) {
           return negativeSpans_.get(index);
         } else {
@@ -5270,7 +5270,7 @@ public final class Types {
        * <code>repeated .prometheus.BucketSpan negative_spans = 8;</code>
        */
       public Builder setNegativeSpans(
-          int index, org.beifengtz.jvmm.prometheus.Types.BucketSpan value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.BucketSpan value) {
         if (negativeSpansBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -5291,7 +5291,7 @@ public final class Types {
        * <code>repeated .prometheus.BucketSpan negative_spans = 8;</code>
        */
       public Builder setNegativeSpans(
-          int index, org.beifengtz.jvmm.prometheus.Types.BucketSpan.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.Builder builderForValue) {
         if (negativeSpansBuilder_ == null) {
           ensureNegativeSpansIsMutable();
           negativeSpans_.set(index, builderForValue.build());
@@ -5308,7 +5308,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.BucketSpan negative_spans = 8;</code>
        */
-      public Builder addNegativeSpans(org.beifengtz.jvmm.prometheus.Types.BucketSpan value) {
+      public Builder addNegativeSpans(org.beifengtz.jvmm.server.prometheus.Types.BucketSpan value) {
         if (negativeSpansBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -5329,7 +5329,7 @@ public final class Types {
        * <code>repeated .prometheus.BucketSpan negative_spans = 8;</code>
        */
       public Builder addNegativeSpans(
-          int index, org.beifengtz.jvmm.prometheus.Types.BucketSpan value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.BucketSpan value) {
         if (negativeSpansBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -5350,7 +5350,7 @@ public final class Types {
        * <code>repeated .prometheus.BucketSpan negative_spans = 8;</code>
        */
       public Builder addNegativeSpans(
-          org.beifengtz.jvmm.prometheus.Types.BucketSpan.Builder builderForValue) {
+          org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.Builder builderForValue) {
         if (negativeSpansBuilder_ == null) {
           ensureNegativeSpansIsMutable();
           negativeSpans_.add(builderForValue.build());
@@ -5368,7 +5368,7 @@ public final class Types {
        * <code>repeated .prometheus.BucketSpan negative_spans = 8;</code>
        */
       public Builder addNegativeSpans(
-          int index, org.beifengtz.jvmm.prometheus.Types.BucketSpan.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.Builder builderForValue) {
         if (negativeSpansBuilder_ == null) {
           ensureNegativeSpansIsMutable();
           negativeSpans_.add(index, builderForValue.build());
@@ -5386,7 +5386,7 @@ public final class Types {
        * <code>repeated .prometheus.BucketSpan negative_spans = 8;</code>
        */
       public Builder addAllNegativeSpans(
-          java.lang.Iterable<? extends org.beifengtz.jvmm.prometheus.Types.BucketSpan> values) {
+          java.lang.Iterable<? extends org.beifengtz.jvmm.server.prometheus.Types.BucketSpan> values) {
         if (negativeSpansBuilder_ == null) {
           ensureNegativeSpansIsMutable();
           com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -5438,7 +5438,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.BucketSpan negative_spans = 8;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.BucketSpan.Builder getNegativeSpansBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.Builder getNegativeSpansBuilder(
           int index) {
         return getNegativeSpansFieldBuilder().getBuilder(index);
       }
@@ -5449,7 +5449,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.BucketSpan negative_spans = 8;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.BucketSpanOrBuilder getNegativeSpansOrBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.BucketSpanOrBuilder getNegativeSpansOrBuilder(
           int index) {
         if (negativeSpansBuilder_ == null) {
           return negativeSpans_.get(index);  } else {
@@ -5463,7 +5463,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.BucketSpan negative_spans = 8;</code>
        */
-      public java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.BucketSpanOrBuilder> 
+      public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.BucketSpanOrBuilder> 
            getNegativeSpansOrBuilderList() {
         if (negativeSpansBuilder_ != null) {
           return negativeSpansBuilder_.getMessageOrBuilderList();
@@ -5478,9 +5478,9 @@ public final class Types {
        *
        * <code>repeated .prometheus.BucketSpan negative_spans = 8;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.BucketSpan.Builder addNegativeSpansBuilder() {
+      public org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.Builder addNegativeSpansBuilder() {
         return getNegativeSpansFieldBuilder().addBuilder(
-            org.beifengtz.jvmm.prometheus.Types.BucketSpan.getDefaultInstance());
+            org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.getDefaultInstance());
       }
       /**
        * <pre>
@@ -5489,10 +5489,10 @@ public final class Types {
        *
        * <code>repeated .prometheus.BucketSpan negative_spans = 8;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.BucketSpan.Builder addNegativeSpansBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.Builder addNegativeSpansBuilder(
           int index) {
         return getNegativeSpansFieldBuilder().addBuilder(
-            index, org.beifengtz.jvmm.prometheus.Types.BucketSpan.getDefaultInstance());
+            index, org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.getDefaultInstance());
       }
       /**
        * <pre>
@@ -5501,16 +5501,16 @@ public final class Types {
        *
        * <code>repeated .prometheus.BucketSpan negative_spans = 8;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Types.BucketSpan.Builder> 
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.Builder> 
            getNegativeSpansBuilderList() {
         return getNegativeSpansFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.BucketSpan, org.beifengtz.jvmm.prometheus.Types.BucketSpan.Builder, org.beifengtz.jvmm.prometheus.Types.BucketSpanOrBuilder> 
+          org.beifengtz.jvmm.server.prometheus.Types.BucketSpan, org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.Builder, org.beifengtz.jvmm.server.prometheus.Types.BucketSpanOrBuilder> 
           getNegativeSpansFieldBuilder() {
         if (negativeSpansBuilder_ == null) {
           negativeSpansBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-              org.beifengtz.jvmm.prometheus.Types.BucketSpan, org.beifengtz.jvmm.prometheus.Types.BucketSpan.Builder, org.beifengtz.jvmm.prometheus.Types.BucketSpanOrBuilder>(
+              org.beifengtz.jvmm.server.prometheus.Types.BucketSpan, org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.Builder, org.beifengtz.jvmm.server.prometheus.Types.BucketSpanOrBuilder>(
                   negativeSpans_,
                   ((bitField0_ & 0x00000080) != 0),
                   getParentForChildren(),
@@ -5764,17 +5764,17 @@ public final class Types {
         return this;
       }
 
-      private java.util.List<org.beifengtz.jvmm.prometheus.Types.BucketSpan> positiveSpans_ =
+      private java.util.List<org.beifengtz.jvmm.server.prometheus.Types.BucketSpan> positiveSpans_ =
         java.util.Collections.emptyList();
       private void ensurePositiveSpansIsMutable() {
         if (!((bitField0_ & 0x00000400) != 0)) {
-          positiveSpans_ = new java.util.ArrayList<org.beifengtz.jvmm.prometheus.Types.BucketSpan>(positiveSpans_);
+          positiveSpans_ = new java.util.ArrayList<org.beifengtz.jvmm.server.prometheus.Types.BucketSpan>(positiveSpans_);
           bitField0_ |= 0x00000400;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.BucketSpan, org.beifengtz.jvmm.prometheus.Types.BucketSpan.Builder, org.beifengtz.jvmm.prometheus.Types.BucketSpanOrBuilder> positiveSpansBuilder_;
+          org.beifengtz.jvmm.server.prometheus.Types.BucketSpan, org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.Builder, org.beifengtz.jvmm.server.prometheus.Types.BucketSpanOrBuilder> positiveSpansBuilder_;
 
       /**
        * <pre>
@@ -5783,7 +5783,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.BucketSpan positive_spans = 11;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Types.BucketSpan> getPositiveSpansList() {
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.BucketSpan> getPositiveSpansList() {
         if (positiveSpansBuilder_ == null) {
           return java.util.Collections.unmodifiableList(positiveSpans_);
         } else {
@@ -5811,7 +5811,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.BucketSpan positive_spans = 11;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.BucketSpan getPositiveSpans(int index) {
+      public org.beifengtz.jvmm.server.prometheus.Types.BucketSpan getPositiveSpans(int index) {
         if (positiveSpansBuilder_ == null) {
           return positiveSpans_.get(index);
         } else {
@@ -5826,7 +5826,7 @@ public final class Types {
        * <code>repeated .prometheus.BucketSpan positive_spans = 11;</code>
        */
       public Builder setPositiveSpans(
-          int index, org.beifengtz.jvmm.prometheus.Types.BucketSpan value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.BucketSpan value) {
         if (positiveSpansBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -5847,7 +5847,7 @@ public final class Types {
        * <code>repeated .prometheus.BucketSpan positive_spans = 11;</code>
        */
       public Builder setPositiveSpans(
-          int index, org.beifengtz.jvmm.prometheus.Types.BucketSpan.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.Builder builderForValue) {
         if (positiveSpansBuilder_ == null) {
           ensurePositiveSpansIsMutable();
           positiveSpans_.set(index, builderForValue.build());
@@ -5864,7 +5864,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.BucketSpan positive_spans = 11;</code>
        */
-      public Builder addPositiveSpans(org.beifengtz.jvmm.prometheus.Types.BucketSpan value) {
+      public Builder addPositiveSpans(org.beifengtz.jvmm.server.prometheus.Types.BucketSpan value) {
         if (positiveSpansBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -5885,7 +5885,7 @@ public final class Types {
        * <code>repeated .prometheus.BucketSpan positive_spans = 11;</code>
        */
       public Builder addPositiveSpans(
-          int index, org.beifengtz.jvmm.prometheus.Types.BucketSpan value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.BucketSpan value) {
         if (positiveSpansBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -5906,7 +5906,7 @@ public final class Types {
        * <code>repeated .prometheus.BucketSpan positive_spans = 11;</code>
        */
       public Builder addPositiveSpans(
-          org.beifengtz.jvmm.prometheus.Types.BucketSpan.Builder builderForValue) {
+          org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.Builder builderForValue) {
         if (positiveSpansBuilder_ == null) {
           ensurePositiveSpansIsMutable();
           positiveSpans_.add(builderForValue.build());
@@ -5924,7 +5924,7 @@ public final class Types {
        * <code>repeated .prometheus.BucketSpan positive_spans = 11;</code>
        */
       public Builder addPositiveSpans(
-          int index, org.beifengtz.jvmm.prometheus.Types.BucketSpan.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.Builder builderForValue) {
         if (positiveSpansBuilder_ == null) {
           ensurePositiveSpansIsMutable();
           positiveSpans_.add(index, builderForValue.build());
@@ -5942,7 +5942,7 @@ public final class Types {
        * <code>repeated .prometheus.BucketSpan positive_spans = 11;</code>
        */
       public Builder addAllPositiveSpans(
-          java.lang.Iterable<? extends org.beifengtz.jvmm.prometheus.Types.BucketSpan> values) {
+          java.lang.Iterable<? extends org.beifengtz.jvmm.server.prometheus.Types.BucketSpan> values) {
         if (positiveSpansBuilder_ == null) {
           ensurePositiveSpansIsMutable();
           com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -5994,7 +5994,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.BucketSpan positive_spans = 11;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.BucketSpan.Builder getPositiveSpansBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.Builder getPositiveSpansBuilder(
           int index) {
         return getPositiveSpansFieldBuilder().getBuilder(index);
       }
@@ -6005,7 +6005,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.BucketSpan positive_spans = 11;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.BucketSpanOrBuilder getPositiveSpansOrBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.BucketSpanOrBuilder getPositiveSpansOrBuilder(
           int index) {
         if (positiveSpansBuilder_ == null) {
           return positiveSpans_.get(index);  } else {
@@ -6019,7 +6019,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.BucketSpan positive_spans = 11;</code>
        */
-      public java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.BucketSpanOrBuilder> 
+      public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.BucketSpanOrBuilder> 
            getPositiveSpansOrBuilderList() {
         if (positiveSpansBuilder_ != null) {
           return positiveSpansBuilder_.getMessageOrBuilderList();
@@ -6034,9 +6034,9 @@ public final class Types {
        *
        * <code>repeated .prometheus.BucketSpan positive_spans = 11;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.BucketSpan.Builder addPositiveSpansBuilder() {
+      public org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.Builder addPositiveSpansBuilder() {
         return getPositiveSpansFieldBuilder().addBuilder(
-            org.beifengtz.jvmm.prometheus.Types.BucketSpan.getDefaultInstance());
+            org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.getDefaultInstance());
       }
       /**
        * <pre>
@@ -6045,10 +6045,10 @@ public final class Types {
        *
        * <code>repeated .prometheus.BucketSpan positive_spans = 11;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.BucketSpan.Builder addPositiveSpansBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.Builder addPositiveSpansBuilder(
           int index) {
         return getPositiveSpansFieldBuilder().addBuilder(
-            index, org.beifengtz.jvmm.prometheus.Types.BucketSpan.getDefaultInstance());
+            index, org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.getDefaultInstance());
       }
       /**
        * <pre>
@@ -6057,16 +6057,16 @@ public final class Types {
        *
        * <code>repeated .prometheus.BucketSpan positive_spans = 11;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Types.BucketSpan.Builder> 
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.Builder> 
            getPositiveSpansBuilderList() {
         return getPositiveSpansFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.BucketSpan, org.beifengtz.jvmm.prometheus.Types.BucketSpan.Builder, org.beifengtz.jvmm.prometheus.Types.BucketSpanOrBuilder> 
+          org.beifengtz.jvmm.server.prometheus.Types.BucketSpan, org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.Builder, org.beifengtz.jvmm.server.prometheus.Types.BucketSpanOrBuilder> 
           getPositiveSpansFieldBuilder() {
         if (positiveSpansBuilder_ == null) {
           positiveSpansBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-              org.beifengtz.jvmm.prometheus.Types.BucketSpan, org.beifengtz.jvmm.prometheus.Types.BucketSpan.Builder, org.beifengtz.jvmm.prometheus.Types.BucketSpanOrBuilder>(
+              org.beifengtz.jvmm.server.prometheus.Types.BucketSpan, org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.Builder, org.beifengtz.jvmm.server.prometheus.Types.BucketSpanOrBuilder>(
                   positiveSpans_,
                   ((bitField0_ & 0x00000400) != 0),
                   getParentForChildren(),
@@ -6344,16 +6344,16 @@ public final class Types {
        * @return The resetHint.
        */
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.Histogram.ResetHint getResetHint() {
-        org.beifengtz.jvmm.prometheus.Types.Histogram.ResetHint result = org.beifengtz.jvmm.prometheus.Types.Histogram.ResetHint.forNumber(resetHint_);
-        return result == null ? org.beifengtz.jvmm.prometheus.Types.Histogram.ResetHint.UNRECOGNIZED : result;
+      public org.beifengtz.jvmm.server.prometheus.Types.Histogram.ResetHint getResetHint() {
+        org.beifengtz.jvmm.server.prometheus.Types.Histogram.ResetHint result = org.beifengtz.jvmm.server.prometheus.Types.Histogram.ResetHint.forNumber(resetHint_);
+        return result == null ? org.beifengtz.jvmm.server.prometheus.Types.Histogram.ResetHint.UNRECOGNIZED : result;
       }
       /**
        * <code>.prometheus.Histogram.ResetHint reset_hint = 14;</code>
        * @param value The resetHint to set.
        * @return This builder for chaining.
        */
-      public Builder setResetHint(org.beifengtz.jvmm.prometheus.Types.Histogram.ResetHint value) {
+      public Builder setResetHint(org.beifengtz.jvmm.server.prometheus.Types.Histogram.ResetHint value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -6436,12 +6436,12 @@ public final class Types {
     }
 
     // @@protoc_insertion_point(class_scope:prometheus.Histogram)
-    private static final org.beifengtz.jvmm.prometheus.Types.Histogram DEFAULT_INSTANCE;
+    private static final org.beifengtz.jvmm.server.prometheus.Types.Histogram DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.beifengtz.jvmm.prometheus.Types.Histogram();
+      DEFAULT_INSTANCE = new org.beifengtz.jvmm.server.prometheus.Types.Histogram();
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.Histogram getDefaultInstance() {
+    public static org.beifengtz.jvmm.server.prometheus.Types.Histogram getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -6477,7 +6477,7 @@ public final class Types {
     }
 
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.Histogram getDefaultInstanceForType() {
+    public org.beifengtz.jvmm.server.prometheus.Types.Histogram getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -6539,15 +6539,15 @@ public final class Types {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_BucketSpan_descriptor;
+      return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_BucketSpan_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_BucketSpan_fieldAccessorTable
+      return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_BucketSpan_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.beifengtz.jvmm.prometheus.Types.BucketSpan.class, org.beifengtz.jvmm.prometheus.Types.BucketSpan.Builder.class);
+              org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.class, org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.Builder.class);
     }
 
     public static final int OFFSET_FIELD_NUMBER = 1;
@@ -6627,10 +6627,10 @@ public final class Types {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.beifengtz.jvmm.prometheus.Types.BucketSpan)) {
+      if (!(obj instanceof org.beifengtz.jvmm.server.prometheus.Types.BucketSpan)) {
         return super.equals(obj);
       }
-      org.beifengtz.jvmm.prometheus.Types.BucketSpan other = (org.beifengtz.jvmm.prometheus.Types.BucketSpan) obj;
+      org.beifengtz.jvmm.server.prometheus.Types.BucketSpan other = (org.beifengtz.jvmm.server.prometheus.Types.BucketSpan) obj;
 
       if (getOffset()
           != other.getOffset()) return false;
@@ -6656,44 +6656,44 @@ public final class Types {
       return hash;
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.BucketSpan parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.BucketSpan parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.BucketSpan parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.BucketSpan parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.BucketSpan parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.BucketSpan parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.BucketSpan parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.BucketSpan parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.BucketSpan parseFrom(byte[] data)
+    public static org.beifengtz.jvmm.server.prometheus.Types.BucketSpan parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.BucketSpan parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.BucketSpan parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.BucketSpan parseFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Types.BucketSpan parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.BucketSpan parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.BucketSpan parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -6701,26 +6701,26 @@ public final class Types {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.BucketSpan parseDelimitedFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Types.BucketSpan parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.BucketSpan parseDelimitedFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.BucketSpan parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.BucketSpan parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.BucketSpan parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.BucketSpan parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.BucketSpan parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -6733,7 +6733,7 @@ public final class Types {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.beifengtz.jvmm.prometheus.Types.BucketSpan prototype) {
+    public static Builder newBuilder(org.beifengtz.jvmm.server.prometheus.Types.BucketSpan prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -6762,21 +6762,21 @@ public final class Types {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:prometheus.BucketSpan)
-        org.beifengtz.jvmm.prometheus.Types.BucketSpanOrBuilder {
+        org.beifengtz.jvmm.server.prometheus.Types.BucketSpanOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_BucketSpan_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_BucketSpan_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_BucketSpan_fieldAccessorTable
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_BucketSpan_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.beifengtz.jvmm.prometheus.Types.BucketSpan.class, org.beifengtz.jvmm.prometheus.Types.BucketSpan.Builder.class);
+                org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.class, org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.Builder.class);
       }
 
-      // Construct using org.beifengtz.jvmm.prometheus.Types.BucketSpan.newBuilder()
+      // Construct using org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.newBuilder()
       private Builder() {
 
       }
@@ -6798,17 +6798,17 @@ public final class Types {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_BucketSpan_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_BucketSpan_descriptor;
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.BucketSpan getDefaultInstanceForType() {
-        return org.beifengtz.jvmm.prometheus.Types.BucketSpan.getDefaultInstance();
+      public org.beifengtz.jvmm.server.prometheus.Types.BucketSpan getDefaultInstanceForType() {
+        return org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.getDefaultInstance();
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.BucketSpan build() {
-        org.beifengtz.jvmm.prometheus.Types.BucketSpan result = buildPartial();
+      public org.beifengtz.jvmm.server.prometheus.Types.BucketSpan build() {
+        org.beifengtz.jvmm.server.prometheus.Types.BucketSpan result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -6816,14 +6816,14 @@ public final class Types {
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.BucketSpan buildPartial() {
-        org.beifengtz.jvmm.prometheus.Types.BucketSpan result = new org.beifengtz.jvmm.prometheus.Types.BucketSpan(this);
+      public org.beifengtz.jvmm.server.prometheus.Types.BucketSpan buildPartial() {
+        org.beifengtz.jvmm.server.prometheus.Types.BucketSpan result = new org.beifengtz.jvmm.server.prometheus.Types.BucketSpan(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(org.beifengtz.jvmm.prometheus.Types.BucketSpan result) {
+      private void buildPartial0(org.beifengtz.jvmm.server.prometheus.Types.BucketSpan result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.offset_ = offset_;
@@ -6867,16 +6867,16 @@ public final class Types {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.beifengtz.jvmm.prometheus.Types.BucketSpan) {
-          return mergeFrom((org.beifengtz.jvmm.prometheus.Types.BucketSpan)other);
+        if (other instanceof org.beifengtz.jvmm.server.prometheus.Types.BucketSpan) {
+          return mergeFrom((org.beifengtz.jvmm.server.prometheus.Types.BucketSpan)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.beifengtz.jvmm.prometheus.Types.BucketSpan other) {
-        if (other == org.beifengtz.jvmm.prometheus.Types.BucketSpan.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.beifengtz.jvmm.server.prometheus.Types.BucketSpan other) {
+        if (other == org.beifengtz.jvmm.server.prometheus.Types.BucketSpan.getDefaultInstance()) return this;
         if (other.getOffset() != 0) {
           setOffset(other.getOffset());
         }
@@ -7040,12 +7040,12 @@ public final class Types {
     }
 
     // @@protoc_insertion_point(class_scope:prometheus.BucketSpan)
-    private static final org.beifengtz.jvmm.prometheus.Types.BucketSpan DEFAULT_INSTANCE;
+    private static final org.beifengtz.jvmm.server.prometheus.Types.BucketSpan DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.beifengtz.jvmm.prometheus.Types.BucketSpan();
+      DEFAULT_INSTANCE = new org.beifengtz.jvmm.server.prometheus.Types.BucketSpan();
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.BucketSpan getDefaultInstance() {
+    public static org.beifengtz.jvmm.server.prometheus.Types.BucketSpan getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -7081,7 +7081,7 @@ public final class Types {
     }
 
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.BucketSpan getDefaultInstanceForType() {
+    public org.beifengtz.jvmm.server.prometheus.Types.BucketSpan getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -7099,7 +7099,7 @@ public final class Types {
      *
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
-    java.util.List<org.beifengtz.jvmm.prometheus.Types.Label> 
+    java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Label> 
         getLabelsList();
     /**
      * <pre>
@@ -7109,7 +7109,7 @@ public final class Types {
      *
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.Label getLabels(int index);
+    org.beifengtz.jvmm.server.prometheus.Types.Label getLabels(int index);
     /**
      * <pre>
      * For a timeseries to be valid, and for the samples and exemplars
@@ -7127,7 +7127,7 @@ public final class Types {
      *
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
-    java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder> 
+    java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder> 
         getLabelsOrBuilderList();
     /**
      * <pre>
@@ -7137,18 +7137,18 @@ public final class Types {
      *
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder getLabelsOrBuilder(
+    org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder getLabelsOrBuilder(
         int index);
 
     /**
      * <code>repeated .prometheus.Sample samples = 2;</code>
      */
-    java.util.List<org.beifengtz.jvmm.prometheus.Types.Sample> 
+    java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Sample> 
         getSamplesList();
     /**
      * <code>repeated .prometheus.Sample samples = 2;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.Sample getSamples(int index);
+    org.beifengtz.jvmm.server.prometheus.Types.Sample getSamples(int index);
     /**
      * <code>repeated .prometheus.Sample samples = 2;</code>
      */
@@ -7156,23 +7156,23 @@ public final class Types {
     /**
      * <code>repeated .prometheus.Sample samples = 2;</code>
      */
-    java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.SampleOrBuilder> 
+    java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.SampleOrBuilder> 
         getSamplesOrBuilderList();
     /**
      * <code>repeated .prometheus.Sample samples = 2;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.SampleOrBuilder getSamplesOrBuilder(
+    org.beifengtz.jvmm.server.prometheus.Types.SampleOrBuilder getSamplesOrBuilder(
         int index);
 
     /**
      * <code>repeated .prometheus.Exemplar exemplars = 3;</code>
      */
-    java.util.List<org.beifengtz.jvmm.prometheus.Types.Exemplar> 
+    java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Exemplar> 
         getExemplarsList();
     /**
      * <code>repeated .prometheus.Exemplar exemplars = 3;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.Exemplar getExemplars(int index);
+    org.beifengtz.jvmm.server.prometheus.Types.Exemplar getExemplars(int index);
     /**
      * <code>repeated .prometheus.Exemplar exemplars = 3;</code>
      */
@@ -7180,23 +7180,23 @@ public final class Types {
     /**
      * <code>repeated .prometheus.Exemplar exemplars = 3;</code>
      */
-    java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.ExemplarOrBuilder> 
+    java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.ExemplarOrBuilder> 
         getExemplarsOrBuilderList();
     /**
      * <code>repeated .prometheus.Exemplar exemplars = 3;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.ExemplarOrBuilder getExemplarsOrBuilder(
+    org.beifengtz.jvmm.server.prometheus.Types.ExemplarOrBuilder getExemplarsOrBuilder(
         int index);
 
     /**
      * <code>repeated .prometheus.Histogram histograms = 4;</code>
      */
-    java.util.List<org.beifengtz.jvmm.prometheus.Types.Histogram> 
+    java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Histogram> 
         getHistogramsList();
     /**
      * <code>repeated .prometheus.Histogram histograms = 4;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.Histogram getHistograms(int index);
+    org.beifengtz.jvmm.server.prometheus.Types.Histogram getHistograms(int index);
     /**
      * <code>repeated .prometheus.Histogram histograms = 4;</code>
      */
@@ -7204,12 +7204,12 @@ public final class Types {
     /**
      * <code>repeated .prometheus.Histogram histograms = 4;</code>
      */
-    java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.HistogramOrBuilder> 
+    java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.HistogramOrBuilder> 
         getHistogramsOrBuilderList();
     /**
      * <code>repeated .prometheus.Histogram histograms = 4;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.HistogramOrBuilder getHistogramsOrBuilder(
+    org.beifengtz.jvmm.server.prometheus.Types.HistogramOrBuilder getHistogramsOrBuilder(
         int index);
   }
   /**
@@ -7244,20 +7244,20 @@ public final class Types {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_TimeSeries_descriptor;
+      return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_TimeSeries_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_TimeSeries_fieldAccessorTable
+      return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_TimeSeries_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.beifengtz.jvmm.prometheus.Types.TimeSeries.class, org.beifengtz.jvmm.prometheus.Types.TimeSeries.Builder.class);
+              org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.class, org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.Builder.class);
     }
 
     public static final int LABELS_FIELD_NUMBER = 1;
     @SuppressWarnings("serial")
-    private java.util.List<org.beifengtz.jvmm.prometheus.Types.Label> labels_;
+    private java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Label> labels_;
     /**
      * <pre>
      * For a timeseries to be valid, and for the samples and exemplars
@@ -7267,7 +7267,7 @@ public final class Types {
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
     @java.lang.Override
-    public java.util.List<org.beifengtz.jvmm.prometheus.Types.Label> getLabelsList() {
+    public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Label> getLabelsList() {
       return labels_;
     }
     /**
@@ -7279,7 +7279,7 @@ public final class Types {
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
     @java.lang.Override
-    public java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder> 
+    public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder> 
         getLabelsOrBuilderList() {
       return labels_;
     }
@@ -7304,7 +7304,7 @@ public final class Types {
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.Label getLabels(int index) {
+    public org.beifengtz.jvmm.server.prometheus.Types.Label getLabels(int index) {
       return labels_.get(index);
     }
     /**
@@ -7316,26 +7316,26 @@ public final class Types {
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder getLabelsOrBuilder(
+    public org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder getLabelsOrBuilder(
         int index) {
       return labels_.get(index);
     }
 
     public static final int SAMPLES_FIELD_NUMBER = 2;
     @SuppressWarnings("serial")
-    private java.util.List<org.beifengtz.jvmm.prometheus.Types.Sample> samples_;
+    private java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Sample> samples_;
     /**
      * <code>repeated .prometheus.Sample samples = 2;</code>
      */
     @java.lang.Override
-    public java.util.List<org.beifengtz.jvmm.prometheus.Types.Sample> getSamplesList() {
+    public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Sample> getSamplesList() {
       return samples_;
     }
     /**
      * <code>repeated .prometheus.Sample samples = 2;</code>
      */
     @java.lang.Override
-    public java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.SampleOrBuilder> 
+    public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.SampleOrBuilder> 
         getSamplesOrBuilderList() {
       return samples_;
     }
@@ -7350,33 +7350,33 @@ public final class Types {
      * <code>repeated .prometheus.Sample samples = 2;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.Sample getSamples(int index) {
+    public org.beifengtz.jvmm.server.prometheus.Types.Sample getSamples(int index) {
       return samples_.get(index);
     }
     /**
      * <code>repeated .prometheus.Sample samples = 2;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.SampleOrBuilder getSamplesOrBuilder(
+    public org.beifengtz.jvmm.server.prometheus.Types.SampleOrBuilder getSamplesOrBuilder(
         int index) {
       return samples_.get(index);
     }
 
     public static final int EXEMPLARS_FIELD_NUMBER = 3;
     @SuppressWarnings("serial")
-    private java.util.List<org.beifengtz.jvmm.prometheus.Types.Exemplar> exemplars_;
+    private java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Exemplar> exemplars_;
     /**
      * <code>repeated .prometheus.Exemplar exemplars = 3;</code>
      */
     @java.lang.Override
-    public java.util.List<org.beifengtz.jvmm.prometheus.Types.Exemplar> getExemplarsList() {
+    public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Exemplar> getExemplarsList() {
       return exemplars_;
     }
     /**
      * <code>repeated .prometheus.Exemplar exemplars = 3;</code>
      */
     @java.lang.Override
-    public java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.ExemplarOrBuilder> 
+    public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.ExemplarOrBuilder> 
         getExemplarsOrBuilderList() {
       return exemplars_;
     }
@@ -7391,33 +7391,33 @@ public final class Types {
      * <code>repeated .prometheus.Exemplar exemplars = 3;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.Exemplar getExemplars(int index) {
+    public org.beifengtz.jvmm.server.prometheus.Types.Exemplar getExemplars(int index) {
       return exemplars_.get(index);
     }
     /**
      * <code>repeated .prometheus.Exemplar exemplars = 3;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.ExemplarOrBuilder getExemplarsOrBuilder(
+    public org.beifengtz.jvmm.server.prometheus.Types.ExemplarOrBuilder getExemplarsOrBuilder(
         int index) {
       return exemplars_.get(index);
     }
 
     public static final int HISTOGRAMS_FIELD_NUMBER = 4;
     @SuppressWarnings("serial")
-    private java.util.List<org.beifengtz.jvmm.prometheus.Types.Histogram> histograms_;
+    private java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Histogram> histograms_;
     /**
      * <code>repeated .prometheus.Histogram histograms = 4;</code>
      */
     @java.lang.Override
-    public java.util.List<org.beifengtz.jvmm.prometheus.Types.Histogram> getHistogramsList() {
+    public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Histogram> getHistogramsList() {
       return histograms_;
     }
     /**
      * <code>repeated .prometheus.Histogram histograms = 4;</code>
      */
     @java.lang.Override
-    public java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.HistogramOrBuilder> 
+    public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.HistogramOrBuilder> 
         getHistogramsOrBuilderList() {
       return histograms_;
     }
@@ -7432,14 +7432,14 @@ public final class Types {
      * <code>repeated .prometheus.Histogram histograms = 4;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.Histogram getHistograms(int index) {
+    public org.beifengtz.jvmm.server.prometheus.Types.Histogram getHistograms(int index) {
       return histograms_.get(index);
     }
     /**
      * <code>repeated .prometheus.Histogram histograms = 4;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.HistogramOrBuilder getHistogramsOrBuilder(
+    public org.beifengtz.jvmm.server.prometheus.Types.HistogramOrBuilder getHistogramsOrBuilder(
         int index) {
       return histograms_.get(index);
     }
@@ -7505,10 +7505,10 @@ public final class Types {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.beifengtz.jvmm.prometheus.Types.TimeSeries)) {
+      if (!(obj instanceof org.beifengtz.jvmm.server.prometheus.Types.TimeSeries)) {
         return super.equals(obj);
       }
-      org.beifengtz.jvmm.prometheus.Types.TimeSeries other = (org.beifengtz.jvmm.prometheus.Types.TimeSeries) obj;
+      org.beifengtz.jvmm.server.prometheus.Types.TimeSeries other = (org.beifengtz.jvmm.server.prometheus.Types.TimeSeries) obj;
 
       if (!getLabelsList()
           .equals(other.getLabelsList())) return false;
@@ -7550,44 +7550,44 @@ public final class Types {
       return hash;
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.TimeSeries parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.TimeSeries parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.TimeSeries parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.TimeSeries parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.TimeSeries parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.TimeSeries parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.TimeSeries parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.TimeSeries parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.TimeSeries parseFrom(byte[] data)
+    public static org.beifengtz.jvmm.server.prometheus.Types.TimeSeries parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.TimeSeries parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.TimeSeries parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.TimeSeries parseFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Types.TimeSeries parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.TimeSeries parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.TimeSeries parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -7595,26 +7595,26 @@ public final class Types {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.TimeSeries parseDelimitedFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Types.TimeSeries parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.TimeSeries parseDelimitedFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.TimeSeries parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.TimeSeries parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.TimeSeries parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.TimeSeries parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.TimeSeries parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -7627,7 +7627,7 @@ public final class Types {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.beifengtz.jvmm.prometheus.Types.TimeSeries prototype) {
+    public static Builder newBuilder(org.beifengtz.jvmm.server.prometheus.Types.TimeSeries prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -7652,21 +7652,21 @@ public final class Types {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:prometheus.TimeSeries)
-        org.beifengtz.jvmm.prometheus.Types.TimeSeriesOrBuilder {
+        org.beifengtz.jvmm.server.prometheus.Types.TimeSeriesOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_TimeSeries_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_TimeSeries_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_TimeSeries_fieldAccessorTable
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_TimeSeries_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.beifengtz.jvmm.prometheus.Types.TimeSeries.class, org.beifengtz.jvmm.prometheus.Types.TimeSeries.Builder.class);
+                org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.class, org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.Builder.class);
       }
 
-      // Construct using org.beifengtz.jvmm.prometheus.Types.TimeSeries.newBuilder()
+      // Construct using org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.newBuilder()
       private Builder() {
 
       }
@@ -7714,17 +7714,17 @@ public final class Types {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_TimeSeries_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_TimeSeries_descriptor;
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.TimeSeries getDefaultInstanceForType() {
-        return org.beifengtz.jvmm.prometheus.Types.TimeSeries.getDefaultInstance();
+      public org.beifengtz.jvmm.server.prometheus.Types.TimeSeries getDefaultInstanceForType() {
+        return org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.getDefaultInstance();
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.TimeSeries build() {
-        org.beifengtz.jvmm.prometheus.Types.TimeSeries result = buildPartial();
+      public org.beifengtz.jvmm.server.prometheus.Types.TimeSeries build() {
+        org.beifengtz.jvmm.server.prometheus.Types.TimeSeries result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -7732,15 +7732,15 @@ public final class Types {
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.TimeSeries buildPartial() {
-        org.beifengtz.jvmm.prometheus.Types.TimeSeries result = new org.beifengtz.jvmm.prometheus.Types.TimeSeries(this);
+      public org.beifengtz.jvmm.server.prometheus.Types.TimeSeries buildPartial() {
+        org.beifengtz.jvmm.server.prometheus.Types.TimeSeries result = new org.beifengtz.jvmm.server.prometheus.Types.TimeSeries(this);
         buildPartialRepeatedFields(result);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartialRepeatedFields(org.beifengtz.jvmm.prometheus.Types.TimeSeries result) {
+      private void buildPartialRepeatedFields(org.beifengtz.jvmm.server.prometheus.Types.TimeSeries result) {
         if (labelsBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0)) {
             labels_ = java.util.Collections.unmodifiableList(labels_);
@@ -7779,7 +7779,7 @@ public final class Types {
         }
       }
 
-      private void buildPartial0(org.beifengtz.jvmm.prometheus.Types.TimeSeries result) {
+      private void buildPartial0(org.beifengtz.jvmm.server.prometheus.Types.TimeSeries result) {
         int from_bitField0_ = bitField0_;
       }
 
@@ -7817,16 +7817,16 @@ public final class Types {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.beifengtz.jvmm.prometheus.Types.TimeSeries) {
-          return mergeFrom((org.beifengtz.jvmm.prometheus.Types.TimeSeries)other);
+        if (other instanceof org.beifengtz.jvmm.server.prometheus.Types.TimeSeries) {
+          return mergeFrom((org.beifengtz.jvmm.server.prometheus.Types.TimeSeries)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.beifengtz.jvmm.prometheus.Types.TimeSeries other) {
-        if (other == org.beifengtz.jvmm.prometheus.Types.TimeSeries.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.beifengtz.jvmm.server.prometheus.Types.TimeSeries other) {
+        if (other == org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.getDefaultInstance()) return this;
         if (labelsBuilder_ == null) {
           if (!other.labels_.isEmpty()) {
             if (labels_.isEmpty()) {
@@ -7958,9 +7958,9 @@ public final class Types {
                 done = true;
                 break;
               case 10: {
-                org.beifengtz.jvmm.prometheus.Types.Label m =
+                org.beifengtz.jvmm.server.prometheus.Types.Label m =
                     input.readMessage(
-                        org.beifengtz.jvmm.prometheus.Types.Label.parser(),
+                        org.beifengtz.jvmm.server.prometheus.Types.Label.parser(),
                         extensionRegistry);
                 if (labelsBuilder_ == null) {
                   ensureLabelsIsMutable();
@@ -7971,9 +7971,9 @@ public final class Types {
                 break;
               } // case 10
               case 18: {
-                org.beifengtz.jvmm.prometheus.Types.Sample m =
+                org.beifengtz.jvmm.server.prometheus.Types.Sample m =
                     input.readMessage(
-                        org.beifengtz.jvmm.prometheus.Types.Sample.parser(),
+                        org.beifengtz.jvmm.server.prometheus.Types.Sample.parser(),
                         extensionRegistry);
                 if (samplesBuilder_ == null) {
                   ensureSamplesIsMutable();
@@ -7984,9 +7984,9 @@ public final class Types {
                 break;
               } // case 18
               case 26: {
-                org.beifengtz.jvmm.prometheus.Types.Exemplar m =
+                org.beifengtz.jvmm.server.prometheus.Types.Exemplar m =
                     input.readMessage(
-                        org.beifengtz.jvmm.prometheus.Types.Exemplar.parser(),
+                        org.beifengtz.jvmm.server.prometheus.Types.Exemplar.parser(),
                         extensionRegistry);
                 if (exemplarsBuilder_ == null) {
                   ensureExemplarsIsMutable();
@@ -7997,9 +7997,9 @@ public final class Types {
                 break;
               } // case 26
               case 34: {
-                org.beifengtz.jvmm.prometheus.Types.Histogram m =
+                org.beifengtz.jvmm.server.prometheus.Types.Histogram m =
                     input.readMessage(
-                        org.beifengtz.jvmm.prometheus.Types.Histogram.parser(),
+                        org.beifengtz.jvmm.server.prometheus.Types.Histogram.parser(),
                         extensionRegistry);
                 if (histogramsBuilder_ == null) {
                   ensureHistogramsIsMutable();
@@ -8026,17 +8026,17 @@ public final class Types {
       }
       private int bitField0_;
 
-      private java.util.List<org.beifengtz.jvmm.prometheus.Types.Label> labels_ =
+      private java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Label> labels_ =
         java.util.Collections.emptyList();
       private void ensureLabelsIsMutable() {
         if (!((bitField0_ & 0x00000001) != 0)) {
-          labels_ = new java.util.ArrayList<org.beifengtz.jvmm.prometheus.Types.Label>(labels_);
+          labels_ = new java.util.ArrayList<org.beifengtz.jvmm.server.prometheus.Types.Label>(labels_);
           bitField0_ |= 0x00000001;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.Label, org.beifengtz.jvmm.prometheus.Types.Label.Builder, org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder> labelsBuilder_;
+          org.beifengtz.jvmm.server.prometheus.Types.Label, org.beifengtz.jvmm.server.prometheus.Types.Label.Builder, org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder> labelsBuilder_;
 
       /**
        * <pre>
@@ -8046,7 +8046,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Types.Label> getLabelsList() {
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Label> getLabelsList() {
         if (labelsBuilder_ == null) {
           return java.util.Collections.unmodifiableList(labels_);
         } else {
@@ -8076,7 +8076,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Label getLabels(int index) {
+      public org.beifengtz.jvmm.server.prometheus.Types.Label getLabels(int index) {
         if (labelsBuilder_ == null) {
           return labels_.get(index);
         } else {
@@ -8092,7 +8092,7 @@ public final class Types {
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
       public Builder setLabels(
-          int index, org.beifengtz.jvmm.prometheus.Types.Label value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Label value) {
         if (labelsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -8114,7 +8114,7 @@ public final class Types {
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
       public Builder setLabels(
-          int index, org.beifengtz.jvmm.prometheus.Types.Label.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Label.Builder builderForValue) {
         if (labelsBuilder_ == null) {
           ensureLabelsIsMutable();
           labels_.set(index, builderForValue.build());
@@ -8132,7 +8132,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public Builder addLabels(org.beifengtz.jvmm.prometheus.Types.Label value) {
+      public Builder addLabels(org.beifengtz.jvmm.server.prometheus.Types.Label value) {
         if (labelsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -8154,7 +8154,7 @@ public final class Types {
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
       public Builder addLabels(
-          int index, org.beifengtz.jvmm.prometheus.Types.Label value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Label value) {
         if (labelsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -8176,7 +8176,7 @@ public final class Types {
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
       public Builder addLabels(
-          org.beifengtz.jvmm.prometheus.Types.Label.Builder builderForValue) {
+          org.beifengtz.jvmm.server.prometheus.Types.Label.Builder builderForValue) {
         if (labelsBuilder_ == null) {
           ensureLabelsIsMutable();
           labels_.add(builderForValue.build());
@@ -8195,7 +8195,7 @@ public final class Types {
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
       public Builder addLabels(
-          int index, org.beifengtz.jvmm.prometheus.Types.Label.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Label.Builder builderForValue) {
         if (labelsBuilder_ == null) {
           ensureLabelsIsMutable();
           labels_.add(index, builderForValue.build());
@@ -8214,7 +8214,7 @@ public final class Types {
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
       public Builder addAllLabels(
-          java.lang.Iterable<? extends org.beifengtz.jvmm.prometheus.Types.Label> values) {
+          java.lang.Iterable<? extends org.beifengtz.jvmm.server.prometheus.Types.Label> values) {
         if (labelsBuilder_ == null) {
           ensureLabelsIsMutable();
           com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -8269,7 +8269,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Label.Builder getLabelsBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.Label.Builder getLabelsBuilder(
           int index) {
         return getLabelsFieldBuilder().getBuilder(index);
       }
@@ -8281,7 +8281,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder getLabelsOrBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder getLabelsOrBuilder(
           int index) {
         if (labelsBuilder_ == null) {
           return labels_.get(index);  } else {
@@ -8296,7 +8296,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder> 
+      public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder> 
            getLabelsOrBuilderList() {
         if (labelsBuilder_ != null) {
           return labelsBuilder_.getMessageOrBuilderList();
@@ -8312,9 +8312,9 @@ public final class Types {
        *
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Label.Builder addLabelsBuilder() {
+      public org.beifengtz.jvmm.server.prometheus.Types.Label.Builder addLabelsBuilder() {
         return getLabelsFieldBuilder().addBuilder(
-            org.beifengtz.jvmm.prometheus.Types.Label.getDefaultInstance());
+            org.beifengtz.jvmm.server.prometheus.Types.Label.getDefaultInstance());
       }
       /**
        * <pre>
@@ -8324,10 +8324,10 @@ public final class Types {
        *
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Label.Builder addLabelsBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.Label.Builder addLabelsBuilder(
           int index) {
         return getLabelsFieldBuilder().addBuilder(
-            index, org.beifengtz.jvmm.prometheus.Types.Label.getDefaultInstance());
+            index, org.beifengtz.jvmm.server.prometheus.Types.Label.getDefaultInstance());
       }
       /**
        * <pre>
@@ -8337,16 +8337,16 @@ public final class Types {
        *
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Types.Label.Builder> 
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Label.Builder> 
            getLabelsBuilderList() {
         return getLabelsFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.Label, org.beifengtz.jvmm.prometheus.Types.Label.Builder, org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder> 
+          org.beifengtz.jvmm.server.prometheus.Types.Label, org.beifengtz.jvmm.server.prometheus.Types.Label.Builder, org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder> 
           getLabelsFieldBuilder() {
         if (labelsBuilder_ == null) {
           labelsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-              org.beifengtz.jvmm.prometheus.Types.Label, org.beifengtz.jvmm.prometheus.Types.Label.Builder, org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder>(
+              org.beifengtz.jvmm.server.prometheus.Types.Label, org.beifengtz.jvmm.server.prometheus.Types.Label.Builder, org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder>(
                   labels_,
                   ((bitField0_ & 0x00000001) != 0),
                   getParentForChildren(),
@@ -8356,22 +8356,22 @@ public final class Types {
         return labelsBuilder_;
       }
 
-      private java.util.List<org.beifengtz.jvmm.prometheus.Types.Sample> samples_ =
+      private java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Sample> samples_ =
         java.util.Collections.emptyList();
       private void ensureSamplesIsMutable() {
         if (!((bitField0_ & 0x00000002) != 0)) {
-          samples_ = new java.util.ArrayList<org.beifengtz.jvmm.prometheus.Types.Sample>(samples_);
+          samples_ = new java.util.ArrayList<org.beifengtz.jvmm.server.prometheus.Types.Sample>(samples_);
           bitField0_ |= 0x00000002;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.Sample, org.beifengtz.jvmm.prometheus.Types.Sample.Builder, org.beifengtz.jvmm.prometheus.Types.SampleOrBuilder> samplesBuilder_;
+          org.beifengtz.jvmm.server.prometheus.Types.Sample, org.beifengtz.jvmm.server.prometheus.Types.Sample.Builder, org.beifengtz.jvmm.server.prometheus.Types.SampleOrBuilder> samplesBuilder_;
 
       /**
        * <code>repeated .prometheus.Sample samples = 2;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Types.Sample> getSamplesList() {
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Sample> getSamplesList() {
         if (samplesBuilder_ == null) {
           return java.util.Collections.unmodifiableList(samples_);
         } else {
@@ -8391,7 +8391,7 @@ public final class Types {
       /**
        * <code>repeated .prometheus.Sample samples = 2;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Sample getSamples(int index) {
+      public org.beifengtz.jvmm.server.prometheus.Types.Sample getSamples(int index) {
         if (samplesBuilder_ == null) {
           return samples_.get(index);
         } else {
@@ -8402,7 +8402,7 @@ public final class Types {
        * <code>repeated .prometheus.Sample samples = 2;</code>
        */
       public Builder setSamples(
-          int index, org.beifengtz.jvmm.prometheus.Types.Sample value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Sample value) {
         if (samplesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -8419,7 +8419,7 @@ public final class Types {
        * <code>repeated .prometheus.Sample samples = 2;</code>
        */
       public Builder setSamples(
-          int index, org.beifengtz.jvmm.prometheus.Types.Sample.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Sample.Builder builderForValue) {
         if (samplesBuilder_ == null) {
           ensureSamplesIsMutable();
           samples_.set(index, builderForValue.build());
@@ -8432,7 +8432,7 @@ public final class Types {
       /**
        * <code>repeated .prometheus.Sample samples = 2;</code>
        */
-      public Builder addSamples(org.beifengtz.jvmm.prometheus.Types.Sample value) {
+      public Builder addSamples(org.beifengtz.jvmm.server.prometheus.Types.Sample value) {
         if (samplesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -8449,7 +8449,7 @@ public final class Types {
        * <code>repeated .prometheus.Sample samples = 2;</code>
        */
       public Builder addSamples(
-          int index, org.beifengtz.jvmm.prometheus.Types.Sample value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Sample value) {
         if (samplesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -8466,7 +8466,7 @@ public final class Types {
        * <code>repeated .prometheus.Sample samples = 2;</code>
        */
       public Builder addSamples(
-          org.beifengtz.jvmm.prometheus.Types.Sample.Builder builderForValue) {
+          org.beifengtz.jvmm.server.prometheus.Types.Sample.Builder builderForValue) {
         if (samplesBuilder_ == null) {
           ensureSamplesIsMutable();
           samples_.add(builderForValue.build());
@@ -8480,7 +8480,7 @@ public final class Types {
        * <code>repeated .prometheus.Sample samples = 2;</code>
        */
       public Builder addSamples(
-          int index, org.beifengtz.jvmm.prometheus.Types.Sample.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Sample.Builder builderForValue) {
         if (samplesBuilder_ == null) {
           ensureSamplesIsMutable();
           samples_.add(index, builderForValue.build());
@@ -8494,7 +8494,7 @@ public final class Types {
        * <code>repeated .prometheus.Sample samples = 2;</code>
        */
       public Builder addAllSamples(
-          java.lang.Iterable<? extends org.beifengtz.jvmm.prometheus.Types.Sample> values) {
+          java.lang.Iterable<? extends org.beifengtz.jvmm.server.prometheus.Types.Sample> values) {
         if (samplesBuilder_ == null) {
           ensureSamplesIsMutable();
           com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -8534,14 +8534,14 @@ public final class Types {
       /**
        * <code>repeated .prometheus.Sample samples = 2;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Sample.Builder getSamplesBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.Sample.Builder getSamplesBuilder(
           int index) {
         return getSamplesFieldBuilder().getBuilder(index);
       }
       /**
        * <code>repeated .prometheus.Sample samples = 2;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.SampleOrBuilder getSamplesOrBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.SampleOrBuilder getSamplesOrBuilder(
           int index) {
         if (samplesBuilder_ == null) {
           return samples_.get(index);  } else {
@@ -8551,7 +8551,7 @@ public final class Types {
       /**
        * <code>repeated .prometheus.Sample samples = 2;</code>
        */
-      public java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.SampleOrBuilder> 
+      public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.SampleOrBuilder> 
            getSamplesOrBuilderList() {
         if (samplesBuilder_ != null) {
           return samplesBuilder_.getMessageOrBuilderList();
@@ -8562,31 +8562,31 @@ public final class Types {
       /**
        * <code>repeated .prometheus.Sample samples = 2;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Sample.Builder addSamplesBuilder() {
+      public org.beifengtz.jvmm.server.prometheus.Types.Sample.Builder addSamplesBuilder() {
         return getSamplesFieldBuilder().addBuilder(
-            org.beifengtz.jvmm.prometheus.Types.Sample.getDefaultInstance());
+            org.beifengtz.jvmm.server.prometheus.Types.Sample.getDefaultInstance());
       }
       /**
        * <code>repeated .prometheus.Sample samples = 2;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Sample.Builder addSamplesBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.Sample.Builder addSamplesBuilder(
           int index) {
         return getSamplesFieldBuilder().addBuilder(
-            index, org.beifengtz.jvmm.prometheus.Types.Sample.getDefaultInstance());
+            index, org.beifengtz.jvmm.server.prometheus.Types.Sample.getDefaultInstance());
       }
       /**
        * <code>repeated .prometheus.Sample samples = 2;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Types.Sample.Builder> 
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Sample.Builder> 
            getSamplesBuilderList() {
         return getSamplesFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.Sample, org.beifengtz.jvmm.prometheus.Types.Sample.Builder, org.beifengtz.jvmm.prometheus.Types.SampleOrBuilder> 
+          org.beifengtz.jvmm.server.prometheus.Types.Sample, org.beifengtz.jvmm.server.prometheus.Types.Sample.Builder, org.beifengtz.jvmm.server.prometheus.Types.SampleOrBuilder> 
           getSamplesFieldBuilder() {
         if (samplesBuilder_ == null) {
           samplesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-              org.beifengtz.jvmm.prometheus.Types.Sample, org.beifengtz.jvmm.prometheus.Types.Sample.Builder, org.beifengtz.jvmm.prometheus.Types.SampleOrBuilder>(
+              org.beifengtz.jvmm.server.prometheus.Types.Sample, org.beifengtz.jvmm.server.prometheus.Types.Sample.Builder, org.beifengtz.jvmm.server.prometheus.Types.SampleOrBuilder>(
                   samples_,
                   ((bitField0_ & 0x00000002) != 0),
                   getParentForChildren(),
@@ -8596,22 +8596,22 @@ public final class Types {
         return samplesBuilder_;
       }
 
-      private java.util.List<org.beifengtz.jvmm.prometheus.Types.Exemplar> exemplars_ =
+      private java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Exemplar> exemplars_ =
         java.util.Collections.emptyList();
       private void ensureExemplarsIsMutable() {
         if (!((bitField0_ & 0x00000004) != 0)) {
-          exemplars_ = new java.util.ArrayList<org.beifengtz.jvmm.prometheus.Types.Exemplar>(exemplars_);
+          exemplars_ = new java.util.ArrayList<org.beifengtz.jvmm.server.prometheus.Types.Exemplar>(exemplars_);
           bitField0_ |= 0x00000004;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.Exemplar, org.beifengtz.jvmm.prometheus.Types.Exemplar.Builder, org.beifengtz.jvmm.prometheus.Types.ExemplarOrBuilder> exemplarsBuilder_;
+          org.beifengtz.jvmm.server.prometheus.Types.Exemplar, org.beifengtz.jvmm.server.prometheus.Types.Exemplar.Builder, org.beifengtz.jvmm.server.prometheus.Types.ExemplarOrBuilder> exemplarsBuilder_;
 
       /**
        * <code>repeated .prometheus.Exemplar exemplars = 3;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Types.Exemplar> getExemplarsList() {
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Exemplar> getExemplarsList() {
         if (exemplarsBuilder_ == null) {
           return java.util.Collections.unmodifiableList(exemplars_);
         } else {
@@ -8631,7 +8631,7 @@ public final class Types {
       /**
        * <code>repeated .prometheus.Exemplar exemplars = 3;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Exemplar getExemplars(int index) {
+      public org.beifengtz.jvmm.server.prometheus.Types.Exemplar getExemplars(int index) {
         if (exemplarsBuilder_ == null) {
           return exemplars_.get(index);
         } else {
@@ -8642,7 +8642,7 @@ public final class Types {
        * <code>repeated .prometheus.Exemplar exemplars = 3;</code>
        */
       public Builder setExemplars(
-          int index, org.beifengtz.jvmm.prometheus.Types.Exemplar value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Exemplar value) {
         if (exemplarsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -8659,7 +8659,7 @@ public final class Types {
        * <code>repeated .prometheus.Exemplar exemplars = 3;</code>
        */
       public Builder setExemplars(
-          int index, org.beifengtz.jvmm.prometheus.Types.Exemplar.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Exemplar.Builder builderForValue) {
         if (exemplarsBuilder_ == null) {
           ensureExemplarsIsMutable();
           exemplars_.set(index, builderForValue.build());
@@ -8672,7 +8672,7 @@ public final class Types {
       /**
        * <code>repeated .prometheus.Exemplar exemplars = 3;</code>
        */
-      public Builder addExemplars(org.beifengtz.jvmm.prometheus.Types.Exemplar value) {
+      public Builder addExemplars(org.beifengtz.jvmm.server.prometheus.Types.Exemplar value) {
         if (exemplarsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -8689,7 +8689,7 @@ public final class Types {
        * <code>repeated .prometheus.Exemplar exemplars = 3;</code>
        */
       public Builder addExemplars(
-          int index, org.beifengtz.jvmm.prometheus.Types.Exemplar value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Exemplar value) {
         if (exemplarsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -8706,7 +8706,7 @@ public final class Types {
        * <code>repeated .prometheus.Exemplar exemplars = 3;</code>
        */
       public Builder addExemplars(
-          org.beifengtz.jvmm.prometheus.Types.Exemplar.Builder builderForValue) {
+          org.beifengtz.jvmm.server.prometheus.Types.Exemplar.Builder builderForValue) {
         if (exemplarsBuilder_ == null) {
           ensureExemplarsIsMutable();
           exemplars_.add(builderForValue.build());
@@ -8720,7 +8720,7 @@ public final class Types {
        * <code>repeated .prometheus.Exemplar exemplars = 3;</code>
        */
       public Builder addExemplars(
-          int index, org.beifengtz.jvmm.prometheus.Types.Exemplar.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Exemplar.Builder builderForValue) {
         if (exemplarsBuilder_ == null) {
           ensureExemplarsIsMutable();
           exemplars_.add(index, builderForValue.build());
@@ -8734,7 +8734,7 @@ public final class Types {
        * <code>repeated .prometheus.Exemplar exemplars = 3;</code>
        */
       public Builder addAllExemplars(
-          java.lang.Iterable<? extends org.beifengtz.jvmm.prometheus.Types.Exemplar> values) {
+          java.lang.Iterable<? extends org.beifengtz.jvmm.server.prometheus.Types.Exemplar> values) {
         if (exemplarsBuilder_ == null) {
           ensureExemplarsIsMutable();
           com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -8774,14 +8774,14 @@ public final class Types {
       /**
        * <code>repeated .prometheus.Exemplar exemplars = 3;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Exemplar.Builder getExemplarsBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.Exemplar.Builder getExemplarsBuilder(
           int index) {
         return getExemplarsFieldBuilder().getBuilder(index);
       }
       /**
        * <code>repeated .prometheus.Exemplar exemplars = 3;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.ExemplarOrBuilder getExemplarsOrBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.ExemplarOrBuilder getExemplarsOrBuilder(
           int index) {
         if (exemplarsBuilder_ == null) {
           return exemplars_.get(index);  } else {
@@ -8791,7 +8791,7 @@ public final class Types {
       /**
        * <code>repeated .prometheus.Exemplar exemplars = 3;</code>
        */
-      public java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.ExemplarOrBuilder> 
+      public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.ExemplarOrBuilder> 
            getExemplarsOrBuilderList() {
         if (exemplarsBuilder_ != null) {
           return exemplarsBuilder_.getMessageOrBuilderList();
@@ -8802,31 +8802,31 @@ public final class Types {
       /**
        * <code>repeated .prometheus.Exemplar exemplars = 3;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Exemplar.Builder addExemplarsBuilder() {
+      public org.beifengtz.jvmm.server.prometheus.Types.Exemplar.Builder addExemplarsBuilder() {
         return getExemplarsFieldBuilder().addBuilder(
-            org.beifengtz.jvmm.prometheus.Types.Exemplar.getDefaultInstance());
+            org.beifengtz.jvmm.server.prometheus.Types.Exemplar.getDefaultInstance());
       }
       /**
        * <code>repeated .prometheus.Exemplar exemplars = 3;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Exemplar.Builder addExemplarsBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.Exemplar.Builder addExemplarsBuilder(
           int index) {
         return getExemplarsFieldBuilder().addBuilder(
-            index, org.beifengtz.jvmm.prometheus.Types.Exemplar.getDefaultInstance());
+            index, org.beifengtz.jvmm.server.prometheus.Types.Exemplar.getDefaultInstance());
       }
       /**
        * <code>repeated .prometheus.Exemplar exemplars = 3;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Types.Exemplar.Builder> 
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Exemplar.Builder> 
            getExemplarsBuilderList() {
         return getExemplarsFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.Exemplar, org.beifengtz.jvmm.prometheus.Types.Exemplar.Builder, org.beifengtz.jvmm.prometheus.Types.ExemplarOrBuilder> 
+          org.beifengtz.jvmm.server.prometheus.Types.Exemplar, org.beifengtz.jvmm.server.prometheus.Types.Exemplar.Builder, org.beifengtz.jvmm.server.prometheus.Types.ExemplarOrBuilder> 
           getExemplarsFieldBuilder() {
         if (exemplarsBuilder_ == null) {
           exemplarsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-              org.beifengtz.jvmm.prometheus.Types.Exemplar, org.beifengtz.jvmm.prometheus.Types.Exemplar.Builder, org.beifengtz.jvmm.prometheus.Types.ExemplarOrBuilder>(
+              org.beifengtz.jvmm.server.prometheus.Types.Exemplar, org.beifengtz.jvmm.server.prometheus.Types.Exemplar.Builder, org.beifengtz.jvmm.server.prometheus.Types.ExemplarOrBuilder>(
                   exemplars_,
                   ((bitField0_ & 0x00000004) != 0),
                   getParentForChildren(),
@@ -8836,22 +8836,22 @@ public final class Types {
         return exemplarsBuilder_;
       }
 
-      private java.util.List<org.beifengtz.jvmm.prometheus.Types.Histogram> histograms_ =
+      private java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Histogram> histograms_ =
         java.util.Collections.emptyList();
       private void ensureHistogramsIsMutable() {
         if (!((bitField0_ & 0x00000008) != 0)) {
-          histograms_ = new java.util.ArrayList<org.beifengtz.jvmm.prometheus.Types.Histogram>(histograms_);
+          histograms_ = new java.util.ArrayList<org.beifengtz.jvmm.server.prometheus.Types.Histogram>(histograms_);
           bitField0_ |= 0x00000008;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.Histogram, org.beifengtz.jvmm.prometheus.Types.Histogram.Builder, org.beifengtz.jvmm.prometheus.Types.HistogramOrBuilder> histogramsBuilder_;
+          org.beifengtz.jvmm.server.prometheus.Types.Histogram, org.beifengtz.jvmm.server.prometheus.Types.Histogram.Builder, org.beifengtz.jvmm.server.prometheus.Types.HistogramOrBuilder> histogramsBuilder_;
 
       /**
        * <code>repeated .prometheus.Histogram histograms = 4;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Types.Histogram> getHistogramsList() {
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Histogram> getHistogramsList() {
         if (histogramsBuilder_ == null) {
           return java.util.Collections.unmodifiableList(histograms_);
         } else {
@@ -8871,7 +8871,7 @@ public final class Types {
       /**
        * <code>repeated .prometheus.Histogram histograms = 4;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Histogram getHistograms(int index) {
+      public org.beifengtz.jvmm.server.prometheus.Types.Histogram getHistograms(int index) {
         if (histogramsBuilder_ == null) {
           return histograms_.get(index);
         } else {
@@ -8882,7 +8882,7 @@ public final class Types {
        * <code>repeated .prometheus.Histogram histograms = 4;</code>
        */
       public Builder setHistograms(
-          int index, org.beifengtz.jvmm.prometheus.Types.Histogram value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Histogram value) {
         if (histogramsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -8899,7 +8899,7 @@ public final class Types {
        * <code>repeated .prometheus.Histogram histograms = 4;</code>
        */
       public Builder setHistograms(
-          int index, org.beifengtz.jvmm.prometheus.Types.Histogram.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Histogram.Builder builderForValue) {
         if (histogramsBuilder_ == null) {
           ensureHistogramsIsMutable();
           histograms_.set(index, builderForValue.build());
@@ -8912,7 +8912,7 @@ public final class Types {
       /**
        * <code>repeated .prometheus.Histogram histograms = 4;</code>
        */
-      public Builder addHistograms(org.beifengtz.jvmm.prometheus.Types.Histogram value) {
+      public Builder addHistograms(org.beifengtz.jvmm.server.prometheus.Types.Histogram value) {
         if (histogramsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -8929,7 +8929,7 @@ public final class Types {
        * <code>repeated .prometheus.Histogram histograms = 4;</code>
        */
       public Builder addHistograms(
-          int index, org.beifengtz.jvmm.prometheus.Types.Histogram value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Histogram value) {
         if (histogramsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -8946,7 +8946,7 @@ public final class Types {
        * <code>repeated .prometheus.Histogram histograms = 4;</code>
        */
       public Builder addHistograms(
-          org.beifengtz.jvmm.prometheus.Types.Histogram.Builder builderForValue) {
+          org.beifengtz.jvmm.server.prometheus.Types.Histogram.Builder builderForValue) {
         if (histogramsBuilder_ == null) {
           ensureHistogramsIsMutable();
           histograms_.add(builderForValue.build());
@@ -8960,7 +8960,7 @@ public final class Types {
        * <code>repeated .prometheus.Histogram histograms = 4;</code>
        */
       public Builder addHistograms(
-          int index, org.beifengtz.jvmm.prometheus.Types.Histogram.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Histogram.Builder builderForValue) {
         if (histogramsBuilder_ == null) {
           ensureHistogramsIsMutable();
           histograms_.add(index, builderForValue.build());
@@ -8974,7 +8974,7 @@ public final class Types {
        * <code>repeated .prometheus.Histogram histograms = 4;</code>
        */
       public Builder addAllHistograms(
-          java.lang.Iterable<? extends org.beifengtz.jvmm.prometheus.Types.Histogram> values) {
+          java.lang.Iterable<? extends org.beifengtz.jvmm.server.prometheus.Types.Histogram> values) {
         if (histogramsBuilder_ == null) {
           ensureHistogramsIsMutable();
           com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -9014,14 +9014,14 @@ public final class Types {
       /**
        * <code>repeated .prometheus.Histogram histograms = 4;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Histogram.Builder getHistogramsBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.Histogram.Builder getHistogramsBuilder(
           int index) {
         return getHistogramsFieldBuilder().getBuilder(index);
       }
       /**
        * <code>repeated .prometheus.Histogram histograms = 4;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.HistogramOrBuilder getHistogramsOrBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.HistogramOrBuilder getHistogramsOrBuilder(
           int index) {
         if (histogramsBuilder_ == null) {
           return histograms_.get(index);  } else {
@@ -9031,7 +9031,7 @@ public final class Types {
       /**
        * <code>repeated .prometheus.Histogram histograms = 4;</code>
        */
-      public java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.HistogramOrBuilder> 
+      public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.HistogramOrBuilder> 
            getHistogramsOrBuilderList() {
         if (histogramsBuilder_ != null) {
           return histogramsBuilder_.getMessageOrBuilderList();
@@ -9042,31 +9042,31 @@ public final class Types {
       /**
        * <code>repeated .prometheus.Histogram histograms = 4;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Histogram.Builder addHistogramsBuilder() {
+      public org.beifengtz.jvmm.server.prometheus.Types.Histogram.Builder addHistogramsBuilder() {
         return getHistogramsFieldBuilder().addBuilder(
-            org.beifengtz.jvmm.prometheus.Types.Histogram.getDefaultInstance());
+            org.beifengtz.jvmm.server.prometheus.Types.Histogram.getDefaultInstance());
       }
       /**
        * <code>repeated .prometheus.Histogram histograms = 4;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Histogram.Builder addHistogramsBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.Histogram.Builder addHistogramsBuilder(
           int index) {
         return getHistogramsFieldBuilder().addBuilder(
-            index, org.beifengtz.jvmm.prometheus.Types.Histogram.getDefaultInstance());
+            index, org.beifengtz.jvmm.server.prometheus.Types.Histogram.getDefaultInstance());
       }
       /**
        * <code>repeated .prometheus.Histogram histograms = 4;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Types.Histogram.Builder> 
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Histogram.Builder> 
            getHistogramsBuilderList() {
         return getHistogramsFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.Histogram, org.beifengtz.jvmm.prometheus.Types.Histogram.Builder, org.beifengtz.jvmm.prometheus.Types.HistogramOrBuilder> 
+          org.beifengtz.jvmm.server.prometheus.Types.Histogram, org.beifengtz.jvmm.server.prometheus.Types.Histogram.Builder, org.beifengtz.jvmm.server.prometheus.Types.HistogramOrBuilder> 
           getHistogramsFieldBuilder() {
         if (histogramsBuilder_ == null) {
           histogramsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-              org.beifengtz.jvmm.prometheus.Types.Histogram, org.beifengtz.jvmm.prometheus.Types.Histogram.Builder, org.beifengtz.jvmm.prometheus.Types.HistogramOrBuilder>(
+              org.beifengtz.jvmm.server.prometheus.Types.Histogram, org.beifengtz.jvmm.server.prometheus.Types.Histogram.Builder, org.beifengtz.jvmm.server.prometheus.Types.HistogramOrBuilder>(
                   histograms_,
                   ((bitField0_ & 0x00000008) != 0),
                   getParentForChildren(),
@@ -9092,12 +9092,12 @@ public final class Types {
     }
 
     // @@protoc_insertion_point(class_scope:prometheus.TimeSeries)
-    private static final org.beifengtz.jvmm.prometheus.Types.TimeSeries DEFAULT_INSTANCE;
+    private static final org.beifengtz.jvmm.server.prometheus.Types.TimeSeries DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.beifengtz.jvmm.prometheus.Types.TimeSeries();
+      DEFAULT_INSTANCE = new org.beifengtz.jvmm.server.prometheus.Types.TimeSeries();
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.TimeSeries getDefaultInstance() {
+    public static org.beifengtz.jvmm.server.prometheus.Types.TimeSeries getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -9133,7 +9133,7 @@ public final class Types {
     }
 
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.TimeSeries getDefaultInstanceForType() {
+    public org.beifengtz.jvmm.server.prometheus.Types.TimeSeries getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -9193,15 +9193,15 @@ public final class Types {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_Label_descriptor;
+      return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_Label_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_Label_fieldAccessorTable
+      return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_Label_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.beifengtz.jvmm.prometheus.Types.Label.class, org.beifengtz.jvmm.prometheus.Types.Label.Builder.class);
+              org.beifengtz.jvmm.server.prometheus.Types.Label.class, org.beifengtz.jvmm.server.prometheus.Types.Label.Builder.class);
     }
 
     public static final int NAME_FIELD_NUMBER = 1;
@@ -9327,10 +9327,10 @@ public final class Types {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.beifengtz.jvmm.prometheus.Types.Label)) {
+      if (!(obj instanceof org.beifengtz.jvmm.server.prometheus.Types.Label)) {
         return super.equals(obj);
       }
-      org.beifengtz.jvmm.prometheus.Types.Label other = (org.beifengtz.jvmm.prometheus.Types.Label) obj;
+      org.beifengtz.jvmm.server.prometheus.Types.Label other = (org.beifengtz.jvmm.server.prometheus.Types.Label) obj;
 
       if (!getName()
           .equals(other.getName())) return false;
@@ -9356,44 +9356,44 @@ public final class Types {
       return hash;
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.Label parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Label parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Label parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Label parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Label parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Label parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Label parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Label parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Label parseFrom(byte[] data)
+    public static org.beifengtz.jvmm.server.prometheus.Types.Label parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Label parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Label parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Label parseFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Types.Label parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Label parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Label parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -9401,26 +9401,26 @@ public final class Types {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.Label parseDelimitedFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Types.Label parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.Label parseDelimitedFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Label parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Label parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Label parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Label parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Label parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -9433,7 +9433,7 @@ public final class Types {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.beifengtz.jvmm.prometheus.Types.Label prototype) {
+    public static Builder newBuilder(org.beifengtz.jvmm.server.prometheus.Types.Label prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -9454,21 +9454,21 @@ public final class Types {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:prometheus.Label)
-        org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder {
+        org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_Label_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_Label_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_Label_fieldAccessorTable
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_Label_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.beifengtz.jvmm.prometheus.Types.Label.class, org.beifengtz.jvmm.prometheus.Types.Label.Builder.class);
+                org.beifengtz.jvmm.server.prometheus.Types.Label.class, org.beifengtz.jvmm.server.prometheus.Types.Label.Builder.class);
       }
 
-      // Construct using org.beifengtz.jvmm.prometheus.Types.Label.newBuilder()
+      // Construct using org.beifengtz.jvmm.server.prometheus.Types.Label.newBuilder()
       private Builder() {
 
       }
@@ -9490,17 +9490,17 @@ public final class Types {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_Label_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_Label_descriptor;
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.Label getDefaultInstanceForType() {
-        return org.beifengtz.jvmm.prometheus.Types.Label.getDefaultInstance();
+      public org.beifengtz.jvmm.server.prometheus.Types.Label getDefaultInstanceForType() {
+        return org.beifengtz.jvmm.server.prometheus.Types.Label.getDefaultInstance();
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.Label build() {
-        org.beifengtz.jvmm.prometheus.Types.Label result = buildPartial();
+      public org.beifengtz.jvmm.server.prometheus.Types.Label build() {
+        org.beifengtz.jvmm.server.prometheus.Types.Label result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -9508,14 +9508,14 @@ public final class Types {
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.Label buildPartial() {
-        org.beifengtz.jvmm.prometheus.Types.Label result = new org.beifengtz.jvmm.prometheus.Types.Label(this);
+      public org.beifengtz.jvmm.server.prometheus.Types.Label buildPartial() {
+        org.beifengtz.jvmm.server.prometheus.Types.Label result = new org.beifengtz.jvmm.server.prometheus.Types.Label(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(org.beifengtz.jvmm.prometheus.Types.Label result) {
+      private void buildPartial0(org.beifengtz.jvmm.server.prometheus.Types.Label result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.name_ = name_;
@@ -9559,16 +9559,16 @@ public final class Types {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.beifengtz.jvmm.prometheus.Types.Label) {
-          return mergeFrom((org.beifengtz.jvmm.prometheus.Types.Label)other);
+        if (other instanceof org.beifengtz.jvmm.server.prometheus.Types.Label) {
+          return mergeFrom((org.beifengtz.jvmm.server.prometheus.Types.Label)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.beifengtz.jvmm.prometheus.Types.Label other) {
-        if (other == org.beifengtz.jvmm.prometheus.Types.Label.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.beifengtz.jvmm.server.prometheus.Types.Label other) {
+        if (other == org.beifengtz.jvmm.server.prometheus.Types.Label.getDefaultInstance()) return this;
         if (!other.getName().isEmpty()) {
           name_ = other.name_;
           bitField0_ |= 0x00000001;
@@ -9792,12 +9792,12 @@ public final class Types {
     }
 
     // @@protoc_insertion_point(class_scope:prometheus.Label)
-    private static final org.beifengtz.jvmm.prometheus.Types.Label DEFAULT_INSTANCE;
+    private static final org.beifengtz.jvmm.server.prometheus.Types.Label DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.beifengtz.jvmm.prometheus.Types.Label();
+      DEFAULT_INSTANCE = new org.beifengtz.jvmm.server.prometheus.Types.Label();
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.Label getDefaultInstance() {
+    public static org.beifengtz.jvmm.server.prometheus.Types.Label getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -9833,7 +9833,7 @@ public final class Types {
     }
 
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.Label getDefaultInstanceForType() {
+    public org.beifengtz.jvmm.server.prometheus.Types.Label getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -9846,12 +9846,12 @@ public final class Types {
     /**
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
-    java.util.List<org.beifengtz.jvmm.prometheus.Types.Label> 
+    java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Label> 
         getLabelsList();
     /**
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.Label getLabels(int index);
+    org.beifengtz.jvmm.server.prometheus.Types.Label getLabels(int index);
     /**
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
@@ -9859,12 +9859,12 @@ public final class Types {
     /**
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
-    java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder> 
+    java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder> 
         getLabelsOrBuilderList();
     /**
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder getLabelsOrBuilder(
+    org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder getLabelsOrBuilder(
         int index);
   }
   /**
@@ -9892,32 +9892,32 @@ public final class Types {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_Labels_descriptor;
+      return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_Labels_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_Labels_fieldAccessorTable
+      return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_Labels_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.beifengtz.jvmm.prometheus.Types.Labels.class, org.beifengtz.jvmm.prometheus.Types.Labels.Builder.class);
+              org.beifengtz.jvmm.server.prometheus.Types.Labels.class, org.beifengtz.jvmm.server.prometheus.Types.Labels.Builder.class);
     }
 
     public static final int LABELS_FIELD_NUMBER = 1;
     @SuppressWarnings("serial")
-    private java.util.List<org.beifengtz.jvmm.prometheus.Types.Label> labels_;
+    private java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Label> labels_;
     /**
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
     @java.lang.Override
-    public java.util.List<org.beifengtz.jvmm.prometheus.Types.Label> getLabelsList() {
+    public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Label> getLabelsList() {
       return labels_;
     }
     /**
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
     @java.lang.Override
-    public java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder> 
+    public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder> 
         getLabelsOrBuilderList() {
       return labels_;
     }
@@ -9932,14 +9932,14 @@ public final class Types {
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.Label getLabels(int index) {
+    public org.beifengtz.jvmm.server.prometheus.Types.Label getLabels(int index) {
       return labels_.get(index);
     }
     /**
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder getLabelsOrBuilder(
+    public org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder getLabelsOrBuilder(
         int index) {
       return labels_.get(index);
     }
@@ -9984,10 +9984,10 @@ public final class Types {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.beifengtz.jvmm.prometheus.Types.Labels)) {
+      if (!(obj instanceof org.beifengtz.jvmm.server.prometheus.Types.Labels)) {
         return super.equals(obj);
       }
-      org.beifengtz.jvmm.prometheus.Types.Labels other = (org.beifengtz.jvmm.prometheus.Types.Labels) obj;
+      org.beifengtz.jvmm.server.prometheus.Types.Labels other = (org.beifengtz.jvmm.server.prometheus.Types.Labels) obj;
 
       if (!getLabelsList()
           .equals(other.getLabelsList())) return false;
@@ -10011,44 +10011,44 @@ public final class Types {
       return hash;
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.Labels parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Labels parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Labels parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Labels parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Labels parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Labels parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Labels parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Labels parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Labels parseFrom(byte[] data)
+    public static org.beifengtz.jvmm.server.prometheus.Types.Labels parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Labels parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Labels parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Labels parseFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Types.Labels parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Labels parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Labels parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -10056,26 +10056,26 @@ public final class Types {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.Labels parseDelimitedFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Types.Labels parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.Labels parseDelimitedFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Labels parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Labels parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Labels parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Labels parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Labels parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -10088,7 +10088,7 @@ public final class Types {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.beifengtz.jvmm.prometheus.Types.Labels prototype) {
+    public static Builder newBuilder(org.beifengtz.jvmm.server.prometheus.Types.Labels prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -10109,21 +10109,21 @@ public final class Types {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:prometheus.Labels)
-        org.beifengtz.jvmm.prometheus.Types.LabelsOrBuilder {
+        org.beifengtz.jvmm.server.prometheus.Types.LabelsOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_Labels_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_Labels_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_Labels_fieldAccessorTable
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_Labels_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.beifengtz.jvmm.prometheus.Types.Labels.class, org.beifengtz.jvmm.prometheus.Types.Labels.Builder.class);
+                org.beifengtz.jvmm.server.prometheus.Types.Labels.class, org.beifengtz.jvmm.server.prometheus.Types.Labels.Builder.class);
       }
 
-      // Construct using org.beifengtz.jvmm.prometheus.Types.Labels.newBuilder()
+      // Construct using org.beifengtz.jvmm.server.prometheus.Types.Labels.newBuilder()
       private Builder() {
 
       }
@@ -10150,17 +10150,17 @@ public final class Types {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_Labels_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_Labels_descriptor;
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.Labels getDefaultInstanceForType() {
-        return org.beifengtz.jvmm.prometheus.Types.Labels.getDefaultInstance();
+      public org.beifengtz.jvmm.server.prometheus.Types.Labels getDefaultInstanceForType() {
+        return org.beifengtz.jvmm.server.prometheus.Types.Labels.getDefaultInstance();
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.Labels build() {
-        org.beifengtz.jvmm.prometheus.Types.Labels result = buildPartial();
+      public org.beifengtz.jvmm.server.prometheus.Types.Labels build() {
+        org.beifengtz.jvmm.server.prometheus.Types.Labels result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -10168,15 +10168,15 @@ public final class Types {
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.Labels buildPartial() {
-        org.beifengtz.jvmm.prometheus.Types.Labels result = new org.beifengtz.jvmm.prometheus.Types.Labels(this);
+      public org.beifengtz.jvmm.server.prometheus.Types.Labels buildPartial() {
+        org.beifengtz.jvmm.server.prometheus.Types.Labels result = new org.beifengtz.jvmm.server.prometheus.Types.Labels(this);
         buildPartialRepeatedFields(result);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartialRepeatedFields(org.beifengtz.jvmm.prometheus.Types.Labels result) {
+      private void buildPartialRepeatedFields(org.beifengtz.jvmm.server.prometheus.Types.Labels result) {
         if (labelsBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0)) {
             labels_ = java.util.Collections.unmodifiableList(labels_);
@@ -10188,7 +10188,7 @@ public final class Types {
         }
       }
 
-      private void buildPartial0(org.beifengtz.jvmm.prometheus.Types.Labels result) {
+      private void buildPartial0(org.beifengtz.jvmm.server.prometheus.Types.Labels result) {
         int from_bitField0_ = bitField0_;
       }
 
@@ -10226,16 +10226,16 @@ public final class Types {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.beifengtz.jvmm.prometheus.Types.Labels) {
-          return mergeFrom((org.beifengtz.jvmm.prometheus.Types.Labels)other);
+        if (other instanceof org.beifengtz.jvmm.server.prometheus.Types.Labels) {
+          return mergeFrom((org.beifengtz.jvmm.server.prometheus.Types.Labels)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.beifengtz.jvmm.prometheus.Types.Labels other) {
-        if (other == org.beifengtz.jvmm.prometheus.Types.Labels.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.beifengtz.jvmm.server.prometheus.Types.Labels other) {
+        if (other == org.beifengtz.jvmm.server.prometheus.Types.Labels.getDefaultInstance()) return this;
         if (labelsBuilder_ == null) {
           if (!other.labels_.isEmpty()) {
             if (labels_.isEmpty()) {
@@ -10289,9 +10289,9 @@ public final class Types {
                 done = true;
                 break;
               case 10: {
-                org.beifengtz.jvmm.prometheus.Types.Label m =
+                org.beifengtz.jvmm.server.prometheus.Types.Label m =
                     input.readMessage(
-                        org.beifengtz.jvmm.prometheus.Types.Label.parser(),
+                        org.beifengtz.jvmm.server.prometheus.Types.Label.parser(),
                         extensionRegistry);
                 if (labelsBuilder_ == null) {
                   ensureLabelsIsMutable();
@@ -10318,22 +10318,22 @@ public final class Types {
       }
       private int bitField0_;
 
-      private java.util.List<org.beifengtz.jvmm.prometheus.Types.Label> labels_ =
+      private java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Label> labels_ =
         java.util.Collections.emptyList();
       private void ensureLabelsIsMutable() {
         if (!((bitField0_ & 0x00000001) != 0)) {
-          labels_ = new java.util.ArrayList<org.beifengtz.jvmm.prometheus.Types.Label>(labels_);
+          labels_ = new java.util.ArrayList<org.beifengtz.jvmm.server.prometheus.Types.Label>(labels_);
           bitField0_ |= 0x00000001;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.Label, org.beifengtz.jvmm.prometheus.Types.Label.Builder, org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder> labelsBuilder_;
+          org.beifengtz.jvmm.server.prometheus.Types.Label, org.beifengtz.jvmm.server.prometheus.Types.Label.Builder, org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder> labelsBuilder_;
 
       /**
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Types.Label> getLabelsList() {
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Label> getLabelsList() {
         if (labelsBuilder_ == null) {
           return java.util.Collections.unmodifiableList(labels_);
         } else {
@@ -10353,7 +10353,7 @@ public final class Types {
       /**
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Label getLabels(int index) {
+      public org.beifengtz.jvmm.server.prometheus.Types.Label getLabels(int index) {
         if (labelsBuilder_ == null) {
           return labels_.get(index);
         } else {
@@ -10364,7 +10364,7 @@ public final class Types {
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
       public Builder setLabels(
-          int index, org.beifengtz.jvmm.prometheus.Types.Label value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Label value) {
         if (labelsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -10381,7 +10381,7 @@ public final class Types {
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
       public Builder setLabels(
-          int index, org.beifengtz.jvmm.prometheus.Types.Label.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Label.Builder builderForValue) {
         if (labelsBuilder_ == null) {
           ensureLabelsIsMutable();
           labels_.set(index, builderForValue.build());
@@ -10394,7 +10394,7 @@ public final class Types {
       /**
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public Builder addLabels(org.beifengtz.jvmm.prometheus.Types.Label value) {
+      public Builder addLabels(org.beifengtz.jvmm.server.prometheus.Types.Label value) {
         if (labelsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -10411,7 +10411,7 @@ public final class Types {
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
       public Builder addLabels(
-          int index, org.beifengtz.jvmm.prometheus.Types.Label value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Label value) {
         if (labelsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -10428,7 +10428,7 @@ public final class Types {
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
       public Builder addLabels(
-          org.beifengtz.jvmm.prometheus.Types.Label.Builder builderForValue) {
+          org.beifengtz.jvmm.server.prometheus.Types.Label.Builder builderForValue) {
         if (labelsBuilder_ == null) {
           ensureLabelsIsMutable();
           labels_.add(builderForValue.build());
@@ -10442,7 +10442,7 @@ public final class Types {
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
       public Builder addLabels(
-          int index, org.beifengtz.jvmm.prometheus.Types.Label.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Label.Builder builderForValue) {
         if (labelsBuilder_ == null) {
           ensureLabelsIsMutable();
           labels_.add(index, builderForValue.build());
@@ -10456,7 +10456,7 @@ public final class Types {
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
       public Builder addAllLabels(
-          java.lang.Iterable<? extends org.beifengtz.jvmm.prometheus.Types.Label> values) {
+          java.lang.Iterable<? extends org.beifengtz.jvmm.server.prometheus.Types.Label> values) {
         if (labelsBuilder_ == null) {
           ensureLabelsIsMutable();
           com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -10496,14 +10496,14 @@ public final class Types {
       /**
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Label.Builder getLabelsBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.Label.Builder getLabelsBuilder(
           int index) {
         return getLabelsFieldBuilder().getBuilder(index);
       }
       /**
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder getLabelsOrBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder getLabelsOrBuilder(
           int index) {
         if (labelsBuilder_ == null) {
           return labels_.get(index);  } else {
@@ -10513,7 +10513,7 @@ public final class Types {
       /**
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder> 
+      public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder> 
            getLabelsOrBuilderList() {
         if (labelsBuilder_ != null) {
           return labelsBuilder_.getMessageOrBuilderList();
@@ -10524,31 +10524,31 @@ public final class Types {
       /**
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Label.Builder addLabelsBuilder() {
+      public org.beifengtz.jvmm.server.prometheus.Types.Label.Builder addLabelsBuilder() {
         return getLabelsFieldBuilder().addBuilder(
-            org.beifengtz.jvmm.prometheus.Types.Label.getDefaultInstance());
+            org.beifengtz.jvmm.server.prometheus.Types.Label.getDefaultInstance());
       }
       /**
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Label.Builder addLabelsBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.Label.Builder addLabelsBuilder(
           int index) {
         return getLabelsFieldBuilder().addBuilder(
-            index, org.beifengtz.jvmm.prometheus.Types.Label.getDefaultInstance());
+            index, org.beifengtz.jvmm.server.prometheus.Types.Label.getDefaultInstance());
       }
       /**
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Types.Label.Builder> 
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Label.Builder> 
            getLabelsBuilderList() {
         return getLabelsFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.Label, org.beifengtz.jvmm.prometheus.Types.Label.Builder, org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder> 
+          org.beifengtz.jvmm.server.prometheus.Types.Label, org.beifengtz.jvmm.server.prometheus.Types.Label.Builder, org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder> 
           getLabelsFieldBuilder() {
         if (labelsBuilder_ == null) {
           labelsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-              org.beifengtz.jvmm.prometheus.Types.Label, org.beifengtz.jvmm.prometheus.Types.Label.Builder, org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder>(
+              org.beifengtz.jvmm.server.prometheus.Types.Label, org.beifengtz.jvmm.server.prometheus.Types.Label.Builder, org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder>(
                   labels_,
                   ((bitField0_ & 0x00000001) != 0),
                   getParentForChildren(),
@@ -10574,12 +10574,12 @@ public final class Types {
     }
 
     // @@protoc_insertion_point(class_scope:prometheus.Labels)
-    private static final org.beifengtz.jvmm.prometheus.Types.Labels DEFAULT_INSTANCE;
+    private static final org.beifengtz.jvmm.server.prometheus.Types.Labels DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.beifengtz.jvmm.prometheus.Types.Labels();
+      DEFAULT_INSTANCE = new org.beifengtz.jvmm.server.prometheus.Types.Labels();
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.Labels getDefaultInstance() {
+    public static org.beifengtz.jvmm.server.prometheus.Types.Labels getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -10615,7 +10615,7 @@ public final class Types {
     }
 
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.Labels getDefaultInstanceForType() {
+    public org.beifengtz.jvmm.server.prometheus.Types.Labels getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -10634,7 +10634,7 @@ public final class Types {
      * <code>.prometheus.LabelMatcher.Type type = 1;</code>
      * @return The type.
      */
-    org.beifengtz.jvmm.prometheus.Types.LabelMatcher.Type getType();
+    org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.Type getType();
 
     /**
      * <code>string name = 2;</code>
@@ -10691,15 +10691,15 @@ public final class Types {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_LabelMatcher_descriptor;
+      return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_LabelMatcher_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_LabelMatcher_fieldAccessorTable
+      return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_LabelMatcher_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.beifengtz.jvmm.prometheus.Types.LabelMatcher.class, org.beifengtz.jvmm.prometheus.Types.LabelMatcher.Builder.class);
+              org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.class, org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.Builder.class);
     }
 
     /**
@@ -10802,7 +10802,7 @@ public final class Types {
       }
       public static final com.google.protobuf.Descriptors.EnumDescriptor
           getDescriptor() {
-        return org.beifengtz.jvmm.prometheus.Types.LabelMatcher.getDescriptor().getEnumTypes().get(0);
+        return org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.getDescriptor().getEnumTypes().get(0);
       }
 
       private static final Type[] VALUES = values();
@@ -10841,9 +10841,9 @@ public final class Types {
      * <code>.prometheus.LabelMatcher.Type type = 1;</code>
      * @return The type.
      */
-    @java.lang.Override public org.beifengtz.jvmm.prometheus.Types.LabelMatcher.Type getType() {
-      org.beifengtz.jvmm.prometheus.Types.LabelMatcher.Type result = org.beifengtz.jvmm.prometheus.Types.LabelMatcher.Type.forNumber(type_);
-      return result == null ? org.beifengtz.jvmm.prometheus.Types.LabelMatcher.Type.UNRECOGNIZED : result;
+    @java.lang.Override public org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.Type getType() {
+      org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.Type result = org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.Type.forNumber(type_);
+      return result == null ? org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.Type.UNRECOGNIZED : result;
     }
 
     public static final int NAME_FIELD_NUMBER = 2;
@@ -10938,7 +10938,7 @@ public final class Types {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (type_ != org.beifengtz.jvmm.prometheus.Types.LabelMatcher.Type.EQ.getNumber()) {
+      if (type_ != org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.Type.EQ.getNumber()) {
         output.writeEnum(1, type_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(name_)) {
@@ -10956,7 +10956,7 @@ public final class Types {
       if (size != -1) return size;
 
       size = 0;
-      if (type_ != org.beifengtz.jvmm.prometheus.Types.LabelMatcher.Type.EQ.getNumber()) {
+      if (type_ != org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.Type.EQ.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(1, type_);
       }
@@ -10976,10 +10976,10 @@ public final class Types {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.beifengtz.jvmm.prometheus.Types.LabelMatcher)) {
+      if (!(obj instanceof org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher)) {
         return super.equals(obj);
       }
-      org.beifengtz.jvmm.prometheus.Types.LabelMatcher other = (org.beifengtz.jvmm.prometheus.Types.LabelMatcher) obj;
+      org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher other = (org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher) obj;
 
       if (type_ != other.type_) return false;
       if (!getName()
@@ -11008,44 +11008,44 @@ public final class Types {
       return hash;
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.LabelMatcher parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.LabelMatcher parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.LabelMatcher parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.LabelMatcher parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.LabelMatcher parseFrom(byte[] data)
+    public static org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.LabelMatcher parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.LabelMatcher parseFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.LabelMatcher parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -11053,26 +11053,26 @@ public final class Types {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.LabelMatcher parseDelimitedFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.LabelMatcher parseDelimitedFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.LabelMatcher parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.LabelMatcher parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -11085,7 +11085,7 @@ public final class Types {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.beifengtz.jvmm.prometheus.Types.LabelMatcher prototype) {
+    public static Builder newBuilder(org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -11110,21 +11110,21 @@ public final class Types {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:prometheus.LabelMatcher)
-        org.beifengtz.jvmm.prometheus.Types.LabelMatcherOrBuilder {
+        org.beifengtz.jvmm.server.prometheus.Types.LabelMatcherOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_LabelMatcher_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_LabelMatcher_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_LabelMatcher_fieldAccessorTable
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_LabelMatcher_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.beifengtz.jvmm.prometheus.Types.LabelMatcher.class, org.beifengtz.jvmm.prometheus.Types.LabelMatcher.Builder.class);
+                org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.class, org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.Builder.class);
       }
 
-      // Construct using org.beifengtz.jvmm.prometheus.Types.LabelMatcher.newBuilder()
+      // Construct using org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.newBuilder()
       private Builder() {
 
       }
@@ -11147,17 +11147,17 @@ public final class Types {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_LabelMatcher_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_LabelMatcher_descriptor;
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.LabelMatcher getDefaultInstanceForType() {
-        return org.beifengtz.jvmm.prometheus.Types.LabelMatcher.getDefaultInstance();
+      public org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher getDefaultInstanceForType() {
+        return org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.getDefaultInstance();
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.LabelMatcher build() {
-        org.beifengtz.jvmm.prometheus.Types.LabelMatcher result = buildPartial();
+      public org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher build() {
+        org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -11165,14 +11165,14 @@ public final class Types {
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.LabelMatcher buildPartial() {
-        org.beifengtz.jvmm.prometheus.Types.LabelMatcher result = new org.beifengtz.jvmm.prometheus.Types.LabelMatcher(this);
+      public org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher buildPartial() {
+        org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher result = new org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(org.beifengtz.jvmm.prometheus.Types.LabelMatcher result) {
+      private void buildPartial0(org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.type_ = type_;
@@ -11219,16 +11219,16 @@ public final class Types {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.beifengtz.jvmm.prometheus.Types.LabelMatcher) {
-          return mergeFrom((org.beifengtz.jvmm.prometheus.Types.LabelMatcher)other);
+        if (other instanceof org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher) {
+          return mergeFrom((org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.beifengtz.jvmm.prometheus.Types.LabelMatcher other) {
-        if (other == org.beifengtz.jvmm.prometheus.Types.LabelMatcher.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher other) {
+        if (other == org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.getDefaultInstance()) return this;
         if (other.type_ != 0) {
           setTypeValue(other.getTypeValue());
         }
@@ -11324,16 +11324,16 @@ public final class Types {
        * @return The type.
        */
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.LabelMatcher.Type getType() {
-        org.beifengtz.jvmm.prometheus.Types.LabelMatcher.Type result = org.beifengtz.jvmm.prometheus.Types.LabelMatcher.Type.forNumber(type_);
-        return result == null ? org.beifengtz.jvmm.prometheus.Types.LabelMatcher.Type.UNRECOGNIZED : result;
+      public org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.Type getType() {
+        org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.Type result = org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.Type.forNumber(type_);
+        return result == null ? org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.Type.UNRECOGNIZED : result;
       }
       /**
        * <code>.prometheus.LabelMatcher.Type type = 1;</code>
        * @param value The type to set.
        * @return This builder for chaining.
        */
-      public Builder setType(org.beifengtz.jvmm.prometheus.Types.LabelMatcher.Type value) {
+      public Builder setType(org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.Type value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -11513,12 +11513,12 @@ public final class Types {
     }
 
     // @@protoc_insertion_point(class_scope:prometheus.LabelMatcher)
-    private static final org.beifengtz.jvmm.prometheus.Types.LabelMatcher DEFAULT_INSTANCE;
+    private static final org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.beifengtz.jvmm.prometheus.Types.LabelMatcher();
+      DEFAULT_INSTANCE = new org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher();
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.LabelMatcher getDefaultInstance() {
+    public static org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -11554,7 +11554,7 @@ public final class Types {
     }
 
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.LabelMatcher getDefaultInstanceForType() {
+    public org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -11702,15 +11702,15 @@ public final class Types {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_ReadHints_descriptor;
+      return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_ReadHints_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_ReadHints_fieldAccessorTable
+      return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_ReadHints_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.beifengtz.jvmm.prometheus.Types.ReadHints.class, org.beifengtz.jvmm.prometheus.Types.ReadHints.Builder.class);
+              org.beifengtz.jvmm.server.prometheus.Types.ReadHints.class, org.beifengtz.jvmm.server.prometheus.Types.ReadHints.Builder.class);
     }
 
     public static final int STEP_MS_FIELD_NUMBER = 1;
@@ -11973,10 +11973,10 @@ public final class Types {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.beifengtz.jvmm.prometheus.Types.ReadHints)) {
+      if (!(obj instanceof org.beifengtz.jvmm.server.prometheus.Types.ReadHints)) {
         return super.equals(obj);
       }
-      org.beifengtz.jvmm.prometheus.Types.ReadHints other = (org.beifengtz.jvmm.prometheus.Types.ReadHints) obj;
+      org.beifengtz.jvmm.server.prometheus.Types.ReadHints other = (org.beifengtz.jvmm.server.prometheus.Types.ReadHints) obj;
 
       if (getStepMs()
           != other.getStepMs()) return false;
@@ -12029,44 +12029,44 @@ public final class Types {
       return hash;
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.ReadHints parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.ReadHints parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.ReadHints parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.ReadHints parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.ReadHints parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.ReadHints parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.ReadHints parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.ReadHints parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.ReadHints parseFrom(byte[] data)
+    public static org.beifengtz.jvmm.server.prometheus.Types.ReadHints parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.ReadHints parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.ReadHints parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.ReadHints parseFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Types.ReadHints parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.ReadHints parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.ReadHints parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -12074,26 +12074,26 @@ public final class Types {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.ReadHints parseDelimitedFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Types.ReadHints parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.ReadHints parseDelimitedFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.ReadHints parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.ReadHints parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.ReadHints parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.ReadHints parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.ReadHints parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -12106,7 +12106,7 @@ public final class Types {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.beifengtz.jvmm.prometheus.Types.ReadHints prototype) {
+    public static Builder newBuilder(org.beifengtz.jvmm.server.prometheus.Types.ReadHints prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -12127,21 +12127,21 @@ public final class Types {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:prometheus.ReadHints)
-        org.beifengtz.jvmm.prometheus.Types.ReadHintsOrBuilder {
+        org.beifengtz.jvmm.server.prometheus.Types.ReadHintsOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_ReadHints_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_ReadHints_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_ReadHints_fieldAccessorTable
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_ReadHints_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.beifengtz.jvmm.prometheus.Types.ReadHints.class, org.beifengtz.jvmm.prometheus.Types.ReadHints.Builder.class);
+                org.beifengtz.jvmm.server.prometheus.Types.ReadHints.class, org.beifengtz.jvmm.server.prometheus.Types.ReadHints.Builder.class);
       }
 
-      // Construct using org.beifengtz.jvmm.prometheus.Types.ReadHints.newBuilder()
+      // Construct using org.beifengtz.jvmm.server.prometheus.Types.ReadHints.newBuilder()
       private Builder() {
 
       }
@@ -12169,17 +12169,17 @@ public final class Types {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_ReadHints_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_ReadHints_descriptor;
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.ReadHints getDefaultInstanceForType() {
-        return org.beifengtz.jvmm.prometheus.Types.ReadHints.getDefaultInstance();
+      public org.beifengtz.jvmm.server.prometheus.Types.ReadHints getDefaultInstanceForType() {
+        return org.beifengtz.jvmm.server.prometheus.Types.ReadHints.getDefaultInstance();
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.ReadHints build() {
-        org.beifengtz.jvmm.prometheus.Types.ReadHints result = buildPartial();
+      public org.beifengtz.jvmm.server.prometheus.Types.ReadHints build() {
+        org.beifengtz.jvmm.server.prometheus.Types.ReadHints result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -12187,14 +12187,14 @@ public final class Types {
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.ReadHints buildPartial() {
-        org.beifengtz.jvmm.prometheus.Types.ReadHints result = new org.beifengtz.jvmm.prometheus.Types.ReadHints(this);
+      public org.beifengtz.jvmm.server.prometheus.Types.ReadHints buildPartial() {
+        org.beifengtz.jvmm.server.prometheus.Types.ReadHints result = new org.beifengtz.jvmm.server.prometheus.Types.ReadHints(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(org.beifengtz.jvmm.prometheus.Types.ReadHints result) {
+      private void buildPartial0(org.beifengtz.jvmm.server.prometheus.Types.ReadHints result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.stepMs_ = stepMs_;
@@ -12254,16 +12254,16 @@ public final class Types {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.beifengtz.jvmm.prometheus.Types.ReadHints) {
-          return mergeFrom((org.beifengtz.jvmm.prometheus.Types.ReadHints)other);
+        if (other instanceof org.beifengtz.jvmm.server.prometheus.Types.ReadHints) {
+          return mergeFrom((org.beifengtz.jvmm.server.prometheus.Types.ReadHints)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.beifengtz.jvmm.prometheus.Types.ReadHints other) {
-        if (other == org.beifengtz.jvmm.prometheus.Types.ReadHints.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.beifengtz.jvmm.server.prometheus.Types.ReadHints other) {
+        if (other == org.beifengtz.jvmm.server.prometheus.Types.ReadHints.getDefaultInstance()) return this;
         if (other.getStepMs() != 0L) {
           setStepMs(other.getStepMs());
         }
@@ -12848,12 +12848,12 @@ public final class Types {
     }
 
     // @@protoc_insertion_point(class_scope:prometheus.ReadHints)
-    private static final org.beifengtz.jvmm.prometheus.Types.ReadHints DEFAULT_INSTANCE;
+    private static final org.beifengtz.jvmm.server.prometheus.Types.ReadHints DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.beifengtz.jvmm.prometheus.Types.ReadHints();
+      DEFAULT_INSTANCE = new org.beifengtz.jvmm.server.prometheus.Types.ReadHints();
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.ReadHints getDefaultInstance() {
+    public static org.beifengtz.jvmm.server.prometheus.Types.ReadHints getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -12889,7 +12889,7 @@ public final class Types {
     }
 
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.ReadHints getDefaultInstanceForType() {
+    public org.beifengtz.jvmm.server.prometheus.Types.ReadHints getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -12920,7 +12920,7 @@ public final class Types {
      * <code>.prometheus.Chunk.Encoding type = 3;</code>
      * @return The type.
      */
-    org.beifengtz.jvmm.prometheus.Types.Chunk.Encoding getType();
+    org.beifengtz.jvmm.server.prometheus.Types.Chunk.Encoding getType();
 
     /**
      * <code>bytes data = 4;</code>
@@ -12959,15 +12959,15 @@ public final class Types {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_Chunk_descriptor;
+      return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_Chunk_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_Chunk_fieldAccessorTable
+      return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_Chunk_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.beifengtz.jvmm.prometheus.Types.Chunk.class, org.beifengtz.jvmm.prometheus.Types.Chunk.Builder.class);
+              org.beifengtz.jvmm.server.prometheus.Types.Chunk.class, org.beifengtz.jvmm.server.prometheus.Types.Chunk.Builder.class);
     }
 
     /**
@@ -13074,7 +13074,7 @@ public final class Types {
       }
       public static final com.google.protobuf.Descriptors.EnumDescriptor
           getDescriptor() {
-        return org.beifengtz.jvmm.prometheus.Types.Chunk.getDescriptor().getEnumTypes().get(0);
+        return org.beifengtz.jvmm.server.prometheus.Types.Chunk.getDescriptor().getEnumTypes().get(0);
       }
 
       private static final Encoding[] VALUES = values();
@@ -13135,9 +13135,9 @@ public final class Types {
      * <code>.prometheus.Chunk.Encoding type = 3;</code>
      * @return The type.
      */
-    @java.lang.Override public org.beifengtz.jvmm.prometheus.Types.Chunk.Encoding getType() {
-      org.beifengtz.jvmm.prometheus.Types.Chunk.Encoding result = org.beifengtz.jvmm.prometheus.Types.Chunk.Encoding.forNumber(type_);
-      return result == null ? org.beifengtz.jvmm.prometheus.Types.Chunk.Encoding.UNRECOGNIZED : result;
+    @java.lang.Override public org.beifengtz.jvmm.server.prometheus.Types.Chunk.Encoding getType() {
+      org.beifengtz.jvmm.server.prometheus.Types.Chunk.Encoding result = org.beifengtz.jvmm.server.prometheus.Types.Chunk.Encoding.forNumber(type_);
+      return result == null ? org.beifengtz.jvmm.server.prometheus.Types.Chunk.Encoding.UNRECOGNIZED : result;
     }
 
     public static final int DATA_FIELD_NUMBER = 4;
@@ -13171,7 +13171,7 @@ public final class Types {
       if (maxTimeMs_ != 0L) {
         output.writeInt64(2, maxTimeMs_);
       }
-      if (type_ != org.beifengtz.jvmm.prometheus.Types.Chunk.Encoding.UNKNOWN.getNumber()) {
+      if (type_ != org.beifengtz.jvmm.server.prometheus.Types.Chunk.Encoding.UNKNOWN.getNumber()) {
         output.writeEnum(3, type_);
       }
       if (!data_.isEmpty()) {
@@ -13194,7 +13194,7 @@ public final class Types {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(2, maxTimeMs_);
       }
-      if (type_ != org.beifengtz.jvmm.prometheus.Types.Chunk.Encoding.UNKNOWN.getNumber()) {
+      if (type_ != org.beifengtz.jvmm.server.prometheus.Types.Chunk.Encoding.UNKNOWN.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(3, type_);
       }
@@ -13212,10 +13212,10 @@ public final class Types {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.beifengtz.jvmm.prometheus.Types.Chunk)) {
+      if (!(obj instanceof org.beifengtz.jvmm.server.prometheus.Types.Chunk)) {
         return super.equals(obj);
       }
-      org.beifengtz.jvmm.prometheus.Types.Chunk other = (org.beifengtz.jvmm.prometheus.Types.Chunk) obj;
+      org.beifengtz.jvmm.server.prometheus.Types.Chunk other = (org.beifengtz.jvmm.server.prometheus.Types.Chunk) obj;
 
       if (getMinTimeMs()
           != other.getMinTimeMs()) return false;
@@ -13250,44 +13250,44 @@ public final class Types {
       return hash;
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.Chunk parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Chunk parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Chunk parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Chunk parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Chunk parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Chunk parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Chunk parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Chunk parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Chunk parseFrom(byte[] data)
+    public static org.beifengtz.jvmm.server.prometheus.Types.Chunk parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Chunk parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Chunk parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Chunk parseFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Types.Chunk parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Chunk parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Chunk parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -13295,26 +13295,26 @@ public final class Types {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.Chunk parseDelimitedFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Types.Chunk parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.Chunk parseDelimitedFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Chunk parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Chunk parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Chunk parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.Chunk parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.Chunk parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -13327,7 +13327,7 @@ public final class Types {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.beifengtz.jvmm.prometheus.Types.Chunk prototype) {
+    public static Builder newBuilder(org.beifengtz.jvmm.server.prometheus.Types.Chunk prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -13353,21 +13353,21 @@ public final class Types {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:prometheus.Chunk)
-        org.beifengtz.jvmm.prometheus.Types.ChunkOrBuilder {
+        org.beifengtz.jvmm.server.prometheus.Types.ChunkOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_Chunk_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_Chunk_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_Chunk_fieldAccessorTable
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_Chunk_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.beifengtz.jvmm.prometheus.Types.Chunk.class, org.beifengtz.jvmm.prometheus.Types.Chunk.Builder.class);
+                org.beifengtz.jvmm.server.prometheus.Types.Chunk.class, org.beifengtz.jvmm.server.prometheus.Types.Chunk.Builder.class);
       }
 
-      // Construct using org.beifengtz.jvmm.prometheus.Types.Chunk.newBuilder()
+      // Construct using org.beifengtz.jvmm.server.prometheus.Types.Chunk.newBuilder()
       private Builder() {
 
       }
@@ -13391,17 +13391,17 @@ public final class Types {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_Chunk_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_Chunk_descriptor;
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.Chunk getDefaultInstanceForType() {
-        return org.beifengtz.jvmm.prometheus.Types.Chunk.getDefaultInstance();
+      public org.beifengtz.jvmm.server.prometheus.Types.Chunk getDefaultInstanceForType() {
+        return org.beifengtz.jvmm.server.prometheus.Types.Chunk.getDefaultInstance();
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.Chunk build() {
-        org.beifengtz.jvmm.prometheus.Types.Chunk result = buildPartial();
+      public org.beifengtz.jvmm.server.prometheus.Types.Chunk build() {
+        org.beifengtz.jvmm.server.prometheus.Types.Chunk result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -13409,14 +13409,14 @@ public final class Types {
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.Chunk buildPartial() {
-        org.beifengtz.jvmm.prometheus.Types.Chunk result = new org.beifengtz.jvmm.prometheus.Types.Chunk(this);
+      public org.beifengtz.jvmm.server.prometheus.Types.Chunk buildPartial() {
+        org.beifengtz.jvmm.server.prometheus.Types.Chunk result = new org.beifengtz.jvmm.server.prometheus.Types.Chunk(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(org.beifengtz.jvmm.prometheus.Types.Chunk result) {
+      private void buildPartial0(org.beifengtz.jvmm.server.prometheus.Types.Chunk result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.minTimeMs_ = minTimeMs_;
@@ -13466,16 +13466,16 @@ public final class Types {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.beifengtz.jvmm.prometheus.Types.Chunk) {
-          return mergeFrom((org.beifengtz.jvmm.prometheus.Types.Chunk)other);
+        if (other instanceof org.beifengtz.jvmm.server.prometheus.Types.Chunk) {
+          return mergeFrom((org.beifengtz.jvmm.server.prometheus.Types.Chunk)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.beifengtz.jvmm.prometheus.Types.Chunk other) {
-        if (other == org.beifengtz.jvmm.prometheus.Types.Chunk.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.beifengtz.jvmm.server.prometheus.Types.Chunk other) {
+        if (other == org.beifengtz.jvmm.server.prometheus.Types.Chunk.getDefaultInstance()) return this;
         if (other.getMinTimeMs() != 0L) {
           setMinTimeMs(other.getMinTimeMs());
         }
@@ -13639,16 +13639,16 @@ public final class Types {
        * @return The type.
        */
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.Chunk.Encoding getType() {
-        org.beifengtz.jvmm.prometheus.Types.Chunk.Encoding result = org.beifengtz.jvmm.prometheus.Types.Chunk.Encoding.forNumber(type_);
-        return result == null ? org.beifengtz.jvmm.prometheus.Types.Chunk.Encoding.UNRECOGNIZED : result;
+      public org.beifengtz.jvmm.server.prometheus.Types.Chunk.Encoding getType() {
+        org.beifengtz.jvmm.server.prometheus.Types.Chunk.Encoding result = org.beifengtz.jvmm.server.prometheus.Types.Chunk.Encoding.forNumber(type_);
+        return result == null ? org.beifengtz.jvmm.server.prometheus.Types.Chunk.Encoding.UNRECOGNIZED : result;
       }
       /**
        * <code>.prometheus.Chunk.Encoding type = 3;</code>
        * @param value The type to set.
        * @return This builder for chaining.
        */
-      public Builder setType(org.beifengtz.jvmm.prometheus.Types.Chunk.Encoding value) {
+      public Builder setType(org.beifengtz.jvmm.server.prometheus.Types.Chunk.Encoding value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -13716,12 +13716,12 @@ public final class Types {
     }
 
     // @@protoc_insertion_point(class_scope:prometheus.Chunk)
-    private static final org.beifengtz.jvmm.prometheus.Types.Chunk DEFAULT_INSTANCE;
+    private static final org.beifengtz.jvmm.server.prometheus.Types.Chunk DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.beifengtz.jvmm.prometheus.Types.Chunk();
+      DEFAULT_INSTANCE = new org.beifengtz.jvmm.server.prometheus.Types.Chunk();
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.Chunk getDefaultInstance() {
+    public static org.beifengtz.jvmm.server.prometheus.Types.Chunk getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -13757,7 +13757,7 @@ public final class Types {
     }
 
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.Chunk getDefaultInstanceForType() {
+    public org.beifengtz.jvmm.server.prometheus.Types.Chunk getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -13774,7 +13774,7 @@ public final class Types {
      *
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
-    java.util.List<org.beifengtz.jvmm.prometheus.Types.Label> 
+    java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Label> 
         getLabelsList();
     /**
      * <pre>
@@ -13783,7 +13783,7 @@ public final class Types {
      *
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.Label getLabels(int index);
+    org.beifengtz.jvmm.server.prometheus.Types.Label getLabels(int index);
     /**
      * <pre>
      * Labels should be sorted.
@@ -13799,7 +13799,7 @@ public final class Types {
      *
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
-    java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder> 
+    java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder> 
         getLabelsOrBuilderList();
     /**
      * <pre>
@@ -13808,7 +13808,7 @@ public final class Types {
      *
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder getLabelsOrBuilder(
+    org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder getLabelsOrBuilder(
         int index);
 
     /**
@@ -13818,7 +13818,7 @@ public final class Types {
      *
      * <code>repeated .prometheus.Chunk chunks = 2;</code>
      */
-    java.util.List<org.beifengtz.jvmm.prometheus.Types.Chunk> 
+    java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Chunk> 
         getChunksList();
     /**
      * <pre>
@@ -13827,7 +13827,7 @@ public final class Types {
      *
      * <code>repeated .prometheus.Chunk chunks = 2;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.Chunk getChunks(int index);
+    org.beifengtz.jvmm.server.prometheus.Types.Chunk getChunks(int index);
     /**
      * <pre>
      * Chunks will be in start time order and may overlap.
@@ -13843,7 +13843,7 @@ public final class Types {
      *
      * <code>repeated .prometheus.Chunk chunks = 2;</code>
      */
-    java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.ChunkOrBuilder> 
+    java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.ChunkOrBuilder> 
         getChunksOrBuilderList();
     /**
      * <pre>
@@ -13852,7 +13852,7 @@ public final class Types {
      *
      * <code>repeated .prometheus.Chunk chunks = 2;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.ChunkOrBuilder getChunksOrBuilder(
+    org.beifengtz.jvmm.server.prometheus.Types.ChunkOrBuilder getChunksOrBuilder(
         int index);
   }
   /**
@@ -13885,20 +13885,20 @@ public final class Types {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_ChunkedSeries_descriptor;
+      return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_ChunkedSeries_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_ChunkedSeries_fieldAccessorTable
+      return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_ChunkedSeries_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.beifengtz.jvmm.prometheus.Types.ChunkedSeries.class, org.beifengtz.jvmm.prometheus.Types.ChunkedSeries.Builder.class);
+              org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries.class, org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries.Builder.class);
     }
 
     public static final int LABELS_FIELD_NUMBER = 1;
     @SuppressWarnings("serial")
-    private java.util.List<org.beifengtz.jvmm.prometheus.Types.Label> labels_;
+    private java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Label> labels_;
     /**
      * <pre>
      * Labels should be sorted.
@@ -13907,7 +13907,7 @@ public final class Types {
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
     @java.lang.Override
-    public java.util.List<org.beifengtz.jvmm.prometheus.Types.Label> getLabelsList() {
+    public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Label> getLabelsList() {
       return labels_;
     }
     /**
@@ -13918,7 +13918,7 @@ public final class Types {
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
     @java.lang.Override
-    public java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder> 
+    public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder> 
         getLabelsOrBuilderList() {
       return labels_;
     }
@@ -13941,7 +13941,7 @@ public final class Types {
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.Label getLabels(int index) {
+    public org.beifengtz.jvmm.server.prometheus.Types.Label getLabels(int index) {
       return labels_.get(index);
     }
     /**
@@ -13952,14 +13952,14 @@ public final class Types {
      * <code>repeated .prometheus.Label labels = 1;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder getLabelsOrBuilder(
+    public org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder getLabelsOrBuilder(
         int index) {
       return labels_.get(index);
     }
 
     public static final int CHUNKS_FIELD_NUMBER = 2;
     @SuppressWarnings("serial")
-    private java.util.List<org.beifengtz.jvmm.prometheus.Types.Chunk> chunks_;
+    private java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Chunk> chunks_;
     /**
      * <pre>
      * Chunks will be in start time order and may overlap.
@@ -13968,7 +13968,7 @@ public final class Types {
      * <code>repeated .prometheus.Chunk chunks = 2;</code>
      */
     @java.lang.Override
-    public java.util.List<org.beifengtz.jvmm.prometheus.Types.Chunk> getChunksList() {
+    public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Chunk> getChunksList() {
       return chunks_;
     }
     /**
@@ -13979,7 +13979,7 @@ public final class Types {
      * <code>repeated .prometheus.Chunk chunks = 2;</code>
      */
     @java.lang.Override
-    public java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.ChunkOrBuilder> 
+    public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.ChunkOrBuilder> 
         getChunksOrBuilderList() {
       return chunks_;
     }
@@ -14002,7 +14002,7 @@ public final class Types {
      * <code>repeated .prometheus.Chunk chunks = 2;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.Chunk getChunks(int index) {
+    public org.beifengtz.jvmm.server.prometheus.Types.Chunk getChunks(int index) {
       return chunks_.get(index);
     }
     /**
@@ -14013,7 +14013,7 @@ public final class Types {
      * <code>repeated .prometheus.Chunk chunks = 2;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.ChunkOrBuilder getChunksOrBuilder(
+    public org.beifengtz.jvmm.server.prometheus.Types.ChunkOrBuilder getChunksOrBuilder(
         int index) {
       return chunks_.get(index);
     }
@@ -14065,10 +14065,10 @@ public final class Types {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.beifengtz.jvmm.prometheus.Types.ChunkedSeries)) {
+      if (!(obj instanceof org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries)) {
         return super.equals(obj);
       }
-      org.beifengtz.jvmm.prometheus.Types.ChunkedSeries other = (org.beifengtz.jvmm.prometheus.Types.ChunkedSeries) obj;
+      org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries other = (org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries) obj;
 
       if (!getLabelsList()
           .equals(other.getLabelsList())) return false;
@@ -14098,44 +14098,44 @@ public final class Types {
       return hash;
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.ChunkedSeries parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.ChunkedSeries parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.ChunkedSeries parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.ChunkedSeries parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.ChunkedSeries parseFrom(byte[] data)
+    public static org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.ChunkedSeries parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.ChunkedSeries parseFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.ChunkedSeries parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -14143,26 +14143,26 @@ public final class Types {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.ChunkedSeries parseDelimitedFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.ChunkedSeries parseDelimitedFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.ChunkedSeries parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Types.ChunkedSeries parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -14175,7 +14175,7 @@ public final class Types {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.beifengtz.jvmm.prometheus.Types.ChunkedSeries prototype) {
+    public static Builder newBuilder(org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -14200,21 +14200,21 @@ public final class Types {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:prometheus.ChunkedSeries)
-        org.beifengtz.jvmm.prometheus.Types.ChunkedSeriesOrBuilder {
+        org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeriesOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_ChunkedSeries_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_ChunkedSeries_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_ChunkedSeries_fieldAccessorTable
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_ChunkedSeries_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.beifengtz.jvmm.prometheus.Types.ChunkedSeries.class, org.beifengtz.jvmm.prometheus.Types.ChunkedSeries.Builder.class);
+                org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries.class, org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries.Builder.class);
       }
 
-      // Construct using org.beifengtz.jvmm.prometheus.Types.ChunkedSeries.newBuilder()
+      // Construct using org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries.newBuilder()
       private Builder() {
 
       }
@@ -14248,17 +14248,17 @@ public final class Types {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.beifengtz.jvmm.prometheus.Types.internal_static_prometheus_ChunkedSeries_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Types.internal_static_prometheus_ChunkedSeries_descriptor;
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.ChunkedSeries getDefaultInstanceForType() {
-        return org.beifengtz.jvmm.prometheus.Types.ChunkedSeries.getDefaultInstance();
+      public org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries getDefaultInstanceForType() {
+        return org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries.getDefaultInstance();
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.ChunkedSeries build() {
-        org.beifengtz.jvmm.prometheus.Types.ChunkedSeries result = buildPartial();
+      public org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries build() {
+        org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -14266,15 +14266,15 @@ public final class Types {
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Types.ChunkedSeries buildPartial() {
-        org.beifengtz.jvmm.prometheus.Types.ChunkedSeries result = new org.beifengtz.jvmm.prometheus.Types.ChunkedSeries(this);
+      public org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries buildPartial() {
+        org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries result = new org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries(this);
         buildPartialRepeatedFields(result);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartialRepeatedFields(org.beifengtz.jvmm.prometheus.Types.ChunkedSeries result) {
+      private void buildPartialRepeatedFields(org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries result) {
         if (labelsBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0)) {
             labels_ = java.util.Collections.unmodifiableList(labels_);
@@ -14295,7 +14295,7 @@ public final class Types {
         }
       }
 
-      private void buildPartial0(org.beifengtz.jvmm.prometheus.Types.ChunkedSeries result) {
+      private void buildPartial0(org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries result) {
         int from_bitField0_ = bitField0_;
       }
 
@@ -14333,16 +14333,16 @@ public final class Types {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.beifengtz.jvmm.prometheus.Types.ChunkedSeries) {
-          return mergeFrom((org.beifengtz.jvmm.prometheus.Types.ChunkedSeries)other);
+        if (other instanceof org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries) {
+          return mergeFrom((org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.beifengtz.jvmm.prometheus.Types.ChunkedSeries other) {
-        if (other == org.beifengtz.jvmm.prometheus.Types.ChunkedSeries.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries other) {
+        if (other == org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries.getDefaultInstance()) return this;
         if (labelsBuilder_ == null) {
           if (!other.labels_.isEmpty()) {
             if (labels_.isEmpty()) {
@@ -14422,9 +14422,9 @@ public final class Types {
                 done = true;
                 break;
               case 10: {
-                org.beifengtz.jvmm.prometheus.Types.Label m =
+                org.beifengtz.jvmm.server.prometheus.Types.Label m =
                     input.readMessage(
-                        org.beifengtz.jvmm.prometheus.Types.Label.parser(),
+                        org.beifengtz.jvmm.server.prometheus.Types.Label.parser(),
                         extensionRegistry);
                 if (labelsBuilder_ == null) {
                   ensureLabelsIsMutable();
@@ -14435,9 +14435,9 @@ public final class Types {
                 break;
               } // case 10
               case 18: {
-                org.beifengtz.jvmm.prometheus.Types.Chunk m =
+                org.beifengtz.jvmm.server.prometheus.Types.Chunk m =
                     input.readMessage(
-                        org.beifengtz.jvmm.prometheus.Types.Chunk.parser(),
+                        org.beifengtz.jvmm.server.prometheus.Types.Chunk.parser(),
                         extensionRegistry);
                 if (chunksBuilder_ == null) {
                   ensureChunksIsMutable();
@@ -14464,17 +14464,17 @@ public final class Types {
       }
       private int bitField0_;
 
-      private java.util.List<org.beifengtz.jvmm.prometheus.Types.Label> labels_ =
+      private java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Label> labels_ =
         java.util.Collections.emptyList();
       private void ensureLabelsIsMutable() {
         if (!((bitField0_ & 0x00000001) != 0)) {
-          labels_ = new java.util.ArrayList<org.beifengtz.jvmm.prometheus.Types.Label>(labels_);
+          labels_ = new java.util.ArrayList<org.beifengtz.jvmm.server.prometheus.Types.Label>(labels_);
           bitField0_ |= 0x00000001;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.Label, org.beifengtz.jvmm.prometheus.Types.Label.Builder, org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder> labelsBuilder_;
+          org.beifengtz.jvmm.server.prometheus.Types.Label, org.beifengtz.jvmm.server.prometheus.Types.Label.Builder, org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder> labelsBuilder_;
 
       /**
        * <pre>
@@ -14483,7 +14483,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Types.Label> getLabelsList() {
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Label> getLabelsList() {
         if (labelsBuilder_ == null) {
           return java.util.Collections.unmodifiableList(labels_);
         } else {
@@ -14511,7 +14511,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Label getLabels(int index) {
+      public org.beifengtz.jvmm.server.prometheus.Types.Label getLabels(int index) {
         if (labelsBuilder_ == null) {
           return labels_.get(index);
         } else {
@@ -14526,7 +14526,7 @@ public final class Types {
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
       public Builder setLabels(
-          int index, org.beifengtz.jvmm.prometheus.Types.Label value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Label value) {
         if (labelsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -14547,7 +14547,7 @@ public final class Types {
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
       public Builder setLabels(
-          int index, org.beifengtz.jvmm.prometheus.Types.Label.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Label.Builder builderForValue) {
         if (labelsBuilder_ == null) {
           ensureLabelsIsMutable();
           labels_.set(index, builderForValue.build());
@@ -14564,7 +14564,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public Builder addLabels(org.beifengtz.jvmm.prometheus.Types.Label value) {
+      public Builder addLabels(org.beifengtz.jvmm.server.prometheus.Types.Label value) {
         if (labelsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -14585,7 +14585,7 @@ public final class Types {
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
       public Builder addLabels(
-          int index, org.beifengtz.jvmm.prometheus.Types.Label value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Label value) {
         if (labelsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -14606,7 +14606,7 @@ public final class Types {
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
       public Builder addLabels(
-          org.beifengtz.jvmm.prometheus.Types.Label.Builder builderForValue) {
+          org.beifengtz.jvmm.server.prometheus.Types.Label.Builder builderForValue) {
         if (labelsBuilder_ == null) {
           ensureLabelsIsMutable();
           labels_.add(builderForValue.build());
@@ -14624,7 +14624,7 @@ public final class Types {
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
       public Builder addLabels(
-          int index, org.beifengtz.jvmm.prometheus.Types.Label.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Label.Builder builderForValue) {
         if (labelsBuilder_ == null) {
           ensureLabelsIsMutable();
           labels_.add(index, builderForValue.build());
@@ -14642,7 +14642,7 @@ public final class Types {
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
       public Builder addAllLabels(
-          java.lang.Iterable<? extends org.beifengtz.jvmm.prometheus.Types.Label> values) {
+          java.lang.Iterable<? extends org.beifengtz.jvmm.server.prometheus.Types.Label> values) {
         if (labelsBuilder_ == null) {
           ensureLabelsIsMutable();
           com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -14694,7 +14694,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Label.Builder getLabelsBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.Label.Builder getLabelsBuilder(
           int index) {
         return getLabelsFieldBuilder().getBuilder(index);
       }
@@ -14705,7 +14705,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder getLabelsOrBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder getLabelsOrBuilder(
           int index) {
         if (labelsBuilder_ == null) {
           return labels_.get(index);  } else {
@@ -14719,7 +14719,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder> 
+      public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder> 
            getLabelsOrBuilderList() {
         if (labelsBuilder_ != null) {
           return labelsBuilder_.getMessageOrBuilderList();
@@ -14734,9 +14734,9 @@ public final class Types {
        *
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Label.Builder addLabelsBuilder() {
+      public org.beifengtz.jvmm.server.prometheus.Types.Label.Builder addLabelsBuilder() {
         return getLabelsFieldBuilder().addBuilder(
-            org.beifengtz.jvmm.prometheus.Types.Label.getDefaultInstance());
+            org.beifengtz.jvmm.server.prometheus.Types.Label.getDefaultInstance());
       }
       /**
        * <pre>
@@ -14745,10 +14745,10 @@ public final class Types {
        *
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Label.Builder addLabelsBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.Label.Builder addLabelsBuilder(
           int index) {
         return getLabelsFieldBuilder().addBuilder(
-            index, org.beifengtz.jvmm.prometheus.Types.Label.getDefaultInstance());
+            index, org.beifengtz.jvmm.server.prometheus.Types.Label.getDefaultInstance());
       }
       /**
        * <pre>
@@ -14757,16 +14757,16 @@ public final class Types {
        *
        * <code>repeated .prometheus.Label labels = 1;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Types.Label.Builder> 
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Label.Builder> 
            getLabelsBuilderList() {
         return getLabelsFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.Label, org.beifengtz.jvmm.prometheus.Types.Label.Builder, org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder> 
+          org.beifengtz.jvmm.server.prometheus.Types.Label, org.beifengtz.jvmm.server.prometheus.Types.Label.Builder, org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder> 
           getLabelsFieldBuilder() {
         if (labelsBuilder_ == null) {
           labelsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-              org.beifengtz.jvmm.prometheus.Types.Label, org.beifengtz.jvmm.prometheus.Types.Label.Builder, org.beifengtz.jvmm.prometheus.Types.LabelOrBuilder>(
+              org.beifengtz.jvmm.server.prometheus.Types.Label, org.beifengtz.jvmm.server.prometheus.Types.Label.Builder, org.beifengtz.jvmm.server.prometheus.Types.LabelOrBuilder>(
                   labels_,
                   ((bitField0_ & 0x00000001) != 0),
                   getParentForChildren(),
@@ -14776,17 +14776,17 @@ public final class Types {
         return labelsBuilder_;
       }
 
-      private java.util.List<org.beifengtz.jvmm.prometheus.Types.Chunk> chunks_ =
+      private java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Chunk> chunks_ =
         java.util.Collections.emptyList();
       private void ensureChunksIsMutable() {
         if (!((bitField0_ & 0x00000002) != 0)) {
-          chunks_ = new java.util.ArrayList<org.beifengtz.jvmm.prometheus.Types.Chunk>(chunks_);
+          chunks_ = new java.util.ArrayList<org.beifengtz.jvmm.server.prometheus.Types.Chunk>(chunks_);
           bitField0_ |= 0x00000002;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.Chunk, org.beifengtz.jvmm.prometheus.Types.Chunk.Builder, org.beifengtz.jvmm.prometheus.Types.ChunkOrBuilder> chunksBuilder_;
+          org.beifengtz.jvmm.server.prometheus.Types.Chunk, org.beifengtz.jvmm.server.prometheus.Types.Chunk.Builder, org.beifengtz.jvmm.server.prometheus.Types.ChunkOrBuilder> chunksBuilder_;
 
       /**
        * <pre>
@@ -14795,7 +14795,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.Chunk chunks = 2;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Types.Chunk> getChunksList() {
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Chunk> getChunksList() {
         if (chunksBuilder_ == null) {
           return java.util.Collections.unmodifiableList(chunks_);
         } else {
@@ -14823,7 +14823,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.Chunk chunks = 2;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Chunk getChunks(int index) {
+      public org.beifengtz.jvmm.server.prometheus.Types.Chunk getChunks(int index) {
         if (chunksBuilder_ == null) {
           return chunks_.get(index);
         } else {
@@ -14838,7 +14838,7 @@ public final class Types {
        * <code>repeated .prometheus.Chunk chunks = 2;</code>
        */
       public Builder setChunks(
-          int index, org.beifengtz.jvmm.prometheus.Types.Chunk value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Chunk value) {
         if (chunksBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -14859,7 +14859,7 @@ public final class Types {
        * <code>repeated .prometheus.Chunk chunks = 2;</code>
        */
       public Builder setChunks(
-          int index, org.beifengtz.jvmm.prometheus.Types.Chunk.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Chunk.Builder builderForValue) {
         if (chunksBuilder_ == null) {
           ensureChunksIsMutable();
           chunks_.set(index, builderForValue.build());
@@ -14876,7 +14876,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.Chunk chunks = 2;</code>
        */
-      public Builder addChunks(org.beifengtz.jvmm.prometheus.Types.Chunk value) {
+      public Builder addChunks(org.beifengtz.jvmm.server.prometheus.Types.Chunk value) {
         if (chunksBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -14897,7 +14897,7 @@ public final class Types {
        * <code>repeated .prometheus.Chunk chunks = 2;</code>
        */
       public Builder addChunks(
-          int index, org.beifengtz.jvmm.prometheus.Types.Chunk value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Chunk value) {
         if (chunksBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -14918,7 +14918,7 @@ public final class Types {
        * <code>repeated .prometheus.Chunk chunks = 2;</code>
        */
       public Builder addChunks(
-          org.beifengtz.jvmm.prometheus.Types.Chunk.Builder builderForValue) {
+          org.beifengtz.jvmm.server.prometheus.Types.Chunk.Builder builderForValue) {
         if (chunksBuilder_ == null) {
           ensureChunksIsMutable();
           chunks_.add(builderForValue.build());
@@ -14936,7 +14936,7 @@ public final class Types {
        * <code>repeated .prometheus.Chunk chunks = 2;</code>
        */
       public Builder addChunks(
-          int index, org.beifengtz.jvmm.prometheus.Types.Chunk.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.Chunk.Builder builderForValue) {
         if (chunksBuilder_ == null) {
           ensureChunksIsMutable();
           chunks_.add(index, builderForValue.build());
@@ -14954,7 +14954,7 @@ public final class Types {
        * <code>repeated .prometheus.Chunk chunks = 2;</code>
        */
       public Builder addAllChunks(
-          java.lang.Iterable<? extends org.beifengtz.jvmm.prometheus.Types.Chunk> values) {
+          java.lang.Iterable<? extends org.beifengtz.jvmm.server.prometheus.Types.Chunk> values) {
         if (chunksBuilder_ == null) {
           ensureChunksIsMutable();
           com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -15006,7 +15006,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.Chunk chunks = 2;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Chunk.Builder getChunksBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.Chunk.Builder getChunksBuilder(
           int index) {
         return getChunksFieldBuilder().getBuilder(index);
       }
@@ -15017,7 +15017,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.Chunk chunks = 2;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.ChunkOrBuilder getChunksOrBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.ChunkOrBuilder getChunksOrBuilder(
           int index) {
         if (chunksBuilder_ == null) {
           return chunks_.get(index);  } else {
@@ -15031,7 +15031,7 @@ public final class Types {
        *
        * <code>repeated .prometheus.Chunk chunks = 2;</code>
        */
-      public java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.ChunkOrBuilder> 
+      public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.ChunkOrBuilder> 
            getChunksOrBuilderList() {
         if (chunksBuilder_ != null) {
           return chunksBuilder_.getMessageOrBuilderList();
@@ -15046,9 +15046,9 @@ public final class Types {
        *
        * <code>repeated .prometheus.Chunk chunks = 2;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Chunk.Builder addChunksBuilder() {
+      public org.beifengtz.jvmm.server.prometheus.Types.Chunk.Builder addChunksBuilder() {
         return getChunksFieldBuilder().addBuilder(
-            org.beifengtz.jvmm.prometheus.Types.Chunk.getDefaultInstance());
+            org.beifengtz.jvmm.server.prometheus.Types.Chunk.getDefaultInstance());
       }
       /**
        * <pre>
@@ -15057,10 +15057,10 @@ public final class Types {
        *
        * <code>repeated .prometheus.Chunk chunks = 2;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.Chunk.Builder addChunksBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.Chunk.Builder addChunksBuilder(
           int index) {
         return getChunksFieldBuilder().addBuilder(
-            index, org.beifengtz.jvmm.prometheus.Types.Chunk.getDefaultInstance());
+            index, org.beifengtz.jvmm.server.prometheus.Types.Chunk.getDefaultInstance());
       }
       /**
        * <pre>
@@ -15069,16 +15069,16 @@ public final class Types {
        *
        * <code>repeated .prometheus.Chunk chunks = 2;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Types.Chunk.Builder> 
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.Chunk.Builder> 
            getChunksBuilderList() {
         return getChunksFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.Chunk, org.beifengtz.jvmm.prometheus.Types.Chunk.Builder, org.beifengtz.jvmm.prometheus.Types.ChunkOrBuilder> 
+          org.beifengtz.jvmm.server.prometheus.Types.Chunk, org.beifengtz.jvmm.server.prometheus.Types.Chunk.Builder, org.beifengtz.jvmm.server.prometheus.Types.ChunkOrBuilder> 
           getChunksFieldBuilder() {
         if (chunksBuilder_ == null) {
           chunksBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-              org.beifengtz.jvmm.prometheus.Types.Chunk, org.beifengtz.jvmm.prometheus.Types.Chunk.Builder, org.beifengtz.jvmm.prometheus.Types.ChunkOrBuilder>(
+              org.beifengtz.jvmm.server.prometheus.Types.Chunk, org.beifengtz.jvmm.server.prometheus.Types.Chunk.Builder, org.beifengtz.jvmm.server.prometheus.Types.ChunkOrBuilder>(
                   chunks_,
                   ((bitField0_ & 0x00000002) != 0),
                   getParentForChildren(),
@@ -15104,12 +15104,12 @@ public final class Types {
     }
 
     // @@protoc_insertion_point(class_scope:prometheus.ChunkedSeries)
-    private static final org.beifengtz.jvmm.prometheus.Types.ChunkedSeries DEFAULT_INSTANCE;
+    private static final org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.beifengtz.jvmm.prometheus.Types.ChunkedSeries();
+      DEFAULT_INSTANCE = new org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries();
     }
 
-    public static org.beifengtz.jvmm.prometheus.Types.ChunkedSeries getDefaultInstance() {
+    public static org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -15145,7 +15145,7 @@ public final class Types {
     }
 
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.ChunkedSeries getDefaultInstanceForType() {
+    public org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -15263,8 +15263,8 @@ public final class Types {
       "N\020\000\022\007\n\003XOR\020\001\022\r\n\tHISTOGRAM\020\002\022\023\n\017FLOAT_HIS" +
       "TOGRAM\020\003\"U\n\rChunkedSeries\022!\n\006labels\030\001 \003(" +
       "\0132\021.prometheus.Label\022!\n\006chunks\030\002 \003(\0132\021.p" +
-      "rometheus.ChunkB\037\n\035org.beifengtz.jvmm.pr" +
-      "ometheusb\006proto3"
+      "rometheus.ChunkB&\n$org.beifengtz.jvmm.se" +
+      "rver.prometheusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

@@ -8,7 +8,6 @@ pluginManagement {
 rootProject.name = 'jvmm'
 include 'core'
 include 'agent'
-include 'web'
 include 'convey'
 include 'common'
 include 'server'

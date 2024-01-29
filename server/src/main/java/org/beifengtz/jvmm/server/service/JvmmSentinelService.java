@@ -5,16 +5,14 @@ import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.factory.ExecutorFactory;
 import org.beifengtz.jvmm.core.entity.JvmmData;
+import org.beifengtz.jvmm.server.prometheus.PrometheusUtil;
 import org.beifengtz.jvmm.server.ServerContext;
 import org.beifengtz.jvmm.server.entity.conf.SentinelConf;
 import org.beifengtz.jvmm.server.entity.conf.SentinelSubscriberConf;
 import org.beifengtz.jvmm.server.entity.conf.SentinelSubscriberConf.SubscriberType;
 import org.beifengtz.jvmm.server.exporter.HttpExporter;
 import org.beifengtz.jvmm.server.exporter.PrometheusExporter;
-import org.beifengtz.jvmm.prometheus.Remote;
-import org.beifengtz.jvmm.prometheus.Types;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -159,7 +157,7 @@ public class JvmmSentinelService implements JvmmService {
                         if (pair.getLeft().get() <= 0) {
                             JvmmData data = pair.getRight().setNode(ServerContext.getConfiguration().getName());
                             String dataStr = hasHttpSubscriber ? data.toJsonStr() : null;
-                            byte[] dataBytes = hasPrometheusSubscriber ? parsePrometheusData(data) : null;
+                            byte[] dataBytes = hasPrometheusSubscriber ? PrometheusUtil.pack(data) : null;
                             for (SentinelSubscriberConf subscriber : conf.getSubscribers()) {
                                 if (subscriber.getType() == SubscriberType.http && httpExporter != null) {
                                     executor.submit(() -> httpExporter.export(subscriber, dataStr));
@@ -175,34 +173,6 @@ public class JvmmSentinelService implements JvmmService {
                 }
             });
             return false;
-        }
-
-        private byte[] parsePrometheusData(JvmmData data) {
-            Remote.WriteRequest.Builder writeRequestBuilder = Remote.WriteRequest.newBuilder();
-            Types.MetricMetadata.Builder builder = Types.MetricMetadata.newBuilder();
-            builder.setType(Types.MetricMetadata.MetricType.UNKNOWN);
-            builder.setMetricFamilyName(data.getNode());
-            builder.setHelp("helper");
-            Types.MetricMetadata metricMetadata = builder.build();
-            writeRequestBuilder.addMetadata(metricMetadata);
-
-            List<Types.Label> labels = new ArrayList<>();
-            Types.TimeSeries.Builder timeSeriesBuilder = Types.TimeSeries.newBuilder();
-            //  自定义标签信息
-            Types.Label nameLabel = Types.Label.newBuilder().setName("__name__").setValue(data.getNode()).build();
-            labels.add(nameLabel);
-
-            //  写入的时间戳到毫秒级
-            Types.Sample sample = Types.Sample.newBuilder()
-                    .setTimestamp(System.currentTimeMillis())
-                    .setValue(Double.parseDouble(resultValues[1])).build();
-
-            // 远程写入prometheus
-            timeSeriesBuilder.addAllLabels(labels);
-            timeSeriesBuilder.addSamples(sample);
-            writeRequestBuilder.addTimeseries(timeSeriesBuilder.build());
-
-            return writeRequestBuilder.build().toByteArray();
         }
     }
 }

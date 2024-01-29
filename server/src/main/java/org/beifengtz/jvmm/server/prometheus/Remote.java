@@ -2,7 +2,7 @@
 // source: remote.proto
 
 // Protobuf Java Version: 3.25.2
-package org.beifengtz.jvmm.prometheus;
+package org.beifengtz.jvmm.server.prometheus;
 
 public final class Remote {
   private Remote() {}
@@ -22,12 +22,12 @@ public final class Remote {
     /**
      * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
      */
-    java.util.List<org.beifengtz.jvmm.prometheus.Types.TimeSeries> 
+    java.util.List<org.beifengtz.jvmm.server.prometheus.Types.TimeSeries> 
         getTimeseriesList();
     /**
      * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.TimeSeries getTimeseries(int index);
+    org.beifengtz.jvmm.server.prometheus.Types.TimeSeries getTimeseries(int index);
     /**
      * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
      */
@@ -35,23 +35,23 @@ public final class Remote {
     /**
      * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
      */
-    java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.TimeSeriesOrBuilder> 
+    java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.TimeSeriesOrBuilder> 
         getTimeseriesOrBuilderList();
     /**
      * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.TimeSeriesOrBuilder getTimeseriesOrBuilder(
+    org.beifengtz.jvmm.server.prometheus.Types.TimeSeriesOrBuilder getTimeseriesOrBuilder(
         int index);
 
     /**
      * <code>repeated .prometheus.MetricMetadata metadata = 3;</code>
      */
-    java.util.List<org.beifengtz.jvmm.prometheus.Types.MetricMetadata> 
+    java.util.List<org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata> 
         getMetadataList();
     /**
      * <code>repeated .prometheus.MetricMetadata metadata = 3;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.MetricMetadata getMetadata(int index);
+    org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata getMetadata(int index);
     /**
      * <code>repeated .prometheus.MetricMetadata metadata = 3;</code>
      */
@@ -59,12 +59,12 @@ public final class Remote {
     /**
      * <code>repeated .prometheus.MetricMetadata metadata = 3;</code>
      */
-    java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.MetricMetadataOrBuilder> 
+    java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.MetricMetadataOrBuilder> 
         getMetadataOrBuilderList();
     /**
      * <code>repeated .prometheus.MetricMetadata metadata = 3;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.MetricMetadataOrBuilder getMetadataOrBuilder(
+    org.beifengtz.jvmm.server.prometheus.Types.MetricMetadataOrBuilder getMetadataOrBuilder(
         int index);
   }
   /**
@@ -93,32 +93,32 @@ public final class Remote {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.beifengtz.jvmm.prometheus.Remote.internal_static_prometheus_WriteRequest_descriptor;
+      return org.beifengtz.jvmm.server.prometheus.Remote.internal_static_prometheus_WriteRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.beifengtz.jvmm.prometheus.Remote.internal_static_prometheus_WriteRequest_fieldAccessorTable
+      return org.beifengtz.jvmm.server.prometheus.Remote.internal_static_prometheus_WriteRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.beifengtz.jvmm.prometheus.Remote.WriteRequest.class, org.beifengtz.jvmm.prometheus.Remote.WriteRequest.Builder.class);
+              org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest.class, org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest.Builder.class);
     }
 
     public static final int TIMESERIES_FIELD_NUMBER = 1;
     @SuppressWarnings("serial")
-    private java.util.List<org.beifengtz.jvmm.prometheus.Types.TimeSeries> timeseries_;
+    private java.util.List<org.beifengtz.jvmm.server.prometheus.Types.TimeSeries> timeseries_;
     /**
      * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
      */
     @java.lang.Override
-    public java.util.List<org.beifengtz.jvmm.prometheus.Types.TimeSeries> getTimeseriesList() {
+    public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.TimeSeries> getTimeseriesList() {
       return timeseries_;
     }
     /**
      * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
      */
     @java.lang.Override
-    public java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.TimeSeriesOrBuilder> 
+    public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.TimeSeriesOrBuilder> 
         getTimeseriesOrBuilderList() {
       return timeseries_;
     }
@@ -133,33 +133,33 @@ public final class Remote {
      * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.TimeSeries getTimeseries(int index) {
+    public org.beifengtz.jvmm.server.prometheus.Types.TimeSeries getTimeseries(int index) {
       return timeseries_.get(index);
     }
     /**
      * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.TimeSeriesOrBuilder getTimeseriesOrBuilder(
+    public org.beifengtz.jvmm.server.prometheus.Types.TimeSeriesOrBuilder getTimeseriesOrBuilder(
         int index) {
       return timeseries_.get(index);
     }
 
     public static final int METADATA_FIELD_NUMBER = 3;
     @SuppressWarnings("serial")
-    private java.util.List<org.beifengtz.jvmm.prometheus.Types.MetricMetadata> metadata_;
+    private java.util.List<org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata> metadata_;
     /**
      * <code>repeated .prometheus.MetricMetadata metadata = 3;</code>
      */
     @java.lang.Override
-    public java.util.List<org.beifengtz.jvmm.prometheus.Types.MetricMetadata> getMetadataList() {
+    public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata> getMetadataList() {
       return metadata_;
     }
     /**
      * <code>repeated .prometheus.MetricMetadata metadata = 3;</code>
      */
     @java.lang.Override
-    public java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.MetricMetadataOrBuilder> 
+    public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.MetricMetadataOrBuilder> 
         getMetadataOrBuilderList() {
       return metadata_;
     }
@@ -174,14 +174,14 @@ public final class Remote {
      * <code>repeated .prometheus.MetricMetadata metadata = 3;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.MetricMetadata getMetadata(int index) {
+    public org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata getMetadata(int index) {
       return metadata_.get(index);
     }
     /**
      * <code>repeated .prometheus.MetricMetadata metadata = 3;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.MetricMetadataOrBuilder getMetadataOrBuilder(
+    public org.beifengtz.jvmm.server.prometheus.Types.MetricMetadataOrBuilder getMetadataOrBuilder(
         int index) {
       return metadata_.get(index);
     }
@@ -233,10 +233,10 @@ public final class Remote {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.beifengtz.jvmm.prometheus.Remote.WriteRequest)) {
+      if (!(obj instanceof org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest)) {
         return super.equals(obj);
       }
-      org.beifengtz.jvmm.prometheus.Remote.WriteRequest other = (org.beifengtz.jvmm.prometheus.Remote.WriteRequest) obj;
+      org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest other = (org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest) obj;
 
       if (!getTimeseriesList()
           .equals(other.getTimeseriesList())) return false;
@@ -266,44 +266,44 @@ public final class Remote {
       return hash;
     }
 
-    public static org.beifengtz.jvmm.prometheus.Remote.WriteRequest parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.WriteRequest parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.WriteRequest parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.WriteRequest parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.WriteRequest parseFrom(byte[] data)
+    public static org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.WriteRequest parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.WriteRequest parseFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.WriteRequest parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -311,26 +311,26 @@ public final class Remote {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Remote.WriteRequest parseDelimitedFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Remote.WriteRequest parseDelimitedFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.WriteRequest parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.WriteRequest parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -343,7 +343,7 @@ public final class Remote {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.beifengtz.jvmm.prometheus.Remote.WriteRequest prototype) {
+    public static Builder newBuilder(org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -364,21 +364,21 @@ public final class Remote {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:prometheus.WriteRequest)
-        org.beifengtz.jvmm.prometheus.Remote.WriteRequestOrBuilder {
+        org.beifengtz.jvmm.server.prometheus.Remote.WriteRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.beifengtz.jvmm.prometheus.Remote.internal_static_prometheus_WriteRequest_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Remote.internal_static_prometheus_WriteRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.beifengtz.jvmm.prometheus.Remote.internal_static_prometheus_WriteRequest_fieldAccessorTable
+        return org.beifengtz.jvmm.server.prometheus.Remote.internal_static_prometheus_WriteRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.beifengtz.jvmm.prometheus.Remote.WriteRequest.class, org.beifengtz.jvmm.prometheus.Remote.WriteRequest.Builder.class);
+                org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest.class, org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest.Builder.class);
       }
 
-      // Construct using org.beifengtz.jvmm.prometheus.Remote.WriteRequest.newBuilder()
+      // Construct using org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest.newBuilder()
       private Builder() {
 
       }
@@ -412,17 +412,17 @@ public final class Remote {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.beifengtz.jvmm.prometheus.Remote.internal_static_prometheus_WriteRequest_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Remote.internal_static_prometheus_WriteRequest_descriptor;
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Remote.WriteRequest getDefaultInstanceForType() {
-        return org.beifengtz.jvmm.prometheus.Remote.WriteRequest.getDefaultInstance();
+      public org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest getDefaultInstanceForType() {
+        return org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest.getDefaultInstance();
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Remote.WriteRequest build() {
-        org.beifengtz.jvmm.prometheus.Remote.WriteRequest result = buildPartial();
+      public org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest build() {
+        org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -430,15 +430,15 @@ public final class Remote {
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Remote.WriteRequest buildPartial() {
-        org.beifengtz.jvmm.prometheus.Remote.WriteRequest result = new org.beifengtz.jvmm.prometheus.Remote.WriteRequest(this);
+      public org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest buildPartial() {
+        org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest result = new org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest(this);
         buildPartialRepeatedFields(result);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartialRepeatedFields(org.beifengtz.jvmm.prometheus.Remote.WriteRequest result) {
+      private void buildPartialRepeatedFields(org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest result) {
         if (timeseriesBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0)) {
             timeseries_ = java.util.Collections.unmodifiableList(timeseries_);
@@ -459,7 +459,7 @@ public final class Remote {
         }
       }
 
-      private void buildPartial0(org.beifengtz.jvmm.prometheus.Remote.WriteRequest result) {
+      private void buildPartial0(org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest result) {
         int from_bitField0_ = bitField0_;
       }
 
@@ -497,16 +497,16 @@ public final class Remote {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.beifengtz.jvmm.prometheus.Remote.WriteRequest) {
-          return mergeFrom((org.beifengtz.jvmm.prometheus.Remote.WriteRequest)other);
+        if (other instanceof org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest) {
+          return mergeFrom((org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.beifengtz.jvmm.prometheus.Remote.WriteRequest other) {
-        if (other == org.beifengtz.jvmm.prometheus.Remote.WriteRequest.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest other) {
+        if (other == org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest.getDefaultInstance()) return this;
         if (timeseriesBuilder_ == null) {
           if (!other.timeseries_.isEmpty()) {
             if (timeseries_.isEmpty()) {
@@ -586,9 +586,9 @@ public final class Remote {
                 done = true;
                 break;
               case 10: {
-                org.beifengtz.jvmm.prometheus.Types.TimeSeries m =
+                org.beifengtz.jvmm.server.prometheus.Types.TimeSeries m =
                     input.readMessage(
-                        org.beifengtz.jvmm.prometheus.Types.TimeSeries.parser(),
+                        org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.parser(),
                         extensionRegistry);
                 if (timeseriesBuilder_ == null) {
                   ensureTimeseriesIsMutable();
@@ -599,9 +599,9 @@ public final class Remote {
                 break;
               } // case 10
               case 26: {
-                org.beifengtz.jvmm.prometheus.Types.MetricMetadata m =
+                org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata m =
                     input.readMessage(
-                        org.beifengtz.jvmm.prometheus.Types.MetricMetadata.parser(),
+                        org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.parser(),
                         extensionRegistry);
                 if (metadataBuilder_ == null) {
                   ensureMetadataIsMutable();
@@ -628,22 +628,22 @@ public final class Remote {
       }
       private int bitField0_;
 
-      private java.util.List<org.beifengtz.jvmm.prometheus.Types.TimeSeries> timeseries_ =
+      private java.util.List<org.beifengtz.jvmm.server.prometheus.Types.TimeSeries> timeseries_ =
         java.util.Collections.emptyList();
       private void ensureTimeseriesIsMutable() {
         if (!((bitField0_ & 0x00000001) != 0)) {
-          timeseries_ = new java.util.ArrayList<org.beifengtz.jvmm.prometheus.Types.TimeSeries>(timeseries_);
+          timeseries_ = new java.util.ArrayList<org.beifengtz.jvmm.server.prometheus.Types.TimeSeries>(timeseries_);
           bitField0_ |= 0x00000001;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.TimeSeries, org.beifengtz.jvmm.prometheus.Types.TimeSeries.Builder, org.beifengtz.jvmm.prometheus.Types.TimeSeriesOrBuilder> timeseriesBuilder_;
+          org.beifengtz.jvmm.server.prometheus.Types.TimeSeries, org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.Builder, org.beifengtz.jvmm.server.prometheus.Types.TimeSeriesOrBuilder> timeseriesBuilder_;
 
       /**
        * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Types.TimeSeries> getTimeseriesList() {
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.TimeSeries> getTimeseriesList() {
         if (timeseriesBuilder_ == null) {
           return java.util.Collections.unmodifiableList(timeseries_);
         } else {
@@ -663,7 +663,7 @@ public final class Remote {
       /**
        * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.TimeSeries getTimeseries(int index) {
+      public org.beifengtz.jvmm.server.prometheus.Types.TimeSeries getTimeseries(int index) {
         if (timeseriesBuilder_ == null) {
           return timeseries_.get(index);
         } else {
@@ -674,7 +674,7 @@ public final class Remote {
        * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
        */
       public Builder setTimeseries(
-          int index, org.beifengtz.jvmm.prometheus.Types.TimeSeries value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.TimeSeries value) {
         if (timeseriesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -691,7 +691,7 @@ public final class Remote {
        * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
        */
       public Builder setTimeseries(
-          int index, org.beifengtz.jvmm.prometheus.Types.TimeSeries.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.Builder builderForValue) {
         if (timeseriesBuilder_ == null) {
           ensureTimeseriesIsMutable();
           timeseries_.set(index, builderForValue.build());
@@ -704,7 +704,7 @@ public final class Remote {
       /**
        * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
        */
-      public Builder addTimeseries(org.beifengtz.jvmm.prometheus.Types.TimeSeries value) {
+      public Builder addTimeseries(org.beifengtz.jvmm.server.prometheus.Types.TimeSeries value) {
         if (timeseriesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -721,7 +721,7 @@ public final class Remote {
        * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
        */
       public Builder addTimeseries(
-          int index, org.beifengtz.jvmm.prometheus.Types.TimeSeries value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.TimeSeries value) {
         if (timeseriesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -738,7 +738,7 @@ public final class Remote {
        * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
        */
       public Builder addTimeseries(
-          org.beifengtz.jvmm.prometheus.Types.TimeSeries.Builder builderForValue) {
+          org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.Builder builderForValue) {
         if (timeseriesBuilder_ == null) {
           ensureTimeseriesIsMutable();
           timeseries_.add(builderForValue.build());
@@ -752,7 +752,7 @@ public final class Remote {
        * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
        */
       public Builder addTimeseries(
-          int index, org.beifengtz.jvmm.prometheus.Types.TimeSeries.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.Builder builderForValue) {
         if (timeseriesBuilder_ == null) {
           ensureTimeseriesIsMutable();
           timeseries_.add(index, builderForValue.build());
@@ -766,7 +766,7 @@ public final class Remote {
        * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
        */
       public Builder addAllTimeseries(
-          java.lang.Iterable<? extends org.beifengtz.jvmm.prometheus.Types.TimeSeries> values) {
+          java.lang.Iterable<? extends org.beifengtz.jvmm.server.prometheus.Types.TimeSeries> values) {
         if (timeseriesBuilder_ == null) {
           ensureTimeseriesIsMutable();
           com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -806,14 +806,14 @@ public final class Remote {
       /**
        * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.TimeSeries.Builder getTimeseriesBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.Builder getTimeseriesBuilder(
           int index) {
         return getTimeseriesFieldBuilder().getBuilder(index);
       }
       /**
        * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.TimeSeriesOrBuilder getTimeseriesOrBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.TimeSeriesOrBuilder getTimeseriesOrBuilder(
           int index) {
         if (timeseriesBuilder_ == null) {
           return timeseries_.get(index);  } else {
@@ -823,7 +823,7 @@ public final class Remote {
       /**
        * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
        */
-      public java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.TimeSeriesOrBuilder> 
+      public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.TimeSeriesOrBuilder> 
            getTimeseriesOrBuilderList() {
         if (timeseriesBuilder_ != null) {
           return timeseriesBuilder_.getMessageOrBuilderList();
@@ -834,31 +834,31 @@ public final class Remote {
       /**
        * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.TimeSeries.Builder addTimeseriesBuilder() {
+      public org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.Builder addTimeseriesBuilder() {
         return getTimeseriesFieldBuilder().addBuilder(
-            org.beifengtz.jvmm.prometheus.Types.TimeSeries.getDefaultInstance());
+            org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.getDefaultInstance());
       }
       /**
        * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.TimeSeries.Builder addTimeseriesBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.Builder addTimeseriesBuilder(
           int index) {
         return getTimeseriesFieldBuilder().addBuilder(
-            index, org.beifengtz.jvmm.prometheus.Types.TimeSeries.getDefaultInstance());
+            index, org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.getDefaultInstance());
       }
       /**
        * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Types.TimeSeries.Builder> 
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.Builder> 
            getTimeseriesBuilderList() {
         return getTimeseriesFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.TimeSeries, org.beifengtz.jvmm.prometheus.Types.TimeSeries.Builder, org.beifengtz.jvmm.prometheus.Types.TimeSeriesOrBuilder> 
+          org.beifengtz.jvmm.server.prometheus.Types.TimeSeries, org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.Builder, org.beifengtz.jvmm.server.prometheus.Types.TimeSeriesOrBuilder> 
           getTimeseriesFieldBuilder() {
         if (timeseriesBuilder_ == null) {
           timeseriesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-              org.beifengtz.jvmm.prometheus.Types.TimeSeries, org.beifengtz.jvmm.prometheus.Types.TimeSeries.Builder, org.beifengtz.jvmm.prometheus.Types.TimeSeriesOrBuilder>(
+              org.beifengtz.jvmm.server.prometheus.Types.TimeSeries, org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.Builder, org.beifengtz.jvmm.server.prometheus.Types.TimeSeriesOrBuilder>(
                   timeseries_,
                   ((bitField0_ & 0x00000001) != 0),
                   getParentForChildren(),
@@ -868,22 +868,22 @@ public final class Remote {
         return timeseriesBuilder_;
       }
 
-      private java.util.List<org.beifengtz.jvmm.prometheus.Types.MetricMetadata> metadata_ =
+      private java.util.List<org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata> metadata_ =
         java.util.Collections.emptyList();
       private void ensureMetadataIsMutable() {
         if (!((bitField0_ & 0x00000002) != 0)) {
-          metadata_ = new java.util.ArrayList<org.beifengtz.jvmm.prometheus.Types.MetricMetadata>(metadata_);
+          metadata_ = new java.util.ArrayList<org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata>(metadata_);
           bitField0_ |= 0x00000002;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.MetricMetadata, org.beifengtz.jvmm.prometheus.Types.MetricMetadata.Builder, org.beifengtz.jvmm.prometheus.Types.MetricMetadataOrBuilder> metadataBuilder_;
+          org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata, org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.Builder, org.beifengtz.jvmm.server.prometheus.Types.MetricMetadataOrBuilder> metadataBuilder_;
 
       /**
        * <code>repeated .prometheus.MetricMetadata metadata = 3;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Types.MetricMetadata> getMetadataList() {
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata> getMetadataList() {
         if (metadataBuilder_ == null) {
           return java.util.Collections.unmodifiableList(metadata_);
         } else {
@@ -903,7 +903,7 @@ public final class Remote {
       /**
        * <code>repeated .prometheus.MetricMetadata metadata = 3;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.MetricMetadata getMetadata(int index) {
+      public org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata getMetadata(int index) {
         if (metadataBuilder_ == null) {
           return metadata_.get(index);
         } else {
@@ -914,7 +914,7 @@ public final class Remote {
        * <code>repeated .prometheus.MetricMetadata metadata = 3;</code>
        */
       public Builder setMetadata(
-          int index, org.beifengtz.jvmm.prometheus.Types.MetricMetadata value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata value) {
         if (metadataBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -931,7 +931,7 @@ public final class Remote {
        * <code>repeated .prometheus.MetricMetadata metadata = 3;</code>
        */
       public Builder setMetadata(
-          int index, org.beifengtz.jvmm.prometheus.Types.MetricMetadata.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.Builder builderForValue) {
         if (metadataBuilder_ == null) {
           ensureMetadataIsMutable();
           metadata_.set(index, builderForValue.build());
@@ -944,7 +944,7 @@ public final class Remote {
       /**
        * <code>repeated .prometheus.MetricMetadata metadata = 3;</code>
        */
-      public Builder addMetadata(org.beifengtz.jvmm.prometheus.Types.MetricMetadata value) {
+      public Builder addMetadata(org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata value) {
         if (metadataBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -961,7 +961,7 @@ public final class Remote {
        * <code>repeated .prometheus.MetricMetadata metadata = 3;</code>
        */
       public Builder addMetadata(
-          int index, org.beifengtz.jvmm.prometheus.Types.MetricMetadata value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata value) {
         if (metadataBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -978,7 +978,7 @@ public final class Remote {
        * <code>repeated .prometheus.MetricMetadata metadata = 3;</code>
        */
       public Builder addMetadata(
-          org.beifengtz.jvmm.prometheus.Types.MetricMetadata.Builder builderForValue) {
+          org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.Builder builderForValue) {
         if (metadataBuilder_ == null) {
           ensureMetadataIsMutable();
           metadata_.add(builderForValue.build());
@@ -992,7 +992,7 @@ public final class Remote {
        * <code>repeated .prometheus.MetricMetadata metadata = 3;</code>
        */
       public Builder addMetadata(
-          int index, org.beifengtz.jvmm.prometheus.Types.MetricMetadata.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.Builder builderForValue) {
         if (metadataBuilder_ == null) {
           ensureMetadataIsMutable();
           metadata_.add(index, builderForValue.build());
@@ -1006,7 +1006,7 @@ public final class Remote {
        * <code>repeated .prometheus.MetricMetadata metadata = 3;</code>
        */
       public Builder addAllMetadata(
-          java.lang.Iterable<? extends org.beifengtz.jvmm.prometheus.Types.MetricMetadata> values) {
+          java.lang.Iterable<? extends org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata> values) {
         if (metadataBuilder_ == null) {
           ensureMetadataIsMutable();
           com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -1046,14 +1046,14 @@ public final class Remote {
       /**
        * <code>repeated .prometheus.MetricMetadata metadata = 3;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.MetricMetadata.Builder getMetadataBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.Builder getMetadataBuilder(
           int index) {
         return getMetadataFieldBuilder().getBuilder(index);
       }
       /**
        * <code>repeated .prometheus.MetricMetadata metadata = 3;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.MetricMetadataOrBuilder getMetadataOrBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.MetricMetadataOrBuilder getMetadataOrBuilder(
           int index) {
         if (metadataBuilder_ == null) {
           return metadata_.get(index);  } else {
@@ -1063,7 +1063,7 @@ public final class Remote {
       /**
        * <code>repeated .prometheus.MetricMetadata metadata = 3;</code>
        */
-      public java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.MetricMetadataOrBuilder> 
+      public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.MetricMetadataOrBuilder> 
            getMetadataOrBuilderList() {
         if (metadataBuilder_ != null) {
           return metadataBuilder_.getMessageOrBuilderList();
@@ -1074,31 +1074,31 @@ public final class Remote {
       /**
        * <code>repeated .prometheus.MetricMetadata metadata = 3;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.MetricMetadata.Builder addMetadataBuilder() {
+      public org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.Builder addMetadataBuilder() {
         return getMetadataFieldBuilder().addBuilder(
-            org.beifengtz.jvmm.prometheus.Types.MetricMetadata.getDefaultInstance());
+            org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.getDefaultInstance());
       }
       /**
        * <code>repeated .prometheus.MetricMetadata metadata = 3;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.MetricMetadata.Builder addMetadataBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.Builder addMetadataBuilder(
           int index) {
         return getMetadataFieldBuilder().addBuilder(
-            index, org.beifengtz.jvmm.prometheus.Types.MetricMetadata.getDefaultInstance());
+            index, org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.getDefaultInstance());
       }
       /**
        * <code>repeated .prometheus.MetricMetadata metadata = 3;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Types.MetricMetadata.Builder> 
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.Builder> 
            getMetadataBuilderList() {
         return getMetadataFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.MetricMetadata, org.beifengtz.jvmm.prometheus.Types.MetricMetadata.Builder, org.beifengtz.jvmm.prometheus.Types.MetricMetadataOrBuilder> 
+          org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata, org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.Builder, org.beifengtz.jvmm.server.prometheus.Types.MetricMetadataOrBuilder> 
           getMetadataFieldBuilder() {
         if (metadataBuilder_ == null) {
           metadataBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-              org.beifengtz.jvmm.prometheus.Types.MetricMetadata, org.beifengtz.jvmm.prometheus.Types.MetricMetadata.Builder, org.beifengtz.jvmm.prometheus.Types.MetricMetadataOrBuilder>(
+              org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata, org.beifengtz.jvmm.server.prometheus.Types.MetricMetadata.Builder, org.beifengtz.jvmm.server.prometheus.Types.MetricMetadataOrBuilder>(
                   metadata_,
                   ((bitField0_ & 0x00000002) != 0),
                   getParentForChildren(),
@@ -1124,12 +1124,12 @@ public final class Remote {
     }
 
     // @@protoc_insertion_point(class_scope:prometheus.WriteRequest)
-    private static final org.beifengtz.jvmm.prometheus.Remote.WriteRequest DEFAULT_INSTANCE;
+    private static final org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.beifengtz.jvmm.prometheus.Remote.WriteRequest();
+      DEFAULT_INSTANCE = new org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest();
     }
 
-    public static org.beifengtz.jvmm.prometheus.Remote.WriteRequest getDefaultInstance() {
+    public static org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -1165,7 +1165,7 @@ public final class Remote {
     }
 
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Remote.WriteRequest getDefaultInstanceForType() {
+    public org.beifengtz.jvmm.server.prometheus.Remote.WriteRequest getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -1178,12 +1178,12 @@ public final class Remote {
     /**
      * <code>repeated .prometheus.Query queries = 1;</code>
      */
-    java.util.List<org.beifengtz.jvmm.prometheus.Remote.Query> 
+    java.util.List<org.beifengtz.jvmm.server.prometheus.Remote.Query> 
         getQueriesList();
     /**
      * <code>repeated .prometheus.Query queries = 1;</code>
      */
-    org.beifengtz.jvmm.prometheus.Remote.Query getQueries(int index);
+    org.beifengtz.jvmm.server.prometheus.Remote.Query getQueries(int index);
     /**
      * <code>repeated .prometheus.Query queries = 1;</code>
      */
@@ -1191,12 +1191,12 @@ public final class Remote {
     /**
      * <code>repeated .prometheus.Query queries = 1;</code>
      */
-    java.util.List<? extends org.beifengtz.jvmm.prometheus.Remote.QueryOrBuilder> 
+    java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Remote.QueryOrBuilder> 
         getQueriesOrBuilderList();
     /**
      * <code>repeated .prometheus.Query queries = 1;</code>
      */
-    org.beifengtz.jvmm.prometheus.Remote.QueryOrBuilder getQueriesOrBuilder(
+    org.beifengtz.jvmm.server.prometheus.Remote.QueryOrBuilder getQueriesOrBuilder(
         int index);
 
     /**
@@ -1211,7 +1211,7 @@ public final class Remote {
      * <code>repeated .prometheus.ReadRequest.ResponseType accepted_response_types = 2;</code>
      * @return A list containing the acceptedResponseTypes.
      */
-    java.util.List<org.beifengtz.jvmm.prometheus.Remote.ReadRequest.ResponseType> getAcceptedResponseTypesList();
+    java.util.List<org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest.ResponseType> getAcceptedResponseTypesList();
     /**
      * <pre>
      * accepted_response_types allows negotiating the content type of the response.
@@ -1238,7 +1238,7 @@ public final class Remote {
      * @param index The index of the element to return.
      * @return The acceptedResponseTypes at the given index.
      */
-    org.beifengtz.jvmm.prometheus.Remote.ReadRequest.ResponseType getAcceptedResponseTypes(int index);
+    org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest.ResponseType getAcceptedResponseTypes(int index);
     /**
      * <pre>
      * accepted_response_types allows negotiating the content type of the response.
@@ -1298,15 +1298,15 @@ public final class Remote {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.beifengtz.jvmm.prometheus.Remote.internal_static_prometheus_ReadRequest_descriptor;
+      return org.beifengtz.jvmm.server.prometheus.Remote.internal_static_prometheus_ReadRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.beifengtz.jvmm.prometheus.Remote.internal_static_prometheus_ReadRequest_fieldAccessorTable
+      return org.beifengtz.jvmm.server.prometheus.Remote.internal_static_prometheus_ReadRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.beifengtz.jvmm.prometheus.Remote.ReadRequest.class, org.beifengtz.jvmm.prometheus.Remote.ReadRequest.Builder.class);
+              org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest.class, org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest.Builder.class);
     }
 
     /**
@@ -1431,7 +1431,7 @@ public final class Remote {
       }
       public static final com.google.protobuf.Descriptors.EnumDescriptor
           getDescriptor() {
-        return org.beifengtz.jvmm.prometheus.Remote.ReadRequest.getDescriptor().getEnumTypes().get(0);
+        return org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest.getDescriptor().getEnumTypes().get(0);
       }
 
       private static final ResponseType[] VALUES = values();
@@ -1459,19 +1459,19 @@ public final class Remote {
 
     public static final int QUERIES_FIELD_NUMBER = 1;
     @SuppressWarnings("serial")
-    private java.util.List<org.beifengtz.jvmm.prometheus.Remote.Query> queries_;
+    private java.util.List<org.beifengtz.jvmm.server.prometheus.Remote.Query> queries_;
     /**
      * <code>repeated .prometheus.Query queries = 1;</code>
      */
     @java.lang.Override
-    public java.util.List<org.beifengtz.jvmm.prometheus.Remote.Query> getQueriesList() {
+    public java.util.List<org.beifengtz.jvmm.server.prometheus.Remote.Query> getQueriesList() {
       return queries_;
     }
     /**
      * <code>repeated .prometheus.Query queries = 1;</code>
      */
     @java.lang.Override
-    public java.util.List<? extends org.beifengtz.jvmm.prometheus.Remote.QueryOrBuilder> 
+    public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Remote.QueryOrBuilder> 
         getQueriesOrBuilderList() {
       return queries_;
     }
@@ -1486,14 +1486,14 @@ public final class Remote {
      * <code>repeated .prometheus.Query queries = 1;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Remote.Query getQueries(int index) {
+    public org.beifengtz.jvmm.server.prometheus.Remote.Query getQueries(int index) {
       return queries_.get(index);
     }
     /**
      * <code>repeated .prometheus.Query queries = 1;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Remote.QueryOrBuilder getQueriesOrBuilder(
+    public org.beifengtz.jvmm.server.prometheus.Remote.QueryOrBuilder getQueriesOrBuilder(
         int index) {
       return queries_.get(index);
     }
@@ -1502,12 +1502,12 @@ public final class Remote {
     @SuppressWarnings("serial")
     private java.util.List<java.lang.Integer> acceptedResponseTypes_;
     private static final com.google.protobuf.Internal.ListAdapter.Converter<
-        java.lang.Integer, org.beifengtz.jvmm.prometheus.Remote.ReadRequest.ResponseType> acceptedResponseTypes_converter_ =
+        java.lang.Integer, org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest.ResponseType> acceptedResponseTypes_converter_ =
             new com.google.protobuf.Internal.ListAdapter.Converter<
-                java.lang.Integer, org.beifengtz.jvmm.prometheus.Remote.ReadRequest.ResponseType>() {
-              public org.beifengtz.jvmm.prometheus.Remote.ReadRequest.ResponseType convert(java.lang.Integer from) {
-                org.beifengtz.jvmm.prometheus.Remote.ReadRequest.ResponseType result = org.beifengtz.jvmm.prometheus.Remote.ReadRequest.ResponseType.forNumber(from);
-                return result == null ? org.beifengtz.jvmm.prometheus.Remote.ReadRequest.ResponseType.UNRECOGNIZED : result;
+                java.lang.Integer, org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest.ResponseType>() {
+              public org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest.ResponseType convert(java.lang.Integer from) {
+                org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest.ResponseType result = org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest.ResponseType.forNumber(from);
+                return result == null ? org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest.ResponseType.UNRECOGNIZED : result;
               }
             };
     /**
@@ -1523,9 +1523,9 @@ public final class Remote {
      * @return A list containing the acceptedResponseTypes.
      */
     @java.lang.Override
-    public java.util.List<org.beifengtz.jvmm.prometheus.Remote.ReadRequest.ResponseType> getAcceptedResponseTypesList() {
+    public java.util.List<org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest.ResponseType> getAcceptedResponseTypesList() {
       return new com.google.protobuf.Internal.ListAdapter<
-          java.lang.Integer, org.beifengtz.jvmm.prometheus.Remote.ReadRequest.ResponseType>(acceptedResponseTypes_, acceptedResponseTypes_converter_);
+          java.lang.Integer, org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest.ResponseType>(acceptedResponseTypes_, acceptedResponseTypes_converter_);
     }
     /**
      * <pre>
@@ -1557,7 +1557,7 @@ public final class Remote {
      * @return The acceptedResponseTypes at the given index.
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Remote.ReadRequest.ResponseType getAcceptedResponseTypes(int index) {
+    public org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest.ResponseType getAcceptedResponseTypes(int index) {
       return acceptedResponseTypes_converter_.convert(acceptedResponseTypes_.get(index));
     }
     /**
@@ -1656,10 +1656,10 @@ public final class Remote {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.beifengtz.jvmm.prometheus.Remote.ReadRequest)) {
+      if (!(obj instanceof org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest)) {
         return super.equals(obj);
       }
-      org.beifengtz.jvmm.prometheus.Remote.ReadRequest other = (org.beifengtz.jvmm.prometheus.Remote.ReadRequest) obj;
+      org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest other = (org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest) obj;
 
       if (!getQueriesList()
           .equals(other.getQueriesList())) return false;
@@ -1688,44 +1688,44 @@ public final class Remote {
       return hash;
     }
 
-    public static org.beifengtz.jvmm.prometheus.Remote.ReadRequest parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.ReadRequest parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.ReadRequest parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.ReadRequest parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.ReadRequest parseFrom(byte[] data)
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.ReadRequest parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.ReadRequest parseFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.ReadRequest parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -1733,26 +1733,26 @@ public final class Remote {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Remote.ReadRequest parseDelimitedFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Remote.ReadRequest parseDelimitedFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.ReadRequest parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.ReadRequest parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -1765,7 +1765,7 @@ public final class Remote {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.beifengtz.jvmm.prometheus.Remote.ReadRequest prototype) {
+    public static Builder newBuilder(org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -1790,21 +1790,21 @@ public final class Remote {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:prometheus.ReadRequest)
-        org.beifengtz.jvmm.prometheus.Remote.ReadRequestOrBuilder {
+        org.beifengtz.jvmm.server.prometheus.Remote.ReadRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.beifengtz.jvmm.prometheus.Remote.internal_static_prometheus_ReadRequest_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Remote.internal_static_prometheus_ReadRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.beifengtz.jvmm.prometheus.Remote.internal_static_prometheus_ReadRequest_fieldAccessorTable
+        return org.beifengtz.jvmm.server.prometheus.Remote.internal_static_prometheus_ReadRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.beifengtz.jvmm.prometheus.Remote.ReadRequest.class, org.beifengtz.jvmm.prometheus.Remote.ReadRequest.Builder.class);
+                org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest.class, org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest.Builder.class);
       }
 
-      // Construct using org.beifengtz.jvmm.prometheus.Remote.ReadRequest.newBuilder()
+      // Construct using org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest.newBuilder()
       private Builder() {
 
       }
@@ -1833,17 +1833,17 @@ public final class Remote {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.beifengtz.jvmm.prometheus.Remote.internal_static_prometheus_ReadRequest_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Remote.internal_static_prometheus_ReadRequest_descriptor;
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Remote.ReadRequest getDefaultInstanceForType() {
-        return org.beifengtz.jvmm.prometheus.Remote.ReadRequest.getDefaultInstance();
+      public org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest getDefaultInstanceForType() {
+        return org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest.getDefaultInstance();
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Remote.ReadRequest build() {
-        org.beifengtz.jvmm.prometheus.Remote.ReadRequest result = buildPartial();
+      public org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest build() {
+        org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -1851,15 +1851,15 @@ public final class Remote {
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Remote.ReadRequest buildPartial() {
-        org.beifengtz.jvmm.prometheus.Remote.ReadRequest result = new org.beifengtz.jvmm.prometheus.Remote.ReadRequest(this);
+      public org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest buildPartial() {
+        org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest result = new org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest(this);
         buildPartialRepeatedFields(result);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartialRepeatedFields(org.beifengtz.jvmm.prometheus.Remote.ReadRequest result) {
+      private void buildPartialRepeatedFields(org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest result) {
         if (queriesBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0)) {
             queries_ = java.util.Collections.unmodifiableList(queries_);
@@ -1876,7 +1876,7 @@ public final class Remote {
         result.acceptedResponseTypes_ = acceptedResponseTypes_;
       }
 
-      private void buildPartial0(org.beifengtz.jvmm.prometheus.Remote.ReadRequest result) {
+      private void buildPartial0(org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest result) {
         int from_bitField0_ = bitField0_;
       }
 
@@ -1914,16 +1914,16 @@ public final class Remote {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.beifengtz.jvmm.prometheus.Remote.ReadRequest) {
-          return mergeFrom((org.beifengtz.jvmm.prometheus.Remote.ReadRequest)other);
+        if (other instanceof org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest) {
+          return mergeFrom((org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.beifengtz.jvmm.prometheus.Remote.ReadRequest other) {
-        if (other == org.beifengtz.jvmm.prometheus.Remote.ReadRequest.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest other) {
+        if (other == org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest.getDefaultInstance()) return this;
         if (queriesBuilder_ == null) {
           if (!other.queries_.isEmpty()) {
             if (queries_.isEmpty()) {
@@ -1987,9 +1987,9 @@ public final class Remote {
                 done = true;
                 break;
               case 10: {
-                org.beifengtz.jvmm.prometheus.Remote.Query m =
+                org.beifengtz.jvmm.server.prometheus.Remote.Query m =
                     input.readMessage(
-                        org.beifengtz.jvmm.prometheus.Remote.Query.parser(),
+                        org.beifengtz.jvmm.server.prometheus.Remote.Query.parser(),
                         extensionRegistry);
                 if (queriesBuilder_ == null) {
                   ensureQueriesIsMutable();
@@ -2033,22 +2033,22 @@ public final class Remote {
       }
       private int bitField0_;
 
-      private java.util.List<org.beifengtz.jvmm.prometheus.Remote.Query> queries_ =
+      private java.util.List<org.beifengtz.jvmm.server.prometheus.Remote.Query> queries_ =
         java.util.Collections.emptyList();
       private void ensureQueriesIsMutable() {
         if (!((bitField0_ & 0x00000001) != 0)) {
-          queries_ = new java.util.ArrayList<org.beifengtz.jvmm.prometheus.Remote.Query>(queries_);
+          queries_ = new java.util.ArrayList<org.beifengtz.jvmm.server.prometheus.Remote.Query>(queries_);
           bitField0_ |= 0x00000001;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Remote.Query, org.beifengtz.jvmm.prometheus.Remote.Query.Builder, org.beifengtz.jvmm.prometheus.Remote.QueryOrBuilder> queriesBuilder_;
+          org.beifengtz.jvmm.server.prometheus.Remote.Query, org.beifengtz.jvmm.server.prometheus.Remote.Query.Builder, org.beifengtz.jvmm.server.prometheus.Remote.QueryOrBuilder> queriesBuilder_;
 
       /**
        * <code>repeated .prometheus.Query queries = 1;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Remote.Query> getQueriesList() {
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Remote.Query> getQueriesList() {
         if (queriesBuilder_ == null) {
           return java.util.Collections.unmodifiableList(queries_);
         } else {
@@ -2068,7 +2068,7 @@ public final class Remote {
       /**
        * <code>repeated .prometheus.Query queries = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Remote.Query getQueries(int index) {
+      public org.beifengtz.jvmm.server.prometheus.Remote.Query getQueries(int index) {
         if (queriesBuilder_ == null) {
           return queries_.get(index);
         } else {
@@ -2079,7 +2079,7 @@ public final class Remote {
        * <code>repeated .prometheus.Query queries = 1;</code>
        */
       public Builder setQueries(
-          int index, org.beifengtz.jvmm.prometheus.Remote.Query value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Remote.Query value) {
         if (queriesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -2096,7 +2096,7 @@ public final class Remote {
        * <code>repeated .prometheus.Query queries = 1;</code>
        */
       public Builder setQueries(
-          int index, org.beifengtz.jvmm.prometheus.Remote.Query.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Remote.Query.Builder builderForValue) {
         if (queriesBuilder_ == null) {
           ensureQueriesIsMutable();
           queries_.set(index, builderForValue.build());
@@ -2109,7 +2109,7 @@ public final class Remote {
       /**
        * <code>repeated .prometheus.Query queries = 1;</code>
        */
-      public Builder addQueries(org.beifengtz.jvmm.prometheus.Remote.Query value) {
+      public Builder addQueries(org.beifengtz.jvmm.server.prometheus.Remote.Query value) {
         if (queriesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -2126,7 +2126,7 @@ public final class Remote {
        * <code>repeated .prometheus.Query queries = 1;</code>
        */
       public Builder addQueries(
-          int index, org.beifengtz.jvmm.prometheus.Remote.Query value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Remote.Query value) {
         if (queriesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -2143,7 +2143,7 @@ public final class Remote {
        * <code>repeated .prometheus.Query queries = 1;</code>
        */
       public Builder addQueries(
-          org.beifengtz.jvmm.prometheus.Remote.Query.Builder builderForValue) {
+          org.beifengtz.jvmm.server.prometheus.Remote.Query.Builder builderForValue) {
         if (queriesBuilder_ == null) {
           ensureQueriesIsMutable();
           queries_.add(builderForValue.build());
@@ -2157,7 +2157,7 @@ public final class Remote {
        * <code>repeated .prometheus.Query queries = 1;</code>
        */
       public Builder addQueries(
-          int index, org.beifengtz.jvmm.prometheus.Remote.Query.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Remote.Query.Builder builderForValue) {
         if (queriesBuilder_ == null) {
           ensureQueriesIsMutable();
           queries_.add(index, builderForValue.build());
@@ -2171,7 +2171,7 @@ public final class Remote {
        * <code>repeated .prometheus.Query queries = 1;</code>
        */
       public Builder addAllQueries(
-          java.lang.Iterable<? extends org.beifengtz.jvmm.prometheus.Remote.Query> values) {
+          java.lang.Iterable<? extends org.beifengtz.jvmm.server.prometheus.Remote.Query> values) {
         if (queriesBuilder_ == null) {
           ensureQueriesIsMutable();
           com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -2211,14 +2211,14 @@ public final class Remote {
       /**
        * <code>repeated .prometheus.Query queries = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Remote.Query.Builder getQueriesBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Remote.Query.Builder getQueriesBuilder(
           int index) {
         return getQueriesFieldBuilder().getBuilder(index);
       }
       /**
        * <code>repeated .prometheus.Query queries = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Remote.QueryOrBuilder getQueriesOrBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Remote.QueryOrBuilder getQueriesOrBuilder(
           int index) {
         if (queriesBuilder_ == null) {
           return queries_.get(index);  } else {
@@ -2228,7 +2228,7 @@ public final class Remote {
       /**
        * <code>repeated .prometheus.Query queries = 1;</code>
        */
-      public java.util.List<? extends org.beifengtz.jvmm.prometheus.Remote.QueryOrBuilder> 
+      public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Remote.QueryOrBuilder> 
            getQueriesOrBuilderList() {
         if (queriesBuilder_ != null) {
           return queriesBuilder_.getMessageOrBuilderList();
@@ -2239,31 +2239,31 @@ public final class Remote {
       /**
        * <code>repeated .prometheus.Query queries = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Remote.Query.Builder addQueriesBuilder() {
+      public org.beifengtz.jvmm.server.prometheus.Remote.Query.Builder addQueriesBuilder() {
         return getQueriesFieldBuilder().addBuilder(
-            org.beifengtz.jvmm.prometheus.Remote.Query.getDefaultInstance());
+            org.beifengtz.jvmm.server.prometheus.Remote.Query.getDefaultInstance());
       }
       /**
        * <code>repeated .prometheus.Query queries = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Remote.Query.Builder addQueriesBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Remote.Query.Builder addQueriesBuilder(
           int index) {
         return getQueriesFieldBuilder().addBuilder(
-            index, org.beifengtz.jvmm.prometheus.Remote.Query.getDefaultInstance());
+            index, org.beifengtz.jvmm.server.prometheus.Remote.Query.getDefaultInstance());
       }
       /**
        * <code>repeated .prometheus.Query queries = 1;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Remote.Query.Builder> 
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Remote.Query.Builder> 
            getQueriesBuilderList() {
         return getQueriesFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Remote.Query, org.beifengtz.jvmm.prometheus.Remote.Query.Builder, org.beifengtz.jvmm.prometheus.Remote.QueryOrBuilder> 
+          org.beifengtz.jvmm.server.prometheus.Remote.Query, org.beifengtz.jvmm.server.prometheus.Remote.Query.Builder, org.beifengtz.jvmm.server.prometheus.Remote.QueryOrBuilder> 
           getQueriesFieldBuilder() {
         if (queriesBuilder_ == null) {
           queriesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-              org.beifengtz.jvmm.prometheus.Remote.Query, org.beifengtz.jvmm.prometheus.Remote.Query.Builder, org.beifengtz.jvmm.prometheus.Remote.QueryOrBuilder>(
+              org.beifengtz.jvmm.server.prometheus.Remote.Query, org.beifengtz.jvmm.server.prometheus.Remote.Query.Builder, org.beifengtz.jvmm.server.prometheus.Remote.QueryOrBuilder>(
                   queries_,
                   ((bitField0_ & 0x00000001) != 0),
                   getParentForChildren(),
@@ -2293,9 +2293,9 @@ public final class Remote {
        * <code>repeated .prometheus.ReadRequest.ResponseType accepted_response_types = 2;</code>
        * @return A list containing the acceptedResponseTypes.
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Remote.ReadRequest.ResponseType> getAcceptedResponseTypesList() {
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest.ResponseType> getAcceptedResponseTypesList() {
         return new com.google.protobuf.Internal.ListAdapter<
-            java.lang.Integer, org.beifengtz.jvmm.prometheus.Remote.ReadRequest.ResponseType>(acceptedResponseTypes_, acceptedResponseTypes_converter_);
+            java.lang.Integer, org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest.ResponseType>(acceptedResponseTypes_, acceptedResponseTypes_converter_);
       }
       /**
        * <pre>
@@ -2325,7 +2325,7 @@ public final class Remote {
        * @param index The index of the element to return.
        * @return The acceptedResponseTypes at the given index.
        */
-      public org.beifengtz.jvmm.prometheus.Remote.ReadRequest.ResponseType getAcceptedResponseTypes(int index) {
+      public org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest.ResponseType getAcceptedResponseTypes(int index) {
         return acceptedResponseTypes_converter_.convert(acceptedResponseTypes_.get(index));
       }
       /**
@@ -2343,7 +2343,7 @@ public final class Remote {
        * @return This builder for chaining.
        */
       public Builder setAcceptedResponseTypes(
-          int index, org.beifengtz.jvmm.prometheus.Remote.ReadRequest.ResponseType value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest.ResponseType value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -2365,7 +2365,7 @@ public final class Remote {
        * @param value The acceptedResponseTypes to add.
        * @return This builder for chaining.
        */
-      public Builder addAcceptedResponseTypes(org.beifengtz.jvmm.prometheus.Remote.ReadRequest.ResponseType value) {
+      public Builder addAcceptedResponseTypes(org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest.ResponseType value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -2388,9 +2388,9 @@ public final class Remote {
        * @return This builder for chaining.
        */
       public Builder addAllAcceptedResponseTypes(
-          java.lang.Iterable<? extends org.beifengtz.jvmm.prometheus.Remote.ReadRequest.ResponseType> values) {
+          java.lang.Iterable<? extends org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest.ResponseType> values) {
         ensureAcceptedResponseTypesIsMutable();
-        for (org.beifengtz.jvmm.prometheus.Remote.ReadRequest.ResponseType value : values) {
+        for (org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest.ResponseType value : values) {
           acceptedResponseTypes_.add(value.getNumber());
         }
         onChanged();
@@ -2525,12 +2525,12 @@ public final class Remote {
     }
 
     // @@protoc_insertion_point(class_scope:prometheus.ReadRequest)
-    private static final org.beifengtz.jvmm.prometheus.Remote.ReadRequest DEFAULT_INSTANCE;
+    private static final org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.beifengtz.jvmm.prometheus.Remote.ReadRequest();
+      DEFAULT_INSTANCE = new org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest();
     }
 
-    public static org.beifengtz.jvmm.prometheus.Remote.ReadRequest getDefaultInstance() {
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -2566,7 +2566,7 @@ public final class Remote {
     }
 
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Remote.ReadRequest getDefaultInstanceForType() {
+    public org.beifengtz.jvmm.server.prometheus.Remote.ReadRequest getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -2583,7 +2583,7 @@ public final class Remote {
      *
      * <code>repeated .prometheus.QueryResult results = 1;</code>
      */
-    java.util.List<org.beifengtz.jvmm.prometheus.Remote.QueryResult> 
+    java.util.List<org.beifengtz.jvmm.server.prometheus.Remote.QueryResult> 
         getResultsList();
     /**
      * <pre>
@@ -2592,7 +2592,7 @@ public final class Remote {
      *
      * <code>repeated .prometheus.QueryResult results = 1;</code>
      */
-    org.beifengtz.jvmm.prometheus.Remote.QueryResult getResults(int index);
+    org.beifengtz.jvmm.server.prometheus.Remote.QueryResult getResults(int index);
     /**
      * <pre>
      * In same order as the request's queries.
@@ -2608,7 +2608,7 @@ public final class Remote {
      *
      * <code>repeated .prometheus.QueryResult results = 1;</code>
      */
-    java.util.List<? extends org.beifengtz.jvmm.prometheus.Remote.QueryResultOrBuilder> 
+    java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Remote.QueryResultOrBuilder> 
         getResultsOrBuilderList();
     /**
      * <pre>
@@ -2617,7 +2617,7 @@ public final class Remote {
      *
      * <code>repeated .prometheus.QueryResult results = 1;</code>
      */
-    org.beifengtz.jvmm.prometheus.Remote.QueryResultOrBuilder getResultsOrBuilder(
+    org.beifengtz.jvmm.server.prometheus.Remote.QueryResultOrBuilder getResultsOrBuilder(
         int index);
   }
   /**
@@ -2649,20 +2649,20 @@ public final class Remote {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.beifengtz.jvmm.prometheus.Remote.internal_static_prometheus_ReadResponse_descriptor;
+      return org.beifengtz.jvmm.server.prometheus.Remote.internal_static_prometheus_ReadResponse_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.beifengtz.jvmm.prometheus.Remote.internal_static_prometheus_ReadResponse_fieldAccessorTable
+      return org.beifengtz.jvmm.server.prometheus.Remote.internal_static_prometheus_ReadResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.beifengtz.jvmm.prometheus.Remote.ReadResponse.class, org.beifengtz.jvmm.prometheus.Remote.ReadResponse.Builder.class);
+              org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse.class, org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse.Builder.class);
     }
 
     public static final int RESULTS_FIELD_NUMBER = 1;
     @SuppressWarnings("serial")
-    private java.util.List<org.beifengtz.jvmm.prometheus.Remote.QueryResult> results_;
+    private java.util.List<org.beifengtz.jvmm.server.prometheus.Remote.QueryResult> results_;
     /**
      * <pre>
      * In same order as the request's queries.
@@ -2671,7 +2671,7 @@ public final class Remote {
      * <code>repeated .prometheus.QueryResult results = 1;</code>
      */
     @java.lang.Override
-    public java.util.List<org.beifengtz.jvmm.prometheus.Remote.QueryResult> getResultsList() {
+    public java.util.List<org.beifengtz.jvmm.server.prometheus.Remote.QueryResult> getResultsList() {
       return results_;
     }
     /**
@@ -2682,7 +2682,7 @@ public final class Remote {
      * <code>repeated .prometheus.QueryResult results = 1;</code>
      */
     @java.lang.Override
-    public java.util.List<? extends org.beifengtz.jvmm.prometheus.Remote.QueryResultOrBuilder> 
+    public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Remote.QueryResultOrBuilder> 
         getResultsOrBuilderList() {
       return results_;
     }
@@ -2705,7 +2705,7 @@ public final class Remote {
      * <code>repeated .prometheus.QueryResult results = 1;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Remote.QueryResult getResults(int index) {
+    public org.beifengtz.jvmm.server.prometheus.Remote.QueryResult getResults(int index) {
       return results_.get(index);
     }
     /**
@@ -2716,7 +2716,7 @@ public final class Remote {
      * <code>repeated .prometheus.QueryResult results = 1;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Remote.QueryResultOrBuilder getResultsOrBuilder(
+    public org.beifengtz.jvmm.server.prometheus.Remote.QueryResultOrBuilder getResultsOrBuilder(
         int index) {
       return results_.get(index);
     }
@@ -2761,10 +2761,10 @@ public final class Remote {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.beifengtz.jvmm.prometheus.Remote.ReadResponse)) {
+      if (!(obj instanceof org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse)) {
         return super.equals(obj);
       }
-      org.beifengtz.jvmm.prometheus.Remote.ReadResponse other = (org.beifengtz.jvmm.prometheus.Remote.ReadResponse) obj;
+      org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse other = (org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse) obj;
 
       if (!getResultsList()
           .equals(other.getResultsList())) return false;
@@ -2788,44 +2788,44 @@ public final class Remote {
       return hash;
     }
 
-    public static org.beifengtz.jvmm.prometheus.Remote.ReadResponse parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.ReadResponse parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.ReadResponse parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.ReadResponse parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.ReadResponse parseFrom(byte[] data)
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.ReadResponse parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.ReadResponse parseFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.ReadResponse parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -2833,26 +2833,26 @@ public final class Remote {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Remote.ReadResponse parseDelimitedFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Remote.ReadResponse parseDelimitedFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.ReadResponse parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.ReadResponse parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -2865,7 +2865,7 @@ public final class Remote {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.beifengtz.jvmm.prometheus.Remote.ReadResponse prototype) {
+    public static Builder newBuilder(org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -2890,21 +2890,21 @@ public final class Remote {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:prometheus.ReadResponse)
-        org.beifengtz.jvmm.prometheus.Remote.ReadResponseOrBuilder {
+        org.beifengtz.jvmm.server.prometheus.Remote.ReadResponseOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.beifengtz.jvmm.prometheus.Remote.internal_static_prometheus_ReadResponse_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Remote.internal_static_prometheus_ReadResponse_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.beifengtz.jvmm.prometheus.Remote.internal_static_prometheus_ReadResponse_fieldAccessorTable
+        return org.beifengtz.jvmm.server.prometheus.Remote.internal_static_prometheus_ReadResponse_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.beifengtz.jvmm.prometheus.Remote.ReadResponse.class, org.beifengtz.jvmm.prometheus.Remote.ReadResponse.Builder.class);
+                org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse.class, org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse.Builder.class);
       }
 
-      // Construct using org.beifengtz.jvmm.prometheus.Remote.ReadResponse.newBuilder()
+      // Construct using org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse.newBuilder()
       private Builder() {
 
       }
@@ -2931,17 +2931,17 @@ public final class Remote {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.beifengtz.jvmm.prometheus.Remote.internal_static_prometheus_ReadResponse_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Remote.internal_static_prometheus_ReadResponse_descriptor;
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Remote.ReadResponse getDefaultInstanceForType() {
-        return org.beifengtz.jvmm.prometheus.Remote.ReadResponse.getDefaultInstance();
+      public org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse getDefaultInstanceForType() {
+        return org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse.getDefaultInstance();
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Remote.ReadResponse build() {
-        org.beifengtz.jvmm.prometheus.Remote.ReadResponse result = buildPartial();
+      public org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse build() {
+        org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -2949,15 +2949,15 @@ public final class Remote {
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Remote.ReadResponse buildPartial() {
-        org.beifengtz.jvmm.prometheus.Remote.ReadResponse result = new org.beifengtz.jvmm.prometheus.Remote.ReadResponse(this);
+      public org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse buildPartial() {
+        org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse result = new org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse(this);
         buildPartialRepeatedFields(result);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartialRepeatedFields(org.beifengtz.jvmm.prometheus.Remote.ReadResponse result) {
+      private void buildPartialRepeatedFields(org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse result) {
         if (resultsBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0)) {
             results_ = java.util.Collections.unmodifiableList(results_);
@@ -2969,7 +2969,7 @@ public final class Remote {
         }
       }
 
-      private void buildPartial0(org.beifengtz.jvmm.prometheus.Remote.ReadResponse result) {
+      private void buildPartial0(org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse result) {
         int from_bitField0_ = bitField0_;
       }
 
@@ -3007,16 +3007,16 @@ public final class Remote {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.beifengtz.jvmm.prometheus.Remote.ReadResponse) {
-          return mergeFrom((org.beifengtz.jvmm.prometheus.Remote.ReadResponse)other);
+        if (other instanceof org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse) {
+          return mergeFrom((org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.beifengtz.jvmm.prometheus.Remote.ReadResponse other) {
-        if (other == org.beifengtz.jvmm.prometheus.Remote.ReadResponse.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse other) {
+        if (other == org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse.getDefaultInstance()) return this;
         if (resultsBuilder_ == null) {
           if (!other.results_.isEmpty()) {
             if (results_.isEmpty()) {
@@ -3070,9 +3070,9 @@ public final class Remote {
                 done = true;
                 break;
               case 10: {
-                org.beifengtz.jvmm.prometheus.Remote.QueryResult m =
+                org.beifengtz.jvmm.server.prometheus.Remote.QueryResult m =
                     input.readMessage(
-                        org.beifengtz.jvmm.prometheus.Remote.QueryResult.parser(),
+                        org.beifengtz.jvmm.server.prometheus.Remote.QueryResult.parser(),
                         extensionRegistry);
                 if (resultsBuilder_ == null) {
                   ensureResultsIsMutable();
@@ -3099,17 +3099,17 @@ public final class Remote {
       }
       private int bitField0_;
 
-      private java.util.List<org.beifengtz.jvmm.prometheus.Remote.QueryResult> results_ =
+      private java.util.List<org.beifengtz.jvmm.server.prometheus.Remote.QueryResult> results_ =
         java.util.Collections.emptyList();
       private void ensureResultsIsMutable() {
         if (!((bitField0_ & 0x00000001) != 0)) {
-          results_ = new java.util.ArrayList<org.beifengtz.jvmm.prometheus.Remote.QueryResult>(results_);
+          results_ = new java.util.ArrayList<org.beifengtz.jvmm.server.prometheus.Remote.QueryResult>(results_);
           bitField0_ |= 0x00000001;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Remote.QueryResult, org.beifengtz.jvmm.prometheus.Remote.QueryResult.Builder, org.beifengtz.jvmm.prometheus.Remote.QueryResultOrBuilder> resultsBuilder_;
+          org.beifengtz.jvmm.server.prometheus.Remote.QueryResult, org.beifengtz.jvmm.server.prometheus.Remote.QueryResult.Builder, org.beifengtz.jvmm.server.prometheus.Remote.QueryResultOrBuilder> resultsBuilder_;
 
       /**
        * <pre>
@@ -3118,7 +3118,7 @@ public final class Remote {
        *
        * <code>repeated .prometheus.QueryResult results = 1;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Remote.QueryResult> getResultsList() {
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Remote.QueryResult> getResultsList() {
         if (resultsBuilder_ == null) {
           return java.util.Collections.unmodifiableList(results_);
         } else {
@@ -3146,7 +3146,7 @@ public final class Remote {
        *
        * <code>repeated .prometheus.QueryResult results = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Remote.QueryResult getResults(int index) {
+      public org.beifengtz.jvmm.server.prometheus.Remote.QueryResult getResults(int index) {
         if (resultsBuilder_ == null) {
           return results_.get(index);
         } else {
@@ -3161,7 +3161,7 @@ public final class Remote {
        * <code>repeated .prometheus.QueryResult results = 1;</code>
        */
       public Builder setResults(
-          int index, org.beifengtz.jvmm.prometheus.Remote.QueryResult value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Remote.QueryResult value) {
         if (resultsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -3182,7 +3182,7 @@ public final class Remote {
        * <code>repeated .prometheus.QueryResult results = 1;</code>
        */
       public Builder setResults(
-          int index, org.beifengtz.jvmm.prometheus.Remote.QueryResult.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Remote.QueryResult.Builder builderForValue) {
         if (resultsBuilder_ == null) {
           ensureResultsIsMutable();
           results_.set(index, builderForValue.build());
@@ -3199,7 +3199,7 @@ public final class Remote {
        *
        * <code>repeated .prometheus.QueryResult results = 1;</code>
        */
-      public Builder addResults(org.beifengtz.jvmm.prometheus.Remote.QueryResult value) {
+      public Builder addResults(org.beifengtz.jvmm.server.prometheus.Remote.QueryResult value) {
         if (resultsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -3220,7 +3220,7 @@ public final class Remote {
        * <code>repeated .prometheus.QueryResult results = 1;</code>
        */
       public Builder addResults(
-          int index, org.beifengtz.jvmm.prometheus.Remote.QueryResult value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Remote.QueryResult value) {
         if (resultsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -3241,7 +3241,7 @@ public final class Remote {
        * <code>repeated .prometheus.QueryResult results = 1;</code>
        */
       public Builder addResults(
-          org.beifengtz.jvmm.prometheus.Remote.QueryResult.Builder builderForValue) {
+          org.beifengtz.jvmm.server.prometheus.Remote.QueryResult.Builder builderForValue) {
         if (resultsBuilder_ == null) {
           ensureResultsIsMutable();
           results_.add(builderForValue.build());
@@ -3259,7 +3259,7 @@ public final class Remote {
        * <code>repeated .prometheus.QueryResult results = 1;</code>
        */
       public Builder addResults(
-          int index, org.beifengtz.jvmm.prometheus.Remote.QueryResult.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Remote.QueryResult.Builder builderForValue) {
         if (resultsBuilder_ == null) {
           ensureResultsIsMutable();
           results_.add(index, builderForValue.build());
@@ -3277,7 +3277,7 @@ public final class Remote {
        * <code>repeated .prometheus.QueryResult results = 1;</code>
        */
       public Builder addAllResults(
-          java.lang.Iterable<? extends org.beifengtz.jvmm.prometheus.Remote.QueryResult> values) {
+          java.lang.Iterable<? extends org.beifengtz.jvmm.server.prometheus.Remote.QueryResult> values) {
         if (resultsBuilder_ == null) {
           ensureResultsIsMutable();
           com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -3329,7 +3329,7 @@ public final class Remote {
        *
        * <code>repeated .prometheus.QueryResult results = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Remote.QueryResult.Builder getResultsBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Remote.QueryResult.Builder getResultsBuilder(
           int index) {
         return getResultsFieldBuilder().getBuilder(index);
       }
@@ -3340,7 +3340,7 @@ public final class Remote {
        *
        * <code>repeated .prometheus.QueryResult results = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Remote.QueryResultOrBuilder getResultsOrBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Remote.QueryResultOrBuilder getResultsOrBuilder(
           int index) {
         if (resultsBuilder_ == null) {
           return results_.get(index);  } else {
@@ -3354,7 +3354,7 @@ public final class Remote {
        *
        * <code>repeated .prometheus.QueryResult results = 1;</code>
        */
-      public java.util.List<? extends org.beifengtz.jvmm.prometheus.Remote.QueryResultOrBuilder> 
+      public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Remote.QueryResultOrBuilder> 
            getResultsOrBuilderList() {
         if (resultsBuilder_ != null) {
           return resultsBuilder_.getMessageOrBuilderList();
@@ -3369,9 +3369,9 @@ public final class Remote {
        *
        * <code>repeated .prometheus.QueryResult results = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Remote.QueryResult.Builder addResultsBuilder() {
+      public org.beifengtz.jvmm.server.prometheus.Remote.QueryResult.Builder addResultsBuilder() {
         return getResultsFieldBuilder().addBuilder(
-            org.beifengtz.jvmm.prometheus.Remote.QueryResult.getDefaultInstance());
+            org.beifengtz.jvmm.server.prometheus.Remote.QueryResult.getDefaultInstance());
       }
       /**
        * <pre>
@@ -3380,10 +3380,10 @@ public final class Remote {
        *
        * <code>repeated .prometheus.QueryResult results = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Remote.QueryResult.Builder addResultsBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Remote.QueryResult.Builder addResultsBuilder(
           int index) {
         return getResultsFieldBuilder().addBuilder(
-            index, org.beifengtz.jvmm.prometheus.Remote.QueryResult.getDefaultInstance());
+            index, org.beifengtz.jvmm.server.prometheus.Remote.QueryResult.getDefaultInstance());
       }
       /**
        * <pre>
@@ -3392,16 +3392,16 @@ public final class Remote {
        *
        * <code>repeated .prometheus.QueryResult results = 1;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Remote.QueryResult.Builder> 
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Remote.QueryResult.Builder> 
            getResultsBuilderList() {
         return getResultsFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Remote.QueryResult, org.beifengtz.jvmm.prometheus.Remote.QueryResult.Builder, org.beifengtz.jvmm.prometheus.Remote.QueryResultOrBuilder> 
+          org.beifengtz.jvmm.server.prometheus.Remote.QueryResult, org.beifengtz.jvmm.server.prometheus.Remote.QueryResult.Builder, org.beifengtz.jvmm.server.prometheus.Remote.QueryResultOrBuilder> 
           getResultsFieldBuilder() {
         if (resultsBuilder_ == null) {
           resultsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-              org.beifengtz.jvmm.prometheus.Remote.QueryResult, org.beifengtz.jvmm.prometheus.Remote.QueryResult.Builder, org.beifengtz.jvmm.prometheus.Remote.QueryResultOrBuilder>(
+              org.beifengtz.jvmm.server.prometheus.Remote.QueryResult, org.beifengtz.jvmm.server.prometheus.Remote.QueryResult.Builder, org.beifengtz.jvmm.server.prometheus.Remote.QueryResultOrBuilder>(
                   results_,
                   ((bitField0_ & 0x00000001) != 0),
                   getParentForChildren(),
@@ -3427,12 +3427,12 @@ public final class Remote {
     }
 
     // @@protoc_insertion_point(class_scope:prometheus.ReadResponse)
-    private static final org.beifengtz.jvmm.prometheus.Remote.ReadResponse DEFAULT_INSTANCE;
+    private static final org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.beifengtz.jvmm.prometheus.Remote.ReadResponse();
+      DEFAULT_INSTANCE = new org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse();
     }
 
-    public static org.beifengtz.jvmm.prometheus.Remote.ReadResponse getDefaultInstance() {
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -3468,7 +3468,7 @@ public final class Remote {
     }
 
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Remote.ReadResponse getDefaultInstanceForType() {
+    public org.beifengtz.jvmm.server.prometheus.Remote.ReadResponse getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -3493,12 +3493,12 @@ public final class Remote {
     /**
      * <code>repeated .prometheus.LabelMatcher matchers = 3;</code>
      */
-    java.util.List<org.beifengtz.jvmm.prometheus.Types.LabelMatcher> 
+    java.util.List<org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher> 
         getMatchersList();
     /**
      * <code>repeated .prometheus.LabelMatcher matchers = 3;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.LabelMatcher getMatchers(int index);
+    org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher getMatchers(int index);
     /**
      * <code>repeated .prometheus.LabelMatcher matchers = 3;</code>
      */
@@ -3506,12 +3506,12 @@ public final class Remote {
     /**
      * <code>repeated .prometheus.LabelMatcher matchers = 3;</code>
      */
-    java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.LabelMatcherOrBuilder> 
+    java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.LabelMatcherOrBuilder> 
         getMatchersOrBuilderList();
     /**
      * <code>repeated .prometheus.LabelMatcher matchers = 3;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.LabelMatcherOrBuilder getMatchersOrBuilder(
+    org.beifengtz.jvmm.server.prometheus.Types.LabelMatcherOrBuilder getMatchersOrBuilder(
         int index);
 
     /**
@@ -3523,11 +3523,11 @@ public final class Remote {
      * <code>.prometheus.ReadHints hints = 4;</code>
      * @return The hints.
      */
-    org.beifengtz.jvmm.prometheus.Types.ReadHints getHints();
+    org.beifengtz.jvmm.server.prometheus.Types.ReadHints getHints();
     /**
      * <code>.prometheus.ReadHints hints = 4;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.ReadHintsOrBuilder getHintsOrBuilder();
+    org.beifengtz.jvmm.server.prometheus.Types.ReadHintsOrBuilder getHintsOrBuilder();
   }
   /**
    * Protobuf type {@code prometheus.Query}
@@ -3554,15 +3554,15 @@ public final class Remote {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.beifengtz.jvmm.prometheus.Remote.internal_static_prometheus_Query_descriptor;
+      return org.beifengtz.jvmm.server.prometheus.Remote.internal_static_prometheus_Query_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.beifengtz.jvmm.prometheus.Remote.internal_static_prometheus_Query_fieldAccessorTable
+      return org.beifengtz.jvmm.server.prometheus.Remote.internal_static_prometheus_Query_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.beifengtz.jvmm.prometheus.Remote.Query.class, org.beifengtz.jvmm.prometheus.Remote.Query.Builder.class);
+              org.beifengtz.jvmm.server.prometheus.Remote.Query.class, org.beifengtz.jvmm.server.prometheus.Remote.Query.Builder.class);
     }
 
     private int bitField0_;
@@ -3590,19 +3590,19 @@ public final class Remote {
 
     public static final int MATCHERS_FIELD_NUMBER = 3;
     @SuppressWarnings("serial")
-    private java.util.List<org.beifengtz.jvmm.prometheus.Types.LabelMatcher> matchers_;
+    private java.util.List<org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher> matchers_;
     /**
      * <code>repeated .prometheus.LabelMatcher matchers = 3;</code>
      */
     @java.lang.Override
-    public java.util.List<org.beifengtz.jvmm.prometheus.Types.LabelMatcher> getMatchersList() {
+    public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher> getMatchersList() {
       return matchers_;
     }
     /**
      * <code>repeated .prometheus.LabelMatcher matchers = 3;</code>
      */
     @java.lang.Override
-    public java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.LabelMatcherOrBuilder> 
+    public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.LabelMatcherOrBuilder> 
         getMatchersOrBuilderList() {
       return matchers_;
     }
@@ -3617,20 +3617,20 @@ public final class Remote {
      * <code>repeated .prometheus.LabelMatcher matchers = 3;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.LabelMatcher getMatchers(int index) {
+    public org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher getMatchers(int index) {
       return matchers_.get(index);
     }
     /**
      * <code>repeated .prometheus.LabelMatcher matchers = 3;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.LabelMatcherOrBuilder getMatchersOrBuilder(
+    public org.beifengtz.jvmm.server.prometheus.Types.LabelMatcherOrBuilder getMatchersOrBuilder(
         int index) {
       return matchers_.get(index);
     }
 
     public static final int HINTS_FIELD_NUMBER = 4;
-    private org.beifengtz.jvmm.prometheus.Types.ReadHints hints_;
+    private org.beifengtz.jvmm.server.prometheus.Types.ReadHints hints_;
     /**
      * <code>.prometheus.ReadHints hints = 4;</code>
      * @return Whether the hints field is set.
@@ -3644,15 +3644,15 @@ public final class Remote {
      * @return The hints.
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.ReadHints getHints() {
-      return hints_ == null ? org.beifengtz.jvmm.prometheus.Types.ReadHints.getDefaultInstance() : hints_;
+    public org.beifengtz.jvmm.server.prometheus.Types.ReadHints getHints() {
+      return hints_ == null ? org.beifengtz.jvmm.server.prometheus.Types.ReadHints.getDefaultInstance() : hints_;
     }
     /**
      * <code>.prometheus.ReadHints hints = 4;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.ReadHintsOrBuilder getHintsOrBuilder() {
-      return hints_ == null ? org.beifengtz.jvmm.prometheus.Types.ReadHints.getDefaultInstance() : hints_;
+    public org.beifengtz.jvmm.server.prometheus.Types.ReadHintsOrBuilder getHintsOrBuilder() {
+      return hints_ == null ? org.beifengtz.jvmm.server.prometheus.Types.ReadHints.getDefaultInstance() : hints_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -3716,10 +3716,10 @@ public final class Remote {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.beifengtz.jvmm.prometheus.Remote.Query)) {
+      if (!(obj instanceof org.beifengtz.jvmm.server.prometheus.Remote.Query)) {
         return super.equals(obj);
       }
-      org.beifengtz.jvmm.prometheus.Remote.Query other = (org.beifengtz.jvmm.prometheus.Remote.Query) obj;
+      org.beifengtz.jvmm.server.prometheus.Remote.Query other = (org.beifengtz.jvmm.server.prometheus.Remote.Query) obj;
 
       if (getStartTimestampMs()
           != other.getStartTimestampMs()) return false;
@@ -3762,44 +3762,44 @@ public final class Remote {
       return hash;
     }
 
-    public static org.beifengtz.jvmm.prometheus.Remote.Query parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.Query parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.Query parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.Query parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.Query parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.Query parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.Query parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.Query parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.Query parseFrom(byte[] data)
+    public static org.beifengtz.jvmm.server.prometheus.Remote.Query parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.Query parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.Query parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.Query parseFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Remote.Query parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.Query parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.Query parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -3807,26 +3807,26 @@ public final class Remote {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Remote.Query parseDelimitedFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Remote.Query parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Remote.Query parseDelimitedFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.Query parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.Query parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.Query parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.Query parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.Query parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -3839,7 +3839,7 @@ public final class Remote {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.beifengtz.jvmm.prometheus.Remote.Query prototype) {
+    public static Builder newBuilder(org.beifengtz.jvmm.server.prometheus.Remote.Query prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -3860,21 +3860,21 @@ public final class Remote {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:prometheus.Query)
-        org.beifengtz.jvmm.prometheus.Remote.QueryOrBuilder {
+        org.beifengtz.jvmm.server.prometheus.Remote.QueryOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.beifengtz.jvmm.prometheus.Remote.internal_static_prometheus_Query_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Remote.internal_static_prometheus_Query_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.beifengtz.jvmm.prometheus.Remote.internal_static_prometheus_Query_fieldAccessorTable
+        return org.beifengtz.jvmm.server.prometheus.Remote.internal_static_prometheus_Query_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.beifengtz.jvmm.prometheus.Remote.Query.class, org.beifengtz.jvmm.prometheus.Remote.Query.Builder.class);
+                org.beifengtz.jvmm.server.prometheus.Remote.Query.class, org.beifengtz.jvmm.server.prometheus.Remote.Query.Builder.class);
       }
 
-      // Construct using org.beifengtz.jvmm.prometheus.Remote.Query.newBuilder()
+      // Construct using org.beifengtz.jvmm.server.prometheus.Remote.Query.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -3915,17 +3915,17 @@ public final class Remote {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.beifengtz.jvmm.prometheus.Remote.internal_static_prometheus_Query_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Remote.internal_static_prometheus_Query_descriptor;
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Remote.Query getDefaultInstanceForType() {
-        return org.beifengtz.jvmm.prometheus.Remote.Query.getDefaultInstance();
+      public org.beifengtz.jvmm.server.prometheus.Remote.Query getDefaultInstanceForType() {
+        return org.beifengtz.jvmm.server.prometheus.Remote.Query.getDefaultInstance();
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Remote.Query build() {
-        org.beifengtz.jvmm.prometheus.Remote.Query result = buildPartial();
+      public org.beifengtz.jvmm.server.prometheus.Remote.Query build() {
+        org.beifengtz.jvmm.server.prometheus.Remote.Query result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -3933,15 +3933,15 @@ public final class Remote {
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Remote.Query buildPartial() {
-        org.beifengtz.jvmm.prometheus.Remote.Query result = new org.beifengtz.jvmm.prometheus.Remote.Query(this);
+      public org.beifengtz.jvmm.server.prometheus.Remote.Query buildPartial() {
+        org.beifengtz.jvmm.server.prometheus.Remote.Query result = new org.beifengtz.jvmm.server.prometheus.Remote.Query(this);
         buildPartialRepeatedFields(result);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartialRepeatedFields(org.beifengtz.jvmm.prometheus.Remote.Query result) {
+      private void buildPartialRepeatedFields(org.beifengtz.jvmm.server.prometheus.Remote.Query result) {
         if (matchersBuilder_ == null) {
           if (((bitField0_ & 0x00000004) != 0)) {
             matchers_ = java.util.Collections.unmodifiableList(matchers_);
@@ -3953,7 +3953,7 @@ public final class Remote {
         }
       }
 
-      private void buildPartial0(org.beifengtz.jvmm.prometheus.Remote.Query result) {
+      private void buildPartial0(org.beifengtz.jvmm.server.prometheus.Remote.Query result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.startTimestampMs_ = startTimestampMs_;
@@ -4005,16 +4005,16 @@ public final class Remote {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.beifengtz.jvmm.prometheus.Remote.Query) {
-          return mergeFrom((org.beifengtz.jvmm.prometheus.Remote.Query)other);
+        if (other instanceof org.beifengtz.jvmm.server.prometheus.Remote.Query) {
+          return mergeFrom((org.beifengtz.jvmm.server.prometheus.Remote.Query)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.beifengtz.jvmm.prometheus.Remote.Query other) {
-        if (other == org.beifengtz.jvmm.prometheus.Remote.Query.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.beifengtz.jvmm.server.prometheus.Remote.Query other) {
+        if (other == org.beifengtz.jvmm.server.prometheus.Remote.Query.getDefaultInstance()) return this;
         if (other.getStartTimestampMs() != 0L) {
           setStartTimestampMs(other.getStartTimestampMs());
         }
@@ -4087,9 +4087,9 @@ public final class Remote {
                 break;
               } // case 16
               case 26: {
-                org.beifengtz.jvmm.prometheus.Types.LabelMatcher m =
+                org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher m =
                     input.readMessage(
-                        org.beifengtz.jvmm.prometheus.Types.LabelMatcher.parser(),
+                        org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.parser(),
                         extensionRegistry);
                 if (matchersBuilder_ == null) {
                   ensureMatchersIsMutable();
@@ -4187,22 +4187,22 @@ public final class Remote {
         return this;
       }
 
-      private java.util.List<org.beifengtz.jvmm.prometheus.Types.LabelMatcher> matchers_ =
+      private java.util.List<org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher> matchers_ =
         java.util.Collections.emptyList();
       private void ensureMatchersIsMutable() {
         if (!((bitField0_ & 0x00000004) != 0)) {
-          matchers_ = new java.util.ArrayList<org.beifengtz.jvmm.prometheus.Types.LabelMatcher>(matchers_);
+          matchers_ = new java.util.ArrayList<org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher>(matchers_);
           bitField0_ |= 0x00000004;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.LabelMatcher, org.beifengtz.jvmm.prometheus.Types.LabelMatcher.Builder, org.beifengtz.jvmm.prometheus.Types.LabelMatcherOrBuilder> matchersBuilder_;
+          org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher, org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.Builder, org.beifengtz.jvmm.server.prometheus.Types.LabelMatcherOrBuilder> matchersBuilder_;
 
       /**
        * <code>repeated .prometheus.LabelMatcher matchers = 3;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Types.LabelMatcher> getMatchersList() {
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher> getMatchersList() {
         if (matchersBuilder_ == null) {
           return java.util.Collections.unmodifiableList(matchers_);
         } else {
@@ -4222,7 +4222,7 @@ public final class Remote {
       /**
        * <code>repeated .prometheus.LabelMatcher matchers = 3;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.LabelMatcher getMatchers(int index) {
+      public org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher getMatchers(int index) {
         if (matchersBuilder_ == null) {
           return matchers_.get(index);
         } else {
@@ -4233,7 +4233,7 @@ public final class Remote {
        * <code>repeated .prometheus.LabelMatcher matchers = 3;</code>
        */
       public Builder setMatchers(
-          int index, org.beifengtz.jvmm.prometheus.Types.LabelMatcher value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher value) {
         if (matchersBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -4250,7 +4250,7 @@ public final class Remote {
        * <code>repeated .prometheus.LabelMatcher matchers = 3;</code>
        */
       public Builder setMatchers(
-          int index, org.beifengtz.jvmm.prometheus.Types.LabelMatcher.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.Builder builderForValue) {
         if (matchersBuilder_ == null) {
           ensureMatchersIsMutable();
           matchers_.set(index, builderForValue.build());
@@ -4263,7 +4263,7 @@ public final class Remote {
       /**
        * <code>repeated .prometheus.LabelMatcher matchers = 3;</code>
        */
-      public Builder addMatchers(org.beifengtz.jvmm.prometheus.Types.LabelMatcher value) {
+      public Builder addMatchers(org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher value) {
         if (matchersBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -4280,7 +4280,7 @@ public final class Remote {
        * <code>repeated .prometheus.LabelMatcher matchers = 3;</code>
        */
       public Builder addMatchers(
-          int index, org.beifengtz.jvmm.prometheus.Types.LabelMatcher value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher value) {
         if (matchersBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -4297,7 +4297,7 @@ public final class Remote {
        * <code>repeated .prometheus.LabelMatcher matchers = 3;</code>
        */
       public Builder addMatchers(
-          org.beifengtz.jvmm.prometheus.Types.LabelMatcher.Builder builderForValue) {
+          org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.Builder builderForValue) {
         if (matchersBuilder_ == null) {
           ensureMatchersIsMutable();
           matchers_.add(builderForValue.build());
@@ -4311,7 +4311,7 @@ public final class Remote {
        * <code>repeated .prometheus.LabelMatcher matchers = 3;</code>
        */
       public Builder addMatchers(
-          int index, org.beifengtz.jvmm.prometheus.Types.LabelMatcher.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.Builder builderForValue) {
         if (matchersBuilder_ == null) {
           ensureMatchersIsMutable();
           matchers_.add(index, builderForValue.build());
@@ -4325,7 +4325,7 @@ public final class Remote {
        * <code>repeated .prometheus.LabelMatcher matchers = 3;</code>
        */
       public Builder addAllMatchers(
-          java.lang.Iterable<? extends org.beifengtz.jvmm.prometheus.Types.LabelMatcher> values) {
+          java.lang.Iterable<? extends org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher> values) {
         if (matchersBuilder_ == null) {
           ensureMatchersIsMutable();
           com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -4365,14 +4365,14 @@ public final class Remote {
       /**
        * <code>repeated .prometheus.LabelMatcher matchers = 3;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.LabelMatcher.Builder getMatchersBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.Builder getMatchersBuilder(
           int index) {
         return getMatchersFieldBuilder().getBuilder(index);
       }
       /**
        * <code>repeated .prometheus.LabelMatcher matchers = 3;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.LabelMatcherOrBuilder getMatchersOrBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.LabelMatcherOrBuilder getMatchersOrBuilder(
           int index) {
         if (matchersBuilder_ == null) {
           return matchers_.get(index);  } else {
@@ -4382,7 +4382,7 @@ public final class Remote {
       /**
        * <code>repeated .prometheus.LabelMatcher matchers = 3;</code>
        */
-      public java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.LabelMatcherOrBuilder> 
+      public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.LabelMatcherOrBuilder> 
            getMatchersOrBuilderList() {
         if (matchersBuilder_ != null) {
           return matchersBuilder_.getMessageOrBuilderList();
@@ -4393,31 +4393,31 @@ public final class Remote {
       /**
        * <code>repeated .prometheus.LabelMatcher matchers = 3;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.LabelMatcher.Builder addMatchersBuilder() {
+      public org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.Builder addMatchersBuilder() {
         return getMatchersFieldBuilder().addBuilder(
-            org.beifengtz.jvmm.prometheus.Types.LabelMatcher.getDefaultInstance());
+            org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.getDefaultInstance());
       }
       /**
        * <code>repeated .prometheus.LabelMatcher matchers = 3;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.LabelMatcher.Builder addMatchersBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.Builder addMatchersBuilder(
           int index) {
         return getMatchersFieldBuilder().addBuilder(
-            index, org.beifengtz.jvmm.prometheus.Types.LabelMatcher.getDefaultInstance());
+            index, org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.getDefaultInstance());
       }
       /**
        * <code>repeated .prometheus.LabelMatcher matchers = 3;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Types.LabelMatcher.Builder> 
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.Builder> 
            getMatchersBuilderList() {
         return getMatchersFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.LabelMatcher, org.beifengtz.jvmm.prometheus.Types.LabelMatcher.Builder, org.beifengtz.jvmm.prometheus.Types.LabelMatcherOrBuilder> 
+          org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher, org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.Builder, org.beifengtz.jvmm.server.prometheus.Types.LabelMatcherOrBuilder> 
           getMatchersFieldBuilder() {
         if (matchersBuilder_ == null) {
           matchersBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-              org.beifengtz.jvmm.prometheus.Types.LabelMatcher, org.beifengtz.jvmm.prometheus.Types.LabelMatcher.Builder, org.beifengtz.jvmm.prometheus.Types.LabelMatcherOrBuilder>(
+              org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher, org.beifengtz.jvmm.server.prometheus.Types.LabelMatcher.Builder, org.beifengtz.jvmm.server.prometheus.Types.LabelMatcherOrBuilder>(
                   matchers_,
                   ((bitField0_ & 0x00000004) != 0),
                   getParentForChildren(),
@@ -4427,9 +4427,9 @@ public final class Remote {
         return matchersBuilder_;
       }
 
-      private org.beifengtz.jvmm.prometheus.Types.ReadHints hints_;
+      private org.beifengtz.jvmm.server.prometheus.Types.ReadHints hints_;
       private com.google.protobuf.SingleFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.ReadHints, org.beifengtz.jvmm.prometheus.Types.ReadHints.Builder, org.beifengtz.jvmm.prometheus.Types.ReadHintsOrBuilder> hintsBuilder_;
+          org.beifengtz.jvmm.server.prometheus.Types.ReadHints, org.beifengtz.jvmm.server.prometheus.Types.ReadHints.Builder, org.beifengtz.jvmm.server.prometheus.Types.ReadHintsOrBuilder> hintsBuilder_;
       /**
        * <code>.prometheus.ReadHints hints = 4;</code>
        * @return Whether the hints field is set.
@@ -4441,9 +4441,9 @@ public final class Remote {
        * <code>.prometheus.ReadHints hints = 4;</code>
        * @return The hints.
        */
-      public org.beifengtz.jvmm.prometheus.Types.ReadHints getHints() {
+      public org.beifengtz.jvmm.server.prometheus.Types.ReadHints getHints() {
         if (hintsBuilder_ == null) {
-          return hints_ == null ? org.beifengtz.jvmm.prometheus.Types.ReadHints.getDefaultInstance() : hints_;
+          return hints_ == null ? org.beifengtz.jvmm.server.prometheus.Types.ReadHints.getDefaultInstance() : hints_;
         } else {
           return hintsBuilder_.getMessage();
         }
@@ -4451,7 +4451,7 @@ public final class Remote {
       /**
        * <code>.prometheus.ReadHints hints = 4;</code>
        */
-      public Builder setHints(org.beifengtz.jvmm.prometheus.Types.ReadHints value) {
+      public Builder setHints(org.beifengtz.jvmm.server.prometheus.Types.ReadHints value) {
         if (hintsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -4468,7 +4468,7 @@ public final class Remote {
        * <code>.prometheus.ReadHints hints = 4;</code>
        */
       public Builder setHints(
-          org.beifengtz.jvmm.prometheus.Types.ReadHints.Builder builderForValue) {
+          org.beifengtz.jvmm.server.prometheus.Types.ReadHints.Builder builderForValue) {
         if (hintsBuilder_ == null) {
           hints_ = builderForValue.build();
         } else {
@@ -4481,11 +4481,11 @@ public final class Remote {
       /**
        * <code>.prometheus.ReadHints hints = 4;</code>
        */
-      public Builder mergeHints(org.beifengtz.jvmm.prometheus.Types.ReadHints value) {
+      public Builder mergeHints(org.beifengtz.jvmm.server.prometheus.Types.ReadHints value) {
         if (hintsBuilder_ == null) {
           if (((bitField0_ & 0x00000008) != 0) &&
             hints_ != null &&
-            hints_ != org.beifengtz.jvmm.prometheus.Types.ReadHints.getDefaultInstance()) {
+            hints_ != org.beifengtz.jvmm.server.prometheus.Types.ReadHints.getDefaultInstance()) {
             getHintsBuilder().mergeFrom(value);
           } else {
             hints_ = value;
@@ -4515,7 +4515,7 @@ public final class Remote {
       /**
        * <code>.prometheus.ReadHints hints = 4;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.ReadHints.Builder getHintsBuilder() {
+      public org.beifengtz.jvmm.server.prometheus.Types.ReadHints.Builder getHintsBuilder() {
         bitField0_ |= 0x00000008;
         onChanged();
         return getHintsFieldBuilder().getBuilder();
@@ -4523,23 +4523,23 @@ public final class Remote {
       /**
        * <code>.prometheus.ReadHints hints = 4;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.ReadHintsOrBuilder getHintsOrBuilder() {
+      public org.beifengtz.jvmm.server.prometheus.Types.ReadHintsOrBuilder getHintsOrBuilder() {
         if (hintsBuilder_ != null) {
           return hintsBuilder_.getMessageOrBuilder();
         } else {
           return hints_ == null ?
-              org.beifengtz.jvmm.prometheus.Types.ReadHints.getDefaultInstance() : hints_;
+              org.beifengtz.jvmm.server.prometheus.Types.ReadHints.getDefaultInstance() : hints_;
         }
       }
       /**
        * <code>.prometheus.ReadHints hints = 4;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.ReadHints, org.beifengtz.jvmm.prometheus.Types.ReadHints.Builder, org.beifengtz.jvmm.prometheus.Types.ReadHintsOrBuilder> 
+          org.beifengtz.jvmm.server.prometheus.Types.ReadHints, org.beifengtz.jvmm.server.prometheus.Types.ReadHints.Builder, org.beifengtz.jvmm.server.prometheus.Types.ReadHintsOrBuilder> 
           getHintsFieldBuilder() {
         if (hintsBuilder_ == null) {
           hintsBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-              org.beifengtz.jvmm.prometheus.Types.ReadHints, org.beifengtz.jvmm.prometheus.Types.ReadHints.Builder, org.beifengtz.jvmm.prometheus.Types.ReadHintsOrBuilder>(
+              org.beifengtz.jvmm.server.prometheus.Types.ReadHints, org.beifengtz.jvmm.server.prometheus.Types.ReadHints.Builder, org.beifengtz.jvmm.server.prometheus.Types.ReadHintsOrBuilder>(
                   getHints(),
                   getParentForChildren(),
                   isClean());
@@ -4564,12 +4564,12 @@ public final class Remote {
     }
 
     // @@protoc_insertion_point(class_scope:prometheus.Query)
-    private static final org.beifengtz.jvmm.prometheus.Remote.Query DEFAULT_INSTANCE;
+    private static final org.beifengtz.jvmm.server.prometheus.Remote.Query DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.beifengtz.jvmm.prometheus.Remote.Query();
+      DEFAULT_INSTANCE = new org.beifengtz.jvmm.server.prometheus.Remote.Query();
     }
 
-    public static org.beifengtz.jvmm.prometheus.Remote.Query getDefaultInstance() {
+    public static org.beifengtz.jvmm.server.prometheus.Remote.Query getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -4605,7 +4605,7 @@ public final class Remote {
     }
 
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Remote.Query getDefaultInstanceForType() {
+    public org.beifengtz.jvmm.server.prometheus.Remote.Query getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -4622,7 +4622,7 @@ public final class Remote {
      *
      * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
      */
-    java.util.List<org.beifengtz.jvmm.prometheus.Types.TimeSeries> 
+    java.util.List<org.beifengtz.jvmm.server.prometheus.Types.TimeSeries> 
         getTimeseriesList();
     /**
      * <pre>
@@ -4631,7 +4631,7 @@ public final class Remote {
      *
      * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.TimeSeries getTimeseries(int index);
+    org.beifengtz.jvmm.server.prometheus.Types.TimeSeries getTimeseries(int index);
     /**
      * <pre>
      * Samples within a time series must be ordered by time.
@@ -4647,7 +4647,7 @@ public final class Remote {
      *
      * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
      */
-    java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.TimeSeriesOrBuilder> 
+    java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.TimeSeriesOrBuilder> 
         getTimeseriesOrBuilderList();
     /**
      * <pre>
@@ -4656,7 +4656,7 @@ public final class Remote {
      *
      * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.TimeSeriesOrBuilder getTimeseriesOrBuilder(
+    org.beifengtz.jvmm.server.prometheus.Types.TimeSeriesOrBuilder getTimeseriesOrBuilder(
         int index);
   }
   /**
@@ -4684,20 +4684,20 @@ public final class Remote {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.beifengtz.jvmm.prometheus.Remote.internal_static_prometheus_QueryResult_descriptor;
+      return org.beifengtz.jvmm.server.prometheus.Remote.internal_static_prometheus_QueryResult_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.beifengtz.jvmm.prometheus.Remote.internal_static_prometheus_QueryResult_fieldAccessorTable
+      return org.beifengtz.jvmm.server.prometheus.Remote.internal_static_prometheus_QueryResult_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.beifengtz.jvmm.prometheus.Remote.QueryResult.class, org.beifengtz.jvmm.prometheus.Remote.QueryResult.Builder.class);
+              org.beifengtz.jvmm.server.prometheus.Remote.QueryResult.class, org.beifengtz.jvmm.server.prometheus.Remote.QueryResult.Builder.class);
     }
 
     public static final int TIMESERIES_FIELD_NUMBER = 1;
     @SuppressWarnings("serial")
-    private java.util.List<org.beifengtz.jvmm.prometheus.Types.TimeSeries> timeseries_;
+    private java.util.List<org.beifengtz.jvmm.server.prometheus.Types.TimeSeries> timeseries_;
     /**
      * <pre>
      * Samples within a time series must be ordered by time.
@@ -4706,7 +4706,7 @@ public final class Remote {
      * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
      */
     @java.lang.Override
-    public java.util.List<org.beifengtz.jvmm.prometheus.Types.TimeSeries> getTimeseriesList() {
+    public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.TimeSeries> getTimeseriesList() {
       return timeseries_;
     }
     /**
@@ -4717,7 +4717,7 @@ public final class Remote {
      * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
      */
     @java.lang.Override
-    public java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.TimeSeriesOrBuilder> 
+    public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.TimeSeriesOrBuilder> 
         getTimeseriesOrBuilderList() {
       return timeseries_;
     }
@@ -4740,7 +4740,7 @@ public final class Remote {
      * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.TimeSeries getTimeseries(int index) {
+    public org.beifengtz.jvmm.server.prometheus.Types.TimeSeries getTimeseries(int index) {
       return timeseries_.get(index);
     }
     /**
@@ -4751,7 +4751,7 @@ public final class Remote {
      * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.TimeSeriesOrBuilder getTimeseriesOrBuilder(
+    public org.beifengtz.jvmm.server.prometheus.Types.TimeSeriesOrBuilder getTimeseriesOrBuilder(
         int index) {
       return timeseries_.get(index);
     }
@@ -4796,10 +4796,10 @@ public final class Remote {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.beifengtz.jvmm.prometheus.Remote.QueryResult)) {
+      if (!(obj instanceof org.beifengtz.jvmm.server.prometheus.Remote.QueryResult)) {
         return super.equals(obj);
       }
-      org.beifengtz.jvmm.prometheus.Remote.QueryResult other = (org.beifengtz.jvmm.prometheus.Remote.QueryResult) obj;
+      org.beifengtz.jvmm.server.prometheus.Remote.QueryResult other = (org.beifengtz.jvmm.server.prometheus.Remote.QueryResult) obj;
 
       if (!getTimeseriesList()
           .equals(other.getTimeseriesList())) return false;
@@ -4823,44 +4823,44 @@ public final class Remote {
       return hash;
     }
 
-    public static org.beifengtz.jvmm.prometheus.Remote.QueryResult parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.QueryResult parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.QueryResult parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.QueryResult parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.QueryResult parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.QueryResult parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.QueryResult parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.QueryResult parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.QueryResult parseFrom(byte[] data)
+    public static org.beifengtz.jvmm.server.prometheus.Remote.QueryResult parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.QueryResult parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.QueryResult parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.QueryResult parseFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Remote.QueryResult parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.QueryResult parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.QueryResult parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -4868,26 +4868,26 @@ public final class Remote {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Remote.QueryResult parseDelimitedFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Remote.QueryResult parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Remote.QueryResult parseDelimitedFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.QueryResult parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.QueryResult parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.QueryResult parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.QueryResult parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.QueryResult parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -4900,7 +4900,7 @@ public final class Remote {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.beifengtz.jvmm.prometheus.Remote.QueryResult prototype) {
+    public static Builder newBuilder(org.beifengtz.jvmm.server.prometheus.Remote.QueryResult prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -4921,21 +4921,21 @@ public final class Remote {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:prometheus.QueryResult)
-        org.beifengtz.jvmm.prometheus.Remote.QueryResultOrBuilder {
+        org.beifengtz.jvmm.server.prometheus.Remote.QueryResultOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.beifengtz.jvmm.prometheus.Remote.internal_static_prometheus_QueryResult_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Remote.internal_static_prometheus_QueryResult_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.beifengtz.jvmm.prometheus.Remote.internal_static_prometheus_QueryResult_fieldAccessorTable
+        return org.beifengtz.jvmm.server.prometheus.Remote.internal_static_prometheus_QueryResult_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.beifengtz.jvmm.prometheus.Remote.QueryResult.class, org.beifengtz.jvmm.prometheus.Remote.QueryResult.Builder.class);
+                org.beifengtz.jvmm.server.prometheus.Remote.QueryResult.class, org.beifengtz.jvmm.server.prometheus.Remote.QueryResult.Builder.class);
       }
 
-      // Construct using org.beifengtz.jvmm.prometheus.Remote.QueryResult.newBuilder()
+      // Construct using org.beifengtz.jvmm.server.prometheus.Remote.QueryResult.newBuilder()
       private Builder() {
 
       }
@@ -4962,17 +4962,17 @@ public final class Remote {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.beifengtz.jvmm.prometheus.Remote.internal_static_prometheus_QueryResult_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Remote.internal_static_prometheus_QueryResult_descriptor;
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Remote.QueryResult getDefaultInstanceForType() {
-        return org.beifengtz.jvmm.prometheus.Remote.QueryResult.getDefaultInstance();
+      public org.beifengtz.jvmm.server.prometheus.Remote.QueryResult getDefaultInstanceForType() {
+        return org.beifengtz.jvmm.server.prometheus.Remote.QueryResult.getDefaultInstance();
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Remote.QueryResult build() {
-        org.beifengtz.jvmm.prometheus.Remote.QueryResult result = buildPartial();
+      public org.beifengtz.jvmm.server.prometheus.Remote.QueryResult build() {
+        org.beifengtz.jvmm.server.prometheus.Remote.QueryResult result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -4980,15 +4980,15 @@ public final class Remote {
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Remote.QueryResult buildPartial() {
-        org.beifengtz.jvmm.prometheus.Remote.QueryResult result = new org.beifengtz.jvmm.prometheus.Remote.QueryResult(this);
+      public org.beifengtz.jvmm.server.prometheus.Remote.QueryResult buildPartial() {
+        org.beifengtz.jvmm.server.prometheus.Remote.QueryResult result = new org.beifengtz.jvmm.server.prometheus.Remote.QueryResult(this);
         buildPartialRepeatedFields(result);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartialRepeatedFields(org.beifengtz.jvmm.prometheus.Remote.QueryResult result) {
+      private void buildPartialRepeatedFields(org.beifengtz.jvmm.server.prometheus.Remote.QueryResult result) {
         if (timeseriesBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0)) {
             timeseries_ = java.util.Collections.unmodifiableList(timeseries_);
@@ -5000,7 +5000,7 @@ public final class Remote {
         }
       }
 
-      private void buildPartial0(org.beifengtz.jvmm.prometheus.Remote.QueryResult result) {
+      private void buildPartial0(org.beifengtz.jvmm.server.prometheus.Remote.QueryResult result) {
         int from_bitField0_ = bitField0_;
       }
 
@@ -5038,16 +5038,16 @@ public final class Remote {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.beifengtz.jvmm.prometheus.Remote.QueryResult) {
-          return mergeFrom((org.beifengtz.jvmm.prometheus.Remote.QueryResult)other);
+        if (other instanceof org.beifengtz.jvmm.server.prometheus.Remote.QueryResult) {
+          return mergeFrom((org.beifengtz.jvmm.server.prometheus.Remote.QueryResult)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.beifengtz.jvmm.prometheus.Remote.QueryResult other) {
-        if (other == org.beifengtz.jvmm.prometheus.Remote.QueryResult.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.beifengtz.jvmm.server.prometheus.Remote.QueryResult other) {
+        if (other == org.beifengtz.jvmm.server.prometheus.Remote.QueryResult.getDefaultInstance()) return this;
         if (timeseriesBuilder_ == null) {
           if (!other.timeseries_.isEmpty()) {
             if (timeseries_.isEmpty()) {
@@ -5101,9 +5101,9 @@ public final class Remote {
                 done = true;
                 break;
               case 10: {
-                org.beifengtz.jvmm.prometheus.Types.TimeSeries m =
+                org.beifengtz.jvmm.server.prometheus.Types.TimeSeries m =
                     input.readMessage(
-                        org.beifengtz.jvmm.prometheus.Types.TimeSeries.parser(),
+                        org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.parser(),
                         extensionRegistry);
                 if (timeseriesBuilder_ == null) {
                   ensureTimeseriesIsMutable();
@@ -5130,17 +5130,17 @@ public final class Remote {
       }
       private int bitField0_;
 
-      private java.util.List<org.beifengtz.jvmm.prometheus.Types.TimeSeries> timeseries_ =
+      private java.util.List<org.beifengtz.jvmm.server.prometheus.Types.TimeSeries> timeseries_ =
         java.util.Collections.emptyList();
       private void ensureTimeseriesIsMutable() {
         if (!((bitField0_ & 0x00000001) != 0)) {
-          timeseries_ = new java.util.ArrayList<org.beifengtz.jvmm.prometheus.Types.TimeSeries>(timeseries_);
+          timeseries_ = new java.util.ArrayList<org.beifengtz.jvmm.server.prometheus.Types.TimeSeries>(timeseries_);
           bitField0_ |= 0x00000001;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.TimeSeries, org.beifengtz.jvmm.prometheus.Types.TimeSeries.Builder, org.beifengtz.jvmm.prometheus.Types.TimeSeriesOrBuilder> timeseriesBuilder_;
+          org.beifengtz.jvmm.server.prometheus.Types.TimeSeries, org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.Builder, org.beifengtz.jvmm.server.prometheus.Types.TimeSeriesOrBuilder> timeseriesBuilder_;
 
       /**
        * <pre>
@@ -5149,7 +5149,7 @@ public final class Remote {
        *
        * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Types.TimeSeries> getTimeseriesList() {
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.TimeSeries> getTimeseriesList() {
         if (timeseriesBuilder_ == null) {
           return java.util.Collections.unmodifiableList(timeseries_);
         } else {
@@ -5177,7 +5177,7 @@ public final class Remote {
        *
        * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.TimeSeries getTimeseries(int index) {
+      public org.beifengtz.jvmm.server.prometheus.Types.TimeSeries getTimeseries(int index) {
         if (timeseriesBuilder_ == null) {
           return timeseries_.get(index);
         } else {
@@ -5192,7 +5192,7 @@ public final class Remote {
        * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
        */
       public Builder setTimeseries(
-          int index, org.beifengtz.jvmm.prometheus.Types.TimeSeries value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.TimeSeries value) {
         if (timeseriesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -5213,7 +5213,7 @@ public final class Remote {
        * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
        */
       public Builder setTimeseries(
-          int index, org.beifengtz.jvmm.prometheus.Types.TimeSeries.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.Builder builderForValue) {
         if (timeseriesBuilder_ == null) {
           ensureTimeseriesIsMutable();
           timeseries_.set(index, builderForValue.build());
@@ -5230,7 +5230,7 @@ public final class Remote {
        *
        * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
        */
-      public Builder addTimeseries(org.beifengtz.jvmm.prometheus.Types.TimeSeries value) {
+      public Builder addTimeseries(org.beifengtz.jvmm.server.prometheus.Types.TimeSeries value) {
         if (timeseriesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -5251,7 +5251,7 @@ public final class Remote {
        * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
        */
       public Builder addTimeseries(
-          int index, org.beifengtz.jvmm.prometheus.Types.TimeSeries value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.TimeSeries value) {
         if (timeseriesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -5272,7 +5272,7 @@ public final class Remote {
        * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
        */
       public Builder addTimeseries(
-          org.beifengtz.jvmm.prometheus.Types.TimeSeries.Builder builderForValue) {
+          org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.Builder builderForValue) {
         if (timeseriesBuilder_ == null) {
           ensureTimeseriesIsMutable();
           timeseries_.add(builderForValue.build());
@@ -5290,7 +5290,7 @@ public final class Remote {
        * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
        */
       public Builder addTimeseries(
-          int index, org.beifengtz.jvmm.prometheus.Types.TimeSeries.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.Builder builderForValue) {
         if (timeseriesBuilder_ == null) {
           ensureTimeseriesIsMutable();
           timeseries_.add(index, builderForValue.build());
@@ -5308,7 +5308,7 @@ public final class Remote {
        * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
        */
       public Builder addAllTimeseries(
-          java.lang.Iterable<? extends org.beifengtz.jvmm.prometheus.Types.TimeSeries> values) {
+          java.lang.Iterable<? extends org.beifengtz.jvmm.server.prometheus.Types.TimeSeries> values) {
         if (timeseriesBuilder_ == null) {
           ensureTimeseriesIsMutable();
           com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -5360,7 +5360,7 @@ public final class Remote {
        *
        * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.TimeSeries.Builder getTimeseriesBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.Builder getTimeseriesBuilder(
           int index) {
         return getTimeseriesFieldBuilder().getBuilder(index);
       }
@@ -5371,7 +5371,7 @@ public final class Remote {
        *
        * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.TimeSeriesOrBuilder getTimeseriesOrBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.TimeSeriesOrBuilder getTimeseriesOrBuilder(
           int index) {
         if (timeseriesBuilder_ == null) {
           return timeseries_.get(index);  } else {
@@ -5385,7 +5385,7 @@ public final class Remote {
        *
        * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
        */
-      public java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.TimeSeriesOrBuilder> 
+      public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.TimeSeriesOrBuilder> 
            getTimeseriesOrBuilderList() {
         if (timeseriesBuilder_ != null) {
           return timeseriesBuilder_.getMessageOrBuilderList();
@@ -5400,9 +5400,9 @@ public final class Remote {
        *
        * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.TimeSeries.Builder addTimeseriesBuilder() {
+      public org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.Builder addTimeseriesBuilder() {
         return getTimeseriesFieldBuilder().addBuilder(
-            org.beifengtz.jvmm.prometheus.Types.TimeSeries.getDefaultInstance());
+            org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.getDefaultInstance());
       }
       /**
        * <pre>
@@ -5411,10 +5411,10 @@ public final class Remote {
        *
        * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.TimeSeries.Builder addTimeseriesBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.Builder addTimeseriesBuilder(
           int index) {
         return getTimeseriesFieldBuilder().addBuilder(
-            index, org.beifengtz.jvmm.prometheus.Types.TimeSeries.getDefaultInstance());
+            index, org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.getDefaultInstance());
       }
       /**
        * <pre>
@@ -5423,16 +5423,16 @@ public final class Remote {
        *
        * <code>repeated .prometheus.TimeSeries timeseries = 1;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Types.TimeSeries.Builder> 
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.Builder> 
            getTimeseriesBuilderList() {
         return getTimeseriesFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.TimeSeries, org.beifengtz.jvmm.prometheus.Types.TimeSeries.Builder, org.beifengtz.jvmm.prometheus.Types.TimeSeriesOrBuilder> 
+          org.beifengtz.jvmm.server.prometheus.Types.TimeSeries, org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.Builder, org.beifengtz.jvmm.server.prometheus.Types.TimeSeriesOrBuilder> 
           getTimeseriesFieldBuilder() {
         if (timeseriesBuilder_ == null) {
           timeseriesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-              org.beifengtz.jvmm.prometheus.Types.TimeSeries, org.beifengtz.jvmm.prometheus.Types.TimeSeries.Builder, org.beifengtz.jvmm.prometheus.Types.TimeSeriesOrBuilder>(
+              org.beifengtz.jvmm.server.prometheus.Types.TimeSeries, org.beifengtz.jvmm.server.prometheus.Types.TimeSeries.Builder, org.beifengtz.jvmm.server.prometheus.Types.TimeSeriesOrBuilder>(
                   timeseries_,
                   ((bitField0_ & 0x00000001) != 0),
                   getParentForChildren(),
@@ -5458,12 +5458,12 @@ public final class Remote {
     }
 
     // @@protoc_insertion_point(class_scope:prometheus.QueryResult)
-    private static final org.beifengtz.jvmm.prometheus.Remote.QueryResult DEFAULT_INSTANCE;
+    private static final org.beifengtz.jvmm.server.prometheus.Remote.QueryResult DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.beifengtz.jvmm.prometheus.Remote.QueryResult();
+      DEFAULT_INSTANCE = new org.beifengtz.jvmm.server.prometheus.Remote.QueryResult();
     }
 
-    public static org.beifengtz.jvmm.prometheus.Remote.QueryResult getDefaultInstance() {
+    public static org.beifengtz.jvmm.server.prometheus.Remote.QueryResult getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -5499,7 +5499,7 @@ public final class Remote {
     }
 
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Remote.QueryResult getDefaultInstanceForType() {
+    public org.beifengtz.jvmm.server.prometheus.Remote.QueryResult getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -5512,12 +5512,12 @@ public final class Remote {
     /**
      * <code>repeated .prometheus.ChunkedSeries chunked_series = 1;</code>
      */
-    java.util.List<org.beifengtz.jvmm.prometheus.Types.ChunkedSeries> 
+    java.util.List<org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries> 
         getChunkedSeriesList();
     /**
      * <code>repeated .prometheus.ChunkedSeries chunked_series = 1;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.ChunkedSeries getChunkedSeries(int index);
+    org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries getChunkedSeries(int index);
     /**
      * <code>repeated .prometheus.ChunkedSeries chunked_series = 1;</code>
      */
@@ -5525,12 +5525,12 @@ public final class Remote {
     /**
      * <code>repeated .prometheus.ChunkedSeries chunked_series = 1;</code>
      */
-    java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.ChunkedSeriesOrBuilder> 
+    java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeriesOrBuilder> 
         getChunkedSeriesOrBuilderList();
     /**
      * <code>repeated .prometheus.ChunkedSeries chunked_series = 1;</code>
      */
-    org.beifengtz.jvmm.prometheus.Types.ChunkedSeriesOrBuilder getChunkedSeriesOrBuilder(
+    org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeriesOrBuilder getChunkedSeriesOrBuilder(
         int index);
 
     /**
@@ -5575,32 +5575,32 @@ public final class Remote {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.beifengtz.jvmm.prometheus.Remote.internal_static_prometheus_ChunkedReadResponse_descriptor;
+      return org.beifengtz.jvmm.server.prometheus.Remote.internal_static_prometheus_ChunkedReadResponse_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.beifengtz.jvmm.prometheus.Remote.internal_static_prometheus_ChunkedReadResponse_fieldAccessorTable
+      return org.beifengtz.jvmm.server.prometheus.Remote.internal_static_prometheus_ChunkedReadResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse.class, org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse.Builder.class);
+              org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse.class, org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse.Builder.class);
     }
 
     public static final int CHUNKED_SERIES_FIELD_NUMBER = 1;
     @SuppressWarnings("serial")
-    private java.util.List<org.beifengtz.jvmm.prometheus.Types.ChunkedSeries> chunkedSeries_;
+    private java.util.List<org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries> chunkedSeries_;
     /**
      * <code>repeated .prometheus.ChunkedSeries chunked_series = 1;</code>
      */
     @java.lang.Override
-    public java.util.List<org.beifengtz.jvmm.prometheus.Types.ChunkedSeries> getChunkedSeriesList() {
+    public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries> getChunkedSeriesList() {
       return chunkedSeries_;
     }
     /**
      * <code>repeated .prometheus.ChunkedSeries chunked_series = 1;</code>
      */
     @java.lang.Override
-    public java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.ChunkedSeriesOrBuilder> 
+    public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeriesOrBuilder> 
         getChunkedSeriesOrBuilderList() {
       return chunkedSeries_;
     }
@@ -5615,14 +5615,14 @@ public final class Remote {
      * <code>repeated .prometheus.ChunkedSeries chunked_series = 1;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.ChunkedSeries getChunkedSeries(int index) {
+    public org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries getChunkedSeries(int index) {
       return chunkedSeries_.get(index);
     }
     /**
      * <code>repeated .prometheus.ChunkedSeries chunked_series = 1;</code>
      */
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Types.ChunkedSeriesOrBuilder getChunkedSeriesOrBuilder(
+    public org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeriesOrBuilder getChunkedSeriesOrBuilder(
         int index) {
       return chunkedSeries_.get(index);
     }
@@ -5689,10 +5689,10 @@ public final class Remote {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse)) {
+      if (!(obj instanceof org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse)) {
         return super.equals(obj);
       }
-      org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse other = (org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse) obj;
+      org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse other = (org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse) obj;
 
       if (!getChunkedSeriesList()
           .equals(other.getChunkedSeriesList())) return false;
@@ -5721,44 +5721,44 @@ public final class Remote {
       return hash;
     }
 
-    public static org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse parseFrom(byte[] data)
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse parseFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -5766,26 +5766,26 @@ public final class Remote {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse parseDelimitedFrom(java.io.InputStream input)
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse parseDelimitedFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse parseFrom(
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -5798,7 +5798,7 @@ public final class Remote {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse prototype) {
+    public static Builder newBuilder(org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -5826,21 +5826,21 @@ public final class Remote {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:prometheus.ChunkedReadResponse)
-        org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponseOrBuilder {
+        org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponseOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.beifengtz.jvmm.prometheus.Remote.internal_static_prometheus_ChunkedReadResponse_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Remote.internal_static_prometheus_ChunkedReadResponse_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.beifengtz.jvmm.prometheus.Remote.internal_static_prometheus_ChunkedReadResponse_fieldAccessorTable
+        return org.beifengtz.jvmm.server.prometheus.Remote.internal_static_prometheus_ChunkedReadResponse_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse.class, org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse.Builder.class);
+                org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse.class, org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse.Builder.class);
       }
 
-      // Construct using org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse.newBuilder()
+      // Construct using org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse.newBuilder()
       private Builder() {
 
       }
@@ -5868,17 +5868,17 @@ public final class Remote {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.beifengtz.jvmm.prometheus.Remote.internal_static_prometheus_ChunkedReadResponse_descriptor;
+        return org.beifengtz.jvmm.server.prometheus.Remote.internal_static_prometheus_ChunkedReadResponse_descriptor;
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse getDefaultInstanceForType() {
-        return org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse.getDefaultInstance();
+      public org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse getDefaultInstanceForType() {
+        return org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse.getDefaultInstance();
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse build() {
-        org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse result = buildPartial();
+      public org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse build() {
+        org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -5886,15 +5886,15 @@ public final class Remote {
       }
 
       @java.lang.Override
-      public org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse buildPartial() {
-        org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse result = new org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse(this);
+      public org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse buildPartial() {
+        org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse result = new org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse(this);
         buildPartialRepeatedFields(result);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartialRepeatedFields(org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse result) {
+      private void buildPartialRepeatedFields(org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse result) {
         if (chunkedSeriesBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0)) {
             chunkedSeries_ = java.util.Collections.unmodifiableList(chunkedSeries_);
@@ -5906,7 +5906,7 @@ public final class Remote {
         }
       }
 
-      private void buildPartial0(org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse result) {
+      private void buildPartial0(org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000002) != 0)) {
           result.queryIndex_ = queryIndex_;
@@ -5947,16 +5947,16 @@ public final class Remote {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse) {
-          return mergeFrom((org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse)other);
+        if (other instanceof org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse) {
+          return mergeFrom((org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse other) {
-        if (other == org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse other) {
+        if (other == org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse.getDefaultInstance()) return this;
         if (chunkedSeriesBuilder_ == null) {
           if (!other.chunkedSeries_.isEmpty()) {
             if (chunkedSeries_.isEmpty()) {
@@ -6013,9 +6013,9 @@ public final class Remote {
                 done = true;
                 break;
               case 10: {
-                org.beifengtz.jvmm.prometheus.Types.ChunkedSeries m =
+                org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries m =
                     input.readMessage(
-                        org.beifengtz.jvmm.prometheus.Types.ChunkedSeries.parser(),
+                        org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries.parser(),
                         extensionRegistry);
                 if (chunkedSeriesBuilder_ == null) {
                   ensureChunkedSeriesIsMutable();
@@ -6047,22 +6047,22 @@ public final class Remote {
       }
       private int bitField0_;
 
-      private java.util.List<org.beifengtz.jvmm.prometheus.Types.ChunkedSeries> chunkedSeries_ =
+      private java.util.List<org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries> chunkedSeries_ =
         java.util.Collections.emptyList();
       private void ensureChunkedSeriesIsMutable() {
         if (!((bitField0_ & 0x00000001) != 0)) {
-          chunkedSeries_ = new java.util.ArrayList<org.beifengtz.jvmm.prometheus.Types.ChunkedSeries>(chunkedSeries_);
+          chunkedSeries_ = new java.util.ArrayList<org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries>(chunkedSeries_);
           bitField0_ |= 0x00000001;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.ChunkedSeries, org.beifengtz.jvmm.prometheus.Types.ChunkedSeries.Builder, org.beifengtz.jvmm.prometheus.Types.ChunkedSeriesOrBuilder> chunkedSeriesBuilder_;
+          org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries, org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries.Builder, org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeriesOrBuilder> chunkedSeriesBuilder_;
 
       /**
        * <code>repeated .prometheus.ChunkedSeries chunked_series = 1;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Types.ChunkedSeries> getChunkedSeriesList() {
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries> getChunkedSeriesList() {
         if (chunkedSeriesBuilder_ == null) {
           return java.util.Collections.unmodifiableList(chunkedSeries_);
         } else {
@@ -6082,7 +6082,7 @@ public final class Remote {
       /**
        * <code>repeated .prometheus.ChunkedSeries chunked_series = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.ChunkedSeries getChunkedSeries(int index) {
+      public org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries getChunkedSeries(int index) {
         if (chunkedSeriesBuilder_ == null) {
           return chunkedSeries_.get(index);
         } else {
@@ -6093,7 +6093,7 @@ public final class Remote {
        * <code>repeated .prometheus.ChunkedSeries chunked_series = 1;</code>
        */
       public Builder setChunkedSeries(
-          int index, org.beifengtz.jvmm.prometheus.Types.ChunkedSeries value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries value) {
         if (chunkedSeriesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -6110,7 +6110,7 @@ public final class Remote {
        * <code>repeated .prometheus.ChunkedSeries chunked_series = 1;</code>
        */
       public Builder setChunkedSeries(
-          int index, org.beifengtz.jvmm.prometheus.Types.ChunkedSeries.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries.Builder builderForValue) {
         if (chunkedSeriesBuilder_ == null) {
           ensureChunkedSeriesIsMutable();
           chunkedSeries_.set(index, builderForValue.build());
@@ -6123,7 +6123,7 @@ public final class Remote {
       /**
        * <code>repeated .prometheus.ChunkedSeries chunked_series = 1;</code>
        */
-      public Builder addChunkedSeries(org.beifengtz.jvmm.prometheus.Types.ChunkedSeries value) {
+      public Builder addChunkedSeries(org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries value) {
         if (chunkedSeriesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -6140,7 +6140,7 @@ public final class Remote {
        * <code>repeated .prometheus.ChunkedSeries chunked_series = 1;</code>
        */
       public Builder addChunkedSeries(
-          int index, org.beifengtz.jvmm.prometheus.Types.ChunkedSeries value) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries value) {
         if (chunkedSeriesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -6157,7 +6157,7 @@ public final class Remote {
        * <code>repeated .prometheus.ChunkedSeries chunked_series = 1;</code>
        */
       public Builder addChunkedSeries(
-          org.beifengtz.jvmm.prometheus.Types.ChunkedSeries.Builder builderForValue) {
+          org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries.Builder builderForValue) {
         if (chunkedSeriesBuilder_ == null) {
           ensureChunkedSeriesIsMutable();
           chunkedSeries_.add(builderForValue.build());
@@ -6171,7 +6171,7 @@ public final class Remote {
        * <code>repeated .prometheus.ChunkedSeries chunked_series = 1;</code>
        */
       public Builder addChunkedSeries(
-          int index, org.beifengtz.jvmm.prometheus.Types.ChunkedSeries.Builder builderForValue) {
+          int index, org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries.Builder builderForValue) {
         if (chunkedSeriesBuilder_ == null) {
           ensureChunkedSeriesIsMutable();
           chunkedSeries_.add(index, builderForValue.build());
@@ -6185,7 +6185,7 @@ public final class Remote {
        * <code>repeated .prometheus.ChunkedSeries chunked_series = 1;</code>
        */
       public Builder addAllChunkedSeries(
-          java.lang.Iterable<? extends org.beifengtz.jvmm.prometheus.Types.ChunkedSeries> values) {
+          java.lang.Iterable<? extends org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries> values) {
         if (chunkedSeriesBuilder_ == null) {
           ensureChunkedSeriesIsMutable();
           com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -6225,14 +6225,14 @@ public final class Remote {
       /**
        * <code>repeated .prometheus.ChunkedSeries chunked_series = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.ChunkedSeries.Builder getChunkedSeriesBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries.Builder getChunkedSeriesBuilder(
           int index) {
         return getChunkedSeriesFieldBuilder().getBuilder(index);
       }
       /**
        * <code>repeated .prometheus.ChunkedSeries chunked_series = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.ChunkedSeriesOrBuilder getChunkedSeriesOrBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeriesOrBuilder getChunkedSeriesOrBuilder(
           int index) {
         if (chunkedSeriesBuilder_ == null) {
           return chunkedSeries_.get(index);  } else {
@@ -6242,7 +6242,7 @@ public final class Remote {
       /**
        * <code>repeated .prometheus.ChunkedSeries chunked_series = 1;</code>
        */
-      public java.util.List<? extends org.beifengtz.jvmm.prometheus.Types.ChunkedSeriesOrBuilder> 
+      public java.util.List<? extends org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeriesOrBuilder> 
            getChunkedSeriesOrBuilderList() {
         if (chunkedSeriesBuilder_ != null) {
           return chunkedSeriesBuilder_.getMessageOrBuilderList();
@@ -6253,31 +6253,31 @@ public final class Remote {
       /**
        * <code>repeated .prometheus.ChunkedSeries chunked_series = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.ChunkedSeries.Builder addChunkedSeriesBuilder() {
+      public org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries.Builder addChunkedSeriesBuilder() {
         return getChunkedSeriesFieldBuilder().addBuilder(
-            org.beifengtz.jvmm.prometheus.Types.ChunkedSeries.getDefaultInstance());
+            org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries.getDefaultInstance());
       }
       /**
        * <code>repeated .prometheus.ChunkedSeries chunked_series = 1;</code>
        */
-      public org.beifengtz.jvmm.prometheus.Types.ChunkedSeries.Builder addChunkedSeriesBuilder(
+      public org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries.Builder addChunkedSeriesBuilder(
           int index) {
         return getChunkedSeriesFieldBuilder().addBuilder(
-            index, org.beifengtz.jvmm.prometheus.Types.ChunkedSeries.getDefaultInstance());
+            index, org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries.getDefaultInstance());
       }
       /**
        * <code>repeated .prometheus.ChunkedSeries chunked_series = 1;</code>
        */
-      public java.util.List<org.beifengtz.jvmm.prometheus.Types.ChunkedSeries.Builder> 
+      public java.util.List<org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries.Builder> 
            getChunkedSeriesBuilderList() {
         return getChunkedSeriesFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.beifengtz.jvmm.prometheus.Types.ChunkedSeries, org.beifengtz.jvmm.prometheus.Types.ChunkedSeries.Builder, org.beifengtz.jvmm.prometheus.Types.ChunkedSeriesOrBuilder> 
+          org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries, org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries.Builder, org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeriesOrBuilder> 
           getChunkedSeriesFieldBuilder() {
         if (chunkedSeriesBuilder_ == null) {
           chunkedSeriesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-              org.beifengtz.jvmm.prometheus.Types.ChunkedSeries, org.beifengtz.jvmm.prometheus.Types.ChunkedSeries.Builder, org.beifengtz.jvmm.prometheus.Types.ChunkedSeriesOrBuilder>(
+              org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries, org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeries.Builder, org.beifengtz.jvmm.server.prometheus.Types.ChunkedSeriesOrBuilder>(
                   chunkedSeries_,
                   ((bitField0_ & 0x00000001) != 0),
                   getParentForChildren(),
@@ -6347,12 +6347,12 @@ public final class Remote {
     }
 
     // @@protoc_insertion_point(class_scope:prometheus.ChunkedReadResponse)
-    private static final org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse DEFAULT_INSTANCE;
+    private static final org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse();
+      DEFAULT_INSTANCE = new org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse();
     }
 
-    public static org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse getDefaultInstance() {
+    public static org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -6388,7 +6388,7 @@ public final class Remote {
     }
 
     @java.lang.Override
-    public org.beifengtz.jvmm.prometheus.Remote.ChunkedReadResponse getDefaultInstanceForType() {
+    public org.beifengtz.jvmm.server.prometheus.Remote.ChunkedReadResponse getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -6450,13 +6450,13 @@ public final class Remote {
       "s\030\001 \003(\0132\026.prometheus.TimeSeries\"]\n\023Chunk" +
       "edReadResponse\0221\n\016chunked_series\030\001 \003(\0132\031" +
       ".prometheus.ChunkedSeries\022\023\n\013query_index" +
-      "\030\002 \001(\003B\037\n\035org.beifengtz.jvmm.prometheusb" +
-      "\006proto3"
+      "\030\002 \001(\003B&\n$org.beifengtz.jvmm.server.prom" +
+      "etheusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          org.beifengtz.jvmm.prometheus.Types.getDescriptor(),
+          org.beifengtz.jvmm.server.prometheus.Types.getDescriptor(),
         });
     internal_static_prometheus_WriteRequest_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -6494,7 +6494,7 @@ public final class Remote {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_prometheus_ChunkedReadResponse_descriptor,
         new java.lang.String[] { "ChunkedSeries", "QueryIndex", });
-    org.beifengtz.jvmm.prometheus.Types.getDescriptor();
+    org.beifengtz.jvmm.server.prometheus.Types.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

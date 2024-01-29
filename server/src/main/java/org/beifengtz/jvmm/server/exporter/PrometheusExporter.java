@@ -4,12 +4,9 @@ import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.server.entity.conf.SentinelSubscriberConf;
 
-import java.io.BufferedWriter;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 /**
@@ -42,10 +39,8 @@ public class PrometheusExporter implements JvmmExporter<byte[]> {
 
             try {
                 OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
-                writer.write(data);
-                writer.flush();
-                writer.close();
+                os.write(data);
+                os.flush();
                 os.close();
                 conn.connect();
             } finally {
