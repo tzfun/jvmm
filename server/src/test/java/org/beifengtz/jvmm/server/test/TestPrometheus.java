@@ -1,7 +1,5 @@
 package org.beifengtz.jvmm.server.test;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import org.beifengtz.jvmm.core.contanstant.CollectionType;
 import org.beifengtz.jvmm.core.entity.JvmmData;
 import org.beifengtz.jvmm.server.entity.conf.SentinelSubscriberConf;
@@ -10,9 +8,7 @@ import org.beifengtz.jvmm.server.exporter.PrometheusExporter;
 import org.beifengtz.jvmm.server.prometheus.PrometheusUtil;
 import org.beifengtz.jvmm.server.service.JvmmService;
 import org.junit.jupiter.api.Test;
-import org.xerial.snappy.Snappy;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;

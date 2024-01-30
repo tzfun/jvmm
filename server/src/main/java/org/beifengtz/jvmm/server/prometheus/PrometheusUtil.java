@@ -34,7 +34,7 @@ public class PrometheusUtil {
         Types.MetricMetadata.Builder metricMetaData = Types.MetricMetadata.newBuilder();
         metricMetaData.setType(Types.MetricMetadata.MetricType.GAUGE);
         metricMetaData.setHelp("helper");
-        metricMetaData.setMetricFamilyName("jvmm_guage");
+        metricMetaData.setMetricFamilyName("jvmm_gauge");
         writeRequest.addMetadata(metricMetaData.build());
 
         //  公共标签
@@ -71,7 +71,7 @@ public class PrometheusUtil {
         Types.TimeSeries.Builder processTimeSeries = Types.TimeSeries.newBuilder();
         labels.add(Types.Label.newBuilder().setName("p_name").setValue(process.getName()).build());
         labels.add(Types.Label.newBuilder().setName("p_id").setValue(String.valueOf(process.getPid())).build());
-        labels.add(Types.Label.newBuilder().setName("p_start").setValue(String.valueOf(process.getStartTime())).build());
+        labels.add(Types.Label.newBuilder().setName("p_up_time").setValue(String.valueOf(timestamp - process.getStartTime())).build());
         labels.add(Types.Label.newBuilder().setName("vm_name").setValue(process.getVmName()).build());
         labels.add(Types.Label.newBuilder().setName("vm_version").setValue(process.getVmVersion()).build());
 

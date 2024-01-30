@@ -61,17 +61,21 @@ server:
       # Subscriber list, if this item is not configured or the list is empty, the sentry mode cannot be started
       # The subscriber's push interface only supports Basic authentication, which is configured through the auth segment
     - subscribers:
-      - url: http://127.0.0.1:9999/monitor/subscriber
+      - type: http
+        url: http://127.0.0.1:9999/monitor/subscriber
         auth:
           enable: true
           username: 123456
           password: 123456
-      - url: http://monitor.example.com:9999/monitor/subscriber
+      - type: prometheus
+        url: http://127.0.0.1:9090/api/v1/write
+        auth:
+          enable: true
+          username: 123456
+          password: 123456
       # The interval between sentinels executing tasks, unit is second.
       # Notice! Some collection items take time, it is recommended that the interval be greater than 1 second.
       interval: 15
-      # Total sending times, -1 means unlimited
-      count: 20
       # The collection items executed by the sentinel, the sentinel will collect the data and send it to subscribers.
       # Optional values: process|disk|disk_io|cpu|network|sys|sys_memory|sys_file|port|jvm_classloading|jvm_classloader|
       #                  jvm_compilation|jvm_gc|jvm_memory|jvm_memory_manager|jvm_memory_pool|jvm_thread|jvm_thread_stack|
@@ -89,9 +93,11 @@ server:
         - 3306
     # You can define multiple sentinels, which perform different tasks
     - subscribers:
-      - url: http://monitor.example.com:9999/monitor/subscriber
+      - type: http
+        url: http://monitor.example.com:9999/monitor/subscriber
+      - type: prometheus
+        url: http://127.0.0.1:9090/api/v1/write
       interval: 15
-      count: -1
       tasks:
         - jvm_gc
         - jvm_memory

@@ -62,8 +62,7 @@ public class ServerBootDemo {
                         .setAuth(new AuthOptionConf().setEnable(true)
                                 .setUsername("auth-account")
                                 .setPassword("auth-password")))
-                .setInterval(10)
-                .setCount(-1);
+                .setInterval(10);
 
         return new Configuration()
                 .setName("jvmm-server")

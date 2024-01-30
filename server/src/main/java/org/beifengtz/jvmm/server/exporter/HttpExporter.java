@@ -1,8 +1,6 @@
 package org.beifengtz.jvmm.server.exporter;
 
 import io.netty.handler.codec.http.HttpMethod;
-import io.netty.util.internal.logging.InternalLogger;
-import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.QuickFailManager;
 import org.beifengtz.jvmm.common.util.CommonUtil;
 import org.beifengtz.jvmm.convey.socket.HttpUtil;
@@ -24,7 +22,6 @@ import java.util.concurrent.TimeUnit;
  * @author beifengtz
  */
 public class HttpExporter implements JvmmExporter<byte[], String> {
-    private static final InternalLogger logger = InternalLoggerFactory.getInstance(HttpExporter.class);
     protected static final Map<String, String> globalHeaders = CommonUtil.hasMapOf("Content-Type", "application/json;charset=UTF-8");
     /**
      * 连续失败超过 5 次数后进入快失败冷却时间 1 分钟

@@ -149,9 +149,6 @@ public class JvmmSentinelService implements JvmmService {
          */
         public boolean run() {
             counter++;
-            if (conf.getCount() > 0 && counter > conf.getCount()) {
-                return true;
-            }
             executor.execute(() -> {
                 try {
                     JvmmService.collectByOptions(conf.getTasks(), conf.getListenedPorts(), conf.getListenedThreadPools(), pair -> {

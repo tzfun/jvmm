@@ -21,10 +21,6 @@ public class SentinelConf {
      */
     private List<CollectionType> tasks = new ArrayList<>();
     /**
-     * 执行次数，如果为负数则表示无限制
-     */
-    private int count = -1;
-    /**
      * 采集周期，秒
      */
     private int interval = 10;
@@ -66,15 +62,6 @@ public class SentinelConf {
 
     public SentinelConf clearTasks() {
         this.tasks.clear();
-        return this;
-    }
-
-    public int getCount() {
-        return count;
-    }
-
-    public SentinelConf setCount(int count) {
-        this.count = count;
         return this;
     }
 
