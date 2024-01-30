@@ -42,6 +42,10 @@ public class ChannelUtil {
     public static final String JVMM_ENCODER = "jvmmEncoder";
     public static final String CHUNKED_WRITE_HANDLER = "chunkedWriteHandler";
     public static final String HTTP_CODEC_HANDLER = "httpCodecHandler";
+    public static final String SNAPPY_ENCODER = "snappyEncoder";
+    public static final String SNAPPY_DECODER = "snappyDecoder";
+    public static final String BASE64_ENCODER = "base64Encoder";
+    public static final String BASE64_DECODER = "base64Decoder";
     public static final String AGGREGATOR_HANDLER = "HttpObjectAggregator";
 
     public static Class<? extends Channel> channelClass(EventLoopGroup group) {

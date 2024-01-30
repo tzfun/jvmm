@@ -9,11 +9,12 @@ import org.beifengtz.jvmm.convey.socket.HttpUtil;
 import org.beifengtz.jvmm.server.entity.conf.AuthOptionConf;
 import org.beifengtz.jvmm.server.entity.conf.SentinelSubscriberConf;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -22,7 +23,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author beifengtz
  */
-public class HttpExporter implements JvmmExporter<byte[]> {
+public class HttpExporter implements JvmmExporter<byte[], String> {
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(HttpExporter.class);
     protected static final Map<String, String> globalHeaders = CommonUtil.hasMapOf("Content-Type", "application/json;charset=UTF-8");
     /**
@@ -31,30 +32,31 @@ public class HttpExporter implements JvmmExporter<byte[]> {
     protected final QuickFailManager<String> quickFailManager = new QuickFailManager<>(5, (int) TimeUnit.MINUTES.toMillis(1));
 
     @Override
-    public void export(SentinelSubscriberConf subscriber, byte[] data) {
+    public CompletableFuture<String> export(SentinelSubscriberConf subscriber, byte[] data) {
         String url = subscriber.getUrl();
+        CompletableFuture<String> future = new CompletableFuture<>();
         if (quickFailManager.check(url)) {
-            boolean success = false;
-            try {
-                Map<String, String> headers;
-                AuthOptionConf auth = subscriber.getAuth();
-                if (auth != null && auth.isEnable()) {
-                    headers = new HashMap<>(globalHeaders);
-                    String authKey = Base64.getEncoder().encodeToString((auth.getUsername() + ":" + auth.getPassword()).getBytes(StandardCharsets.UTF_8));
-                    headers.put("Authorization", "Basic " + authKey);
-                } else {
-                    headers = globalHeaders;
-                }
-                HttpUtil.asyncReq(HttpUtil.packRequest(HttpMethod.POST, url, data, headers)).get();
-                success = true;
-            } catch (ExecutionException e) {
-                Throwable cause = e.getCause();
-                logger.warn("Can not export jvmm data to '{}'. {}: {}", url, cause.getClass(), cause.getMessage());
-            } catch (Throwable e) {
-                logger.error("Monitor publish to " + url + " failed: " + e.getMessage(), e);
-            } finally {
-                quickFailManager.result(url, success);
+            Map<String, String> headers;
+            AuthOptionConf auth = subscriber.getAuth();
+            if (auth != null && auth.isEnable()) {
+                headers = new HashMap<>(globalHeaders);
+                String authKey = Base64.getEncoder().encodeToString((auth.getUsername() + ":" + auth.getPassword()).getBytes(StandardCharsets.UTF_8));
+                headers.put("Authorization", "Basic " + authKey);
+            } else {
+                headers = globalHeaders;
             }
+            HttpUtil.asyncReq(HttpUtil.packRequest(HttpMethod.POST, url, data, headers)).whenComplete((bytes, t) -> {
+                if (t == null) {
+                    future.complete(new String(bytes, StandardCharsets.UTF_8));
+                    quickFailManager.result(url, true);
+                } else {
+                    future.completeExceptionally(t);
+                    quickFailManager.result(url, false);
+                }
+            });
+        } else {
+            future.completeExceptionally(new IOException("Too many consecutive failures, execution suspended"));
         }
+        return future;
     }
 }

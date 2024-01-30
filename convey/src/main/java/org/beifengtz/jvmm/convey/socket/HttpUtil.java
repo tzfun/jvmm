@@ -16,7 +16,6 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
@@ -76,12 +75,13 @@ public class HttpUtil {
             }
             req.headers().set(HttpHeaderNames.HOST, uri.getHost());
             req.headers().set(HttpHeaderNames.CONTENT_LENGTH, req.content().readableBytes());
+            String compression = req.headers().get(HttpHeaderNames.CONTENT_ENCODING);
 
             Bootstrap b = new Bootstrap();
             b.group(group)
                     .channel(ChannelUtil.channelClass(group))
                     .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, connectTimeoutMillis)
-                    .handler(new HttpClientChannelInitializer(new HttpHandlerProvider(completableFuture), sslCtx));
+                    .handler(new HttpClientChannelInitializer(new HttpHandlerProvider(completableFuture), sslCtx, compression));
             ChannelFuture future = b.connect(host, port);
             future.addListener(f -> {
                 if (f.isSuccess()) {
@@ -150,7 +150,7 @@ public class HttpUtil {
         @Override
         protected void channelRead0(ChannelHandlerContext ctx, FullHttpResponse msg) throws Exception {
             byte[] bytes = getData(msg);
-            if (msg.status().code() == HttpResponseStatus.OK.code()) {
+            if (msg.status().code() / 100 == 2) {
                 future.complete(bytes);
             } else {
                 String body = new String(bytes, StandardCharsets.UTF_8);

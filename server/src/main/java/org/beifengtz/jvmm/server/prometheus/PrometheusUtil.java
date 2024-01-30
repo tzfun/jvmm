@@ -29,9 +29,9 @@ public class PrometheusUtil {
         Remote.WriteRequest.Builder writeRequest = Remote.WriteRequest.newBuilder();
 
         Types.MetricMetadata.Builder metricMetaData = Types.MetricMetadata.newBuilder();
-        metricMetaData.setType(Types.MetricMetadata.MetricType.UNKNOWN);
-
-        metricMetaData.setMetricFamilyName(data.getNode());
+        metricMetaData.setType(Types.MetricMetadata.MetricType.GAUGE);
+        metricMetaData.setHelp("helper");
+        metricMetaData.setMetricFamilyName("bandwitch_guage");
         writeRequest.addMetadata(metricMetaData.build());
 
         //  公共标签
