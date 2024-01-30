@@ -438,15 +438,30 @@ server:
   type: sentinel
   sentinel:
     - subscribers:
-      - url: http://127.0.0.1:9999/monitor/subscriber
+      # publish jvmm data to http server
+      - type: http
+        url: http://127.0.0.1:9999/monitor/subscriber
         auth:
           enable: true
           username: 123456
           password: 123456
-      - url: http://monitor.example.com:9999/monitor/subscriber
+      # publish jvmm data to prometheus
+      - type: prometheus
+        url: http://127.0.0.1:9090/api/v1/write
+        auth:
+          enable: true
+          username: 123456
+          password: 123456
       interval: 15
+      tasks:
+      - process
+      - disk
+      - disk_io
+      - cpu
+      - port
 ...
 ```
+##### http推送
 
 总共支持以下采集项，其中`disk_io`、`cpu`、`network`执行需要耗时，程序内部为异步回调实现，因此哨兵执行间隔不能小于`1s`。
 
@@ -474,6 +489,28 @@ server:
   "jvmm_thread_pool"
 ]
 ```
+
+##### prometheus推送
+
+目前仅以下采集项支持prometheus
+```json
+[
+  "process",
+  "disk_io",
+  "cpu",
+  "network",
+  "sys",
+  "sys_memory",
+  "sys_file",
+  "jvm_classloading",
+  "jvm_compilation",
+  "jvm_gc",
+  "jvm_memory",
+  "jvm_memory_pool",
+  "jvm_thread"
+]
+```
+
 
 ## core使用
 
