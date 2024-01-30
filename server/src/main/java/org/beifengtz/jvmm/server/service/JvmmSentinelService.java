@@ -5,14 +5,15 @@ import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.factory.ExecutorFactory;
 import org.beifengtz.jvmm.core.entity.JvmmData;
-import org.beifengtz.jvmm.server.prometheus.PrometheusUtil;
 import org.beifengtz.jvmm.server.ServerContext;
 import org.beifengtz.jvmm.server.entity.conf.SentinelConf;
 import org.beifengtz.jvmm.server.entity.conf.SentinelSubscriberConf;
 import org.beifengtz.jvmm.server.entity.conf.SentinelSubscriberConf.SubscriberType;
 import org.beifengtz.jvmm.server.exporter.HttpExporter;
 import org.beifengtz.jvmm.server.exporter.PrometheusExporter;
+import org.beifengtz.jvmm.server.prometheus.PrometheusUtil;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -156,13 +157,13 @@ public class JvmmSentinelService implements JvmmService {
                     JvmmService.collectByOptions(conf.getTasks(), conf.getListenedPorts(), conf.getListenedThreadPools(), pair -> {
                         if (pair.getLeft().get() <= 0) {
                             JvmmData data = pair.getRight().setNode(ServerContext.getConfiguration().getName());
-                            String dataStr = hasHttpSubscriber ? data.toJsonStr() : null;
-                            byte[] dataBytes = hasPrometheusSubscriber ? PrometheusUtil.pack(data) : null;
+                            byte[] httpData = hasHttpSubscriber ? data.toJsonStr().getBytes(StandardCharsets.UTF_8) : null;
+                            byte[] prometheusData = hasPrometheusSubscriber ? PrometheusUtil.pack(data) : null;
                             for (SentinelSubscriberConf subscriber : conf.getSubscribers()) {
                                 if (subscriber.getType() == SubscriberType.http && httpExporter != null) {
-                                    executor.submit(() -> httpExporter.export(subscriber, dataStr));
+                                    executor.submit(() -> httpExporter.export(subscriber, httpData));
                                 } else if (subscriber.getType() == SubscriberType.prometheus && prometheusExporter != null) {
-                                    executor.submit(() -> prometheusExporter.export(subscriber, dataBytes));
+                                    executor.submit(() -> prometheusExporter.export(subscriber, prometheusData));
                                 }
                             }
                             execTime = System.currentTimeMillis() + conf.getInterval() * 1000L;

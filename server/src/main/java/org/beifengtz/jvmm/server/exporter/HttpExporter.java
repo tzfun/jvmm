@@ -1,18 +1,19 @@
 package org.beifengtz.jvmm.server.exporter;
 
+import io.netty.handler.codec.http.HttpMethod;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.QuickFailManager;
 import org.beifengtz.jvmm.common.util.CommonUtil;
-import org.beifengtz.jvmm.common.util.HttpUtil;
+import org.beifengtz.jvmm.convey.socket.HttpUtil;
 import org.beifengtz.jvmm.server.entity.conf.AuthOptionConf;
 import org.beifengtz.jvmm.server.entity.conf.SentinelSubscriberConf;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -21,7 +22,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author beifengtz
  */
-public class HttpExporter implements JvmmExporter<String> {
+public class HttpExporter implements JvmmExporter<byte[]> {
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(HttpExporter.class);
     protected static final Map<String, String> globalHeaders = CommonUtil.hasMapOf("Content-Type", "application/json;charset=UTF-8");
     /**
@@ -30,7 +31,7 @@ public class HttpExporter implements JvmmExporter<String> {
     protected final QuickFailManager<String> quickFailManager = new QuickFailManager<>(5, (int) TimeUnit.MINUTES.toMillis(1));
 
     @Override
-    public void export(SentinelSubscriberConf subscriber, String data) {
+    public void export(SentinelSubscriberConf subscriber, byte[] data) {
         String url = subscriber.getUrl();
         if (quickFailManager.check(url)) {
             boolean success = false;
@@ -44,11 +45,11 @@ public class HttpExporter implements JvmmExporter<String> {
                 } else {
                     headers = globalHeaders;
                 }
-
-                HttpUtil.post(url, data, headers);
+                HttpUtil.asyncReq(HttpUtil.packRequest(HttpMethod.POST, url, data, headers)).get();
                 success = true;
-            } catch (IOException e) {
-                logger.warn("Can not connect monitor subscriber '{}': {}", url, e.getMessage());
+            } catch (ExecutionException e) {
+                Throwable cause = e.getCause();
+                logger.warn("Can not export jvmm data to '{}'. {}: {}", url, cause.getClass(), cause.getMessage());
             } catch (Throwable e) {
                 logger.error("Monitor publish to " + url + " failed: " + e.getMessage(), e);
             } finally {

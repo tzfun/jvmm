@@ -18,6 +18,7 @@ import java.security.PrivilegedAction;
 public class SystemPropertyUtil {
 
     public static final String PROPERTY_JVMM_WORK_THREAD = "jvmm.workThread";
+    public static final String PROPERTY_JVMM_IO_THREAD = "jvmm.ioThread";
     public static final String PROPERTY_JVMM_PROFILER_LOADED = "jvmm.profiler.loaded";
     public static final String PROPERTY_JVMM_SCAN_PACKAGE = "jvmm.scanPackage";
     public static final String PROPERTY_JVMM_HOME = "jvmm.home";

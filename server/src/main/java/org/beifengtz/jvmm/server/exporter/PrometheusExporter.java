@@ -1,13 +1,15 @@
 package org.beifengtz.jvmm.server.exporter;
 
+import io.netty.handler.codec.http.HttpMethod;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
+import org.beifengtz.jvmm.convey.socket.HttpUtil;
 import org.beifengtz.jvmm.server.entity.conf.SentinelSubscriberConf;
 
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * description: TODO
@@ -22,32 +24,19 @@ public class PrometheusExporter implements JvmmExporter<byte[]> {
     @Override
     public void export(SentinelSubscriberConf subscriber, byte[] data) {
         String url = subscriber.getUrl() + "/api/v1/write";
-        try {
-            URL requestUrl = new URL(url);
-            HttpURLConnection conn = (HttpURLConnection) requestUrl.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setDoInput(true);
-            conn.setDoOutput(true);
-            conn.setConnectTimeout(3000);
-            conn.setReadTimeout(5000);
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-type", "application/x-protobuf");
+        headers.put("X-Prometheus-Remote-Write-Version", "0.1.0");
+        String authorization = Base64.getUrlEncoder().encodeToString(("username" + ":" + "password").getBytes());
+        headers.put("Authorization", "Basic " + authorization);
 
-            conn.setRequestProperty("Content-type", "application/x-protobuf");
-            conn.setRequestProperty("X-Prometheus-Remote-Write-Version", "0.1.0");
-
-            String authorization = Base64.getUrlEncoder().encodeToString(("username" + ":" + "password").getBytes());
-            conn.setRequestProperty("Authorization", "Basic " + authorization);
-
-            try {
-                OutputStream os = conn.getOutputStream();
-                os.write(data);
-                os.flush();
-                os.close();
-                conn.connect();
-            } finally {
-                conn.disconnect();
+        HttpUtil.asyncReq(HttpUtil.packRequest(HttpMethod.POST, url, data, headers)).whenComplete(((bytes, throwable) -> {
+            if (throwable == null) {
+                System.out.println(new String(bytes, StandardCharsets.UTF_8));
+            } else {
+                logger.warn("Post prometheus failed. {}: {}", throwable.getClass(), throwable.getMessage());
+                throwable.printStackTrace();
             }
-        } catch (Throwable e) {
-            logger.error("Write to prometheus failed: " + url, e);
-        }
+        }));
     }
 }

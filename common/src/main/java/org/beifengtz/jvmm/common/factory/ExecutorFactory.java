@@ -1,5 +1,7 @@
 package org.beifengtz.jvmm.common.factory;
 
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
@@ -19,6 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ExecutorFactory {
 
     private static volatile ScheduledExecutorService SCHEDULE_THREAD_POOL;
+    private static volatile EventLoopGroup IO_THREAD_POOL;
 
     private static ThreadFactory getThreadFactory(String name) {
         return new DefaultThreadFactory(StringUtil.isEmpty(name) ? "jvmm" : name);
@@ -26,6 +29,10 @@ public class ExecutorFactory {
 
     public static int getNThreads() {
         return Math.max(2, SystemPropertyUtil.getInt(SystemPropertyUtil.PROPERTY_JVMM_WORK_THREAD, Runtime.getRuntime().availableProcessors()));
+    }
+
+    public static int getIOThreads() {
+        return Math.max(2, SystemPropertyUtil.getInt(SystemPropertyUtil.PROPERTY_JVMM_IO_THREAD, Runtime.getRuntime().availableProcessors()));
     }
 
     public static ScheduledExecutorService getThreadPool() {
@@ -39,12 +46,29 @@ public class ExecutorFactory {
         return SCHEDULE_THREAD_POOL;
     }
 
+    public static EventLoopGroup getIOThreadPool() {
+        if (IO_THREAD_POOL == null) {
+            synchronized (ExecutorFactory.class) {
+                if (IO_THREAD_POOL == null) {
+                    IO_THREAD_POOL = new NioEventLoopGroup(getIOThreads(), getThreadFactory("jvmm-io"));
+                }
+            }
+        }
+        return IO_THREAD_POOL;
+    }
+
     public static void releaseThreadPool() {
         if (SCHEDULE_THREAD_POOL != null) {
             InternalLoggerFactory.getInstance(ExecutorFactory.class).info("Trigger to shutdown jvmm thread pool...");
             SCHEDULE_THREAD_POOL.shutdown();
             SCHEDULE_THREAD_POOL = null;
             InternalLoggerFactory.getInstance(ExecutorFactory.class).info("Jvmm thread pool has been shutdown");
+        }
+
+        if (IO_THREAD_POOL != null) {
+            IO_THREAD_POOL.shutdownGracefully();
+            SCHEDULE_THREAD_POOL = null;
+            InternalLoggerFactory.getInstance(ExecutorFactory.class).info("Jvmm IO thread pool has been shutdown");
         }
     }
 

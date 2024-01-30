@@ -40,5 +40,6 @@ public class TestPrometheus {
         });
 
         cdl.await();
+        Thread.sleep(3000);
     }
 }

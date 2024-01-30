@@ -1,6 +1,5 @@
 package org.beifengtz.jvmm.convey.handler;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonPrimitive;
@@ -30,6 +29,7 @@ public interface HandlerProvider {
 
     /**
      * 当一个连接在 idle 时间内未收到数据时，将断开连接
+     *
      * @return idle时间，单位秒，如果为0则用不断开，除非逻辑层面手动触发断开连接
      */
     default int getIdleSeconds() {
@@ -45,6 +45,7 @@ public interface HandlerProvider {
 
     /**
      * handler执行的线程池，如果为null则默认使用 work group
+     *
      * @return {@link EventExecutorGroup}
      */
     default EventExecutorGroup getGroup() {
