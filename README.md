@@ -495,7 +495,6 @@ server:
 目前仅以下采集项支持prometheus
 ```json
 [
-  "process",
   "disk_io",
   "cpu",
   "network",

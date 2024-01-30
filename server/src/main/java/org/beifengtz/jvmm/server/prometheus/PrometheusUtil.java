@@ -2,8 +2,20 @@ package org.beifengtz.jvmm.server.prometheus;
 
 import org.beifengtz.jvmm.common.exception.MessageSerializeException;
 import org.beifengtz.jvmm.core.entity.JvmmData;
-import org.beifengtz.jvmm.core.entity.info.*;
+import org.beifengtz.jvmm.core.entity.info.CPUInfo;
+import org.beifengtz.jvmm.core.entity.info.DiskIOInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmClassLoadingInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmCompilationInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmGCInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmMemoryInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmMemoryPoolInfo;
+import org.beifengtz.jvmm.core.entity.info.JvmThreadInfo;
+import org.beifengtz.jvmm.core.entity.info.MemoryUsageInfo;
+import org.beifengtz.jvmm.core.entity.info.NetInfo;
 import org.beifengtz.jvmm.core.entity.info.NetInfo.NetworkIFInfo;
+import org.beifengtz.jvmm.core.entity.info.SysFileInfo;
+import org.beifengtz.jvmm.core.entity.info.SysInfo;
+import org.beifengtz.jvmm.core.entity.info.SysMemInfo;
 import org.beifengtz.jvmm.server.prometheus.Types.Label;
 import org.beifengtz.jvmm.server.prometheus.Types.Sample;
 import org.xerial.snappy.Snappy;
@@ -40,7 +52,6 @@ public class PrometheusUtil {
         labels.add(Types.Label.newBuilder().setName("node").setValue(data.getNode()).build());
         long now = System.currentTimeMillis();
 
-        packProcess(data.getProcess(), now, labels, writeRequest);
         packSystem(data.getSys(), labels);
         packDiskIO(data.getDiskIO(), now, labels, writeRequest);
         packCpu(data.getCpu(), now, labels, writeRequest);
@@ -58,31 +69,6 @@ public class PrometheusUtil {
         } catch (IOException e) {
             throw new MessageSerializeException(e);
         }
-    }
-
-    /**
-     * 组装进程信息到Prometheus结构
-     *
-     * @param process      进程信息
-     * @param timestamp    统计时间戳
-     * @param labels       通用标签
-     * @param writeRequest Request
-     */
-    private static void packProcess(ProcessInfo process, long timestamp, List<Types.Label> labels,
-                                    Remote.WriteRequest.Builder writeRequest) {
-        if (process == null) {
-            return;
-        }
-        Types.TimeSeries.Builder processTimeSeries = Types.TimeSeries.newBuilder();
-        labels.add(Types.Label.newBuilder().setName("p_name").setValue(process.getName()).build());
-        labels.add(Types.Label.newBuilder().setName("p_id").setValue(String.valueOf(process.getPid())).build());
-        labels.add(Types.Label.newBuilder().setName("vm_name").setValue(process.getVmName()).build());
-        labels.add(Types.Label.newBuilder().setName("vm_version").setValue(process.getVmVersion()).build());
-
-        processTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("p_up_time").build());
-        processTimeSeries.addAllLabels(labels);
-        processTimeSeries.addSamples(Types.Sample.newBuilder().setTimestamp(timestamp).setValue(process.getUptime()).build());
-        writeRequest.addTimeseries(processTimeSeries.build());
     }
 
     /**
