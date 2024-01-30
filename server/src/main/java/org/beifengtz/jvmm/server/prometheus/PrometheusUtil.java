@@ -76,17 +76,12 @@ public class PrometheusUtil {
         Types.TimeSeries.Builder processTimeSeries = Types.TimeSeries.newBuilder();
         labels.add(Types.Label.newBuilder().setName("p_name").setValue(process.getName()).build());
         labels.add(Types.Label.newBuilder().setName("p_id").setValue(String.valueOf(process.getPid())).build());
-        labels.add(Types.Label.newBuilder().setName("p_up_time").setValue(String.valueOf(timestamp - process.getStartTime())).build());
         labels.add(Types.Label.newBuilder().setName("vm_name").setValue(process.getVmName()).build());
         labels.add(Types.Label.newBuilder().setName("vm_version").setValue(process.getVmVersion()).build());
 
-        processTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("process_run_time").build());
+        processTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("p_up_time").build());
         processTimeSeries.addAllLabels(labels);
-
-        processTimeSeries.addSamples(Types.Sample.newBuilder()
-                .setTimestamp(timestamp)
-                .setValue(process.getUptime())
-                .build());
+        processTimeSeries.addSamples(Types.Sample.newBuilder().setTimestamp(timestamp).setValue(process.getUptime()).build());
         writeRequest.addTimeseries(processTimeSeries.build());
     }
 

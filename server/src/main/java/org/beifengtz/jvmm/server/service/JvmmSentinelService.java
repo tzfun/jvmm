@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -153,20 +154,40 @@ public class JvmmSentinelService implements JvmmService {
                 try {
                     JvmmService.collectByOptions(conf.getTasks(), conf.getListenedPorts(), conf.getListenedThreadPools(), pair -> {
                         if (pair.getLeft().get() <= 0) {
-                            JvmmData data = pair.getRight().setNode(ServerContext.getConfiguration().getName());
-                            byte[] httpData = hasHttpSubscriber ? data.toJsonStr().getBytes(StandardCharsets.UTF_8) : null;
-                            byte[] prometheusData = hasPrometheusSubscriber ? PrometheusUtil.pack(data) : null;
-                            for (SentinelSubscriberConf subscriber : conf.getSubscribers()) {
-                                if (subscriber.getType() == SubscriberType.http && httpExporter != null) {
-                                    executor.submit(() -> httpExporter.export(subscriber, httpData));
-                                } else if (subscriber.getType() == SubscriberType.prometheus && prometheusExporter != null) {
-                                    executor.submit(() -> prometheusExporter.export(subscriber, prometheusData));
+                            try {
+                                JvmmData data = pair.getRight().setNode(ServerContext.getConfiguration().getName());
+                                byte[] httpData = hasHttpSubscriber ? data.toJsonStr().getBytes(StandardCharsets.UTF_8) : null;
+                                byte[] prometheusData = hasPrometheusSubscriber ? PrometheusUtil.pack(data) : null;
+                                for (SentinelSubscriberConf subscriber : conf.getSubscribers()) {
+                                    if (subscriber.getType() == SubscriberType.http && httpExporter != null) {
+                                        CompletableFuture<String> future = httpExporter.export(subscriber, httpData);
+                                        future.whenComplete(((s, throwable) -> {
+                                            if (throwable == null) {
+                                                logger.debug("Sentinel published to http server[{}], task: {}", subscriber.getUrl(), conf.getTasks());
+                                            } else {
+                                                logger.warn("Sentinel publish to http server[{}] failed. {}: {}",
+                                                        subscriber.getUrl(), throwable.getMessage(), throwable.getMessage());
+                                            }
+                                        }));
+                                    } else if (subscriber.getType() == SubscriberType.prometheus && prometheusExporter != null) {
+                                        CompletableFuture<byte[]> future = prometheusExporter.export(subscriber, prometheusData);
+                                        future.whenComplete(((bytes, throwable) -> {
+                                            if (throwable == null) {
+                                                logger.debug("Sentinel published to http server[{}], task: {}", subscriber.getUrl(), conf.getTasks());
+                                            } else {
+                                                logger.warn("Sentinel publish to prometheus server[{}] failed. {}: {}",
+                                                        subscriber.getUrl(), throwable.getMessage(), throwable.getMessage());
+                                            }
+                                        }));
+                                    }
                                 }
+                            } catch (Throwable e) {
+                                logger.error("Sentinel publish failed", e);
                             }
                             execTime = System.currentTimeMillis() + conf.getInterval() * 1000L;
                         }
                     });
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     logger.error("Sentinel execute task failed: " + e.getMessage(), e);
                 }
             });
