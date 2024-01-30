@@ -26,6 +26,8 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
@@ -249,16 +251,16 @@ public class CommandRunner {
                 if (tempDir.exists()) {
                     FileUtil.delFile(tempDir);
                 }
-                String regex = "async-profiler/.*|com/.*|io/.*|org/benf.*|META-INF/maven/.*" +
-                        "|META-INF/native/.*|META-INF/native-image/.*|io.netty.versions.propeties|server-source/.*|" +
-                        ".*jvmm/common/.*|.*jvmm/convey/.*|.*jvmm/core/.*|.*jvmm/log/.*|oshi/.*|oshi.*|org/yaml.*";
+                List<String> libRegexList = getServerLibRegexList();
+
                 if (containsSlf4j) {
-                    regex += ("|org/slf4j/.*");
+                    libRegexList.add("org/slf4j/.*");
                     logger.info("The slf4j dependencies is put into server");
                 } else {
                     logger.info("The slf4j dependencies is removed");
                 }
-                FileUtil.copyFromJar(new JarFile(path), tempDir, regex, fileName -> {
+
+                FileUtil.copyFromJar(new JarFile(path), tempDir, StringUtil.join("|", libRegexList), fileName -> {
                     if (fileName.startsWith("server-source")) {
                         return fileName.replace("server-source/", "");
                     } else {
@@ -284,6 +286,25 @@ public class CommandRunner {
         } else {
             logger.error("The jvmm server cannot be generated. You can try the following: 1. select the appropriate jvmm version, 2. run in jar mode");
         }
+    }
+
+    private static List<String> getServerLibRegexList() {
+        List<String> list = new ArrayList<>();
+        list.add("async-profiler/.*");
+        list.add("com/.*");
+        list.add("io/.*");
+        list.add("org/benf.*");
+        list.add("META-INF/native/.*");
+        list.add("META-INF/native-image/.*");
+        list.add("server-source/.*");
+        list.add(".*jvmm/common/.*");
+        list.add(".*jvmm/convey/.*");
+        list.add(".*jvmm/core/.*");
+        list.add(".*jvmm/log/.*");
+        list.add("oshi/.*");
+        list.add("oshi.*");
+        list.add("org/yaml.*");
+        return list;
     }
 
     private static boolean checkJarVersion(String dir) throws IOException {

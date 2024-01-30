@@ -75,13 +75,12 @@ public class HttpUtil {
             }
             req.headers().set(HttpHeaderNames.HOST, uri.getHost());
             req.headers().set(HttpHeaderNames.CONTENT_LENGTH, req.content().readableBytes());
-            String compression = req.headers().get(HttpHeaderNames.CONTENT_ENCODING);
 
             Bootstrap b = new Bootstrap();
             b.group(group)
                     .channel(ChannelUtil.channelClass(group))
                     .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, connectTimeoutMillis)
-                    .handler(new HttpClientChannelInitializer(new HttpHandlerProvider(completableFuture), sslCtx, compression));
+                    .handler(new HttpClientChannelInitializer(new HttpHandlerProvider(completableFuture), sslCtx));
             ChannelFuture future = b.connect(host, port);
             future.addListener(f -> {
                 if (f.isSuccess()) {

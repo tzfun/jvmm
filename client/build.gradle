@@ -40,10 +40,10 @@ tasks.compileJava.configure {
             def targetDir = file(resourcesPath + '/server-source')
             FileTree fileTree = zipTree(zipFile).matching {
                 include 'config.yml'
-                include 'module-info.class'
                 include 'org/beifengtz/jvmm/server/**'
                 include 'org/yaml/**'
-                include 'META-INF/INDEX.LIST'
+                include 'org/xerial/snappy/**'
+                include 'com/google/protobuf/**'
                 include 'META-INF/MANIFEST.MF'
             }
             from fileTree
@@ -70,10 +70,13 @@ jar {
     }
 
     doLast {
+        def targetJar = "${project.buildDir}/libs/${jarName}"
+
+        //  版本存档
         def targetDir = "${rootProject.rootDir}/bin/jvmm-${rootProject.version}"
         copy {
             println("copy ${jarName} to ${targetDir}")
-            from "${project.buildDir}/libs/${jarName}", "${project.buildDir}/resources/main/attach", "${project.buildDir}/resources/main/attach.bat"
+            from targetJar, "${project.buildDir}/resources/main/attach", "${project.buildDir}/resources/main/attach.bat"
             into targetDir
         }
     }

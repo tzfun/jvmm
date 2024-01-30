@@ -1,5 +1,6 @@
 package org.beifengtz.jvmm.server.prometheus;
 
+import org.beifengtz.jvmm.common.exception.MessageSerializeException;
 import org.beifengtz.jvmm.core.entity.JvmmData;
 import org.beifengtz.jvmm.core.entity.info.CPUInfo;
 import org.beifengtz.jvmm.core.entity.info.DiskIOInfo;
@@ -10,9 +11,11 @@ import org.beifengtz.jvmm.core.entity.info.SysInfo;
 import org.beifengtz.jvmm.core.entity.info.SysMemInfo;
 import org.beifengtz.jvmm.server.prometheus.Types.Label;
 import org.beifengtz.jvmm.server.prometheus.Types.Sample;
+import org.xerial.snappy.Snappy;
 import oshi.software.os.InternetProtocolStats.TcpStats;
 import oshi.software.os.InternetProtocolStats.UdpStats;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +34,7 @@ public class PrometheusUtil {
         Types.MetricMetadata.Builder metricMetaData = Types.MetricMetadata.newBuilder();
         metricMetaData.setType(Types.MetricMetadata.MetricType.GAUGE);
         metricMetaData.setHelp("helper");
-        metricMetaData.setMetricFamilyName("bandwitch_guage");
+        metricMetaData.setMetricFamilyName("jvmm_guage");
         writeRequest.addMetadata(metricMetaData.build());
 
         //  公共标签
@@ -45,7 +48,11 @@ public class PrometheusUtil {
         buildPrometheusCpu(data.getCpu(), now, labels, writeRequest);
         buildPrometheusNetwork(data.getNetwork(), now, labels, writeRequest);
         buildPrometheusSysMem(data.getSysMem(), now, labels, writeRequest);
-        return writeRequest.build().toByteArray();
+        try {
+            return Snappy.compress(writeRequest.build().toByteArray());
+        } catch (IOException e) {
+            throw new MessageSerializeException(e);
+        }
     }
 
     /**
@@ -57,7 +64,7 @@ public class PrometheusUtil {
      * @param writeRequest Request
      */
     private static void buildPrometheusProcess(ProcessInfo process, long timestamp, List<Types.Label> labels,
-                                        Remote.WriteRequest.Builder writeRequest) {
+                                               Remote.WriteRequest.Builder writeRequest) {
         if (process == null) {
             return;
         }
@@ -103,7 +110,7 @@ public class PrometheusUtil {
      * @param writeRequest Request
      */
     private static void buildPrometheusDiskIO(List<DiskIOInfo> disks, long timestamp, List<Types.Label> labels,
-                                       Remote.WriteRequest.Builder writeRequest) {
+                                              Remote.WriteRequest.Builder writeRequest) {
         if (disks == null) {
             return;
         }
@@ -176,7 +183,7 @@ public class PrometheusUtil {
      * @param writeRequest Request
      */
     private static void buildPrometheusCpu(CPUInfo cpu, long timestamp, List<Types.Label> labels,
-                                    Remote.WriteRequest.Builder writeRequest) {
+                                           Remote.WriteRequest.Builder writeRequest) {
         if (cpu == null) {
             return;
         }
@@ -220,7 +227,7 @@ public class PrometheusUtil {
      * @param writeRequest Request
      */
     private static void buildPrometheusNetwork(NetInfo network, long timestamp, List<Types.Label> labels,
-                                        Remote.WriteRequest.Builder writeRequest) {
+                                               Remote.WriteRequest.Builder writeRequest) {
         if (network == null) {
             return;
         }
@@ -315,7 +322,7 @@ public class PrometheusUtil {
     }
 
     private static void buildPrometheusTcpStats(TcpStats stats, String namePrefix, long timestamp, List<Types.Label> labels,
-                                         Remote.WriteRequest.Builder writeRequest) {
+                                                Remote.WriteRequest.Builder writeRequest) {
         if (stats == null) {
             return;
         }
@@ -375,7 +382,7 @@ public class PrometheusUtil {
     }
 
     private static void buildPrometheusUdpStats(UdpStats stats, String namePrefix, long timestamp, List<Types.Label> labels,
-                                         Remote.WriteRequest.Builder writeRequest) {
+                                                Remote.WriteRequest.Builder writeRequest) {
         if (stats == null) {
             return;
         }
@@ -403,7 +410,7 @@ public class PrometheusUtil {
      * @param writeRequest Request
      */
     private static void buildPrometheusSysMem(SysMemInfo sysMem, long timestamp, List<Types.Label> labels,
-                                       Remote.WriteRequest.Builder writeRequest) {
+                                              Remote.WriteRequest.Builder writeRequest) {
         if (sysMem == null) {
             return;
         }

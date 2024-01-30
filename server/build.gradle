@@ -16,7 +16,7 @@ dependencies {
         compile project(':logger')
     }
     compile "com.google.protobuf:protobuf-java:${protobufVersion}"
-    testImplementation "org.xerial.snappy:snappy-java:1.1.10.3"
+    compile "org.xerial.snappy:snappy-java:1.1.10.3"
 }
 
 jar {

@@ -38,11 +38,6 @@ public class TestPrometheus {
             if (pair.getLeft().get() <= 0) {
                 JvmmData data = pair.getRight().setNode("test_node");
                 byte[] dataBytes = PrometheusUtil.pack(data);
-                try {
-                    dataBytes = Snappy.compress(dataBytes);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
                 System.out.println("Exported " + dataBytes.length);
                 exporter.export(subscriber, dataBytes).whenComplete(((bytes, throwable) -> {
                     if (throwable == null) {
@@ -55,30 +50,6 @@ public class TestPrometheus {
             }
         });
 
-        cdl.await();
-    }
-
-    @Test
-    public void testSnappy() throws Exception {
-        List<CollectionType> tasks = Arrays.asList(CollectionType.values());
-        CountDownLatch cdl = new CountDownLatch(1);
-        JvmmService.collectByOptions(tasks, Arrays.asList(3306, 6379, 8080), null, pair -> {
-            if (pair.getLeft().get() <= 0) {
-                JvmmData data = pair.getRight().setNode("test_node");
-                byte[] dataBytes = PrometheusUtil.pack(data);
-                try {
-                    System.out.println(Arrays.toString(Snappy.compress(dataBytes)));
-
-                    io.netty.handler.codec.compression.Snappy snappy = new io.netty.handler.codec.compression.Snappy();
-                    ByteBuf buffer = Unpooled.buffer();
-                    snappy.encode(Unpooled.copiedBuffer(dataBytes), buffer, dataBytes.length);
-                    System.out.println(Arrays.toString(buffer.array()));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                cdl.countDown();
-            }
-        });
         cdl.await();
     }
 }
