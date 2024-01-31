@@ -499,6 +499,7 @@ server:
   "disk_io",
   "cpu",
   "network",
+  "sys",
   "sys_memory",
   "sys_file",
   "jvm_classloading",

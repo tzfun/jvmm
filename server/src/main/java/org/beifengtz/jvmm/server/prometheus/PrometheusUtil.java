@@ -20,6 +20,7 @@ import org.beifengtz.jvmm.core.entity.info.SysMemInfo;
 import org.beifengtz.jvmm.server.prometheus.Types.Label;
 import org.beifengtz.jvmm.server.prometheus.Types.Sample;
 import org.xerial.snappy.Snappy;
+import oshi.software.os.InternetProtocolStats.TcpState;
 import oshi.software.os.InternetProtocolStats.TcpStats;
 import oshi.software.os.InternetProtocolStats.UdpStats;
 
@@ -255,10 +256,42 @@ public class PrometheusUtil {
         }
 
         Types.TimeSeries.Builder netConnectionsTimeSeries = Types.TimeSeries.newBuilder();
-        netConnectionsTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("net_connections").build());
+        netConnectionsTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("net_conn").build());
         netConnectionsTimeSeries.addAllLabels(labels);
         netConnectionsTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(network.getConnections()).build());
         writeRequest.addTimeseries(netConnectionsTimeSeries);
+
+        Types.TimeSeries.Builder netTcpV4ConnectionsTimeSeries = Types.TimeSeries.newBuilder();
+        netTcpV4ConnectionsTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("net_tcp4_conn").build());
+        netTcpV4ConnectionsTimeSeries.addAllLabels(labels);
+        netTcpV4ConnectionsTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(network.getTcpV4Connections()).build());
+        writeRequest.addTimeseries(netTcpV4ConnectionsTimeSeries);
+
+        Types.TimeSeries.Builder netTcpV6ConnectionsTimeSeries = Types.TimeSeries.newBuilder();
+        netTcpV6ConnectionsTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("net_tcp6_conn").build());
+        netTcpV6ConnectionsTimeSeries.addAllLabels(labels);
+        netTcpV6ConnectionsTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(network.getTcpV6Connections()).build());
+        writeRequest.addTimeseries(netTcpV6ConnectionsTimeSeries);
+
+        Types.TimeSeries.Builder netUdpV4ConnectionsTimeSeries = Types.TimeSeries.newBuilder();
+        netUdpV4ConnectionsTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("net_udp4_conn").build());
+        netUdpV4ConnectionsTimeSeries.addAllLabels(labels);
+        netUdpV4ConnectionsTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(network.getUdpV4Connections()).build());
+        writeRequest.addTimeseries(netUdpV4ConnectionsTimeSeries);
+
+        Types.TimeSeries.Builder netUdpV6ConnectionsTimeSeries = Types.TimeSeries.newBuilder();
+        netUdpV6ConnectionsTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("net_udp6_conn").build());
+        netUdpV6ConnectionsTimeSeries.addAllLabels(labels);
+        netUdpV6ConnectionsTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(network.getUdpV6Connections()).build());
+        writeRequest.addTimeseries(netUdpV6ConnectionsTimeSeries);
+
+        for (Entry<TcpState, Integer> entry : network.getTcpStateConnections().entrySet()) {
+            Types.TimeSeries.Builder netStateTimeSeries = Types.TimeSeries.newBuilder();
+            netStateTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("net_conn_" + entry.getKey()).build());
+            netStateTimeSeries.addAllLabels(labels);
+            netStateTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(entry.getValue()).build());
+            writeRequest.addTimeseries(netStateTimeSeries);
+        }
 
         buildTcpStats(network.getTcpV4(), "net_tcp_v4", timestamp, labels, writeRequest);
         buildTcpStats(network.getTcpV6(), "net_tcp_v6", timestamp, labels, writeRequest);

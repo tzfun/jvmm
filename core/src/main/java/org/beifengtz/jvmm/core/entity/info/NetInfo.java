@@ -1,11 +1,14 @@
 package org.beifengtz.jvmm.core.entity.info;
 
 import org.beifengtz.jvmm.common.JsonParsable;
+import oshi.software.os.InternetProtocolStats.TcpState;
 import oshi.software.os.InternetProtocolStats.TcpStats;
 import oshi.software.os.InternetProtocolStats.UdpStats;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * description: 网卡信息
@@ -17,6 +20,11 @@ public class NetInfo implements JsonParsable {
      * 当前连接数
      */
     private long connections;
+    private long tcpV4Connections;
+    private long tcpV6Connections;
+    private long udpV4Connections;
+    private long udpV6Connections;
+    private final Map<TcpState, Integer> tcpStateConnections = new HashMap<>();
     /**
      * TCP IPV4 连接信息
      */
@@ -53,6 +61,46 @@ public class NetInfo implements JsonParsable {
     public NetInfo setConnections(long connections) {
         this.connections = connections;
         return this;
+    }
+
+    public long getTcpV4Connections() {
+        return tcpV4Connections;
+    }
+
+    public NetInfo setTcpV4Connections(long tcpV4Connections) {
+        this.tcpV4Connections = tcpV4Connections;
+        return this;
+    }
+
+    public long getTcpV6Connections() {
+        return tcpV6Connections;
+    }
+
+    public NetInfo setTcpV6Connections(long tcpV6Connections) {
+        this.tcpV6Connections = tcpV6Connections;
+        return this;
+    }
+
+    public long getUdpV4Connections() {
+        return udpV4Connections;
+    }
+
+    public NetInfo setUdpV4Connections(long udpV4Connections) {
+        this.udpV4Connections = udpV4Connections;
+        return this;
+    }
+
+    public long getUdpV6Connections() {
+        return udpV6Connections;
+    }
+
+    public NetInfo setUdpV6Connections(long udpV6Connections) {
+        this.udpV6Connections = udpV6Connections;
+        return this;
+    }
+
+    public Map<TcpState, Integer> getTcpStateConnections() {
+        return tcpStateConnections;
     }
 
     public TcpStats getTcpV4() {

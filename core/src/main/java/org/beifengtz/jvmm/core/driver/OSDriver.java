@@ -17,6 +17,8 @@ import oshi.hardware.HWPartition;
 import oshi.hardware.NetworkIF;
 import oshi.software.os.FileSystem;
 import oshi.software.os.InternetProtocolStats;
+import oshi.software.os.InternetProtocolStats.IPConnection;
+import oshi.software.os.InternetProtocolStats.TcpState;
 import oshi.software.os.OSFileStore;
 import oshi.software.os.OperatingSystem;
 
@@ -258,12 +260,46 @@ public final class OSDriver {
     public CompletableFuture<NetInfo> getNetInfo() {
         OperatingSystem os = si.getOperatingSystem();
         InternetProtocolStats ips = os.getInternetProtocolStats();
+        List<IPConnection> connections = ips.getConnections();
         NetInfo info = NetInfo.create()
-                .setConnections(ips.getConnections().size())
+                .setConnections(connections.size())
                 .setTcpV4(ips.getTCPv4Stats())
                 .setTcpV6(ips.getTCPv6Stats())
                 .setUdpV4(ips.getUDPv4Stats())
                 .setUdpV6(ips.getUDPv6Stats());
+
+        long tcpV4 = 0, tcpV6 = 0, udpV4 = 0, udpV6 = 0;
+        Map<TcpState, Integer> tcpStateConnections = info.getTcpStateConnections();
+        for (IPConnection connection : connections) {
+            String type = connection.getType();
+            if (type != null) {
+                switch (type.toLowerCase()) {
+                    case "tcp4":
+                        tcpV4++;
+                        break;
+                    case "tcp6":
+                        tcpV6++;
+                        break;
+                    case "udp4":
+                        udpV4++;
+                        break;
+                    case "udp6":
+                        udpV6++;
+                        break;
+                }
+            }
+
+            tcpStateConnections.compute(connection.getState(), (s, n) -> {
+                if (n == null) {
+                    return 1;
+                }
+                return n + 1;
+            });
+        }
+        info.setTcpV4Connections(tcpV4);
+        info.setTcpV6Connections(tcpV6);
+        info.setUdpV4Connections(udpV4);
+        info.setUdpV6Connections(udpV6);
         List<NetworkIF> networkIFs = si.getHardware().getNetworkIFs();
         Map<String, NetworkIF> networkIFMap = new HashMap<>(networkIFs.size());
         for (NetworkIF networkIF : networkIFs) {
