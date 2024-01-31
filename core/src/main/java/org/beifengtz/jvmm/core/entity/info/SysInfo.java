@@ -36,6 +36,10 @@ public class SysInfo implements JsonParsable {
      * 用户
      */
     private String user;
+    /**
+     * 平均负载
+     */
+    private double loadAverage;
 
 
     private SysInfo(){}
@@ -104,6 +108,15 @@ public class SysInfo implements JsonParsable {
 
     public SysInfo setUser(String user) {
         this.user = user;
+        return this;
+    }
+
+    public double getLoadAverage() {
+        return loadAverage;
+    }
+
+    public SysInfo setLoadAverage(double loadAverage) {
+        this.loadAverage = loadAverage;
         return this;
     }
 

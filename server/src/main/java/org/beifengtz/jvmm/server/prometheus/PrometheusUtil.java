@@ -53,6 +53,8 @@ public class PrometheusUtil {
         labels.add(Types.Label.newBuilder().setName("node").setValue(data.getNode()).build());
         long now = System.currentTimeMillis();
 
+        packProcess(data.getProcess(), now, labels, writeRequest);
+        packSystem(data.getSys(), now, labels, writeRequest);
         packDiskIO(data.getDiskIO(), now, labels, writeRequest);
         packCpu(data.getCpu(), now, labels, writeRequest);
         packNetwork(data.getNetwork(), now, labels, writeRequest);
@@ -85,12 +87,11 @@ public class PrometheusUtil {
             return;
         }
         Types.TimeSeries.Builder processTimeSeries = Types.TimeSeries.newBuilder();
-        labels.add(Types.Label.newBuilder().setName("p_name").setValue(process.getName()).build());
-        labels.add(Types.Label.newBuilder().setName("p_id").setValue(String.valueOf(process.getPid())).build());
-        labels.add(Types.Label.newBuilder().setName("vm_name").setValue(process.getVmName()).build());
-        labels.add(Types.Label.newBuilder().setName("vm_version").setValue(process.getVmVersion()).build());
-
         processTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("p_up_time").build());
+        processTimeSeries.addLabels(Types.Label.newBuilder().setName("p_name").setValue(process.getName()).build());
+        processTimeSeries.addLabels(Types.Label.newBuilder().setName("p_id").setValue(String.valueOf(process.getPid())).build());
+        processTimeSeries.addLabels(Types.Label.newBuilder().setName("vm_name").setValue(process.getVmName()).build());
+        processTimeSeries.addLabels(Types.Label.newBuilder().setName("vm_version").setValue(process.getVmVersion()).build());
         processTimeSeries.addAllLabels(labels);
         processTimeSeries.addSamples(Types.Sample.newBuilder().setTimestamp(timestamp).setValue(process.getUptime()).build());
         writeRequest.addTimeseries(processTimeSeries.build());
@@ -99,17 +100,27 @@ public class PrometheusUtil {
     /**
      * 组装操作系统信息到Prometheus结构
      *
-     * @param sys    操作系统信息
-     * @param labels 通用标签
+     * @param sys          操作系统信息
+     * @param timestamp    统计时间戳
+     * @param labels       通用标签
+     * @param writeRequest Request
      */
-    private static void packSystem(SysInfo sys, List<Types.Label> labels) {
+    private static void packSystem(SysInfo sys, long timestamp, List<Types.Label> labels,
+                                   Remote.WriteRequest.Builder writeRequest) {
         if (sys == null) {
             return;
         }
-        labels.add(Types.Label.newBuilder().setName("os_name").setValue(sys.getName()).build());
-        labels.add(Types.Label.newBuilder().setName("os_version").setValue(sys.getVersion()).build());
-        labels.add(Types.Label.newBuilder().setName("os_arch").setValue(sys.getArch()).build());
-        labels.add(Types.Label.newBuilder().setName("os_user").setValue(sys.getUser()).build());
+
+        Types.TimeSeries.Builder osTimeSeries = Types.TimeSeries.newBuilder();
+        osTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("os_load_avg").build());
+        osTimeSeries.addLabels(Types.Label.newBuilder().setName("os_name").setValue(sys.getName()).build());
+        osTimeSeries.addLabels(Types.Label.newBuilder().setName("os_version").setValue(sys.getVersion()).build());
+        osTimeSeries.addLabels(Types.Label.newBuilder().setName("os_arch").setValue(sys.getArch()).build());
+        osTimeSeries.addLabels(Types.Label.newBuilder().setName("os_user").setValue(sys.getUser()).build());
+        osTimeSeries.addAllLabels(labels);
+        osTimeSeries.addSamples(Types.Sample.newBuilder().setTimestamp(timestamp).setValue(sys.getLoadAverage()).build());
+        writeRequest.addTimeseries(osTimeSeries.build());
+
     }
 
     /**

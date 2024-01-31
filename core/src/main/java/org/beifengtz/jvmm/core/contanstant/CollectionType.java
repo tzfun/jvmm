@@ -7,6 +7,9 @@ package org.beifengtz.jvmm.core.contanstant;
  * @author beifengtz
  */
 public enum CollectionType {
+    /**
+     * support prometheus
+     */
     process,
     disk,
     /**

@@ -166,7 +166,7 @@ public class JvmmSentinelService implements JvmmService {
                                                 logger.debug("Sentinel published to http server[{}], task: {}", subscriber.getUrl(), conf.getTasks());
                                             } else {
                                                 logger.warn("Sentinel publish to http server[{}] failed. {}: {}",
-                                                        subscriber.getUrl(), throwable.getMessage(), throwable.getMessage());
+                                                        subscriber.getUrl(), throwable.getClass(), throwable.getMessage());
                                             }
                                         }));
                                     } else if (subscriber.getType() == SubscriberType.prometheus && prometheusExporter != null) {
@@ -176,7 +176,7 @@ public class JvmmSentinelService implements JvmmService {
                                                 logger.debug("Sentinel published to http server[{}], task: {}", subscriber.getUrl(), conf.getTasks());
                                             } else {
                                                 logger.warn("Sentinel publish to prometheus server[{}] failed. {}: {}",
-                                                        subscriber.getUrl(), throwable.getMessage(), throwable.getMessage());
+                                                        subscriber.getUrl(), throwable.getClass(), throwable.getMessage());
                                             }
                                         }));
                                     }
