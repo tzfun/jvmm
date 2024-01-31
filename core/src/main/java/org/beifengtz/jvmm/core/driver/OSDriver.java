@@ -93,25 +93,24 @@ public final class OSDriver {
      */
     public CompletableFuture<List<DiskIOInfo>> getDiskIOInfo() {
         List<HWDiskStore> preHwDisks = si.getHardware().getDiskStores();
-        Map<String, HWDiskStore> diskMap = new HashMap<>(preHwDisks.size());
-        for (HWDiskStore disk : preHwDisks) {
-            diskMap.put(disk.getName(), disk);
-        }
         CompletableFuture<List<DiskIOInfo>> future = new CompletableFuture<>();
         executor.schedule(() -> {
             try {
-                List<HWDiskStore> hwDisks = si.getHardware().getDiskStores();
-                List<DiskIOInfo> disks = new ArrayList<>(hwDisks.size());
-                for (HWDiskStore disk : hwDisks) {
-                    HWDiskStore pre = diskMap.get(disk.getName());
-                    if (pre == null) continue;
+                List<DiskIOInfo> disks = new ArrayList<>(preHwDisks.size());
+                for (HWDiskStore disk : preHwDisks) {
+                    long preReads = disk.getReads();
+                    long preReadBytes = disk.getReadBytes();
+                    long preWrites = disk.getWrites();
+                    long preWriteBytes = disk.getWriteBytes();
+
+                    disk.updateAttributes();
                     DiskIOInfo info = DiskIOInfo.create()
                             .setName(disk.getName().replaceAll("\\\\|\\.", ""))
                             .setCurrentQueueLength(disk.getCurrentQueueLength())
-                            .setReadPerSecond(disk.getReads() - pre.getReads())
-                            .setReadBytesPerSecond(disk.getReadBytes() - pre.getReadBytes())
-                            .setWritePerSecond(disk.getWrites() - pre.getWrites())
-                            .setWriteBytesPerSecond(disk.getWriteBytes() - pre.getWriteBytes());
+                            .setReadPerSecond(disk.getReads() - preReads)
+                            .setReadBytesPerSecond(disk.getReadBytes() - preReadBytes)
+                            .setWritePerSecond(disk.getWrites() - preWrites)
+                            .setWriteBytesPerSecond(disk.getWriteBytes() - preWriteBytes);
                     disks.add(info);
                 }
                 future.complete(disks);
