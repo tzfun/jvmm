@@ -293,10 +293,10 @@ public class PrometheusUtil {
             writeRequest.addTimeseries(netStateTimeSeries);
         }
 
-        buildTcpStats(network.getTcpV4(), "net_tcp_v4", timestamp, labels, writeRequest);
-        buildTcpStats(network.getTcpV6(), "net_tcp_v6", timestamp, labels, writeRequest);
-        buildUdpStats(network.getUdpV4(), "net_udp_v4", timestamp, labels, writeRequest);
-        buildUdpStats(network.getUdpV6(), "net_udp_v6", timestamp, labels, writeRequest);
+        buildTcpStats(network.getTcpV4(), "net_tcp4", timestamp, labels, writeRequest);
+        buildTcpStats(network.getTcpV6(), "net_tcp6", timestamp, labels, writeRequest);
+        buildUdpStats(network.getUdpV4(), "net_udp4", timestamp, labels, writeRequest);
+        buildUdpStats(network.getUdpV6(), "net_udp6", timestamp, labels, writeRequest);
 
         List<NetworkIFInfo> networkIFInfos = network.getNetworkIFInfos();
         if (networkIFInfos != null) {
