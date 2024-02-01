@@ -90,7 +90,7 @@ public class JvmmSentinelService implements JvmmService {
             }, 0, minInterval, TimeUnit.SECONDS);
 
             promise.trySuccess(0);
-            logger.info("Jvmm sentinel service started, sentinel num:{}, min interval: {}", sentinels.size(), minInterval);
+            logger.info("Jvmm sentinel service started, sentinel num: {}, min interval: {}", sentinels.size(), minInterval);
         } else {
             promise.tryFailure(new RuntimeException("No valid jvmm sentinel configuration."));
         }

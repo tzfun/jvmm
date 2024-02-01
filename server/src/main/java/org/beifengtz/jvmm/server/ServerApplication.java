@@ -47,6 +47,7 @@ public class ServerApplication {
     }
 
     public static void main(String[] args) throws Exception {
-        ServerBootstrap.getInstance(loadConf(args)).start(ServerBootstrap.class);
+        ServerBootstrap.getInstance(loadConf(new String[]{"E:\\Project\\jvmm-dev\\jvmm-dev\\config.yml"})).start(ServerBootstrap.class);
+//        ServerBootstrap.getInstance(loadConf(args)).start(ServerBootstrap.class);
     }
 }

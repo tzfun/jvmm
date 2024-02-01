@@ -76,7 +76,6 @@ public class PrometheusUtil {
         }
         Types.TimeSeries.Builder processTimeSeries = Types.TimeSeries.newBuilder();
         processTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("p_up_time").build());
-        processTimeSeries.addLabels(Types.Label.newBuilder().setName("p_name").setValue(process.getName()).build());
         processTimeSeries.addLabels(Types.Label.newBuilder().setName("vm_name").setValue(process.getVmName()).build());
         processTimeSeries.addLabels(Types.Label.newBuilder().setName("vm_version").setValue(process.getVmVersion()).build());
         processTimeSeries.addAllLabels(labels);
@@ -97,17 +96,24 @@ public class PrometheusUtil {
         if (sys == null) {
             return;
         }
-
+        double loadAverage = sys.getLoadAverage();
         Types.TimeSeries.Builder osTimeSeries = Types.TimeSeries.newBuilder();
         osTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("os_load_avg").build());
         osTimeSeries.addLabels(Types.Label.newBuilder().setName("os_name").setValue(sys.getName()).build());
         osTimeSeries.addLabels(Types.Label.newBuilder().setName("os_version").setValue(sys.getVersion()).build());
         osTimeSeries.addLabels(Types.Label.newBuilder().setName("os_arch").setValue(sys.getArch()).build());
-        osTimeSeries.addLabels(Types.Label.newBuilder().setName("os_user").setValue(sys.getUser()).build());
         osTimeSeries.addAllLabels(labels);
-        osTimeSeries.addSamples(Types.Sample.newBuilder().setTimestamp(timestamp).setValue(sys.getLoadAverage()).build());
+        osTimeSeries.addSamples(Types.Sample.newBuilder().setTimestamp(timestamp).setValue(Math.max(loadAverage, 0)).build());
         writeRequest.addTimeseries(osTimeSeries.build());
 
+        Types.TimeSeries.Builder osCPUNumTimeSeries = Types.TimeSeries.newBuilder();
+        osCPUNumTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("os_cpu").build());
+        osCPUNumTimeSeries.addLabels(Types.Label.newBuilder().setName("os_name").setValue(sys.getName()).build());
+        osCPUNumTimeSeries.addLabels(Types.Label.newBuilder().setName("os_version").setValue(sys.getVersion()).build());
+        osCPUNumTimeSeries.addLabels(Types.Label.newBuilder().setName("os_arch").setValue(sys.getArch()).build());
+        osCPUNumTimeSeries.addAllLabels(labels);
+        osCPUNumTimeSeries.addSamples(Types.Sample.newBuilder().setTimestamp(timestamp).setValue(Math.max(sys.getCpuNum(), 0)).build());
+        writeRequest.addTimeseries(osCPUNumTimeSeries.build());
     }
 
     /**
@@ -539,7 +545,7 @@ public class PrometheusUtil {
             writeRequest.addTimeseries(osFileUsableTimeSeries);
 
             Types.TimeSeries.Builder osFileUsablePresentTimeSeries = Types.TimeSeries.newBuilder();
-            osFileUsablePresentTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("os_file_usable_present").build());
+            osFileUsablePresentTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("os_file_usage").build());
             osFileUsablePresentTimeSeries.addLabels(nameLabel);
             osFileUsablePresentTimeSeries.addLabels(labelLabel);
             osFileUsablePresentTimeSeries.addLabels(typeLabel);
@@ -555,12 +561,13 @@ public class PrometheusUtil {
         }
 
         Types.TimeSeries.Builder osFileTotalUsablePresentTimeSeries = Types.TimeSeries.newBuilder();
-        osFileTotalUsablePresentTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("os_file_usage").build());
+        osFileTotalUsablePresentTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("os_file_usage_total").build());
         osFileTotalUsablePresentTimeSeries.addAllLabels(labels);
         osFileTotalUsablePresentTimeSeries.addSamples(Sample.newBuilder()
                 .setTimestamp(timestamp)
                 .setValue(total == 0 ? 0 : (100.0 * (total-usable) / total))
                 .build());
+        writeRequest.addTimeseries(osFileTotalUsablePresentTimeSeries);
     }
 
     /**
