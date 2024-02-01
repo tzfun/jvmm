@@ -37,11 +37,11 @@ public final class Configuration {
     public static Configuration parseFromUrl(String url) {
         try {
             if (url.startsWith("http://") || url.startsWith("https://")) {
-                boolean loaded = FileUtil.readFileFromNet(url, "tmp", "config.yml");
+                boolean loaded = FileUtil.readFileFromNet(url, "tmp", "jvmm.yml");
                 if (loaded) {
-                    return parseFromYamlFile(new File("tmp", "config.yml"));
+                    return parseFromYamlFile(new File("tmp", "jvmm.yml"));
                 } else {
-                    throw new RuntimeException("Can not load 'config.yml' from " + url);
+                    throw new RuntimeException("Can not load 'jvmm.yml' from " + url);
                 }
             } else {
                 File file = new File(url);

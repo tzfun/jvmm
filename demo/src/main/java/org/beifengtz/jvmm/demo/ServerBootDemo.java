@@ -32,7 +32,7 @@ public class ServerBootDemo {
     }
 
     private static Configuration readConfigFromClassPath() throws IOException {
-        InputStream is = ServerBootDemo.class.getResourceAsStream("/config.yml");
+        InputStream is = ServerBootDemo.class.getResourceAsStream("/jvmm.yml");
         if (is != null) {
             String yml = IOUtil.toString(is);
             return Configuration.parseFromYamlStr(yml);

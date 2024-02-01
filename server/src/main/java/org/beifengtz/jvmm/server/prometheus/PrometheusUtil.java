@@ -2,21 +2,8 @@ package org.beifengtz.jvmm.server.prometheus;
 
 import org.beifengtz.jvmm.common.exception.MessageSerializeException;
 import org.beifengtz.jvmm.core.entity.JvmmData;
-import org.beifengtz.jvmm.core.entity.info.CPUInfo;
-import org.beifengtz.jvmm.core.entity.info.DiskIOInfo;
-import org.beifengtz.jvmm.core.entity.info.JvmClassLoadingInfo;
-import org.beifengtz.jvmm.core.entity.info.JvmCompilationInfo;
-import org.beifengtz.jvmm.core.entity.info.JvmGCInfo;
-import org.beifengtz.jvmm.core.entity.info.JvmMemoryInfo;
-import org.beifengtz.jvmm.core.entity.info.JvmMemoryPoolInfo;
-import org.beifengtz.jvmm.core.entity.info.JvmThreadInfo;
-import org.beifengtz.jvmm.core.entity.info.MemoryUsageInfo;
-import org.beifengtz.jvmm.core.entity.info.NetInfo;
+import org.beifengtz.jvmm.core.entity.info.*;
 import org.beifengtz.jvmm.core.entity.info.NetInfo.NetworkIFInfo;
-import org.beifengtz.jvmm.core.entity.info.ProcessInfo;
-import org.beifengtz.jvmm.core.entity.info.SysFileInfo;
-import org.beifengtz.jvmm.core.entity.info.SysInfo;
-import org.beifengtz.jvmm.core.entity.info.SysMemInfo;
 import org.beifengtz.jvmm.server.prometheus.Types.Label;
 import org.beifengtz.jvmm.server.prometheus.Types.Sample;
 import org.xerial.snappy.Snappy;
@@ -90,7 +77,6 @@ public class PrometheusUtil {
         Types.TimeSeries.Builder processTimeSeries = Types.TimeSeries.newBuilder();
         processTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("p_up_time").build());
         processTimeSeries.addLabels(Types.Label.newBuilder().setName("p_name").setValue(process.getName()).build());
-        processTimeSeries.addLabels(Types.Label.newBuilder().setName("p_id").setValue(String.valueOf(process.getPid())).build());
         processTimeSeries.addLabels(Types.Label.newBuilder().setName("vm_name").setValue(process.getVmName()).build());
         processTimeSeries.addLabels(Types.Label.newBuilder().setName("vm_version").setValue(process.getVmVersion()).build());
         processTimeSeries.addAllLabels(labels);
@@ -448,6 +434,16 @@ public class PrometheusUtil {
         if (sysMem == null) {
             return;
         }
+
+        Types.TimeSeries.Builder memFreePresentTimeSeries = Types.TimeSeries.newBuilder();
+        memFreePresentTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("os_mem_usage").build());
+        memFreePresentTimeSeries.addAllLabels(labels);
+        memFreePresentTimeSeries.addSamples(Sample.newBuilder()
+                .setTimestamp(timestamp)
+                .setValue(sysMem.getTotalPhysical() == 0 ? 0 : (100.0 * (sysMem.getTotalPhysical() - sysMem.getFreePhysical()) / sysMem.getTotalPhysical()))
+                .build());
+        writeRequest.addTimeseries(memFreePresentTimeSeries);
+
         Types.TimeSeries.Builder memCommittedTimeSeries = Types.TimeSeries.newBuilder();
         memCommittedTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("os_mem_committed").build());
         memCommittedTimeSeries.addAllLabels(labels);
@@ -504,6 +500,8 @@ public class PrometheusUtil {
         if (sysFileList == null) {
             return;
         }
+        long total = 0;
+        long usable = 0;
         for (SysFileInfo sysFile : sysFileList) {
             Types.Label nameLabel = Types.Label.newBuilder().setName("file_name").setValue(sysFile.getName()).build();
             Types.Label labelLabel = Types.Label.newBuilder().setName("file_label").setValue(sysFile.getLabel()).build();
@@ -511,7 +509,7 @@ public class PrometheusUtil {
             Types.Label mountLabel = Types.Label.newBuilder().setName("file_mount").setValue(sysFile.getMount()).build();
 
             Types.TimeSeries.Builder osFileSizeTimeSeries = Types.TimeSeries.newBuilder();
-            osFileSizeTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("os_file_size").build());
+            osFileSizeTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("os_file_total").build());
             osFileSizeTimeSeries.addLabels(nameLabel);
             osFileSizeTimeSeries.addLabels(labelLabel);
             osFileSizeTimeSeries.addLabels(typeLabel);
@@ -539,7 +537,30 @@ public class PrometheusUtil {
             osFileUsableTimeSeries.addAllLabels(labels);
             osFileUsableTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(sysFile.getUsable()).build());
             writeRequest.addTimeseries(osFileUsableTimeSeries);
+
+            Types.TimeSeries.Builder osFileUsablePresentTimeSeries = Types.TimeSeries.newBuilder();
+            osFileUsablePresentTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("os_file_usable_present").build());
+            osFileUsablePresentTimeSeries.addLabels(nameLabel);
+            osFileUsablePresentTimeSeries.addLabels(labelLabel);
+            osFileUsablePresentTimeSeries.addLabels(typeLabel);
+            osFileUsablePresentTimeSeries.addLabels(mountLabel);
+            osFileUsablePresentTimeSeries.addAllLabels(labels);
+            osFileUsablePresentTimeSeries.addSamples(Sample.newBuilder()
+                    .setTimestamp(timestamp)
+                    .setValue(sysFile.getSize() == 0 ? 0 : (100.0 * sysFile.getUsable() / sysFile.getSize()))
+                    .build());
+            writeRequest.addTimeseries(osFileUsablePresentTimeSeries);
+            total += sysFile.getSize();
+            usable += sysFile.getUsable();
         }
+
+        Types.TimeSeries.Builder osFileTotalUsablePresentTimeSeries = Types.TimeSeries.newBuilder();
+        osFileTotalUsablePresentTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("os_file_usage").build());
+        osFileTotalUsablePresentTimeSeries.addAllLabels(labels);
+        osFileTotalUsablePresentTimeSeries.addSamples(Sample.newBuilder()
+                .setTimestamp(timestamp)
+                .setValue(total == 0 ? 0 : (100.0 * (total-usable) / total))
+                .build());
     }
 
     /**

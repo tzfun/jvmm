@@ -87,7 +87,7 @@ public class GuidedRunner {
     public static String askConfigFilePath() {
 
         String path = null;
-        File f = new File("config.yml");
+        File f = new File("jvmm.yml");
         if (f.exists()) {
             return f.getAbsolutePath();
         }

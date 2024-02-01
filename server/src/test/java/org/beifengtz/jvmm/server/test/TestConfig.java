@@ -19,7 +19,7 @@ public class TestConfig {
     public void testYmlParse() throws Exception {
         Yaml yaml = new Yaml();
         yaml.setBeanAccess(BeanAccess.FIELD);
-        File configFile = new File("config.yml");
+        File configFile = new File("jvmm.yml");
         if (configFile.exists()) {
             Configuration conf = yaml.loadAs(Files.newInputStream(configFile.toPath()), Configuration.class);
             System.out.println(StringUtil.getGson().toJson(conf));

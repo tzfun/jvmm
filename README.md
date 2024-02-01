@@ -91,7 +91,7 @@ Jvmm的核心数据采集功能在 `core` 模块，提供的服务式功能在 `
 2. Http server：提供Http接口远程调用服务，不限语言
 3. Sentinel server：哨兵模式，定时采集指定的数据项并通过 Http 接口传输给第三方
 
-任何一种服务模式都离不开配置文件 [config.yml](server/src/main/resources/config.yml)，通过`server.type`来配置你选择了哪个模式或哪几个模式，
+任何一种服务模式都离不开配置文件 [jvmm.yml](server/src/main/resources/jvmm.yml)，通过`server.type`来配置你选择了哪个模式或哪几个模式，
 它们可以**同时运行**，各个模式的具体配置分别对应 `server.jvmm`，`server.http`，`server.sentinel`。
 ```yaml
 server:
@@ -106,7 +106,7 @@ server:
 
 ### 二、配置文件
 
-默认配置请见 [config.yml](server/src/main/resources/config.yml)，其中配置信息请见配置文件中的注释。
+默认配置请见 [jvmm.yml](server/src/main/resources/jvmm.yml)，其中配置信息请见配置文件中的注释。
 
 ### 三、启动Server
 
@@ -134,14 +134,14 @@ Jvmm提供了四种方式来启动你的 server：
 运行 jvmm.jar，选择**attach**模式
 
 ```shell
-java -jar jvmm.jar -m attach -c ./config.yml
+java -jar jvmm.jar -m attach -c ./jvmm.yml
 ```
 
 然后会提示你选择目标进程的序号，选择后便会在目标进程中启动server。
 
 如果你已经知道目标进程的 pid，你可以直接指定它：
 ```shell
-java -jar jvmm.jar -m attach -c ./config.yml -pid 80080
+java -jar jvmm.jar -m attach -c ./jvmm.yml -pid 80080
 ```
 
 #### II. Java Agent方式启动
@@ -161,17 +161,17 @@ java -jar jvmm.jar -m jar -a
 添加`-javaagent`参数，格式如下：
 
 ```textmate
-java -javaagent:<jvmm-agent.jar路径>=config=<config.yml路径> -jar your-app.jar
+java -javaagent:<jvmm-agent.jar路径>=config=<jvmm.yml路径> -jar your-app.jar
 ```
 
 例如：
 ```shell
-java -javaagent:/path/jvmm-agent.jar=config=/path/config.yml -jar app.jar
+java -javaagent:/path/jvmm-agent.jar=config=/path/jvmm.yml -jar app.jar
 ```
 
 > 为兼容使用外部 server 的功能，完整的javaagent格式为：
 > 
-> `-javaagent:<jvmm-agent.jar路径>=server=<jvmm-server.jar路径>;config=<config.yml路径>`
+> `-javaagent:<jvmm-agent.jar路径>=server=<jvmm-server.jar路径>;config=<jvmm.yml路径>`
 
 当你的程序启动之后 Jvmm 就会以Agent的方式启动
 
@@ -600,7 +600,7 @@ java -jar --add-opens java.base/jdk.internal.loader=ALL-UNNAMED \
           --add-opens jdk.zipfs/jdk.nio.zipfs=ALL-UNNAMED \
           --add-opens java.base/java.net=ALL-UNNAMED \
           --add-opens java.management/sun.management=ALL-UNNAMED \
-          jvmm-server.jar ./config.yml
+          jvmm-server.jar ./jvmm.yml
 ```
 
 ## kernel.perf_event_paranoid权限开关

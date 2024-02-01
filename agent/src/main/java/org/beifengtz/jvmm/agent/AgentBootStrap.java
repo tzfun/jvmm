@@ -76,7 +76,7 @@ public class AgentBootStrap {
      * 如果 jvmm-server.jar 已加载过，并且 server 未启动，将会执行：解析参数、启动服务、启动日志处理线程；
      * 如果 jvmm-server.jar 已加载过，并且 server 已启动，操作将被禁止；
      *
-     * @param args 参数，由 ; 分割，例如： server=/home/beifengtz/jvmm/server.jar;config=E:\Project\jvmm-dev\jvmm-dev\config.yml;fromAgent=true
+     * @param args 参数，由 ; 分割，例如： server=/home/beifengtz/jvmm/server.jar;config=E:\Project\jvmm-dev\jvmm-dev\jvmm.yml;fromAgent=true
      * @param inst {@link Instrumentation}
      * @param type 载入类型：
      *             agentmain - 运行时动态载入

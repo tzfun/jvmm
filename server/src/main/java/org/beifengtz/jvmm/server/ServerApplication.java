@@ -26,15 +26,15 @@ public class ServerApplication {
                 System.exit(1);
             }
         } else {
-            File file = new File(System.getProperty("user.dir") + "/config.yml");
+            File file = new File(System.getProperty("user.dir") + "/jvmm.yml");
             if (file.exists()) {
                 return Configuration.parseFromYamlFile(file);
             } else {
-                file = new File(System.getProperty("user.dir") + "/config/config.yml");
+                file = new File(System.getProperty("user.dir") + "/config/jvmm.yml");
                 if (file.exists()) {
                     return Configuration.parseFromYamlFile(file);
                 } else {
-                    InputStream is = ServerApplication.class.getResourceAsStream("/config.yml");
+                    InputStream is = ServerApplication.class.getResourceAsStream("/jvmm.yml");
                     if (is == null) {
                         throw new RuntimeException("Can not found any configuration.");
                     } else {

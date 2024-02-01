@@ -39,7 +39,7 @@ tasks.compileJava.configure {
             def zipFile = file('../server/build/libs/jvmm-server.jar')
             def targetDir = file(resourcesPath + '/server-source')
             FileTree fileTree = zipTree(zipFile).matching {
-                include 'config.yml'
+                include 'jvmm.yml'
                 include 'org/beifengtz/jvmm/server/**'
                 include 'org/yaml/**'
                 include 'org/xerial/snappy/**'
