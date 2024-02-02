@@ -659,7 +659,9 @@ public class PrometheusUtil {
      */
     private static void packJvmMem(JvmMemoryInfo mem, long timestamp, List<Types.Label> labels,
                                    Remote.WriteRequest.Builder writeRequest) {
-
+        if (mem == null) {
+            return;
+        }
         Types.TimeSeries.Builder jvmMemPendingCountTimeSeries = Types.TimeSeries.newBuilder();
         jvmMemPendingCountTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("jvm_mem_pending").build());
         jvmMemPendingCountTimeSeries.addAllLabels(labels);

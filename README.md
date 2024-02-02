@@ -490,9 +490,9 @@ server:
 ]
 ```
 
-##### prometheus推送
+##### 接入Prometheus和Grafana
 
-目前仅以下采集项支持prometheus
+目前仅以下采集项支持Prometheus
 ```json
 [
   "process",
@@ -511,6 +511,35 @@ server:
 ]
 ```
 
+jvmm提供了三个Grafana模板Dashboard，分别是：node、jvm、all
+
+**node** 模板是与系统相关监控项的集合，可以帮助你更专注物理机或云主机的监控数据，于此模板配合需要配置以下task：
+```json
+[
+  "process",
+  "disk_io",
+  "cpu",
+  "network",
+  "sys",
+  "sys_memory",
+  "sys_file"
+]
+```
+
+**jvm** 模板是与JVM相关监控项的集合，可以帮助你更专注进程的监控数据，与此模板配合需要配置以下task：
+```json
+[
+  "process",
+  "jvm_classloading",
+  "jvm_compilation",
+  "jvm_gc",
+  "jvm_memory",
+  "jvm_memory_pool",
+  "jvm_thread"
+]
+```
+
+**all** 模板是以上两个模板的汇总，配置所有Prometheus支持的采集任务即可，也就是上面两个模板的任务的并集。
 
 ## core使用
 
