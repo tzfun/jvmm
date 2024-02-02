@@ -205,14 +205,14 @@ public class PrometheusUtil {
         Types.Label cpuNumLabel = Types.Label.newBuilder().setName("cpu_num").setValue(String.valueOf(cpu.getCpuNum())).build();
 
         Types.TimeSeries.Builder cpuSysUsageTimeSeries = Types.TimeSeries.newBuilder();
-        cpuSysUsageTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("cpu_sys_usage").build());
+        cpuSysUsageTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("cpu_sys").build());
         cpuSysUsageTimeSeries.addLabels(cpuNumLabel);
         cpuSysUsageTimeSeries.addAllLabels(labels);
         cpuSysUsageTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(cpu.getSys()).build());
         writeRequest.addTimeseries(cpuSysUsageTimeSeries);
 
         Types.TimeSeries.Builder cpuUserUsageTimeSeries = Types.TimeSeries.newBuilder();
-        cpuUserUsageTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("cpu_user_usage").build());
+        cpuUserUsageTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("cpu_user").build());
         cpuUserUsageTimeSeries.addLabels(cpuNumLabel);
         cpuUserUsageTimeSeries.addAllLabels(labels);
         cpuUserUsageTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(cpu.getUser()).build());
@@ -224,13 +224,6 @@ public class PrometheusUtil {
         cpuIOWaitTimeSeries.addAllLabels(labels);
         cpuIOWaitTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(cpu.getIoWait()).build());
         writeRequest.addTimeseries(cpuIOWaitTimeSeries);
-
-        Types.TimeSeries.Builder cpuIdleTimeSeries = Types.TimeSeries.newBuilder();
-        cpuIdleTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("cpu_idle").build());
-        cpuIdleTimeSeries.addLabels(cpuNumLabel);
-        cpuIdleTimeSeries.addAllLabels(labels);
-        cpuIdleTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(cpu.getIdle()).build());
-        writeRequest.addTimeseries(cpuIdleTimeSeries);
     }
 
     /**
@@ -442,11 +435,11 @@ public class PrometheusUtil {
         }
 
         Types.TimeSeries.Builder memFreePresentTimeSeries = Types.TimeSeries.newBuilder();
-        memFreePresentTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("os_mem_usage").build());
+        memFreePresentTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("os_mem_used_present").build());
         memFreePresentTimeSeries.addAllLabels(labels);
         memFreePresentTimeSeries.addSamples(Sample.newBuilder()
                 .setTimestamp(timestamp)
-                .setValue(sysMem.getTotalPhysical() == 0 ? 0 : (100.0 * (sysMem.getTotalPhysical() - sysMem.getFreePhysical()) / sysMem.getTotalPhysical()))
+                .setValue(sysMem.getTotalPhysical() == 0 ? 0 : ((double) (sysMem.getTotalPhysical() - sysMem.getFreePhysical()) / sysMem.getTotalPhysical()))
                 .build());
         writeRequest.addTimeseries(memFreePresentTimeSeries);
 
@@ -544,8 +537,9 @@ public class PrometheusUtil {
             osFileUsableTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(sysFile.getUsable()).build());
             writeRequest.addTimeseries(osFileUsableTimeSeries);
 
+            long size = sysFile.getSize();
             Types.TimeSeries.Builder osFileUsablePresentTimeSeries = Types.TimeSeries.newBuilder();
-            osFileUsablePresentTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("os_file_usage").build());
+            osFileUsablePresentTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("os_file_used_present").build());
             osFileUsablePresentTimeSeries.addLabels(nameLabel);
             osFileUsablePresentTimeSeries.addLabels(labelLabel);
             osFileUsablePresentTimeSeries.addLabels(typeLabel);
@@ -553,19 +547,19 @@ public class PrometheusUtil {
             osFileUsablePresentTimeSeries.addAllLabels(labels);
             osFileUsablePresentTimeSeries.addSamples(Sample.newBuilder()
                     .setTimestamp(timestamp)
-                    .setValue(sysFile.getSize() == 0 ? 0 : (100.0 * sysFile.getUsable() / sysFile.getSize()))
+                    .setValue(size == 0 ? 0 : ((double) (size - sysFile.getUsable()) / size))
                     .build());
             writeRequest.addTimeseries(osFileUsablePresentTimeSeries);
-            total += sysFile.getSize();
+            total += size;
             usable += sysFile.getUsable();
         }
 
         Types.TimeSeries.Builder osFileTotalUsablePresentTimeSeries = Types.TimeSeries.newBuilder();
-        osFileTotalUsablePresentTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("os_file_usage_total").build());
+        osFileTotalUsablePresentTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("os_file_all_used_present").build());
         osFileTotalUsablePresentTimeSeries.addAllLabels(labels);
         osFileTotalUsablePresentTimeSeries.addSamples(Sample.newBuilder()
                 .setTimestamp(timestamp)
-                .setValue(total == 0 ? 0 : (100.0 * (total-usable) / total))
+                .setValue(total == 0 ? 0 : ((double) (total - usable) / total))
                 .build());
         writeRequest.addTimeseries(osFileTotalUsablePresentTimeSeries);
     }
@@ -674,45 +668,29 @@ public class PrometheusUtil {
 
         MemoryUsageInfo heapUsage = mem.getHeapUsage();
         if (heapUsage != null) {
-
-            Types.Label initLabel = Types.Label.newBuilder().setName("jvm_mem_heap_init").setValue(String.valueOf(heapUsage.getInit())).build();
-            Types.Label maxLabel = Types.Label.newBuilder().setName("jvm_mem_heap_max").setValue(String.valueOf(heapUsage.getMax())).build();
             Types.TimeSeries.Builder jvmMemHeapUsedTimeSeries = Types.TimeSeries.newBuilder();
             jvmMemHeapUsedTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("jvm_mem_heap_used").build());
-            jvmMemHeapUsedTimeSeries.addLabels(initLabel);
-            jvmMemHeapUsedTimeSeries.addLabels(maxLabel);
             jvmMemHeapUsedTimeSeries.addAllLabels(labels);
             jvmMemHeapUsedTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(heapUsage.getUsed()).build());
             writeRequest.addTimeseries(jvmMemHeapUsedTimeSeries);
 
             Types.TimeSeries.Builder jvmMemHeapCommittedTimeSeries = Types.TimeSeries.newBuilder();
-            jvmMemHeapCommittedTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("jvm_mem_heap_committed").build());
-            jvmMemHeapCommittedTimeSeries.addLabels(initLabel);
-            jvmMemHeapCommittedTimeSeries.addLabels(maxLabel);
+            jvmMemHeapCommittedTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("jvm_mem_heap_used_present").build());
             jvmMemHeapCommittedTimeSeries.addAllLabels(labels);
-            jvmMemHeapCommittedTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(heapUsage.getCommitted()).build());
+            jvmMemHeapCommittedTimeSeries.addSamples(Sample.newBuilder()
+                    .setTimestamp(timestamp)
+                    .setValue(heapUsage.getMax() <= 0 ? 0 : ((double) heapUsage.getUsed() / heapUsage.getMax()))
+                    .build());
             writeRequest.addTimeseries(jvmMemHeapCommittedTimeSeries);
         }
 
         MemoryUsageInfo nonHeapUsage = mem.getNonHeapUsage();
         if (nonHeapUsage != null) {
-            Types.Label initLabel = Types.Label.newBuilder().setName("jvm_mem_nonheap_init").setValue(String.valueOf(nonHeapUsage.getInit())).build();
-            Types.Label maxLabel = Types.Label.newBuilder().setName("jvm_mem_nonheap_max").setValue(String.valueOf(nonHeapUsage.getMax())).build();
             Types.TimeSeries.Builder jvmMemHeapUsedTimeSeries = Types.TimeSeries.newBuilder();
             jvmMemHeapUsedTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("jvm_mem_nonheap_used").build());
-            jvmMemHeapUsedTimeSeries.addLabels(initLabel);
-            jvmMemHeapUsedTimeSeries.addLabels(maxLabel);
             jvmMemHeapUsedTimeSeries.addAllLabels(labels);
             jvmMemHeapUsedTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(nonHeapUsage.getUsed()).build());
             writeRequest.addTimeseries(jvmMemHeapUsedTimeSeries);
-
-            Types.TimeSeries.Builder jvmMemHeapCommittedTimeSeries = Types.TimeSeries.newBuilder();
-            jvmMemHeapCommittedTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("jvm_mem_nonheap_committed").build());
-            jvmMemHeapCommittedTimeSeries.addLabels(initLabel);
-            jvmMemHeapCommittedTimeSeries.addLabels(maxLabel);
-            jvmMemHeapCommittedTimeSeries.addAllLabels(labels);
-            jvmMemHeapCommittedTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(nonHeapUsage.getCommitted()).build());
-            writeRequest.addTimeseries(jvmMemHeapCommittedTimeSeries);
         }
     }
 
@@ -732,75 +710,33 @@ public class PrometheusUtil {
         for (JvmMemoryPoolInfo pool : poolList) {
             Types.Label nameLabel = Types.Label.newBuilder().setName("jvm_mem_pool_name").setValue(pool.getName()).build();
             Types.Label typeLabel = Types.Label.newBuilder().setName("jvm_mem_pool_type").setValue(pool.getType().name()).build();
-            Types.Label gcThresholdLabel = Types.Label.newBuilder().setName("jvm_mem_pool_gc_threshold").setValue(String.valueOf(pool.getCollectionUsageThreshold())).build();
-            Types.Label thresholdLabel = Types.Label.newBuilder().setName("jvm_mem_pool_threshold").setValue(String.valueOf(pool.getUsageThreshold())).build();
 
             MemoryUsageInfo usage = pool.getPeakUsage();
             if (usage != null) {
-                Types.Label initLabel = Types.Label.newBuilder().setName("jvm_mem_pool_init").setValue(String.valueOf(usage.getInit())).build();
-                Types.Label maxLabel = Types.Label.newBuilder().setName("jvm_mem_pool_max").setValue(String.valueOf(usage.getMax())).build();
-
                 Types.TimeSeries.Builder usedTimeSeries = Types.TimeSeries.newBuilder();
                 usedTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("jvm_mem_pool_used").build());
                 usedTimeSeries.addLabels(nameLabel);
                 usedTimeSeries.addLabels(typeLabel);
-                usedTimeSeries.addLabels(initLabel);
-                usedTimeSeries.addLabels(maxLabel);
-                usedTimeSeries.addLabels(gcThresholdLabel);
-                usedTimeSeries.addLabels(thresholdLabel);
                 usedTimeSeries.addAllLabels(labels);
                 usedTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(usage.getUsed()).build());
                 writeRequest.addTimeseries(usedTimeSeries);
-
-                Types.TimeSeries.Builder committedTimeSeries = Types.TimeSeries.newBuilder();
-                committedTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("jvm_mem_pool_committed").build());
-                committedTimeSeries.addLabels(nameLabel);
-                committedTimeSeries.addLabels(typeLabel);
-                committedTimeSeries.addLabels(initLabel);
-                committedTimeSeries.addLabels(maxLabel);
-                committedTimeSeries.addLabels(gcThresholdLabel);
-                committedTimeSeries.addLabels(thresholdLabel);
-                committedTimeSeries.addAllLabels(labels);
-                committedTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(usage.getCommitted()).build());
-                writeRequest.addTimeseries(committedTimeSeries);
             }
 
             MemoryUsageInfo collectionUsage = pool.getCollectionUsage();
             if (collectionUsage != null) {
-                Types.Label initLabel = Types.Label.newBuilder().setName("jvm_mem_pool_gc_init").setValue(String.valueOf(collectionUsage.getInit())).build();
-                Types.Label maxLabel = Types.Label.newBuilder().setName("jvm_mem_pool_gc_max").setValue(String.valueOf(collectionUsage.getMax())).build();
-
                 Types.TimeSeries.Builder usedTimeSeries = Types.TimeSeries.newBuilder();
                 usedTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("jvm_mem_pool_gc_used").build());
                 usedTimeSeries.addLabels(nameLabel);
                 usedTimeSeries.addLabels(typeLabel);
-                usedTimeSeries.addLabels(initLabel);
-                usedTimeSeries.addLabels(maxLabel);
-                usedTimeSeries.addLabels(gcThresholdLabel);
-                usedTimeSeries.addLabels(thresholdLabel);
                 usedTimeSeries.addAllLabels(labels);
                 usedTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(collectionUsage.getUsed()).build());
                 writeRequest.addTimeseries(usedTimeSeries);
-
-                Types.TimeSeries.Builder committedTimeSeries = Types.TimeSeries.newBuilder();
-                committedTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("jvm_mem_pool_gc_committed").build());
-                committedTimeSeries.addLabels(nameLabel);
-                committedTimeSeries.addLabels(typeLabel);
-                committedTimeSeries.addLabels(initLabel);
-                committedTimeSeries.addLabels(maxLabel);
-                committedTimeSeries.addLabels(gcThresholdLabel);
-                committedTimeSeries.addLabels(thresholdLabel);
-                committedTimeSeries.addAllLabels(labels);
-                committedTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(collectionUsage.getCommitted()).build());
-                writeRequest.addTimeseries(committedTimeSeries);
             }
 
             Types.TimeSeries.Builder overCountTimeSeries = Types.TimeSeries.newBuilder();
             overCountTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("jvm_mem_pool_over_count").build());
             overCountTimeSeries.addLabels(nameLabel);
             overCountTimeSeries.addLabels(typeLabel);
-            overCountTimeSeries.addLabels(gcThresholdLabel);
-            overCountTimeSeries.addLabels(thresholdLabel);
             overCountTimeSeries.addAllLabels(labels);
             overCountTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(pool.getUsageThresholdCount()).build());
             writeRequest.addTimeseries(overCountTimeSeries);
@@ -809,8 +745,6 @@ public class PrometheusUtil {
             gcOverCountTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("jvm_mem_pool_gc_over_count").build());
             gcOverCountTimeSeries.addLabels(nameLabel);
             gcOverCountTimeSeries.addLabels(typeLabel);
-            gcOverCountTimeSeries.addLabels(gcThresholdLabel);
-            gcOverCountTimeSeries.addLabels(thresholdLabel);
             gcOverCountTimeSeries.addAllLabels(labels);
             gcOverCountTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(pool.getCollectionUsageThresholdCount()).build());
             writeRequest.addTimeseries(gcOverCountTimeSeries);
@@ -848,12 +782,6 @@ public class PrometheusUtil {
         threadTimeSeries.addAllLabels(labels);
         threadTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(thread.getThreadCount()).build());
         writeRequest.addTimeseries(threadTimeSeries);
-
-        Types.TimeSeries.Builder threadStartedTimeSeries = Types.TimeSeries.newBuilder();
-        threadStartedTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("jvm_thread_started").build());
-        threadStartedTimeSeries.addAllLabels(labels);
-        threadStartedTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(thread.getTotalStartedThreadCount()).build());
-        writeRequest.addTimeseries(threadStartedTimeSeries);
 
         Types.TimeSeries.Builder threadDaemonTimeSeries = Types.TimeSeries.newBuilder();
         threadDaemonTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("jvm_thread_daemon").build());
