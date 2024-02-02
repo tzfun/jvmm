@@ -25,6 +25,7 @@ JVM（内存、线程、线程池、内存池、GC、类加载器等），还提
   * 类加载信息：类加载统计、类加载器、JIT
 * 支持操作系统数据采集：内存状态、CPU负载、磁盘状态及IO吞吐率、网卡状态及IO吞吐率、端口检测
 * 支持火焰图生成，采样事件包括CPU、内存分配、线程栈、Java方法及native方法调用栈等
+* 支持Grafana一键接入
 * 支持Java代码反编译生成
 * 支持Java代码热更新（可指定ClassLoader）
 * 支持远程执行GC
@@ -32,7 +33,7 @@ JVM（内存、线程、线程池、内存池、GC、类加载器等），还提
 * 提供三种服务模式：
   * jvmm服务：独有RPC协议，需使用jvmm客户端远程连接调用，安全可靠
   * http服务：提供Http接口，不限开发语言远程调用
-  * 哨兵服务：定时采集数据并上报给订阅者
+  * 哨兵服务：定时采集数据并上报给订阅者，支持推送给 Prometheus
 * 支持无感知跨进程attach到Java进程，远程连接，Java Agent启动，server独立运行启动，可自定义开发
 * 支持 JDK 8+
 * 支持 Linux/Mac/Windows
@@ -513,7 +514,16 @@ server:
 
 jvmm提供了三个Grafana模板Dashboard，分别是：node、jvm、all
 
-**node** 模板是与系统相关监控项的集合，可以帮助你更专注物理机或云主机的监控数据，于此模板配合需要配置以下task：
+###### node
+**node** 模板是与系统相关监控项的集合，可以帮助你更专注物理机或云主机的监控数据
+
+![jvmm grafana dashboard](doc/grafana-dashboard-jvmm-all-1.png)
+![jvmm grafana dashboard](doc/grafana-dashboard-jvmm-all-2.png)
+![jvmm grafana dashboard](doc/grafana-dashboard-jvmm-all-3.png)
+
+导入方式：引入dashboard ID `20402` 或 导入 [dashboard-node.json](server/grafana/dashboard-node.json)
+
+与此模板配合需要配置以下task：
 ```json
 [
   "process",
@@ -526,7 +536,17 @@ jvmm提供了三个Grafana模板Dashboard，分别是：node、jvm、all
 ]
 ```
 
-**jvm** 模板是与JVM相关监控项的集合，可以帮助你更专注进程的监控数据，与此模板配合需要配置以下task：
+###### jvm
+**jvm** 模板是与JVM相关监控项的集合，可以帮助你更专注进程的监控数据
+
+![jvmm grafana dashboard](doc/grafana-dashboard-jvmm-jvm.png)
+![jvmm grafana dashboard](doc/grafana-dashboard-jvmm-all-4.png)
+![jvmm grafana dashboard](doc/grafana-dashboard-jvmm-all-5.png)
+
+导入方式：引入dashboard ID `20401` 或 导入 [dashboard-jvm.json](server/grafana/dashboard-jvm.json)
+
+与此模板配合需要配置以下task：
+
 ```json
 [
   "process",
@@ -539,7 +559,10 @@ jvmm提供了三个Grafana模板Dashboard，分别是：node、jvm、all
 ]
 ```
 
+###### all
 **all** 模板是以上两个模板的汇总，配置所有Prometheus支持的采集任务即可，也就是上面两个模板的任务的并集。
+
+导入方式：引入dashboard ID `20400` 或 导入 [dashboard-all.json](server/grafana/dashboard-all.json)
 
 ## core使用
 
