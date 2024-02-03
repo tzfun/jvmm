@@ -521,7 +521,7 @@ jvmm提供了三个Grafana模板Dashboard，分别是：node、jvm、all
 ![jvmm grafana dashboard](doc/grafana-dashboard-jvmm-all-2.png)
 ![jvmm grafana dashboard](doc/grafana-dashboard-jvmm-all-3.png)
 
-导入方式：引入dashboard ID `20402` 或 导入 [dashboard-node.json](server/grafana/dashboard-node.json)
+导入方式：引入dashboard ID [20413](https://grafana.com/grafana/dashboards/20413) 或 导入 [dashboard-node.json](server/grafana/dashboard-node.json)
 
 与此模板配合需要配置以下task：
 ```json
@@ -543,7 +543,7 @@ jvmm提供了三个Grafana模板Dashboard，分别是：node、jvm、all
 ![jvmm grafana dashboard](doc/grafana-dashboard-jvmm-all-4.png)
 ![jvmm grafana dashboard](doc/grafana-dashboard-jvmm-all-5.png)
 
-导入方式：引入dashboard ID `20401` 或 导入 [dashboard-jvm.json](server/grafana/dashboard-jvm.json)
+导入方式：引入dashboard ID [20412](https://grafana.com/grafana/dashboards/20412) 或 导入 [dashboard-jvm.json](server/grafana/dashboard-jvm.json)
 
 与此模板配合需要配置以下task：
 
@@ -562,7 +562,9 @@ jvmm提供了三个Grafana模板Dashboard，分别是：node、jvm、all
 ###### all
 **all** 模板是以上两个模板的汇总，配置所有Prometheus支持的采集任务即可，也就是上面两个模板的任务的并集。
 
-导入方式：引入dashboard ID `20400` 或 导入 [dashboard-all.json](server/grafana/dashboard-all.json)
+导入方式：引入dashboard ID [20411](https://grafana.com/grafana/dashboards/20411) 或 导入 [dashboard-all.json](server/grafana/dashboard-all.json)
+
+
 
 ## core使用
 
