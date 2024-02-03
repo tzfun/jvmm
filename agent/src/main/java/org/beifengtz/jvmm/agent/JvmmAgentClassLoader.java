@@ -80,8 +80,13 @@ public class JvmmAgentClassLoader extends URLClassLoader {
             return clazz;
         } catch (Exception ignored) {
         }
+        //  slf4j优先从其他环境中搜索
         if (name != null && name.startsWith("org.slf4j")) {
-            return searchFromOtherClassLoader(name);
+            try {
+                return super.loadClass(name, resolve);
+            } catch (ClassNotFoundException | NoClassDefFoundError e) {
+                return searchFromOtherClassLoader(name);
+            }
         } else {
             return super.loadClass(name, resolve);
         }
@@ -93,8 +98,6 @@ public class JvmmAgentClassLoader extends URLClassLoader {
     }
 
     private Class<?> searchFromOtherClassLoader(String name) throws ClassNotFoundException {
-        System.out.println("search from other classloader: " + name);
-
         try {
             Method method = Class.forName("sun.management.ThreadImpl").getDeclaredMethod("getThreads");
             method.setAccessible(true);
