@@ -25,7 +25,7 @@ JVM（内存、线程、线程池、内存池、GC、类加载器等），还提
   * 类加载信息：类加载统计、类加载器、JIT
 * 支持操作系统数据采集：内存状态、CPU负载、磁盘状态及IO吞吐率、网卡状态及IO吞吐率、端口检测
 * 支持火焰图生成，采样事件包括CPU、内存分配、线程栈、Java方法及native方法调用栈等
-* 支持Grafana一键接入
+* 支持**Prometheus**、**Grafana**一键接入
 * 支持Java代码反编译生成
 * 支持Java代码热更新（可指定ClassLoader）
 * 支持远程执行GC
@@ -96,7 +96,7 @@ Jvmm的核心数据采集功能在 `core` 模块，提供的服务式功能在 `
 它们可以**同时运行**，各个模式的具体配置分别对应 `server.jvmm`，`server.http`，`server.sentinel`。
 ```yaml
 server:
-  type: jvmm,http,sentinel  # 同时开启三种模式
+  type: jvmm,http,sentinel  # 支持同时开启多种模式
   jvmm:
     # ...
   http:
@@ -236,100 +236,7 @@ public class Jvmm {
 当然上面的启动方式会使用默认的配置，一般都需要自定义配置，`getInstance`方法可以传入一个 `org.beifengtz.jvmm.server.entity.conf.Configuration` 对象，
 通过构造 Configuration 既可以实现自定义配置。
 
-**使用 JvmmConnector 连接 Jvmm Server**
-```java
-package org.beifengtz.jvmm.demo;
-
-import io.netty.channel.EventLoopGroup;
-import io.netty.util.internal.logging.InternalLogger;
-import io.netty.util.internal.logging.InternalLoggerFactory;
-import org.beifengtz.jvmm.common.exception.JvmmConnectFailedException;
-import org.beifengtz.jvmm.convey.channel.ChannelUtil;
-import org.beifengtz.jvmm.convey.entity.JvmmRequest;
-import org.beifengtz.jvmm.convey.entity.JvmmResponse;
-import org.beifengtz.jvmm.convey.enums.RpcType;
-import org.beifengtz.jvmm.convey.socket.JvmmConnector;
-
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
-
-/**
- * Description: TODO
- * <p>
- * Created in 17:16 2021/12/15
- *
- * @author beifengtz
- */
-public class ServerConveyDemo {
-
-  private static InternalLogger logger;
-
-  public static void main(String[] args) throws Exception {
-    logger = InternalLoggerFactory.getInstance(ServerConveyDemo.class);
-
-    EventLoopGroup executor = ChannelUtil.newEventLoopGroup(1);
-
-    JvmmRequest request = JvmmRequest.create().setType(RpcType.JVMM_PING);
-
-    //  向jvmm服务器发送一个消息并同步等待
-    JvmmResponse response = sendMsgOnce(executor, request);
-
-    // 向jvmm服务器发送一个消息，异步响应
-    sendMsgOnceAsync(executor, request, System.out::println);
-
-    //  得到一个保持活跃的连接器
-    JvmmConnector connector = getKeepAliveConnector(executor);
-    connector.send(request);
-  }
-
-  private static JvmmResponse sendMsgOnce(EventLoopGroup executor, JvmmRequest request) throws Exception {
-    return JvmmConnector.waitForResponse(executor, "127.0.0.1", 5010, request, 5, TimeUnit.SECONDS);
-  }
-
-  private static void sendMsgOnceAsync(EventLoopGroup executor, JvmmRequest request,
-                                       JvmmConnector.MsgReceiveListener listener) {
-    JvmmConnector connector = JvmmConnector.newInstance("127.0.0.1", 5010, executor, false, "jvmm_acc", "jvmm_pwd");
-    CompletableFuture<Boolean> connectFuture = connector.connect();
-    connectFuture.whenComplete((success, throwable) -> {
-      if (throwable == null) {
-        if (success) {
-          connector.registerCloseListener(() -> {
-            logger.info("Jvmm connector closed");
-            executor.shutdownGracefully();
-          });
-
-          connector.registerListener(response -> {
-            listener.onMessage(response);
-            connector.close();
-          });
-
-          connector.send(request);
-        } else {
-          logger.error("Authentication failed!");
-        }
-      } else {
-        logger.error("Connect time out");
-      }
-    });
-  }
-
-  private static JvmmConnector getKeepAliveConnector(EventLoopGroup executor) throws Exception {
-    JvmmConnector connector = JvmmConnector.newInstance("127.0.0.1", 5010, executor, true, "jvmm_acc", "jvmm_pwd");
-    CompletableFuture<Boolean> connectFuture = connector.connect();
-    Boolean success = connectFuture.get(3, TimeUnit.SECONDS);
-    if (success) {
-      connector.registerCloseListener(() -> {
-        logger.info("Jvmm connector closed");
-        executor.shutdownGracefully();
-      });
-
-      return connector;
-    } else {
-      throw new JvmmConnectFailedException("Authentication failed!");
-    }
-  }
-}
-```
+**使用 JvmmConnector 连接 Jvmm Server** [ServerConveyDemo.java](demo/src/main/java/org/beifengtz/jvmm/demo/ServerConveyDemo.java)
 
 ### 四、Server接口文档
 
@@ -439,7 +346,7 @@ server:
   type: sentinel
   sentinel:
     - subscribers:
-      # publish jvmm data to http server
+      # publish jvmm data to custom http server
       - type: http
         url: http://127.0.0.1:9999/monitor/subscriber
         auth:
@@ -464,7 +371,7 @@ server:
 ```
 ##### http推送
 
-总共支持以下采集项，其中`disk_io`、`cpu`、`network`执行需要耗时，程序内部为异步回调实现，因此哨兵执行间隔不能小于`1s`。
+总共支持以下采集项，其中`disk_io`、`cpu`、`network`等任务执行需要耗时，程序内部为异步回调实现，哨兵执行间隔不能小于`1s`。
 
 ```json
 [
@@ -517,11 +424,10 @@ jvmm提供了三个Grafana模板Dashboard，分别是：node、jvm、all
 ###### node
 **node** 模板是与系统相关监控项的集合，可以帮助你更专注物理机或云主机的监控数据
 
-![jvmm grafana dashboard](doc/grafana-dashboard-jvmm-all-1.png)
-![jvmm grafana dashboard](doc/grafana-dashboard-jvmm-all-2.png)
-![jvmm grafana dashboard](doc/grafana-dashboard-jvmm-all-3.png)
+![jvmm grafana dashboard](doc/grafana-node-1.png)
+![jvmm grafana dashboard](doc/grafana-node-2.png)
 
-导入方式：引入dashboard ID [20413](https://grafana.com/grafana/dashboards/20413) 或 导入 [dashboard-node.json](server/grafana/dashboard-node.json)
+导入方式：导入Dashboard ID [20413](https://grafana.com/grafana/dashboards/20413) 或 导入 [dashboard-node.json](server/grafana/dashboard-node.json)
 
 与此模板配合需要配置以下task：
 ```json
@@ -539,11 +445,10 @@ jvmm提供了三个Grafana模板Dashboard，分别是：node、jvm、all
 ###### jvm
 **jvm** 模板是与JVM相关监控项的集合，可以帮助你更专注进程的监控数据
 
-![jvmm grafana dashboard](doc/grafana-dashboard-jvmm-jvm.png)
-![jvmm grafana dashboard](doc/grafana-dashboard-jvmm-all-4.png)
-![jvmm grafana dashboard](doc/grafana-dashboard-jvmm-all-5.png)
+![jvmm grafana dashboard](doc/grafana-jvm-1.png)
+![jvmm grafana dashboard](doc/grafana-jvm-2.png)
 
-导入方式：引入dashboard ID [20412](https://grafana.com/grafana/dashboards/20412) 或 导入 [dashboard-jvm.json](server/grafana/dashboard-jvm.json)
+导入方式：导入Dashboard ID [20412](https://grafana.com/grafana/dashboards/20412) 或 导入 [dashboard-jvm.json](server/grafana/dashboard-jvm.json)
 
 与此模板配合需要配置以下task：
 
@@ -562,8 +467,7 @@ jvmm提供了三个Grafana模板Dashboard，分别是：node、jvm、all
 ###### all
 **all** 模板是以上两个模板的汇总，配置所有Prometheus支持的采集任务即可，也就是上面两个模板的任务的并集。
 
-导入方式：引入dashboard ID [20411](https://grafana.com/grafana/dashboards/20411) 或 导入 [dashboard-all.json](server/grafana/dashboard-all.json)
-
+导入方式：导入Dashboard ID [20411](https://grafana.com/grafana/dashboards/20411) 或 导入 [dashboard-all.json](server/grafana/dashboard-all.json)
 
 
 ## core使用
@@ -614,7 +518,7 @@ java -jar jvmm.jar -h
 * [Server启动使用示例](demo/src/main/java/org/beifengtz/jvmm/demo/ServerBootDemo.java)
 * [Jvmm连接工具使用示例](demo/src/main/java/org/beifengtz/jvmm/demo/ServerConveyDemo.java)
 
-Dashboard应用示例
+自定义Dashboard应用示例
 
 ![dashboard](doc/dashboard.jpg)
 
