@@ -108,7 +108,7 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 4,
+        "w": 3,
         "x": 0,
         "y": 1
       },
@@ -180,7 +180,7 @@
       "gridPos": {
         "h": 3,
         "w": 5,
-        "x": 4,
+        "x": 3,
         "y": 1
       },
       "id": 4,
@@ -250,8 +250,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 5,
-        "x": 9,
+        "w": 4,
+        "x": 8,
         "y": 1
       },
       "id": 5,
@@ -315,6 +315,77 @@
                 "value": 80
               }
             ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 12,
+        "y": 1
+      },
+      "id": 9,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "os_cpu{node=\"$node_query\"}",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "CPU Num",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
           },
           "unit": "ms"
         },
@@ -322,8 +393,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 5,
-        "x": 14,
+        "w": 4,
+        "x": 15,
         "y": 1
       },
       "id": 6,
@@ -477,77 +548,6 @@
                 "value": 80
               }
             ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 1,
-        "x": 0,
-        "y": 5
-      },
-      "id": 9,
-      "options": {
-        "colorMode": "none",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "10.2.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "os_cpu{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "CPU Num",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
           },
           "unit": "percentunit"
         },
@@ -555,8 +555,8 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 4,
-        "x": 1,
+        "w": 3,
+        "x": 0,
         "y": 5
       },
       "id": 10,
@@ -659,17 +659,17 @@
       },
       "gridPos": {
         "h": 10,
-        "w": 19,
-        "x": 5,
+        "w": 21,
+        "x": 3,
         "y": 5
       },
       "id": 12,
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "table",
+          "displayMode": "list",
           "placement": "bottom",
-          "showLegend": false
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi",
@@ -762,8 +762,8 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 4,
-        "x": 1,
+        "w": 3,
+        "x": 0,
         "y": 10
       },
       "id": 11,
@@ -825,6 +825,9 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
           "mappings": [],
           "thresholds": {
             "mode": "percentage",
@@ -848,15 +851,16 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 9,
-        "w": 5,
+        "h": 8,
+        "w": 3,
         "x": 0,
         "y": 16
       },
       "id": 14,
       "options": {
-        "minVizHeight": 200,
-        "minVizWidth": 200,
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -865,9 +869,8 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": false,
-        "sizing": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
       "pluginVersion": "10.2.3",
       "targets": [
@@ -889,7 +892,7 @@
         }
       ],
       "title": "Memory Used",
-      "type": "gauge"
+      "type": "stat"
     },
     {
       "datasource": {
@@ -998,9 +1001,9 @@
         ]
       },
       "gridPos": {
-        "h": 9,
-        "w": 19,
-        "x": 5,
+        "h": 8,
+        "w": 21,
+        "x": 3,
         "y": 16
       },
       "id": 15,
@@ -1057,7 +1060,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "os_mem_free",
+          "expr": "os_mem_free{node=\"$node_query\"}",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
@@ -1166,7 +1169,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 25
+        "y": 24
       },
       "id": 16,
       "options": {
@@ -1274,7 +1277,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "decbytes"
         },
         "overrides": []
       },
@@ -1282,7 +1286,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 25
+        "y": 24
       },
       "id": 17,
       "options": {
@@ -1321,7 +1325,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "os_mem_shared",
+          "expr": "os_mem_shared{node=\"$node_query\"}",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
@@ -1341,7 +1345,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 33
+        "y": 32
       },
       "id": 18,
       "panels": [],
@@ -1380,14 +1384,15 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 4,
+        "w": 3,
         "x": 0,
-        "y": 34
+        "y": 33
       },
       "id": 19,
       "options": {
-        "minVizHeight": 200,
-        "minVizWidth": 200,
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -1396,9 +1401,8 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "sizing": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
       "pluginVersion": "10.2.3",
       "targets": [
@@ -1420,7 +1424,7 @@
         }
       ],
       "title": "Disk Used (ALL)",
-      "type": "gauge"
+      "type": "stat"
     },
     {
       "datasource": {
@@ -1454,9 +1458,9 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 8,
-        "x": 4,
-        "y": 34
+        "w": 9,
+        "x": 3,
+        "y": 33
       },
       "id": 20,
       "options": {
@@ -1559,7 +1563,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 34
+        "y": 33
       },
       "id": 21,
       "options": {
@@ -1587,7 +1591,7 @@
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "read: {{disk_name}}",
+          "legendFormat": "{{disk_name}} read",
           "range": true,
           "refId": "A",
           "useBackend": false
@@ -1604,7 +1608,7 @@
           "hide": false,
           "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "write: {{disk_name}}",
+          "legendFormat": "{{disk_name}} write",
           "range": true,
           "refId": "B",
           "useBackend": false
@@ -1677,7 +1681,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 42
+        "y": 41
       },
       "id": 22,
       "options": {
@@ -1795,7 +1799,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 42
+        "y": 41
       },
       "id": 23,
       "options": {
@@ -1825,7 +1829,7 @@
           "includeNullMetadata": true,
           "instant": false,
           "interval": "",
-          "legendFormat": "{{disk_name}} read:",
+          "legendFormat": "{{disk_name}} read",
           "range": true,
           "refId": "A",
           "useBackend": false
@@ -1845,7 +1849,7 @@
           "includeNullMetadata": true,
           "instant": false,
           "interval": "",
-          "legendFormat": "{{disk_name}} write:",
+          "legendFormat": "{{disk_name}} write",
           "range": true,
           "refId": "B",
           "useBackend": false
@@ -1860,7 +1864,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 50
+        "y": 49
       },
       "id": 24,
       "panels": [],
@@ -1930,7 +1934,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 51
+        "y": 50
       },
       "id": 25,
       "options": {
@@ -2233,7 +2237,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 51
+        "y": 50
       },
       "id": 26,
       "options": {
@@ -2241,7 +2245,7 @@
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": false
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi",
@@ -2260,7 +2264,7 @@
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "total:",
+          "legendFormat": "total",
           "range": true,
           "refId": "A",
           "useBackend": false
@@ -2277,7 +2281,7 @@
           "hide": false,
           "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "tcp4:",
+          "legendFormat": "tcp4",
           "range": true,
           "refId": "B",
           "useBackend": false
@@ -2294,7 +2298,7 @@
           "hide": false,
           "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "tcp6:",
+          "legendFormat": "tcp6",
           "range": true,
           "refId": "C",
           "useBackend": false
@@ -2311,7 +2315,7 @@
           "hide": false,
           "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "udp4:",
+          "legendFormat": "udp4",
           "range": true,
           "refId": "D",
           "useBackend": false
@@ -2328,7 +2332,7 @@
           "hide": false,
           "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "udp6:",
+          "legendFormat": "udp6",
           "range": true,
           "refId": "E",
           "useBackend": false
@@ -2401,7 +2405,7 @@
         "h": 8,
         "w": 6,
         "x": 0,
-        "y": 59
+        "y": 58
       },
       "id": 27,
       "options": {
@@ -2424,7 +2428,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "net_if_sent_bytes{node=\"$node_query\", net_if_name=\"$network_if_name\"}",
+          "expr": "increase(net_if_sent_bytes{node=\"$node_query\", net_if_name=\"$network_if_name\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -2440,7 +2444,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "net_if_recv_bytes{node=\"$node_query\", net_if_name=\"$network_if_name\"}",
+          "expr": "increase(net_if_recv_bytes{node=\"$node_query\", net_if_name=\"$network_if_name\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
@@ -2518,7 +2522,7 @@
         "h": 8,
         "w": 6,
         "x": 6,
-        "y": 59
+        "y": 58
       },
       "id": 28,
       "options": {
@@ -2541,7 +2545,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "net_if_sent_count{node=\"$node_query\", net_if_name=\"$network_if_name\"}",
+          "expr": "floor(increase(net_if_sent_count{node=\"$node_query\", net_if_name=\"$network_if_name\"}[$__rate_interval]))",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -2557,7 +2561,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "net_if_recv_count{node=\"$node_query\", net_if_name=\"$network_if_name\"}",
+          "expr": "floor(increase(net_if_recv_count{node=\"$node_query\", net_if_name=\"$network_if_name\"}[$__rate_interval]))",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
@@ -2636,7 +2640,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 59
+        "y": 58
       },
       "id": 29,
       "options": {
