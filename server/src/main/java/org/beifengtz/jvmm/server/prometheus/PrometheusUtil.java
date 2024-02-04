@@ -81,6 +81,12 @@ public class PrometheusUtil {
         processTimeSeries.addAllLabels(labels);
         processTimeSeries.addSamples(Types.Sample.newBuilder().setTimestamp(timestamp).setValue(process.getUptime()).build());
         writeRequest.addTimeseries(processTimeSeries.build());
+
+        Types.TimeSeries.Builder processCpuLoadTimeSeries = Types.TimeSeries.newBuilder();
+        processCpuLoadTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("p_cpu_load").build());
+        processCpuLoadTimeSeries.addAllLabels(labels);
+        processCpuLoadTimeSeries.addSamples(Types.Sample.newBuilder().setTimestamp(timestamp).setValue(process.getCpuLoad()).build());
+        writeRequest.addTimeseries(processCpuLoadTimeSeries.build());
     }
 
     /**
@@ -210,13 +216,6 @@ public class PrometheusUtil {
         cpuSysUsageTimeSeries.addAllLabels(labels);
         cpuSysUsageTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(cpu.getSys()).build());
         writeRequest.addTimeseries(cpuSysUsageTimeSeries);
-
-        Types.TimeSeries.Builder cpuUserUsageTimeSeries = Types.TimeSeries.newBuilder();
-        cpuUserUsageTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("cpu_user").build());
-        cpuUserUsageTimeSeries.addLabels(cpuNumLabel);
-        cpuUserUsageTimeSeries.addAllLabels(labels);
-        cpuUserUsageTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(cpu.getUser()).build());
-        writeRequest.addTimeseries(cpuUserUsageTimeSeries);
 
         Types.TimeSeries.Builder cpuIOWaitTimeSeries = Types.TimeSeries.newBuilder();
         cpuIOWaitTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("cpu_io_wait").build());

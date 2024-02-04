@@ -40,6 +40,7 @@ public class ProcessInfo implements JsonParsable {
      */
     private List<String> inputArgs;
     private String workDir;
+    private double cpuLoad;
 
     private ProcessInfo() {
     }
@@ -171,6 +172,15 @@ public class ProcessInfo implements JsonParsable {
 
     public ProcessInfo setVmSpecVersion(String vmSpecVersion) {
         this.vmSpecVersion = vmSpecVersion;
+        return this;
+    }
+
+    public double getCpuLoad() {
+        return cpuLoad;
+    }
+
+    public ProcessInfo setCpuLoad(double cpuLoad) {
+        this.cpuLoad = cpuLoad;
         return this;
     }
 

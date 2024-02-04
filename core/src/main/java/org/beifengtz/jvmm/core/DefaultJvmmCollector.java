@@ -62,7 +62,7 @@ class DefaultJvmmCollector implements JvmmCollector {
             com.sun.management.OperatingSystemMXBean sunSystemMXBean = (com.sun.management.OperatingSystemMXBean) operatingSystemMXBean;
             info.setCommittedVirtual(sunSystemMXBean.getCommittedVirtualMemorySize())
                     .setFreePhysical(sunSystemMXBean.getFreePhysicalMemorySize())
-                    .setFreeSwap(sunSystemMXBean.getFreePhysicalMemorySize())
+                    .setFreeSwap(sunSystemMXBean.getFreeSwapSpaceSize())
                     .setTotalPhysical(sunSystemMXBean.getTotalPhysicalMemorySize())
                     .setTotalSwap(sunSystemMXBean.getTotalSwapSpaceSize());
 
@@ -125,6 +125,12 @@ class DefaultJvmmCollector implements JvmmCollector {
                 .setVmSpecVersion(runtimeMXBean.getSpecVersion())
                 .setWorkDir(SystemPropertyUtil.get("user.dir"))
                 .setInputArgs(runtimeMXBean.getInputArguments());
+        try {
+            com.sun.management.OperatingSystemMXBean sunSystemMXBean = (com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+            info.setCpuLoad(sunSystemMXBean.getProcessCpuLoad());
+        } catch (Throwable e) {
+            logger.warn("Get system dynamic info failed. " + e.getMessage(), e);
+        }
         return info;
     }
 
