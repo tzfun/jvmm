@@ -58,7 +58,6 @@ public class ServerApplication {
 
     public static void main(String[] args) throws Exception {
         loadBanner();
-        ServerBootstrap.getInstance(loadConf(new String[]{"/Users/beifengtz/Program/jvmm-dev/jvmm-2.4.1/jvmm.yml"})).start(ServerBootstrap.class);
-//        ServerBootstrap.getInstance(loadConf(args)).start(ServerBootstrap.class);
+        ServerBootstrap.getInstance(loadConf(args)).start(ServerBootstrap.class);
     }
 }
