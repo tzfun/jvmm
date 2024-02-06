@@ -182,7 +182,7 @@ public class CommonUtil {
         InputStream is = CommonUtil.class.getResourceAsStream("/version.txt");
         if (is != null) {
             try {
-                return IOUtil.toString(is);
+                return IOUtil.toString(is).trim();
             } catch (IOException ignored) {
             }
         }

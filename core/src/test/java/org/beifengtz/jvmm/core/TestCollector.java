@@ -2,10 +2,14 @@ package org.beifengtz.jvmm.core;
 
 import org.beifengtz.jvmm.common.factory.ExecutorFactory;
 import org.beifengtz.jvmm.common.util.IPUtil;
+import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.core.driver.OSDriver;
 import org.beifengtz.jvmm.core.entity.info.JvmMemoryInfo;
+import org.beifengtz.jvmm.core.entity.info.SysMemInfo;
 import org.beifengtz.jvmm.core.entity.info.ThreadTimedInfo;
 import org.junit.jupiter.api.Test;
+import oshi.SystemInfo;
+import oshi.hardware.GlobalMemory;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
@@ -127,5 +131,24 @@ public class TestCollector {
         });
         thread.start();
         System.out.println("started loop thread " + thread.getId());
+    }
+
+    @Test
+    public void testSystemMemory() {
+        JvmmCollector collector = JvmmFactory.getCollector();
+        SysMemInfo sysMem = collector.getSysMem();
+        System.out.println(100 * (double) sysMem.getFreePhysical() / sysMem.getTotalPhysical());
+
+        System.out.println(StringUtil.formatByteSizeGracefully(sysMem.getTotalPhysical()));
+        System.out.println(StringUtil.formatByteSizeGracefully(sysMem.getFreePhysical()));
+        System.out.println(StringUtil.formatByteSizeGracefully(Runtime.getRuntime().totalMemory()) + " ==> " + 100.0 * Runtime.getRuntime().freeMemory() / Runtime.getRuntime().totalMemory());
+
+        SystemInfo si = new SystemInfo();
+        GlobalMemory memory = si.getHardware().getMemory();
+
+        long available = memory.getAvailable();
+        long total = memory.getTotal();
+        System.out.println(memory.getPageSize());
+        System.out.println(StringUtil.formatByteSizeGracefully(available) + " ==> "+ 100.0 * available / total);
     }
 }

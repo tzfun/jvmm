@@ -11,6 +11,7 @@ import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
 import org.beifengtz.jvmm.core.driver.OSDriver;
 import org.beifengtz.jvmm.core.entity.info.*;
 import org.beifengtz.jvmm.core.entity.result.LinuxMemResult;
+import oshi.hardware.GlobalMemory;
 
 import java.lang.management.*;
 import java.lang.reflect.Field;
@@ -59,11 +60,12 @@ class DefaultJvmmCollector implements JvmmCollector {
         OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
         SysMemInfo info = SysMemInfo.create();
         try {
+            GlobalMemory memory = OSDriver.get().getOSMemory();
             com.sun.management.OperatingSystemMXBean sunSystemMXBean = (com.sun.management.OperatingSystemMXBean) operatingSystemMXBean;
             info.setCommittedVirtual(sunSystemMXBean.getCommittedVirtualMemorySize())
-                    .setFreePhysical(sunSystemMXBean.getFreePhysicalMemorySize())
+                    .setFreePhysical(memory.getAvailable())
+                    .setTotalPhysical(memory.getTotal())
                     .setFreeSwap(sunSystemMXBean.getFreeSwapSpaceSize())
-                    .setTotalPhysical(sunSystemMXBean.getTotalPhysicalMemorySize())
                     .setTotalSwap(sunSystemMXBean.getTotalSwapSpaceSize());
 
             if (PlatformUtil.isLinux()) {

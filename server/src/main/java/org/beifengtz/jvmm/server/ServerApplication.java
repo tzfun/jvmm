@@ -1,5 +1,7 @@
 package org.beifengtz.jvmm.server;
 
+import org.beifengtz.jvmm.common.util.CommonUtil;
+import org.beifengtz.jvmm.common.util.IOUtil;
 import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
 import org.beifengtz.jvmm.server.entity.conf.Configuration;
 
@@ -46,8 +48,17 @@ public class ServerApplication {
         return null;
     }
 
+    private static void loadBanner() throws Exception {
+        InputStream is = ServerApplication.class.getResourceAsStream("/banner.txt");
+        if (is != null) {
+            System.out.print(IOUtil.toString(is));
+        }
+        System.out.printf("Jvmm version: \u001b[0m\u001b[93m%s\u001b[0m\n\n", CommonUtil.getJvmmVersion());
+    }
+
     public static void main(String[] args) throws Exception {
-        ServerBootstrap.getInstance(loadConf(new String[]{"E:\\Project\\jvmm-dev\\jvmm-dev\\jvmm.yml"})).start(ServerBootstrap.class);
+        loadBanner();
+        ServerBootstrap.getInstance(loadConf(new String[]{"/Users/beifengtz/Program/jvmm-dev/jvmm-2.4.1/jvmm.yml"})).start(ServerBootstrap.class);
 //        ServerBootstrap.getInstance(loadConf(args)).start(ServerBootstrap.class);
     }
 }

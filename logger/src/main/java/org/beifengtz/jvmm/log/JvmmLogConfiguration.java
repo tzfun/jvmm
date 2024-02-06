@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public class JvmmLogConfiguration {
 
-    private static final String DEFAULT_PATTERN = "%ansi{%date{yyyy-MM-dd HH:mm:ss}}{36} %ansi{%level}{ERROR=31,INFO=32,WARN=33,DEBUG=34,TRACE=35} %ansi{%class}{38;5;14}\t: %msg";
+    private static final String DEFAULT_PATTERN = "%ansi{%date{yyyy-MM-dd HH:mm:ss.SSSZ}}{36} %ansi{%level}{ERROR=31,INFO=32,WARN=33,DEBUG=34,TRACE=35} %ansi{%class}{38;5;14} %msg";
     /**
      * 日志等级
      */

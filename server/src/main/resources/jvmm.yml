@@ -156,7 +156,7 @@ log:
   fileLimitSize: 10
   # Log output formatting matching rules.
   # The color output supports ANSI code, but it will only appear in the standard output of the console, and will not pollute the log file.
-  pattern: "%ansi{%date{yyyy-MM-dd HH:mm:ss}}{36} %ansi{%level}{ERROR=31,INFO=32,WARN=33,DEBUG=34,TRACE=35} %ansi{%class}{38;5;14} : %msg"
+  pattern: "%ansi{%date{yyyy-MM-dd HH:mm:ss.SSSZ}}{36} %ansi{%level}{ERROR=31,INFO=32,WARN=33,DEBUG=34,TRACE=35} %ansi{%class}{38;5;14} %msg"
   # Output type, support standard output and file output.
   printers: std,file
 

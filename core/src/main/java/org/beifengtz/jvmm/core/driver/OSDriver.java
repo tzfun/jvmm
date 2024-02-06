@@ -12,6 +12,7 @@ import org.beifengtz.jvmm.core.entity.result.LinuxMemResult;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.CentralProcessor.TickType;
+import oshi.hardware.GlobalMemory;
 import oshi.hardware.HWDiskStore;
 import oshi.hardware.HWPartition;
 import oshi.hardware.NetworkIF;
@@ -63,6 +64,10 @@ public final class OSDriver {
             }
         }
         return INSTANCE;
+    }
+
+    public GlobalMemory getOSMemory() {
+        return si.getHardware().getMemory();
     }
 
     public List<DiskInfo> getDiskInfo() {
