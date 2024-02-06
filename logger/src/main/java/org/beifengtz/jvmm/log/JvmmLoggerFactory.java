@@ -29,6 +29,7 @@ public class JvmmLoggerFactory extends InternalLoggerFactory {
     private JvmmLogConfiguration config;
 
     protected JvmmLoggerFactory() {
+        loadConfig();
     }
 
     public static JvmmLoggerFactory getInstance() {
@@ -36,7 +37,6 @@ public class JvmmLoggerFactory extends InternalLoggerFactory {
             synchronized (JvmmLoggerFactory.class) {
                 if (INSTANCE == null) {
                     INSTANCE = new JvmmLoggerFactory();
-                    INSTANCE.loadConfig();
                 }
             }
         }
