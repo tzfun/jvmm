@@ -99,23 +99,35 @@ public final class OSDriver {
     public CompletableFuture<List<DiskIOInfo>> getDiskIOInfo() {
         List<HWDiskStore> preHwDisks = si.getHardware().getDiskStores();
         CompletableFuture<List<DiskIOInfo>> future = new CompletableFuture<>();
+        Map<String, long[]> preDiskInfo = new HashMap<>();
+        for (HWDiskStore disk : preHwDisks) {
+            long reads = disk.getReads();
+            long readBytes = disk.getReadBytes();
+            long writes = disk.getWrites();
+            long writeBytes = disk.getWriteBytes();
+
+            preDiskInfo.put(disk.getName(), new long[]{reads, readBytes, writes, writeBytes});
+        }
         executor.schedule(() -> {
             try {
                 List<DiskIOInfo> disks = new ArrayList<>(preHwDisks.size());
                 for (HWDiskStore disk : preHwDisks) {
-                    long preReads = disk.getReads();
-                    long preReadBytes = disk.getReadBytes();
-                    long preWrites = disk.getWrites();
-                    long preWriteBytes = disk.getWriteBytes();
-
                     disk.updateAttributes();
+                    long reads = disk.getReads();
+                    long readBytes = disk.getReadBytes();
+                    long writes = disk.getWrites();
+                    long writeBytes = disk.getWriteBytes();
+                    String name = disk.getName();
+
+                    long[] preInfo = preDiskInfo.get(name);
+
                     DiskIOInfo info = DiskIOInfo.create()
                             .setName(disk.getName().replaceAll("\\\\|\\.", ""))
                             .setCurrentQueueLength(disk.getCurrentQueueLength())
-                            .setReadPerSecond(disk.getReads() - preReads)
-                            .setReadBytesPerSecond(disk.getReadBytes() - preReadBytes)
-                            .setWritePerSecond(disk.getWrites() - preWrites)
-                            .setWriteBytesPerSecond(disk.getWriteBytes() - preWriteBytes);
+                            .setReadPerSecond(reads - preInfo[0])
+                            .setReadBytesPerSecond(readBytes - preInfo[1])
+                            .setWritePerSecond(writes - preInfo[2])
+                            .setWriteBytesPerSecond(writeBytes - preInfo[3]);
                     disks.add(info);
                 }
                 future.complete(disks);
@@ -141,7 +153,12 @@ public final class OSDriver {
         CompletableFuture<DiskIOInfo> future = new CompletableFuture<>();
         executor.schedule(() -> {
             try {
-                HWDiskStore disk = si.getHardware().getDiskStores().stream().filter(o -> o.getName().contains(name)).findAny().orElse(null);
+                HWDiskStore disk = si.getHardware()
+                        .getDiskStores()
+                        .stream()
+                        .filter(o -> o.getName().contains(name))
+                        .findAny()
+                        .orElse(null);
                 if (disk == null) {
                     future.complete(null);
                 } else {

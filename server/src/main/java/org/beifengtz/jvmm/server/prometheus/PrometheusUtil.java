@@ -443,7 +443,7 @@ public class PrometheusUtil {
         writeRequest.addTimeseries(memFreePresentTimeSeries);
 
         Types.TimeSeries.Builder memCommittedTimeSeries = Types.TimeSeries.newBuilder();
-        memCommittedTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("os_mem_committed").build());
+        memCommittedTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("os_mem_committed_virtual").build());
         memCommittedTimeSeries.addAllLabels(labels);
         memCommittedTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(sysMem.getCommittedVirtual()).build());
         writeRequest.addTimeseries(memCommittedTimeSeries);

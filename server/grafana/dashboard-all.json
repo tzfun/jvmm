@@ -18,12 +18,20 @@
       "usage": {
         "libraryPanels": [
           {
+            "name": "Load Avg",
+            "uid": "ba4f0d70-7b50-445a-b2f5-311476c8038b"
+          },
+          {
+            "name": "CPU System Used",
+            "uid": "a3197bed-12f8-4bf0-9621-6df8dff2c6af"
+          },
+          {
             "name": "CPU Used",
             "uid": "c6bd6cca-ea56-4b21-8e17-af95a4647159"
           },
           {
-            "name": "Memory",
-            "uid": "fe6237f6-5905-45d5-b025-36d92bc18ae1"
+            "name": "CPU User Used",
+            "uid": "f0e994af-1e51-4133-8096-47828620254d"
           },
           {
             "name": "Memory Swap",
@@ -38,18 +46,261 @@
             "uid": "b4ae56ef-dd6f-44c5-b709-8f6ac921f28c"
           },
           {
+            "name": "Disk Used",
+            "uid": "fa89c359-a210-4c9f-95ca-8f0ecb4d02f5"
+          },
+          {
+            "name": "Disk IO (count/s)",
+            "uid": "ce206b18-3fb9-40f8-a9ac-9cef870b468f"
+          },
+          {
+            "name": "Disk Info",
+            "uid": "cd8e1079-7d4c-4aaa-b68c-f7485e9c41a6"
+          },
+          {
+            "name": "Disk IO (size/s)",
+            "uid": "f5ba5101-a516-44bd-bf87-1f9caacf5206"
+          },
+          {
+            "name": "Network State Connections",
+            "uid": "de99f2eb-2aad-4b4e-85c1-2dfa94e65a5a"
+          },
+          {
+            "name": "Network Connections",
+            "uid": "f14a61f1-dec3-4928-8938-f7e739307e14"
+          },
+          {
             "name": "Network Interface IO (Total Size)",
             "uid": "faac7d48-fd9f-4b15-a4a7-dbe0fa253268"
           },
           {
             "name": "Network Interface IO (Total Count)",
             "uid": "fd6b3152-74d2-4c0a-92bd-14e502e18904"
+          },
+          {
+            "name": "Network Interface IO (size/s)",
+            "uid": "e74d240e-9f6d-4f49-b4e7-419c7182291f"
+          },
+          {
+            "name": "JVM Name",
+            "uid": "a226af9d-aea2-4fb1-a758-5a2def033e3f"
+          },
+          {
+            "name": "JVM Heap Used",
+            "uid": "ee37ffc1-43cb-4305-be0b-15c1cea34517"
+          },
+          {
+            "name": "JVM Compilation Time",
+            "uid": "a19d1e31-397c-4358-a9c3-430f9ecc0ca9"
+          },
+          {
+            "name": "JVM Version",
+            "uid": "d373c347-9583-42a8-bfc0-18c0f38adc52"
+          },
+          {
+            "name": "JVM Pending Objects",
+            "uid": "e2168182-de7e-4cda-94d5-54f496949c93"
+          },
+          {
+            "name": "JVM Threads",
+            "uid": "f4873330-85fa-4d26-b2f2-1775b5be7af9"
+          },
+          {
+            "name": "JVM Thread State",
+            "uid": "c22a881c-86b5-4401-ba61-929c41bdf043"
+          },
+          {
+            "name": "JVM GC Used Time",
+            "uid": "fb798fba-16c3-42ca-a402-b4504f68bb0c"
+          },
+          {
+            "name": "JVM GC Active",
+            "uid": "f22ca389-29dc-467c-9f49-d043199fb1e2"
+          },
+          {
+            "name": "JVM Heap",
+            "uid": "b2362bec-cda4-4c75-a62d-b5cdd075350b"
+          },
+          {
+            "name": "JVM Non-Heap",
+            "uid": "c4e1abf2-2e1b-4308-b1be-e67d73cc5d91"
+          },
+          {
+            "name": "JVM Memory Pool Used",
+            "uid": "d74237f9-dc88-4a18-bcaf-e02b238dc9de"
+          },
+          {
+            "name": "JVM Memory Pool Over Times",
+            "uid": "fa172753-b8fd-4cb6-b829-f9bd73877267"
+          },
+          {
+            "name": "JVM Memory Pool GC Used",
+            "uid": "e946d24f-f61e-4154-ade9-755e301b17ee"
+          },
+          {
+            "name": "JVM Memory Pool GC Over Times",
+            "uid": "edefaa08-7fb6-48a2-95c9-1ce3f9aa2ea6"
           }
         ]
       }
     }
   ],
   "__elements": {
+    "ba4f0d70-7b50-445a-b2f5-311476c8038b": {
+      "name": "Load Avg",
+      "uid": "ba4f0d70-7b50-445a-b2f5-311476c8038b",
+      "kind": 1,
+      "model": {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "percentage",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "orange",
+                  "value": 70
+                },
+                {
+                  "color": "red",
+                  "value": 85
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "libraryPanel": {
+          "name": "Load Avg",
+          "uid": "ba4f0d70-7b50-445a-b2f5-311476c8038b"
+        },
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "10.2.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "os_load_avg{node=\"$node_query\"}",
+            "format": "time_series",
+            "fullMetaSearch": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "interval": "",
+            "legendFormat": "{{os_name}}-{{os_version}}-{{os_arch}}",
+            "range": true,
+            "refId": "A",
+            "useBackend": false
+          }
+        ],
+        "title": "Load Avg",
+        "type": "stat"
+      }
+    },
+    "a3197bed-12f8-4bf0-9621-6df8dff2c6af": {
+      "name": "CPU System Used",
+      "uid": "a3197bed-12f8-4bf0-9621-6df8dff2c6af",
+      "kind": 1,
+      "model": {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "percentunit"
+          },
+          "overrides": []
+        },
+        "libraryPanel": {
+          "name": "CPU System Used",
+          "uid": "a3197bed-12f8-4bf0-9621-6df8dff2c6af"
+        },
+        "options": {
+          "minVizHeight": 200,
+          "minVizWidth": 200,
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true,
+          "sizing": "auto"
+        },
+        "pluginVersion": "10.2.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "cpu_sys{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "A",
+            "useBackend": false
+          }
+        ],
+        "title": "CPU System Used",
+        "type": "gauge"
+      }
+    },
     "c6bd6cca-ea56-4b21-8e17-af95a4647159": {
       "name": "CPU Used",
       "uid": "c6bd6cca-ea56-4b21-8e17-af95a4647159",
@@ -188,6 +439,81 @@
         "type": "timeseries"
       }
     },
+    "f0e994af-1e51-4133-8096-47828620254d": {
+      "name": "CPU User Used",
+      "uid": "f0e994af-1e51-4133-8096-47828620254d",
+      "kind": 1,
+      "model": {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "percentunit"
+          },
+          "overrides": []
+        },
+        "libraryPanel": {
+          "name": "CPU User Used",
+          "uid": "f0e994af-1e51-4133-8096-47828620254d"
+        },
+        "options": {
+          "minVizHeight": 200,
+          "minVizWidth": 200,
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true,
+          "sizing": "auto"
+        },
+        "pluginVersion": "10.2.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "p_cpu_load{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "A",
+            "useBackend": false
+          }
+        ],
+        "title": "CPU User Used",
+        "type": "gauge"
+      }
+    },
     "fe6237f6-5905-45d5-b025-36d92bc18ae1": {
       "name": "Memory",
       "uid": "fe6237f6-5905-45d5-b025-36d92bc18ae1",
@@ -195,7 +521,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS}"
         },
         "description": "",
         "fieldConfig": {
@@ -299,10 +625,6 @@
             }
           ]
         },
-        "libraryPanel": {
-          "name": "Memory",
-          "uid": "fe6237f6-5905-45d5-b025-36d92bc18ae1"
-        },
         "options": {
           "legend": {
             "calcs": [],
@@ -340,13 +662,14 @@
             },
             "disableTextWrap": false,
             "editorMode": "builder",
-            "expr": "os_mem_committed{node=\"$node_query\"}",
+            "expr": "os_mem_free{node=\"$node_query\"}",
             "fullMetaSearch": false,
+            "hide": false,
             "includeNullMetadata": true,
             "instant": false,
-            "legendFormat": "committed",
+            "legendFormat": "free",
             "range": true,
-            "refId": "A",
+            "refId": "C",
             "useBackend": false
           },
           {
@@ -356,14 +679,13 @@
             },
             "disableTextWrap": false,
             "editorMode": "builder",
-            "expr": "os_mem_free{node=\"$node_query\"}",
+            "expr": "os_mem_committed_virtual{node=\"$node_query\"}",
             "fullMetaSearch": false,
-            "hide": false,
             "includeNullMetadata": true,
             "instant": false,
-            "legendFormat": "free",
+            "legendFormat": "committed virtual",
             "range": true,
-            "refId": "C",
+            "refId": "A",
             "useBackend": false
           }
         ],
@@ -719,6 +1041,925 @@
         "type": "stat"
       }
     },
+    "fa89c359-a210-4c9f-95ca-8f0ecb4d02f5": {
+      "name": "Disk Used",
+      "uid": "fa89c359-a210-4c9f-95ca-8f0ecb4d02f5",
+      "kind": 1,
+      "model": {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "max": 1,
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "percentunit"
+          },
+          "overrides": []
+        },
+        "libraryPanel": {
+          "name": "Disk Used",
+          "uid": "fa89c359-a210-4c9f-95ca-8f0ecb4d02f5"
+        },
+        "options": {
+          "minVizHeight": 200,
+          "minVizWidth": 200,
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true,
+          "sizing": "auto"
+        },
+        "pluginVersion": "10.2.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "os_file_used_present{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "{{file_name}}",
+            "range": true,
+            "refId": "A",
+            "useBackend": false
+          }
+        ],
+        "title": "Disk Used",
+        "type": "gauge"
+      }
+    },
+    "ce206b18-3fb9-40f8-a9ac-9cef870b468f": {
+      "name": "Disk IO (count/s)",
+      "uid": "ce206b18-3fb9-40f8-a9ac-9cef870b468f",
+      "kind": 1,
+      "model": {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "libraryPanel": {
+          "name": "Disk IO (count/s)",
+          "uid": "ce206b18-3fb9-40f8-a9ac-9cef870b468f"
+        },
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "exemplar": false,
+            "expr": "disk_read_speed{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "read: {{disk_name}}",
+            "range": true,
+            "refId": "A",
+            "useBackend": false
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "disk_write_speed{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "hide": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "write: {{disk_name}}",
+            "range": true,
+            "refId": "B",
+            "useBackend": false
+          }
+        ],
+        "title": "Disk IO (count/s)",
+        "type": "timeseries"
+      }
+    },
+    "cd8e1079-7d4c-4aaa-b68c-f7485e9c41a6": {
+      "name": "Disk Info",
+      "uid": "cd8e1079-7d4c-4aaa-b68c-f7485e9c41a6",
+      "kind": 1,
+      "model": {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "bytes"
+          },
+          "overrides": []
+        },
+        "libraryPanel": {
+          "name": "Disk Info",
+          "uid": "cd8e1079-7d4c-4aaa-b68c-f7485e9c41a6"
+        },
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "os_file_total{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "{{file_name}}-{{file_label}}-{{file_type}} total",
+            "range": true,
+            "refId": "A",
+            "useBackend": false
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "os_file_usable{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "hide": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "{{file_name}}-{{file_label}}-{{file_type}} usable",
+            "range": true,
+            "refId": "B",
+            "useBackend": false
+          }
+        ],
+        "title": "Disk Info",
+        "type": "timeseries"
+      }
+    },
+    "f5ba5101-a516-44bd-bf87-1f9caacf5206": {
+      "name": "Disk IO (size/s)",
+      "uid": "f5ba5101-a516-44bd-bf87-1f9caacf5206",
+      "kind": 1,
+      "model": {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 25,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "normal"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "bytes"
+          },
+          "overrides": []
+        },
+        "libraryPanel": {
+          "name": "Disk IO (size/s)",
+          "uid": "f5ba5101-a516-44bd-bf87-1f9caacf5206"
+        },
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "exemplar": false,
+            "expr": "disk_read_bytes_speed{node=\"$node_query\"}",
+            "format": "time_series",
+            "fullMetaSearch": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "interval": "",
+            "legendFormat": "{{disk_name}} read",
+            "range": true,
+            "refId": "A",
+            "useBackend": false
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "exemplar": false,
+            "expr": "disk_write_bytes_speed{node=\"$node_query\"}",
+            "format": "time_series",
+            "fullMetaSearch": false,
+            "hide": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "interval": "",
+            "legendFormat": "{{disk_name}} write",
+            "range": true,
+            "refId": "B",
+            "useBackend": false
+          }
+        ],
+        "title": "Disk IO (size/s)",
+        "type": "timeseries"
+      }
+    },
+    "de99f2eb-2aad-4b4e-85c1-2dfa94e65a5a": {
+      "name": "Network State Connections",
+      "uid": "de99f2eb-2aad-4b4e-85c1-2dfa94e65a5a",
+      "kind": 1,
+      "model": {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "libraryPanel": {
+          "name": "Network State Connections",
+          "uid": "de99f2eb-2aad-4b4e-85c1-2dfa94e65a5a"
+        },
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "net_conn_UNKNOWN{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "hide": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "UNKNOWN",
+            "range": true,
+            "refId": "C",
+            "useBackend": false
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "net_conn_CLOSE{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "hide": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "CLOSED",
+            "range": true,
+            "refId": "B",
+            "useBackend": false
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "net_conn_CLOSE_WAIT{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "CLOSE_WAIT",
+            "range": true,
+            "refId": "A",
+            "useBackend": false
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "net_conn_LISTEN{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "hide": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "LISTEN",
+            "range": true,
+            "refId": "D",
+            "useBackend": false
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "net_conn_SYN_SENT{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "hide": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "SYN_SENT",
+            "range": true,
+            "refId": "E",
+            "useBackend": false
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "net_conn_SYN_RECV{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "hide": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "SYN_RECV",
+            "range": true,
+            "refId": "F",
+            "useBackend": false
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "net_conn_ESTABLISHED{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "hide": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "ESTABLISHED",
+            "range": true,
+            "refId": "G",
+            "useBackend": false
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "net_conn_FIN_WAIT_2{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "hide": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "FIN_WAIT_2",
+            "range": true,
+            "refId": "H",
+            "useBackend": false
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "net_conn_FIN_WAIT_1{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "hide": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "FIN_WAIT_1",
+            "range": true,
+            "refId": "I",
+            "useBackend": false
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "net_conn_CLOSING{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "hide": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "CLOSING",
+            "range": true,
+            "refId": "J",
+            "useBackend": false
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "net_conn_LAST_ACK{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "hide": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "LAST_ACK",
+            "range": true,
+            "refId": "K",
+            "useBackend": false
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "net_conn_TIME_WAIT{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "hide": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "TIME_WAIT",
+            "range": true,
+            "refId": "L",
+            "useBackend": false
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "net_conn_NONE{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "hide": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "NONE",
+            "range": true,
+            "refId": "M",
+            "useBackend": false
+          }
+        ],
+        "title": "Network State Connections",
+        "type": "timeseries"
+      }
+    },
+    "f14a61f1-dec3-4928-8938-f7e739307e14": {
+      "name": "Network Connections",
+      "uid": "f14a61f1-dec3-4928-8938-f7e739307e14",
+      "kind": 1,
+      "model": {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "libraryPanel": {
+          "name": "Network Connections",
+          "uid": "f14a61f1-dec3-4928-8938-f7e739307e14"
+        },
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "net_conn{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "total",
+            "range": true,
+            "refId": "A",
+            "useBackend": false
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "net_tcp4_conn{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "hide": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "tcp4",
+            "range": true,
+            "refId": "B",
+            "useBackend": false
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "net_tcp6_conn{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "hide": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "tcp6",
+            "range": true,
+            "refId": "C",
+            "useBackend": false
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "net_udp4_conn{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "hide": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "udp4",
+            "range": true,
+            "refId": "D",
+            "useBackend": false
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "net_udp6_conn{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "hide": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "udp6",
+            "range": true,
+            "refId": "E",
+            "useBackend": false
+          }
+        ],
+        "title": "Network Connections",
+        "type": "timeseries"
+      }
+    },
     "faac7d48-fd9f-4b15-a4a7-dbe0fa253268": {
       "name": "Network Interface IO (Total Size)",
       "uid": "faac7d48-fd9f-4b15-a4a7-dbe0fa253268",
@@ -958,15 +2199,1822 @@
         "title": "Network Interface IO (Total Count)",
         "type": "timeseries"
       }
+    },
+    "e74d240e-9f6d-4f49-b4e7-419c7182291f": {
+      "name": "Network Interface IO (size/s)",
+      "uid": "e74d240e-9f6d-4f49-b4e7-419c7182291f",
+      "kind": 1,
+      "model": {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "fieldMinMax": false,
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "bytes"
+          },
+          "overrides": []
+        },
+        "libraryPanel": {
+          "name": "Network Interface IO (size/s)",
+          "uid": "e74d240e-9f6d-4f49-b4e7-419c7182291f"
+        },
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "net_if_sent_speed{node=\"$node_query\", net_if_name=\"$network_if_name\"}",
+            "fullMetaSearch": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "{{net_if_name}}-{{net_if_alias}} sent",
+            "range": true,
+            "refId": "A",
+            "useBackend": false
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "net_if_recv_speed{node=\"$node_query\", net_if_name=\"$network_if_name\"}",
+            "fullMetaSearch": false,
+            "hide": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "{{net_if_name}}-{{net_if_alias}} recv",
+            "range": true,
+            "refId": "B",
+            "useBackend": false
+          }
+        ],
+        "title": "Network Interface IO (size/s)",
+        "type": "timeseries"
+      }
+    },
+    "a226af9d-aea2-4fb1-a758-5a2def033e3f": {
+      "name": "JVM Name",
+      "uid": "a226af9d-aea2-4fb1-a758-5a2def033e3f",
+      "kind": 1,
+      "model": {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "libraryPanel": {
+          "name": "JVM Name",
+          "uid": "a226af9d-aea2-4fb1-a758-5a2def033e3f"
+        },
+        "options": {
+          "colorMode": "none",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "name",
+          "wideLayout": true
+        },
+        "pluginVersion": "10.2.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "p_up_time{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "{{vm_name}}",
+            "range": true,
+            "refId": "A",
+            "useBackend": false
+          }
+        ],
+        "title": "JVM Name",
+        "type": "stat"
+      }
+    },
+    "ee37ffc1-43cb-4305-be0b-15c1cea34517": {
+      "name": "JVM Heap Used",
+      "uid": "ee37ffc1-43cb-4305-be0b-15c1cea34517",
+      "kind": 1,
+      "model": {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "percentunit"
+          },
+          "overrides": []
+        },
+        "libraryPanel": {
+          "name": "JVM Heap Used",
+          "uid": "ee37ffc1-43cb-4305-be0b-15c1cea34517"
+        },
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "10.2.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "jvm_mem_heap_used_present{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "A",
+            "useBackend": false
+          }
+        ],
+        "title": "JVM Heap Used",
+        "type": "stat"
+      }
+    },
+    "a19d1e31-397c-4358-a9c3-430f9ecc0ca9": {
+      "name": "JVM Compilation Time",
+      "uid": "a19d1e31-397c-4358-a9c3-430f9ecc0ca9",
+      "kind": 1,
+      "model": {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 25,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "ms"
+          },
+          "overrides": []
+        },
+        "libraryPanel": {
+          "name": "JVM Compilation Time",
+          "uid": "a19d1e31-397c-4358-a9c3-430f9ecc0ca9"
+        },
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "right",
+            "showLegend": false
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "jvm_compilation_time{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "compilation time",
+            "range": true,
+            "refId": "A",
+            "useBackend": false
+          }
+        ],
+        "title": "JVM Compilation Time",
+        "type": "timeseries"
+      }
+    },
+    "d373c347-9583-42a8-bfc0-18c0f38adc52": {
+      "name": "JVM Version",
+      "uid": "d373c347-9583-42a8-bfc0-18c0f38adc52",
+      "kind": 1,
+      "model": {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "libraryPanel": {
+          "name": "JVM Version",
+          "uid": "d373c347-9583-42a8-bfc0-18c0f38adc52"
+        },
+        "options": {
+          "colorMode": "none",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "name",
+          "wideLayout": true
+        },
+        "pluginVersion": "10.2.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "p_up_time{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "{{vm_version}}",
+            "range": true,
+            "refId": "A",
+            "useBackend": false
+          }
+        ],
+        "title": "JVM Version",
+        "type": "stat"
+      }
+    },
+    "e2168182-de7e-4cda-94d5-54f496949c93": {
+      "name": "JVM Pending Objects",
+      "uid": "e2168182-de7e-4cda-94d5-54f496949c93",
+      "kind": 1,
+      "model": {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "libraryPanel": {
+          "name": "JVM Pending Objects",
+          "uid": "e2168182-de7e-4cda-94d5-54f496949c93"
+        },
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "jvm_mem_pending{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "pending",
+            "range": true,
+            "refId": "A",
+            "useBackend": false
+          }
+        ],
+        "title": "JVM Pending Objects",
+        "type": "timeseries"
+      }
+    },
+    "f4873330-85fa-4d26-b2f2-1775b5be7af9": {
+      "name": "JVM Threads",
+      "uid": "f4873330-85fa-4d26-b2f2-1775b5be7af9",
+      "kind": 1,
+      "model": {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "libraryPanel": {
+          "name": "JVM Threads",
+          "uid": "f4873330-85fa-4d26-b2f2-1775b5be7af9"
+        },
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "jvm_thread_locked{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "locked",
+            "range": true,
+            "refId": "A",
+            "useBackend": false
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "jvm_thread_peek{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "hide": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "peek",
+            "range": true,
+            "refId": "B",
+            "useBackend": false
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "jvm_thread{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "hide": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "current",
+            "range": true,
+            "refId": "C",
+            "useBackend": false
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "jvm_thread_daemon{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "hide": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "daemon",
+            "range": true,
+            "refId": "D",
+            "useBackend": false
+          }
+        ],
+        "title": "JVM Threads",
+        "type": "timeseries"
+      }
+    },
+    "c22a881c-86b5-4401-ba61-929c41bdf043": {
+      "name": "JVM Thread State",
+      "uid": "c22a881c-86b5-4401-ba61-929c41bdf043",
+      "kind": 1,
+      "model": {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "axisWidth": 3,
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "libraryPanel": {
+          "name": "JVM Thread State",
+          "uid": "c22a881c-86b5-4401-ba61-929c41bdf043"
+        },
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "jvm_thread_NEW{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "NEW",
+            "range": true,
+            "refId": "A",
+            "useBackend": false
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "jvm_thread_RUNNABLE{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "hide": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "RUNNABLE",
+            "range": true,
+            "refId": "B",
+            "useBackend": false
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "jvm_thread_BLOCKED{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "hide": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "BLOCKED",
+            "range": true,
+            "refId": "C",
+            "useBackend": false
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "jvm_thread_WAITING{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "hide": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "WAITING",
+            "range": true,
+            "refId": "D",
+            "useBackend": false
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "jvm_thread_TIMED_WAITING{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "hide": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "TIMED_WAITING",
+            "range": true,
+            "refId": "E",
+            "useBackend": false
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "jvm_thread_TERMINATED{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "hide": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "TERMINATED",
+            "range": true,
+            "refId": "F",
+            "useBackend": false
+          }
+        ],
+        "title": "JVM Thread State",
+        "type": "timeseries"
+      }
+    },
+    "e76af6ae-e8d6-4b11-abd0-b53b9d5d19d5": {
+      "name": "JVM CPU Used",
+      "uid": "e76af6ae-e8d6-4b11-abd0-b53b9d5d19d5",
+      "kind": 1,
+      "model": {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 25,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "percentunit"
+          },
+          "overrides": []
+        },
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "right",
+            "showLegend": false
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "10.2.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "p_cpu_load{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "cpu load",
+            "range": true,
+            "refId": "A",
+            "useBackend": false
+          }
+        ],
+        "title": "JVM CPU Used",
+        "type": "timeseries"
+      }
+    },
+    "fb798fba-16c3-42ca-a402-b4504f68bb0c": {
+      "name": "JVM GC Used Time",
+      "uid": "fb798fba-16c3-42ca-a402-b4504f68bb0c",
+      "kind": 1,
+      "model": {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "ms"
+          },
+          "overrides": []
+        },
+        "libraryPanel": {
+          "name": "JVM GC Used Time",
+          "uid": "fb798fba-16c3-42ca-a402-b4504f68bb0c"
+        },
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "right",
+            "showLegend": false
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "increase(jvm_gc_time{node=\"$node_query\"}[$__rate_interval])",
+            "fullMetaSearch": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "{{jvm_gc_name}}",
+            "range": true,
+            "refId": "A",
+            "useBackend": false
+          }
+        ],
+        "title": "JVM GC Used Time",
+        "type": "timeseries"
+      }
+    },
+    "f22ca389-29dc-467c-9f49-d043199fb1e2": {
+      "name": "JVM GC Active",
+      "uid": "f22ca389-29dc-467c-9f49-d043199fb1e2",
+      "kind": 1,
+      "model": {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "none"
+          },
+          "overrides": []
+        },
+        "libraryPanel": {
+          "name": "JVM GC Active",
+          "uid": "f22ca389-29dc-467c-9f49-d043199fb1e2"
+        },
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "floor(increase(jvm_gc_count{node=\"$node_query\"}[$__rate_interval]))",
+            "fullMetaSearch": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "{{jvm_gc_name}}",
+            "range": true,
+            "refId": "A",
+            "useBackend": false
+          }
+        ],
+        "title": "JVM GC Active",
+        "transformations": [],
+        "type": "timeseries"
+      }
+    },
+    "b2362bec-cda4-4c75-a62d-b5cdd075350b": {
+      "name": "JVM Heap",
+      "uid": "b2362bec-cda4-4c75-a62d-b5cdd075350b",
+      "kind": 1,
+      "model": {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "continuous-GrYlRd"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 20,
+              "gradientMode": "scheme",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "smooth",
+              "lineWidth": 3,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "bytes"
+          },
+          "overrides": []
+        },
+        "libraryPanel": {
+          "name": "JVM Heap",
+          "uid": "b2362bec-cda4-4c75-a62d-b5cdd075350b"
+        },
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "right",
+            "showLegend": false
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "jvm_mem_heap_used{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "heap used",
+            "range": true,
+            "refId": "A",
+            "useBackend": false
+          }
+        ],
+        "title": "JVM Heap",
+        "type": "timeseries"
+      }
+    },
+    "c4e1abf2-2e1b-4308-b1be-e67d73cc5d91": {
+      "name": "JVM Non-Heap",
+      "uid": "c4e1abf2-2e1b-4308-b1be-e67d73cc5d91",
+      "kind": 1,
+      "model": {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "continuous-GrYlRd"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 20,
+              "gradientMode": "scheme",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "smooth",
+              "lineWidth": 3,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "bytes"
+          },
+          "overrides": []
+        },
+        "libraryPanel": {
+          "name": "JVM Non-Heap",
+          "uid": "c4e1abf2-2e1b-4308-b1be-e67d73cc5d91"
+        },
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "right",
+            "showLegend": false
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "jvm_mem_nonheap_used{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "non-heap used",
+            "range": true,
+            "refId": "A",
+            "useBackend": false
+          }
+        ],
+        "title": "JVM Non-Heap",
+        "type": "timeseries"
+      }
+    },
+    "d74237f9-dc88-4a18-bcaf-e02b238dc9de": {
+      "name": "JVM Memory Pool Used",
+      "uid": "d74237f9-dc88-4a18-bcaf-e02b238dc9de",
+      "kind": 1,
+      "model": {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "bytes"
+          },
+          "overrides": []
+        },
+        "libraryPanel": {
+          "name": "JVM Memory Pool Used",
+          "uid": "d74237f9-dc88-4a18-bcaf-e02b238dc9de"
+        },
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "jvm_mem_pool_used{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "{{jvm_mem_pool_name}}({{jvm_mem_pool_type}})",
+            "range": true,
+            "refId": "A",
+            "useBackend": false
+          }
+        ],
+        "title": "JVM Memory Pool Used",
+        "type": "timeseries"
+      }
+    },
+    "fa172753-b8fd-4cb6-b829-f9bd73877267": {
+      "name": "JVM Memory Pool Over Times",
+      "uid": "fa172753-b8fd-4cb6-b829-f9bd73877267",
+      "kind": 1,
+      "model": {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+        },
+        "description": "The number of times the JVM memory pool has used memory beyond the limit.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "libraryPanel": {
+          "name": "JVM Memory Pool Over Times",
+          "uid": "fa172753-b8fd-4cb6-b829-f9bd73877267"
+        },
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "jvm_mem_pool_over_count{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "{{jvm_mem_pool_name}}({{jvm_mem_pool_type}})",
+            "range": true,
+            "refId": "A",
+            "useBackend": false
+          }
+        ],
+        "title": "JVM Memory Pool Over Times",
+        "type": "timeseries"
+      }
+    },
+    "e946d24f-f61e-4154-ade9-755e301b17ee": {
+      "name": "JVM Memory Pool GC Used",
+      "uid": "e946d24f-f61e-4154-ade9-755e301b17ee",
+      "kind": 1,
+      "model": {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "bytes"
+          },
+          "overrides": []
+        },
+        "libraryPanel": {
+          "name": "JVM Memory Pool GC Used",
+          "uid": "e946d24f-f61e-4154-ade9-755e301b17ee"
+        },
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "jvm_mem_pool_gc_used{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "{{jvm_mem_pool_name}}({{jvm_mem_pool_type}})",
+            "range": true,
+            "refId": "A",
+            "useBackend": false
+          }
+        ],
+        "title": "JVM Memory Pool GC Used",
+        "type": "timeseries"
+      }
+    },
+    "edefaa08-7fb6-48a2-95c9-1ce3f9aa2ea6": {
+      "name": "JVM Memory Pool GC Over Times",
+      "uid": "edefaa08-7fb6-48a2-95c9-1ce3f9aa2ea6",
+      "kind": 1,
+      "model": {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+        },
+        "description": "The number of times the JVM memory pool used memory during GC exceeded the limit.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "libraryPanel": {
+          "name": "JVM Memory Pool GC Over Times",
+          "uid": "edefaa08-7fb6-48a2-95c9-1ce3f9aa2ea6"
+        },
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "jvm_mem_pool_gc_over_count{node=\"$node_query\"}",
+            "fullMetaSearch": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "legendFormat": "{{jvm_mem_pool_name}}({{jvm_mem_pool_type}})",
+            "range": true,
+            "refId": "A",
+            "useBackend": false
+          }
+        ],
+        "title": "JVM Memory Pool GC Over Times",
+        "type": "timeseries"
+      }
     }
   },
   "__requires": [
-    {
-      "type": "panel",
-      "id": "gauge",
-      "name": "Gauge",
-      "version": ""
-    },
     {
       "type": "grafana",
       "id": "grafana",
@@ -1386,36 +4434,6 @@
       "type": "stat"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "percentage",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "orange",
-                "value": 70
-              },
-              {
-                "color": "red",
-                "value": 85
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 3,
         "w": 4,
@@ -1423,44 +4441,10 @@
         "y": 1
       },
       "id": 8,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "10.2.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "os_load_avg{node=\"$node_query\"}",
-          "format": "time_series",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "interval": "",
-          "legendFormat": "{{os_name}}-{{os_version}}-{{os_arch}}",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "Load Avg",
-      "type": "stat"
+      "libraryPanel": {
+        "uid": "ba4f0d70-7b50-445a-b2f5-311476c8038b",
+        "name": "Load Avg"
+      }
     },
     {
       "collapsed": false,
@@ -1476,33 +4460,6 @@
       "type": "row"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 5,
         "w": 3,
@@ -1510,42 +4467,10 @@
         "y": 5
       },
       "id": 34,
-      "options": {
-        "minVizHeight": 200,
-        "minVizWidth": 200,
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "sizing": "auto"
-      },
-      "pluginVersion": "10.2.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "cpu_sys{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "CPU System Used",
-      "type": "gauge"
+      "libraryPanel": {
+        "uid": "a3197bed-12f8-4bf0-9621-6df8dff2c6af",
+        "name": "CPU System Used"
+      }
     },
     {
       "gridPos": {
@@ -1561,33 +4486,6 @@
       }
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 5,
         "w": 3,
@@ -1595,42 +4493,10 @@
         "y": 10
       },
       "id": 35,
-      "options": {
-        "minVizHeight": 200,
-        "minVizWidth": 200,
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "sizing": "auto"
-      },
-      "pluginVersion": "10.2.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "p_cpu_load{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "CPU User Used",
-      "type": "gauge"
+      "libraryPanel": {
+        "uid": "f0e994af-1e51-4133-8096-47828620254d",
+        "name": "CPU User Used"
+      }
     },
     {
       "collapsed": false,
@@ -1788,35 +4654,6 @@
       }
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "max": 1,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 8,
         "w": 9,
@@ -1824,102 +4661,12 @@
         "y": 33
       },
       "id": 17,
-      "options": {
-        "minVizHeight": 200,
-        "minVizWidth": 200,
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "sizing": "auto"
-      },
-      "pluginVersion": "10.2.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "os_file_used_present{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "{{file_name}}",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "Disk Used",
-      "type": "gauge"
+      "libraryPanel": {
+        "uid": "fa89c359-a210-4c9f-95ca-8f0ecb4d02f5",
+        "name": "Disk Used"
+      }
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -1927,117 +4674,12 @@
         "y": 33
       },
       "id": 2,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "exemplar": false,
-          "expr": "disk_read_speed{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "read: {{disk_name}}",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "disk_write_speed{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "write: {{disk_name}}",
-          "range": true,
-          "refId": "B",
-          "useBackend": false
-        }
-      ],
-      "title": "Disk IO (count/s)",
-      "type": "timeseries"
+      "libraryPanel": {
+        "uid": "ce206b18-3fb9-40f8-a9ac-9cef870b468f",
+        "name": "Disk IO (count/s)"
+      }
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "bytes"
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -2045,117 +4687,12 @@
         "y": 41
       },
       "id": 19,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "os_file_total{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "total {{file_name}}-{{file_label}}-{{file_type}}",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "os_file_usable{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "usable {{file_name}}-{{file_label}}-{{file_type}}",
-          "range": true,
-          "refId": "B",
-          "useBackend": false
-        }
-      ],
-      "title": "Disk Info",
-      "type": "timeseries"
+      "libraryPanel": {
+        "uid": "cd8e1079-7d4c-4aaa-b68c-f7485e9c41a6",
+        "name": "Disk Info"
+      }
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 25,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "bytes"
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -2163,61 +4700,10 @@
         "y": 41
       },
       "id": 3,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "exemplar": false,
-          "expr": "disk_read_bytes_speed{node=\"$node_query\"}",
-          "format": "time_series",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "interval": "",
-          "legendFormat": "{{disk_name}} read:",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "exemplar": false,
-          "expr": "disk_write_bytes_speed{node=\"$node_query\"}",
-          "format": "time_series",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "interval": "",
-          "legendFormat": "{{disk_name}} write:",
-          "range": true,
-          "refId": "B",
-          "useBackend": false
-        }
-      ],
-      "title": "Disk IO (size/s)",
-      "type": "timeseries"
+      "libraryPanel": {
+        "uid": "f5ba5101-a516-44bd-bf87-1f9caacf5206",
+        "name": "Disk IO (size/s)"
+      }
     },
     {
       "collapsed": false,
@@ -2233,64 +4719,6 @@
       "type": "row"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -2298,302 +4726,12 @@
         "y": 50
       },
       "id": 10,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "net_conn_UNKNOWN{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "UNKNOWN",
-          "range": true,
-          "refId": "C",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "net_conn_CLOSE{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "CLOSED",
-          "range": true,
-          "refId": "B",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "net_conn_CLOSE_WAIT{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "CLOSE_WAIT",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "net_conn_LISTEN{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "LISTEN",
-          "range": true,
-          "refId": "D",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "net_conn_SYN_SENT{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "SYN_SENT",
-          "range": true,
-          "refId": "E",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "net_conn_SYN_RECV{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "SYN_RECV",
-          "range": true,
-          "refId": "F",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "net_conn_ESTABLISHED{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "ESTABLISHED",
-          "range": true,
-          "refId": "G",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "net_conn_FIN_WAIT_2{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "FIN_WAIT_2",
-          "range": true,
-          "refId": "H",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "net_conn_FIN_WAIT_1{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "FIN_WAIT_1",
-          "range": true,
-          "refId": "I",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "net_conn_CLOSING{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "CLOSING",
-          "range": true,
-          "refId": "J",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "net_conn_LAST_ACK{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "LAST_ACK",
-          "range": true,
-          "refId": "K",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "net_conn_TIME_WAIT{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "TIME_WAIT",
-          "range": true,
-          "refId": "L",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "net_conn_NONE{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "NONE",
-          "range": true,
-          "refId": "M",
-          "useBackend": false
-        }
-      ],
-      "title": "Network State Connections",
-      "type": "timeseries"
+      "libraryPanel": {
+        "uid": "de99f2eb-2aad-4b4e-85c1-2dfa94e65a5a",
+        "name": "Network State Connections"
+      }
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -2601,106 +4739,10 @@
         "y": 50
       },
       "id": 9,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "net_conn{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "total",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "net_tcp4_conn{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "tcp4",
-          "range": true,
-          "refId": "B",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "net_tcp6_conn{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "tcp6",
-          "range": true,
-          "refId": "C",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "net_udp4_conn{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "udp4",
-          "range": true,
-          "refId": "D",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "net_udp6_conn{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "udp6",
-          "range": true,
-          "refId": "E",
-          "useBackend": false
-        }
-      ],
-      "title": "Network Connections",
-      "type": "timeseries"
+      "libraryPanel": {
+        "uid": "f14a61f1-dec3-4928-8938-f7e739307e14",
+        "name": "Network Connections"
+      }
     },
     {
       "gridPos": {
@@ -2729,66 +4771,6 @@
       }
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "fieldMinMax": false,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "bytes"
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -2796,55 +4778,10 @@
         "y": 58
       },
       "id": 4,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "net_if_sent_speed{node=\"$node_query\", net_if_name=\"$network_if_name\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "{{net_if_name}}-{{net_if_alias}} sent",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "net_if_recv_speed{node=\"$node_query\", net_if_name=\"$network_if_name\"}",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "{{net_if_name}}-{{net_if_alias}} recv",
-          "range": true,
-          "refId": "B",
-          "useBackend": false
-        }
-      ],
-      "title": "Network Interface IO (size/s)",
-      "type": "timeseries"
+      "libraryPanel": {
+        "uid": "e74d240e-9f6d-4f49-b4e7-419c7182291f",
+        "name": "Network Interface IO (size/s)"
+      }
     },
     {
       "collapsed": false,
@@ -2860,32 +4797,6 @@
       "type": "row"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -2893,72 +4804,12 @@
         "y": 67
       },
       "id": 29,
-      "options": {
-        "colorMode": "none",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "name",
-        "wideLayout": true
-      },
-      "pluginVersion": "10.2.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "p_up_time{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "{{vm_name}}",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "JVM Name",
-      "type": "stat"
+      "libraryPanel": {
+        "uid": "a226af9d-aea2-4fb1-a758-5a2def033e3f",
+        "name": "JVM Name"
+      }
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 8,
         "w": 3,
@@ -2966,42 +4817,10 @@
         "y": 67
       },
       "id": 48,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "10.2.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "jvm_mem_heap_used_present{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "JVM Heap Used",
-      "type": "stat"
+      "libraryPanel": {
+        "uid": "ee37ffc1-43cb-4305-be0b-15c1cea34517",
+        "name": "JVM Heap Used"
+      }
     },
     {
       "datasource": {
@@ -3138,65 +4957,6 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 25,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "ms"
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 8,
         "w": 8,
@@ -3204,66 +4964,12 @@
         "y": 67
       },
       "id": 33,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "hidden",
-          "placement": "right",
-          "showLegend": false
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "jvm_compilation_time{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "compilation time",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "JVM Compilation Time",
-      "type": "timeseries"
+      "libraryPanel": {
+        "uid": "a19d1e31-397c-4358-a9c3-430f9ecc0ca9",
+        "name": "JVM Compilation Time"
+      }
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -3271,102 +4977,12 @@
         "y": 71
       },
       "id": 31,
-      "options": {
-        "colorMode": "none",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "name",
-        "wideLayout": true
-      },
-      "pluginVersion": "10.2.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "p_up_time{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "{{vm_version}}",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "JVM Version",
-      "type": "stat"
+      "libraryPanel": {
+        "uid": "d373c347-9583-42a8-bfc0-18c0f38adc52",
+        "name": "JVM Version"
+      }
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 8,
         "w": 7,
@@ -3374,98 +4990,12 @@
         "y": 75
       },
       "id": 38,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "jvm_mem_pending{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "pending",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "JVM Pending Objects",
-      "type": "timeseries"
+      "libraryPanel": {
+        "uid": "e2168182-de7e-4cda-94d5-54f496949c93",
+        "name": "JVM Pending Objects"
+      }
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 8,
         "w": 9,
@@ -3473,150 +5003,12 @@
         "y": 75
       },
       "id": 46,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "jvm_thread_locked{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "locked",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "jvm_thread_peek{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "peek",
-          "range": true,
-          "refId": "B",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "jvm_thread{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "current",
-          "range": true,
-          "refId": "C",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "jvm_thread_daemon{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "daemon",
-          "range": true,
-          "refId": "D",
-          "useBackend": false
-        }
-      ],
-      "title": "JVM Threads",
-      "type": "timeseries"
+      "libraryPanel": {
+        "uid": "f4873330-85fa-4d26-b2f2-1775b5be7af9",
+        "name": "JVM Threads"
+      }
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "axisWidth": 3,
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 8,
         "w": 8,
@@ -3624,184 +5016,12 @@
         "y": 75
       },
       "id": 47,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "jvm_thread_NEW{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "NEW",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "jvm_thread_RUNNABLE{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "RUNNABLE",
-          "range": true,
-          "refId": "B",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "jvm_thread_BLOCKED{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "BLOCKED",
-          "range": true,
-          "refId": "C",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "jvm_thread_WAITING{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "WAITING",
-          "range": true,
-          "refId": "D",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "jvm_thread_TIMED_WAITING{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "TIMED_WAITING",
-          "range": true,
-          "refId": "E",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "jvm_thread_TERMINATED{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "TERMINATED",
-          "range": true,
-          "refId": "F",
-          "useBackend": false
-        }
-      ],
-      "title": "JVM Thread State",
-      "type": "timeseries"
+      "libraryPanel": {
+        "uid": "c22a881c-86b5-4401-ba61-929c41bdf043",
+        "name": "JVM Thread State"
+      }
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 25,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 8,
         "w": 24,
@@ -3809,100 +5029,12 @@
         "y": 83
       },
       "id": 49,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "hidden",
-          "placement": "right",
-          "showLegend": false
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "10.2.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "p_cpu_load{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "cpu load",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "CPU Used",
-      "type": "timeseries"
+      "libraryPanel": {
+        "uid": "e76af6ae-e8d6-4b11-abd0-b53b9d5d19d5",
+        "name": "JVM CPU Used"
+      }
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "ms"
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 8,
         "w": 24,
@@ -3910,99 +5042,12 @@
         "y": 91
       },
       "id": 37,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "hidden",
-          "placement": "right",
-          "showLegend": false
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "increase(jvm_gc_time{node=\"$node_query\"}[$__rate_interval])",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "{{jvm_gc_name}}",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "JVM GC Used Time",
-      "type": "timeseries"
+      "libraryPanel": {
+        "uid": "fb798fba-16c3-42ca-a402-b4504f68bb0c",
+        "name": "JVM GC Used Time"
+      }
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 7,
         "w": 24,
@@ -4010,100 +5055,12 @@
         "y": 99
       },
       "id": 36,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "floor(increase(jvm_gc_count{node=\"$node_query\"}[$__rate_interval]))",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "{{jvm_gc_name}}",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "JVM GC Active",
-      "transformations": [],
-      "type": "timeseries"
+      "libraryPanel": {
+        "uid": "f22ca389-29dc-467c-9f49-d043199fb1e2",
+        "name": "JVM GC Active"
+      }
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "continuous-GrYlRd"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 20,
-            "gradientMode": "scheme",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "smooth",
-            "lineWidth": 3,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "bytes"
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 8,
         "w": 24,
@@ -4111,99 +5068,12 @@
         "y": 106
       },
       "id": 39,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "hidden",
-          "placement": "right",
-          "showLegend": false
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "jvm_mem_heap_used{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "heap used",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "JVM Heap",
-      "type": "timeseries"
+      "libraryPanel": {
+        "uid": "b2362bec-cda4-4c75-a62d-b5cdd075350b",
+        "name": "JVM Heap"
+      }
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "continuous-GrYlRd"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 20,
-            "gradientMode": "scheme",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "smooth",
-            "lineWidth": 3,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "bytes"
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 8,
         "w": 24,
@@ -4211,38 +5081,10 @@
         "y": 114
       },
       "id": 40,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "hidden",
-          "placement": "right",
-          "showLegend": false
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "jvm_mem_nonheap_used{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "non-heap used",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "JVM Non-Heap",
-      "type": "timeseries"
+      "libraryPanel": {
+        "uid": "c4e1abf2-2e1b-4308-b1be-e67d73cc5d91",
+        "name": "JVM Non-Heap"
+      }
     },
     {
       "collapsed": false,
@@ -4258,65 +5100,6 @@
       "type": "row"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "bytes"
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -4324,99 +5107,12 @@
         "y": 123
       },
       "id": 41,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "jvm_mem_pool_used{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "{{jvm_mem_pool_name}}({{jvm_mem_pool_type}})",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "JVM Memory Pool Used",
-      "type": "timeseries"
+      "libraryPanel": {
+        "uid": "d74237f9-dc88-4a18-bcaf-e02b238dc9de",
+        "name": "JVM Memory Pool Used"
+      }
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "description": "The number of times the JVM memory pool has used memory beyond the limit.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -4424,99 +5120,12 @@
         "y": 123
       },
       "id": 43,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "jvm_mem_pool_over_count{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "{{jvm_mem_pool_name}}({{jvm_mem_pool_type}})",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "JVM Memory Pool Over Times",
-      "type": "timeseries"
+      "libraryPanel": {
+        "uid": "fa172753-b8fd-4cb6-b829-f9bd73877267",
+        "name": "JVM Memory Pool Over Times"
+      }
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "bytes"
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -4524,99 +5133,12 @@
         "y": 131
       },
       "id": 42,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "jvm_mem_pool_gc_used{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "{{jvm_mem_pool_name}}({{jvm_mem_pool_type}})",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "JVM Memory Pool GC Used",
-      "type": "timeseries"
+      "libraryPanel": {
+        "uid": "e946d24f-f61e-4154-ade9-755e301b17ee",
+        "name": "JVM Memory Pool GC Used"
+      }
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "description": "The number of times the JVM memory pool used memory during GC exceeded the limit.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -4624,38 +5146,10 @@
         "y": 131
       },
       "id": 44,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "jvm_mem_pool_gc_over_count{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "{{jvm_mem_pool_name}}({{jvm_mem_pool_type}})",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "JVM Memory Pool GC Over Times",
-      "type": "timeseries"
+      "libraryPanel": {
+        "uid": "edefaa08-7fb6-48a2-95c9-1ce3f9aa2ea6",
+        "name": "JVM Memory Pool GC Over Times"
+      }
     }
   ],
   "refresh": "10s",
@@ -4715,13 +5209,13 @@
     ]
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Jvmm Dashboard",
   "uid": "e3aa5de6-b86e-4fe7-8fc9-9fcd3edf4621",
-  "version": 8,
+  "version": 10,
   "weekStart": ""
 }

@@ -22,10 +22,6 @@
             "uid": "c6bd6cca-ea56-4b21-8e17-af95a4647159"
           },
           {
-            "name": "Memory",
-            "uid": "fe6237f6-5905-45d5-b025-36d92bc18ae1"
-          },
-          {
             "name": "Memory Swap",
             "uid": "ed891c08-3ba9-4d54-a906-eb6cf129fe81"
           },
@@ -195,7 +191,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS}"
         },
         "description": "",
         "fieldConfig": {
@@ -299,10 +295,6 @@
             }
           ]
         },
-        "libraryPanel": {
-          "name": "Memory",
-          "uid": "fe6237f6-5905-45d5-b025-36d92bc18ae1"
-        },
         "options": {
           "legend": {
             "calcs": [],
@@ -340,13 +332,14 @@
             },
             "disableTextWrap": false,
             "editorMode": "builder",
-            "expr": "os_mem_committed{node=\"$node_query\"}",
+            "expr": "os_mem_free{node=\"$node_query\"}",
             "fullMetaSearch": false,
+            "hide": false,
             "includeNullMetadata": true,
             "instant": false,
-            "legendFormat": "committed",
+            "legendFormat": "free",
             "range": true,
-            "refId": "A",
+            "refId": "C",
             "useBackend": false
           },
           {
@@ -356,14 +349,13 @@
             },
             "disableTextWrap": false,
             "editorMode": "builder",
-            "expr": "os_mem_free{node=\"$node_query\"}",
+            "expr": "os_mem_committed_virtual{node=\"$node_query\"}",
             "fullMetaSearch": false,
-            "hide": false,
             "includeNullMetadata": true,
             "instant": false,
-            "legendFormat": "free",
+            "legendFormat": "committed virtual",
             "range": true,
-            "refId": "C",
+            "refId": "A",
             "useBackend": false
           }
         ],
@@ -1008,6 +1000,7 @@
       }
     ]
   },
+  "description": "Jvmm grafana dashboard for node",
   "editable": false,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
@@ -2896,7 +2889,7 @@
     ]
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {},
