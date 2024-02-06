@@ -17,6 +17,17 @@ dependencies {
     compile "io.netty:netty-handler:${nettyVersion}"
 }
 
+task writeVersionFile() {
+    def file = file('src/main/resources/version.txt')
+    file.deleteOnExit()
+    file.createNewFile()
+    file.write("${version}")
+}
+
+tasks.compileJava.configure {
+    dependsOn writeVersionFile
+}
+
 jar {
     manifestContentCharset 'utf-8'
     metadataCharset 'utf-8'

@@ -1,5 +1,7 @@
 package org.beifengtz.jvmm.common.util;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,8 +17,6 @@ import java.util.Objects;
  * @author beifengtz
  */
 public class CommonUtil {
-
-    public static final int DAY_OF_SECONDS = 86400;
 
     public static <K, V> HashMap<K, V> hasMapOf(K k1, V v1) {
         HashMap<K, V> map = new HashMap<>(5);
@@ -176,5 +176,16 @@ public class CommonUtil {
             sb.delete(len - 1, len);
         }
         return sb.toString();
+    }
+
+    public static String getJvmmVersion() {
+        InputStream is = CommonUtil.class.getResourceAsStream("/version.txt");
+        if (is != null) {
+            try {
+                return IOUtil.toString(is);
+            } catch (IOException ignored) {
+            }
+        }
+        return "0.0.0";
     }
 }
