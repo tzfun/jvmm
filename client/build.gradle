@@ -51,7 +51,7 @@ tasks.compileJava.configure {
         }
 
         println("write jvmm version file")
-        file(resourcesPath + '/version.txt').withWriter("UTF-8") { it.write(rootProject.version) }
+        file(resourcesPath + '/jvmm-version.txt').withWriter("UTF-8") { it.write(rootProject.version) }
     }
 }
 

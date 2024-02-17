@@ -273,7 +273,7 @@ public class CommandRunner {
 
                 try {
                     File versionFile = getVersionFile(outputDir);
-                    FileUtil.writeByteArrayToFile(versionFile, IOUtil.toByteArray(CommandRunner.class.getResourceAsStream("/version.txt")));
+                    FileUtil.writeByteArrayToFile(versionFile, IOUtil.toByteArray(CommandRunner.class.getResourceAsStream("/jvmm-version.txt")));
                     FileUtil.writeByteArrayToFile(getJarSignFile(outputDir, "server"), String.valueOf(containsSlf4j).getBytes(StandardCharsets.UTF_8));
                 } catch (IOException e) {
                     logger.warn("Write version file failed: " + e.getMessage());
@@ -312,7 +312,7 @@ public class CommandRunner {
         File versionFile = getVersionFile(dir);
         if (versionFile.exists()) {
             String existV = Files.readAllLines(versionFile.toPath()).get(0).trim();
-            InputStream vis = CommandRunner.class.getResourceAsStream("/version.txt");
+            InputStream vis = CommandRunner.class.getResourceAsStream("/jvmm-version.txt");
             if (vis != null) {
                 String newV = IOUtil.toString(vis).trim();
                 return Objects.equals(existV, newV);
@@ -384,7 +384,7 @@ public class CommandRunner {
             logger.info("Generated agent jar to " + agentJarFile.getAbsolutePath());
 
             try {
-                FileUtil.writeByteArrayToFile(getVersionFile(outputDir), IOUtil.toByteArray(CommandRunner.class.getResourceAsStream("/version.txt")));
+                FileUtil.writeByteArrayToFile(getVersionFile(outputDir), IOUtil.toByteArray(CommandRunner.class.getResourceAsStream("/jvmm-version.txt")));
                 FileUtil.writeByteArrayToFile(getJarSignFile(outputDir, "agent"), String.valueOf(containsSlf4j).getBytes(StandardCharsets.UTF_8));
             } catch (IOException e) {
                 logger.warn("Write version file failed: " + e.getMessage());

@@ -179,7 +179,7 @@ public class CommonUtil {
     }
 
     public static String getJvmmVersion() {
-        InputStream is = CommonUtil.class.getResourceAsStream("/version.txt");
+        InputStream is = CommonUtil.class.getResourceAsStream("/jvmm-version.txt");
         if (is != null) {
             try {
                 return IOUtil.toString(is).trim();
