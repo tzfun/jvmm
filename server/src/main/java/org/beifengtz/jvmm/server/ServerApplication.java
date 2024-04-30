@@ -49,7 +49,7 @@ public class ServerApplication {
     }
 
     private static void loadBanner() throws Exception {
-        InputStream is = ServerApplication.class.getResourceAsStream("/banner.txt");
+        InputStream is = ServerApplication.class.getResourceAsStream("/jvmm-banner.txt");
         if (is != null) {
             System.out.print(IOUtil.toString(is));
         }
