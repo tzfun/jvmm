@@ -77,12 +77,7 @@ public interface JvmmService {
                     });
                     break;
                 case cpu:
-                    asyncNum.incrementAndGet();
-                    collector.getCPU().thenAccept(info -> {
-                        res.setCpu(info);
-                        asyncNum.decrementAndGet();
-                        consumer.accept(PairKey.of(asyncNum, res));
-                    });
+                    res.setCpu(collector.getCPUInfo());
                     break;
                 case network:
                     asyncNum.incrementAndGet();

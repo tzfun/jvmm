@@ -204,43 +204,82 @@ public final class OSDriver {
     }
 
     /**
-     * 获取CPU信息，包含系统使用率、用户使用率、空闲率、IO等待率。
+     * 获取一段时间内的CPU信息，包含系统使用率、用户使用率、空闲率、IO等待率。
      *
+     * @param delay 时间间隔
+     * @param unit  时间单位
      * @return {@link CPUInfo} of {@link CompletableFuture}
      */
-    public CompletableFuture<CPUInfo> getCPUInfo() {
-        CentralProcessor processor = si.getHardware().getProcessor();
-        long[] prevTicks = processor.getSystemCpuLoadTicks();
+    public CompletableFuture<CPUInfo> getCPUInfo(int delay, TimeUnit unit) {
+        long[] prevTicks = getCpuLoadTicks();
         CompletableFuture<CPUInfo> future = new CompletableFuture<>();
         executor.schedule(() -> {
-            try {
-                long[] ticks = processor.getSystemCpuLoadTicks();
-
-                long nice = ticks[TickType.NICE.getIndex()] - prevTicks[TickType.NICE.getIndex()];
-                long irq = ticks[TickType.IRQ.getIndex()] - prevTicks[TickType.IRQ.getIndex()];
-                long softIrq = ticks[TickType.SOFTIRQ.getIndex()] - prevTicks[TickType.SOFTIRQ.getIndex()];
-                long steal = ticks[TickType.STEAL.getIndex()] - prevTicks[TickType.STEAL.getIndex()];
-                long sys = ticks[TickType.SYSTEM.getIndex()] - prevTicks[TickType.SYSTEM.getIndex()];
-                long user = ticks[TickType.USER.getIndex()] - prevTicks[TickType.USER.getIndex()];
-                long ioWait = ticks[TickType.IOWAIT.getIndex()] - prevTicks[TickType.IOWAIT.getIndex()];
-                long idle = ticks[TickType.IDLE.getIndex()] - prevTicks[TickType.IDLE.getIndex()];
-
-                long total = nice + irq + softIrq + steal + sys + user + ioWait + idle;
-                if (total == 0) {
-                    total = 1;
-                }
-
-                future.complete(CPUInfo.create()
-                        .setCpuNum(processor.getLogicalProcessorCount())
-                        .setSys((double) sys / total)
-                        .setUser((double) user / total)
-                        .setIoWait((double) ioWait / total)
-                        .setIdle((double) idle / total));
-            } catch (Throwable t) {
-                future.completeExceptionally(t);
-            }
-        }, 1, TimeUnit.SECONDS);
+            future.complete(getCpuInfoBetweenTicks(prevTicks));
+        }, delay, unit);
         return future;
+    }
+
+    /**
+     * 获取系统范围的 CPU 负载滴答计数器。返回一个包含八个元素的数组，
+     * 这些元素表示在用户 （0）、Nice （1）、系统 （2）、空闲 （3）、IOwait （4）、硬件中断 （IRQ） （5）、软件中断/DPC （SoftIRQ）
+     * （6） 或 Steal （7） 状态中花费的毫秒数。
+     * <p>
+     * 使用{@link TickType}去取其中的值：
+     * <pre>
+     *     long[] ticks = getCpuLoadTickets();
+     *
+     *     long nice = ticks[TickType.NICE.getIndex()];
+     *     long irq = ticks[TickType.IRQ.getIndex()];
+     *     long softIrq = ticks[TickType.SOFTIRQ.getIndex()];
+     *     long steal = ticks[TickType.STEAL.getIndex()];
+     *     long sys = ticks[TickType.SYSTEM.getIndex()];
+     *     long user = ticks[TickType.USER.getIndex()];
+     *     long ioWait = ticks[TickType.IOWAIT.getIndex()];
+     *     long idle = ticks[TickType.IDLE.getIndex()];
+     * </pre>
+     *
+     * @return 一个包含 8 个长值的数组，表示在 User、Nice、System、Idle、IOwait、IRQ、SoftIRQ 和 Steal 状态下花费的时间。
+     */
+    public long[] getCpuLoadTicks() {
+        CentralProcessor processor = si.getHardware().getProcessor();
+        return processor.getSystemCpuLoadTicks();
+    }
+
+    /**
+     * 根据旧的ticks获取期间CPU负载数据
+     *
+     * @param oldTicks 旧的ticks数据
+     * @return {@link CPUInfo}
+     */
+    public CPUInfo getCpuInfoBetweenTicks(long[] oldTicks) {
+        CentralProcessor processor = si.getHardware().getProcessor();
+        CPUInfo info = CPUInfo.create().setCpuNum(processor.getLogicalProcessorCount());
+        if (oldTicks == null) {
+            return info;
+        }
+        long[] ticks = processor.getSystemCpuLoadTicks();
+
+        long nice = ticks[TickType.NICE.getIndex()] - oldTicks[TickType.NICE.getIndex()];
+        long irq = ticks[TickType.IRQ.getIndex()] - oldTicks[TickType.IRQ.getIndex()];
+        long softIrq = ticks[TickType.SOFTIRQ.getIndex()] - oldTicks[TickType.SOFTIRQ.getIndex()];
+        long steal = ticks[TickType.STEAL.getIndex()] - oldTicks[TickType.STEAL.getIndex()];
+        long sys = ticks[TickType.SYSTEM.getIndex()] - oldTicks[TickType.SYSTEM.getIndex()];
+        long user = ticks[TickType.USER.getIndex()] - oldTicks[TickType.USER.getIndex()];
+        long ioWait = ticks[TickType.IOWAIT.getIndex()] - oldTicks[TickType.IOWAIT.getIndex()];
+        long idle = ticks[TickType.IDLE.getIndex()] - oldTicks[TickType.IDLE.getIndex()];
+
+        long total = nice + irq + softIrq + steal + sys + user + ioWait + idle;
+
+        double sysRate = total > 0 ? ((double) (total - idle) / total) : 0;
+        double userRate = total > 0 ? ((double) user / total) : 0;
+        double ioWaitRate = total > 0 ? ((double) ioWait / total) : 0;
+        double idleRate = total > 0 ? ((double) idle / total) : 0;
+
+        return info
+                .setSys(sysRate)
+                .setUser(userRate)
+                .setIoWait(ioWaitRate)
+                .setIdle(idleRate);
     }
 
     /**

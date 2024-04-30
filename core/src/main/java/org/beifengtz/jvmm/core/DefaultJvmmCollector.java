@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -38,6 +39,8 @@ import java.util.concurrent.TimeUnit;
 class DefaultJvmmCollector implements JvmmCollector {
 
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(DefaultJvmmCollector.class);
+    private volatile long[] cpuTicks;
+    private volatile ScheduledFuture<?> cpuTicksRecorder;
 
     DefaultJvmmCollector() {
     }
@@ -80,8 +83,20 @@ class DefaultJvmmCollector implements JvmmCollector {
     }
 
     @Override
+    @Deprecated
     public CompletableFuture<CPUInfo> getCPU() {
-        return OSDriver.get().getCPUInfo();
+        return OSDriver.get().getCPUInfo(1, TimeUnit.SECONDS);
+    }
+
+    @Override
+    public CompletableFuture<CPUInfo> getCPU(int delay, TimeUnit unit) {
+        return OSDriver.get().getCPUInfo(delay, unit);
+    }
+
+    @Override
+    public CPUInfo getCPUInfo() {
+        startCpuTicksRecorder();
+        return OSDriver.get().getCpuInfoBetweenTicks(cpuTicks);
     }
 
     @Override
@@ -712,4 +727,15 @@ class DefaultJvmmCollector implements JvmmCollector {
         return info;
     }
 
+    private void startCpuTicksRecorder() {
+        if (cpuTicksRecorder == null || cpuTicksRecorder.isDone()) {
+            synchronized (this) {
+                if (cpuTicksRecorder == null || cpuTicksRecorder.isDone()) {
+                    cpuTicksRecorder = ExecutorFactory.getThreadPool().scheduleWithFixedDelay(() -> {
+                        cpuTicks = OSDriver.get().getCpuLoadTicks();
+                    }, 0, 30, TimeUnit.SECONDS);
+                }
+            }
+        }
+    }
 }

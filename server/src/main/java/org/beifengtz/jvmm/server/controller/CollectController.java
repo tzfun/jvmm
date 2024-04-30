@@ -61,8 +61,8 @@ public class CollectController {
 
     @JvmmMapping(RpcType.JVMM_COLLECT_CPU_INFO)
     @HttpRequest("/collect/cpu")
-    public void getCPUInfo(ResponseFuture future) {
-        JvmmFactory.getCollector().getCPU().thenAccept(future::apply);
+    public CPUInfo getCPUInfo() {
+        return JvmmFactory.getCollector().getCPUInfo();
     }
 
     @JvmmMapping(RpcType.JVMM_COLLECT_NETWORK_INFO)

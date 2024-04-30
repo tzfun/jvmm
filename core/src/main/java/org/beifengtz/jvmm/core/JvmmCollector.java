@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 /**
  * <p>
@@ -34,11 +33,29 @@ public interface JvmmCollector {
     SysMemInfo getSysMem();
 
     /**
-     * 获取CPU负载信息，异步执行
+     * 获取CPU负载信息，异步执行，采样间隔时间：1秒
      *
      * @return {@link CPUInfo} of {@link CompletableFuture}
+     * @deprecated 请使用 {@link #getCPU(int, TimeUnit)} 方法
      */
+    @Deprecated
     CompletableFuture<CPUInfo> getCPU();
+
+    /**
+     * 获取指定时间间隔内的CPU信息
+     *
+     * @param delay 间隔时间
+     * @param unit  时间单位
+     * @return {@link CPUInfo} of {@link CompletableFuture}
+     */
+    CompletableFuture<CPUInfo> getCPU(int delay, TimeUnit unit);
+
+    /**
+     * 获取CPU负载信息，该方法将会取最近30秒的CPU负载数据，如果记录内容不足30秒各个指标可能会返回 0
+     *
+     * @return {@link CPUInfo}
+     */
+    CPUInfo getCPUInfo();
 
     /**
      * 获取网卡、网络IO信息，异步执行

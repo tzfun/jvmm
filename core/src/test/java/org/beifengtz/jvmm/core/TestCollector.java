@@ -4,6 +4,7 @@ import org.beifengtz.jvmm.common.factory.ExecutorFactory;
 import org.beifengtz.jvmm.common.util.IPUtil;
 import org.beifengtz.jvmm.common.util.StringUtil;
 import org.beifengtz.jvmm.core.driver.OSDriver;
+import org.beifengtz.jvmm.core.entity.info.CPUInfo;
 import org.beifengtz.jvmm.core.entity.info.JvmMemoryInfo;
 import org.beifengtz.jvmm.core.entity.info.SysMemInfo;
 import org.beifengtz.jvmm.core.entity.info.ThreadTimedInfo;
@@ -56,11 +57,9 @@ public class TestCollector {
         OSDriver osDriver = OSDriver.get();
         System.out.println(osDriver.getDiskInfo());
         System.out.println(osDriver.getOsFileInfo());
-        osDriver.getCPUInfo().thenAccept(System.out::println);
-        System.out.println(osDriver.getCPULoadAverage());
+        osDriver.getCPUInfo(1, TimeUnit.SECONDS).thenAccept(System.out::println);
         osDriver.getNetInfo().thenAccept(System.out::println);
         osDriver.getDiskIOInfo().thenAccept(System.out::println);
-
         Thread.sleep(2000);
     }
 
@@ -150,5 +149,17 @@ public class TestCollector {
         long total = memory.getTotal();
         System.out.println(memory.getPageSize());
         System.out.println(StringUtil.formatByteSizeGracefully(available) + " ==> "+ 100.0 * available / total);
+    }
+
+    @Test
+    public void testCpuLoad() throws Exception {
+        JvmmCollector collector = JvmmFactory.getCollector();
+        OSDriver osDriver = OSDriver.get();
+        System.out.println(osDriver.getCPULoadAverage());
+        System.out.println(collector.getCPUInfo());
+        CPUInfo cpuInfo = collector.getCPU(3, TimeUnit.SECONDS).get();
+        System.out.println(cpuInfo);
+        Thread.sleep(40000);
+        System.out.println(collector.getCPUInfo());
     }
 }
