@@ -575,6 +575,12 @@ sudo sh -c 'echo "kernel.perf_event_paranoid=1" >> /etc/sysctl.conf'
 sudo sysctl -p
 ```
 
+# 项目捐赠
+本工具完全开源免费，创作不易，如果你觉得不错可以捐赠支持本项目。
+
+捐赠名单：
+- [LJLintermittent](https://github.com/LJLintermittent) - 20元
+
 # 联系作者
 
 在使用过程中遇到任何问题，或者对本项目有独特的见解或建议，欢迎[提交issue](https://github.com/tzfun/jvmm/issues)或私信我

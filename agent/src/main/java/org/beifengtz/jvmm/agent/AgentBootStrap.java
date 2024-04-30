@@ -138,9 +138,12 @@ public class AgentBootStrap {
                     LoggerUtil.info(AgentBootStrap.class, "Copy jvmm server dependency from agent...");
                     serverJarFile.getParentFile().mkdirs();
                     if (serverJarFile.exists()) {
-                        serverJarFile.delete();
+                        if (serverJarFile.delete()) {
+                            Files.copy(serverStream, serverJarFile.toPath());
+                        }
+                    } else {
+                        Files.copy(serverStream, serverJarFile.toPath());
                     }
-                    Files.copy(serverStream, serverJarFile.toPath());
                 }
             } else {
                 serverJarFile = new File(serverJar);

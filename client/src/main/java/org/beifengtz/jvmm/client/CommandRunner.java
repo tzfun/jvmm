@@ -421,8 +421,7 @@ public class CommandRunner {
         JvmmConnector connector = tryConnect(host, port, group, username, password);
 
         connector.registerCloseListener(() -> {
-            System.out.println();
-            logger.info("Connected channel inactive, trigger to close connector...");
+            logger.info("Connection closed");
             System.exit(0);
         });
 

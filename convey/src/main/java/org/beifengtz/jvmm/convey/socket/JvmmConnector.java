@@ -222,7 +222,6 @@ public class JvmmConnector implements Closeable {
                     state = State.CONNECTED;
                     channel.closeFuture().addListener(future -> {
                         state = State.CLOSED;
-                        System.out.println("connector closed");
                         if (closeListener != null) {
                             closeListener.onclose();
                         }
