@@ -148,7 +148,7 @@ public class TestCollector {
         long available = memory.getAvailable();
         long total = memory.getTotal();
         System.out.println(memory.getPageSize());
-        System.out.println(StringUtil.formatByteSizeGracefully(available) + " ==> "+ 100.0 * available / total);
+        System.out.println(StringUtil.formatByteSizeGracefully(available) + " ==> " + 100.0 * available / total);
     }
 
     @Test
@@ -159,7 +159,6 @@ public class TestCollector {
         System.out.println(collector.getCPUInfo());
         CPUInfo cpuInfo = collector.getCPU(3, TimeUnit.SECONDS).get();
         System.out.println(cpuInfo);
-        Thread.sleep(40000);
         System.out.println(collector.getCPUInfo());
     }
 }

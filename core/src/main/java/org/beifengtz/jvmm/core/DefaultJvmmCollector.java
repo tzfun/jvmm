@@ -55,7 +55,7 @@ class DefaultJvmmCollector implements JvmmCollector {
                 .setTimeZone(SystemPropertyUtil.get("user.timezone"))
                 .setIp(IPUtil.getLocalIP())
                 .setUser(SystemPropertyUtil.get("user.name"))
-                .setLoadAverage(operatingSystemMXBean.getSystemLoadAverage());
+                .setLoadAverage(OSDriver.get().getCPULoadAverage());
     }
 
     @Override
