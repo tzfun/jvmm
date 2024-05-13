@@ -18,28 +18,8 @@
       "usage": {
         "libraryPanels": [
           {
-            "name": "CPU Used",
-            "uid": "c6bd6cca-ea56-4b21-8e17-af95a4647159"
-          },
-          {
-            "name": "Memory Swap",
-            "uid": "ed891c08-3ba9-4d54-a906-eb6cf129fe81"
-          },
-          {
-            "name": "Buffer Cache & Shared Memory",
-            "uid": "f12fea3b-a235-4086-8973-e9bdc06e446c"
-          },
-          {
             "name": "Disk Used (ALL)",
             "uid": "b4ae56ef-dd6f-44c5-b709-8f6ac921f28c"
-          },
-          {
-            "name": "Network Interface IO (Total Size)",
-            "uid": "faac7d48-fd9f-4b15-a4a7-dbe0fa253268"
-          },
-          {
-            "name": "Network Interface IO (Total Count)",
-            "uid": "fd6b3152-74d2-4c0a-92bd-14e502e18904"
           }
         ]
       }
@@ -123,594 +103,6 @@
         "type": "stat"
       }
     },
-    "c6bd6cca-ea56-4b21-8e17-af95a4647159": {
-      "name": "CPU Used",
-      "uid": "c6bd6cca-ea56-4b21-8e17-af95a4647159",
-      "kind": 1,
-      "model": {
-        "datasource": {
-          "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-JVMM-NODE-FOR-LIBRARY-PANEL}"
-        },
-        "description": "",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "palette-classic"
-            },
-            "custom": {
-              "axisBorderShow": false,
-              "axisCenteredZero": false,
-              "axisColorMode": "text",
-              "axisLabel": "",
-              "axisPlacement": "auto",
-              "barAlignment": 0,
-              "drawStyle": "line",
-              "fillOpacity": 25,
-              "gradientMode": "none",
-              "hideFrom": {
-                "legend": false,
-                "tooltip": false,
-                "viz": false
-              },
-              "insertNulls": false,
-              "lineInterpolation": "linear",
-              "lineWidth": 1,
-              "pointSize": 5,
-              "scaleDistribution": {
-                "type": "linear"
-              },
-              "showPoints": "auto",
-              "spanNulls": false,
-              "stacking": {
-                "group": "A",
-                "mode": "normal"
-              },
-              "thresholdsStyle": {
-                "mode": "off"
-              }
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                },
-                {
-                  "color": "red",
-                  "value": 80
-                }
-              ]
-            },
-            "unit": "percentunit"
-          },
-          "overrides": []
-        },
-        "libraryPanel": {
-          "name": "CPU Used",
-          "uid": "c6bd6cca-ea56-4b21-8e17-af95a4647159"
-        },
-        "options": {
-          "legend": {
-            "calcs": [],
-            "displayMode": "list",
-            "placement": "bottom",
-            "showLegend": true
-          },
-          "tooltip": {
-            "mode": "multi",
-            "sort": "none"
-          }
-        },
-        "targets": [
-          {
-            "datasource": {
-              "type": "prometheus",
-              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
-            },
-            "disableTextWrap": false,
-            "editorMode": "builder",
-            "expr": "cpu_sys{node=\"$node_query\"}",
-            "fullMetaSearch": false,
-            "hide": false,
-            "includeNullMetadata": true,
-            "instant": false,
-            "legendFormat": "sys",
-            "range": true,
-            "refId": "B",
-            "useBackend": false
-          },
-          {
-            "datasource": {
-              "type": "prometheus",
-              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
-            },
-            "disableTextWrap": false,
-            "editorMode": "builder",
-            "expr": "p_cpu_load{node=\"$node_query\"}",
-            "fullMetaSearch": false,
-            "hide": false,
-            "includeNullMetadata": true,
-            "instant": false,
-            "legendFormat": "process",
-            "range": true,
-            "refId": "D",
-            "useBackend": false
-          },
-          {
-            "datasource": {
-              "type": "prometheus",
-              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
-            },
-            "disableTextWrap": false,
-            "editorMode": "builder",
-            "expr": "cpu_io_wait{node=\"$node_query\"}",
-            "fullMetaSearch": false,
-            "hide": false,
-            "includeNullMetadata": true,
-            "instant": false,
-            "legendFormat": "io_wait",
-            "range": true,
-            "refId": "A",
-            "useBackend": false
-          }
-        ],
-        "title": "CPU Used",
-        "type": "timeseries"
-      }
-    },
-    "fe6237f6-5905-45d5-b025-36d92bc18ae1": {
-      "name": "Memory",
-      "uid": "fe6237f6-5905-45d5-b025-36d92bc18ae1",
-      "kind": 1,
-      "model": {
-        "datasource": {
-          "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-JVMM-NODE}"
-        },
-        "description": "",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "palette-classic"
-            },
-            "custom": {
-              "axisBorderShow": false,
-              "axisCenteredZero": false,
-              "axisColorMode": "text",
-              "axisLabel": "",
-              "axisPlacement": "auto",
-              "barAlignment": 0,
-              "drawStyle": "line",
-              "fillOpacity": 25,
-              "gradientMode": "none",
-              "hideFrom": {
-                "legend": false,
-                "tooltip": false,
-                "viz": false
-              },
-              "insertNulls": false,
-              "lineInterpolation": "linear",
-              "lineWidth": 1,
-              "pointSize": 5,
-              "scaleDistribution": {
-                "type": "linear"
-              },
-              "showPoints": "auto",
-              "spanNulls": false,
-              "stacking": {
-                "group": "A",
-                "mode": "normal"
-              },
-              "thresholdsStyle": {
-                "mode": "off"
-              }
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                },
-                {
-                  "color": "red",
-                  "value": 80
-                }
-              ]
-            },
-            "unit": "bytes"
-          },
-          "overrides": [
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "free"
-              },
-              "properties": [
-                {
-                  "id": "color",
-                  "value": {
-                    "fixedColor": "super-light-purple",
-                    "mode": "fixed"
-                  }
-                }
-              ]
-            },
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "committed"
-              },
-              "properties": [
-                {
-                  "id": "color",
-                  "value": {
-                    "fixedColor": "super-light-yellow",
-                    "mode": "fixed"
-                  }
-                }
-              ]
-            },
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "total"
-              },
-              "properties": [
-                {
-                  "id": "color",
-                  "value": {
-                    "fixedColor": "text",
-                    "mode": "fixed"
-                  }
-                }
-              ]
-            }
-          ]
-        },
-        "options": {
-          "legend": {
-            "calcs": [],
-            "displayMode": "list",
-            "placement": "bottom",
-            "showLegend": true
-          },
-          "tooltip": {
-            "mode": "multi",
-            "sort": "none"
-          }
-        },
-        "targets": [
-          {
-            "datasource": {
-              "type": "prometheus",
-              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
-            },
-            "disableTextWrap": false,
-            "editorMode": "builder",
-            "expr": "os_mem_total{node=\"$node_query\"}",
-            "fullMetaSearch": false,
-            "hide": false,
-            "includeNullMetadata": true,
-            "instant": false,
-            "legendFormat": "total",
-            "range": true,
-            "refId": "B",
-            "useBackend": false
-          },
-          {
-            "datasource": {
-              "type": "prometheus",
-              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
-            },
-            "disableTextWrap": false,
-            "editorMode": "builder",
-            "expr": "os_mem_free{node=\"$node_query\"}",
-            "fullMetaSearch": false,
-            "hide": false,
-            "includeNullMetadata": true,
-            "instant": false,
-            "legendFormat": "free",
-            "range": true,
-            "refId": "C",
-            "useBackend": false
-          },
-          {
-            "datasource": {
-              "type": "prometheus",
-              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
-            },
-            "disableTextWrap": false,
-            "editorMode": "builder",
-            "expr": "os_mem_committed_virtual{node=\"$node_query\"}",
-            "fullMetaSearch": false,
-            "includeNullMetadata": true,
-            "instant": false,
-            "legendFormat": "committed virtual",
-            "range": true,
-            "refId": "A",
-            "useBackend": false
-          }
-        ],
-        "title": "Memory",
-        "type": "timeseries"
-      }
-    },
-    "ed891c08-3ba9-4d54-a906-eb6cf129fe81": {
-      "name": "Memory Swap",
-      "uid": "ed891c08-3ba9-4d54-a906-eb6cf129fe81",
-      "kind": 1,
-      "model": {
-        "datasource": {
-          "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-JVMM-NODE-FOR-LIBRARY-PANEL}"
-        },
-        "description": "",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "palette-classic"
-            },
-            "custom": {
-              "axisBorderShow": false,
-              "axisCenteredZero": false,
-              "axisColorMode": "text",
-              "axisLabel": "",
-              "axisPlacement": "auto",
-              "barAlignment": 0,
-              "drawStyle": "line",
-              "fillOpacity": 25,
-              "gradientMode": "none",
-              "hideFrom": {
-                "legend": false,
-                "tooltip": false,
-                "viz": false
-              },
-              "insertNulls": false,
-              "lineInterpolation": "linear",
-              "lineWidth": 1,
-              "pointSize": 5,
-              "scaleDistribution": {
-                "type": "linear"
-              },
-              "showPoints": "auto",
-              "spanNulls": false,
-              "stacking": {
-                "group": "A",
-                "mode": "normal"
-              },
-              "thresholdsStyle": {
-                "mode": "off"
-              }
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                },
-                {
-                  "color": "red",
-                  "value": 80
-                }
-              ]
-            },
-            "unit": "bytes"
-          },
-          "overrides": [
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "free"
-              },
-              "properties": [
-                {
-                  "id": "color",
-                  "value": {
-                    "fixedColor": "super-light-yellow",
-                    "mode": "fixed"
-                  }
-                }
-              ]
-            },
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "total"
-              },
-              "properties": [
-                {
-                  "id": "color",
-                  "value": {
-                    "fixedColor": "super-light-purple",
-                    "mode": "fixed"
-                  }
-                }
-              ]
-            }
-          ]
-        },
-        "libraryPanel": {
-          "name": "Memory Swap",
-          "uid": "ed891c08-3ba9-4d54-a906-eb6cf129fe81"
-        },
-        "options": {
-          "legend": {
-            "calcs": [],
-            "displayMode": "list",
-            "placement": "bottom",
-            "showLegend": true
-          },
-          "tooltip": {
-            "mode": "multi",
-            "sort": "none"
-          }
-        },
-        "targets": [
-          {
-            "datasource": {
-              "type": "prometheus",
-              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
-            },
-            "disableTextWrap": false,
-            "editorMode": "builder",
-            "expr": "os_mem_total_swap{node=\"$node_query\"}",
-            "fullMetaSearch": false,
-            "includeNullMetadata": true,
-            "instant": false,
-            "legendFormat": "total",
-            "range": true,
-            "refId": "A",
-            "useBackend": false
-          },
-          {
-            "datasource": {
-              "type": "prometheus",
-              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
-            },
-            "disableTextWrap": false,
-            "editorMode": "builder",
-            "expr": "os_mem_free_swap{node=\"$node_query\"}",
-            "fullMetaSearch": false,
-            "hide": false,
-            "includeNullMetadata": true,
-            "instant": false,
-            "legendFormat": "free",
-            "range": true,
-            "refId": "B",
-            "useBackend": false
-          }
-        ],
-        "title": "Memory Swap",
-        "type": "timeseries"
-      }
-    },
-    "f12fea3b-a235-4086-8973-e9bdc06e446c": {
-      "name": "Buffer Cache & Shared Memory",
-      "uid": "f12fea3b-a235-4086-8973-e9bdc06e446c",
-      "kind": 1,
-      "model": {
-        "datasource": {
-          "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-JVMM-NODE-FOR-LIBRARY-PANEL}"
-        },
-        "description": "",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "palette-classic"
-            },
-            "custom": {
-              "axisBorderShow": false,
-              "axisCenteredZero": false,
-              "axisColorMode": "text",
-              "axisLabel": "",
-              "axisPlacement": "auto",
-              "barAlignment": 0,
-              "drawStyle": "line",
-              "fillOpacity": 0,
-              "gradientMode": "none",
-              "hideFrom": {
-                "legend": false,
-                "tooltip": false,
-                "viz": false
-              },
-              "insertNulls": false,
-              "lineInterpolation": "linear",
-              "lineWidth": 1,
-              "pointSize": 5,
-              "scaleDistribution": {
-                "type": "linear"
-              },
-              "showPoints": "auto",
-              "spanNulls": false,
-              "stacking": {
-                "group": "A",
-                "mode": "none"
-              },
-              "thresholdsStyle": {
-                "mode": "off"
-              }
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                },
-                {
-                  "color": "red",
-                  "value": 80
-                }
-              ]
-            },
-            "unit": "bytes"
-          },
-          "overrides": []
-        },
-        "libraryPanel": {
-          "name": "Buffer Cache & Shared Memory",
-          "uid": "f12fea3b-a235-4086-8973-e9bdc06e446c"
-        },
-        "options": {
-          "legend": {
-            "calcs": [],
-            "displayMode": "list",
-            "placement": "bottom",
-            "showLegend": true
-          },
-          "tooltip": {
-            "mode": "multi",
-            "sort": "none"
-          }
-        },
-        "targets": [
-          {
-            "datasource": {
-              "type": "prometheus",
-              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
-            },
-            "disableTextWrap": false,
-            "editorMode": "builder",
-            "expr": "os_mem_buffer_cache{node=\"$node_query\"}",
-            "fullMetaSearch": false,
-            "includeNullMetadata": true,
-            "instant": false,
-            "legendFormat": "buffer cache",
-            "range": true,
-            "refId": "A",
-            "useBackend": false
-          },
-          {
-            "datasource": {
-              "type": "prometheus",
-              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
-            },
-            "disableTextWrap": false,
-            "editorMode": "builder",
-            "expr": "os_mem_shared{node=\"$node_query\"}",
-            "fullMetaSearch": false,
-            "hide": false,
-            "includeNullMetadata": true,
-            "instant": false,
-            "legendFormat": "shared",
-            "range": true,
-            "refId": "B",
-            "useBackend": false
-          }
-        ],
-        "title": "Buffer Cache & Shared Memory",
-        "type": "timeseries"
-      }
-    },
     "b4ae56ef-dd6f-44c5-b709-8f6ac921f28c": {
       "name": "Disk Used (ALL)",
       "uid": "b4ae56ef-dd6f-44c5-b709-8f6ac921f28c",
@@ -787,246 +179,6 @@
         "title": "Disk Used (ALL)",
         "type": "stat"
       }
-    },
-    "faac7d48-fd9f-4b15-a4a7-dbe0fa253268": {
-      "name": "Network Interface IO (Total Size)",
-      "uid": "faac7d48-fd9f-4b15-a4a7-dbe0fa253268",
-      "kind": 1,
-      "model": {
-        "datasource": {
-          "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-JVMM-NODE-FOR-LIBRARY-PANEL}"
-        },
-        "description": "",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "palette-classic"
-            },
-            "custom": {
-              "axisBorderShow": false,
-              "axisCenteredZero": false,
-              "axisColorMode": "text",
-              "axisLabel": "",
-              "axisPlacement": "auto",
-              "barAlignment": 0,
-              "drawStyle": "line",
-              "fillOpacity": 0,
-              "gradientMode": "none",
-              "hideFrom": {
-                "legend": false,
-                "tooltip": false,
-                "viz": false
-              },
-              "insertNulls": false,
-              "lineInterpolation": "linear",
-              "lineWidth": 1,
-              "pointSize": 5,
-              "scaleDistribution": {
-                "type": "linear"
-              },
-              "showPoints": "auto",
-              "spanNulls": false,
-              "stacking": {
-                "group": "A",
-                "mode": "none"
-              },
-              "thresholdsStyle": {
-                "mode": "off"
-              }
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                },
-                {
-                  "color": "red",
-                  "value": 80
-                }
-              ]
-            },
-            "unit": "bytes"
-          },
-          "overrides": []
-        },
-        "libraryPanel": {
-          "name": "Network Interface IO (Total Size)",
-          "uid": "faac7d48-fd9f-4b15-a4a7-dbe0fa253268"
-        },
-        "options": {
-          "legend": {
-            "calcs": [],
-            "displayMode": "list",
-            "placement": "bottom",
-            "showLegend": true
-          },
-          "tooltip": {
-            "mode": "multi",
-            "sort": "none"
-          }
-        },
-        "targets": [
-          {
-            "datasource": {
-              "type": "prometheus",
-              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
-            },
-            "disableTextWrap": false,
-            "editorMode": "builder",
-            "expr": "increase(net_if_sent_bytes{node=\"$node_query\", net_if_name=\"$network_if_name\"}[$__rate_interval])",
-            "fullMetaSearch": false,
-            "includeNullMetadata": true,
-            "instant": false,
-            "legendFormat": "{{net_if_name}}-{{net_if_alias}} sent",
-            "range": true,
-            "refId": "A",
-            "useBackend": false
-          },
-          {
-            "datasource": {
-              "type": "prometheus",
-              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
-            },
-            "disableTextWrap": false,
-            "editorMode": "builder",
-            "expr": "increase(net_if_recv_bytes{node=\"$node_query\", net_if_name=\"$network_if_name\"}[$__rate_interval])",
-            "fullMetaSearch": false,
-            "hide": false,
-            "includeNullMetadata": true,
-            "instant": false,
-            "legendFormat": "{{net_if_name}}-{{net_if_alias}} recv",
-            "range": true,
-            "refId": "B",
-            "useBackend": false
-          }
-        ],
-        "title": "Network Interface IO (Total Size)",
-        "type": "timeseries"
-      }
-    },
-    "fd6b3152-74d2-4c0a-92bd-14e502e18904": {
-      "name": "Network Interface IO (Total Count)",
-      "uid": "fd6b3152-74d2-4c0a-92bd-14e502e18904",
-      "kind": 1,
-      "model": {
-        "datasource": {
-          "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-JVMM-NODE-FOR-LIBRARY-PANEL}"
-        },
-        "description": "",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "palette-classic"
-            },
-            "custom": {
-              "axisBorderShow": false,
-              "axisCenteredZero": false,
-              "axisColorMode": "text",
-              "axisLabel": "",
-              "axisPlacement": "auto",
-              "barAlignment": 0,
-              "drawStyle": "line",
-              "fillOpacity": 0,
-              "gradientMode": "none",
-              "hideFrom": {
-                "legend": false,
-                "tooltip": false,
-                "viz": false
-              },
-              "insertNulls": false,
-              "lineInterpolation": "linear",
-              "lineWidth": 1,
-              "pointSize": 5,
-              "scaleDistribution": {
-                "type": "linear"
-              },
-              "showPoints": "auto",
-              "spanNulls": false,
-              "stacking": {
-                "group": "A",
-                "mode": "none"
-              },
-              "thresholdsStyle": {
-                "mode": "off"
-              }
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                },
-                {
-                  "color": "red",
-                  "value": 80
-                }
-              ]
-            },
-            "unit": "locale"
-          },
-          "overrides": []
-        },
-        "libraryPanel": {
-          "name": "Network Interface IO (Total Count)",
-          "uid": "fd6b3152-74d2-4c0a-92bd-14e502e18904"
-        },
-        "options": {
-          "legend": {
-            "calcs": [],
-            "displayMode": "list",
-            "placement": "bottom",
-            "showLegend": true
-          },
-          "tooltip": {
-            "mode": "multi",
-            "sort": "none"
-          }
-        },
-        "targets": [
-          {
-            "datasource": {
-              "type": "prometheus",
-              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
-            },
-            "disableTextWrap": false,
-            "editorMode": "builder",
-            "expr": "floor(increase(net_if_sent_count{node=\"$node_query\", net_if_name=\"$network_if_name\"}[$__rate_interval]))",
-            "fullMetaSearch": false,
-            "includeNullMetadata": true,
-            "instant": false,
-            "legendFormat": "{{net_if_name}}-{{net_if_alias}} sent",
-            "range": true,
-            "refId": "A",
-            "useBackend": false
-          },
-          {
-            "datasource": {
-              "type": "prometheus",
-              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
-            },
-            "disableTextWrap": false,
-            "editorMode": "builder",
-            "expr": "floor(increase(net_if_recv_count{node=\"$node_query\", net_if_name=\"$network_if_name\"}[$__rate_interval]))",
-            "fullMetaSearch": false,
-            "hide": false,
-            "includeNullMetadata": true,
-            "instant": false,
-            "legendFormat": "{{net_if_name}}-{{net_if_alias}} recv",
-            "range": true,
-            "refId": "B",
-            "useBackend": false
-          }
-        ],
-        "title": "Network Interface IO (Total Count)",
-        "type": "timeseries"
-      }
     }
   },
   "__requires": [
@@ -1077,7 +229,6 @@
       }
     ]
   },
-  "description": "Jvmm grafana dashboard for node",
   "editable": false,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
@@ -1553,6 +704,66 @@
       "type": "gauge"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS-JVMM-NODE}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 25,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 10,
         "w": 21,
@@ -1560,10 +771,73 @@
         "y": 5
       },
       "id": 31,
-      "libraryPanel": {
-        "uid": "c6bd6cca-ea56-4b21-8e17-af95a4647159",
-        "name": "CPU Used"
-      }
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "cpu_sys{node=\"$node_query\"}",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "sys",
+          "range": true,
+          "refId": "B",
+          "useBackend": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "p_cpu_load{node=\"$node_query\"}",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "process",
+          "range": true,
+          "refId": "D",
+          "useBackend": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "cpu_io_wait{node=\"$node_query\"}",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "io_wait",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "CPU Used",
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -1721,6 +995,112 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS-JVMM-NODE}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 25,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "free"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "super-light-purple",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "committed"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "super-light-yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "total"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "text",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
       "gridPos": {
         "h": 8,
         "w": 21,
@@ -1728,12 +1108,165 @@
         "y": 16
       },
       "id": 33,
-      "libraryPanel": {
-        "uid": "fe6237f6-5905-45d5-b025-36d92bc18ae1",
-        "name": "Memory"
-      }
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "os_mem_total{node=\"$node_query\"}",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "total",
+          "range": true,
+          "refId": "B",
+          "useBackend": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "os_mem_free{node=\"$node_query\"}",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "free",
+          "range": true,
+          "refId": "C",
+          "useBackend": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "os_mem_committed_virtual{node=\"$node_query\"}",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "committed virtual",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Memory",
+      "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS-JVMM-NODE}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 25,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "free"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "super-light-yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "total"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "super-light-purple",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -1741,12 +1274,117 @@
         "y": 24
       },
       "id": 35,
-      "libraryPanel": {
-        "uid": "ed891c08-3ba9-4d54-a906-eb6cf129fe81",
-        "name": "Memory Swap"
-      }
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "os_mem_total_swap{node=\"$node_query\"}",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "total",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "os_mem_free_swap{node=\"$node_query\"}",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "free",
+          "range": true,
+          "refId": "B",
+          "useBackend": false
+        }
+      ],
+      "title": "Memory Swap",
+      "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS-JVMM-NODE}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -1754,10 +1392,55 @@
         "y": 24
       },
       "id": 37,
-      "libraryPanel": {
-        "uid": "f12fea3b-a235-4086-8973-e9bdc06e446c",
-        "name": "Buffer Cache & Shared Memory"
-      }
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "os_mem_buffer_cache{node=\"$node_query\"}",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "buffer cache",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "os_mem_shared{node=\"$node_query\"}",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "shared",
+          "range": true,
+          "refId": "B",
+          "useBackend": false
+        }
+      ],
+      "title": "Buffer Cache & Shared Memory",
+      "type": "timeseries"
     },
     {
       "collapsed": false,
@@ -2701,6 +2384,66 @@
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS-JVMM-NODE}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 8,
         "w": 6,
@@ -2708,12 +2451,117 @@
         "y": 58
       },
       "id": 41,
-      "libraryPanel": {
-        "uid": "faac7d48-fd9f-4b15-a4a7-dbe0fa253268",
-        "name": "Network Interface IO (Total Size)"
-      }
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "increase(net_if_sent_bytes{node=\"$node_query\", net_if_name=\"$network_if_name\"}[$__rate_interval])",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "{{net_if_name}}-{{net_if_alias}} sent",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "increase(net_if_recv_bytes{node=\"$node_query\", net_if_name=\"$network_if_name\"}[$__rate_interval])",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "{{net_if_name}}-{{net_if_alias}} recv",
+          "range": true,
+          "refId": "B",
+          "useBackend": false
+        }
+      ],
+      "title": "Network Interface IO (Total Size)",
+      "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS-JVMM-NODE}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "locale"
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 8,
         "w": 6,
@@ -2721,10 +2569,55 @@
         "y": 58
       },
       "id": 43,
-      "libraryPanel": {
-        "uid": "fd6b3152-74d2-4c0a-92bd-14e502e18904",
-        "name": "Network Interface IO (Total Count)"
-      }
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "floor(increase(net_if_sent_count{node=\"$node_query\", net_if_name=\"$network_if_name\"}[$__rate_interval]))",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "{{net_if_name}}-{{net_if_alias}} sent",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "floor(increase(net_if_recv_count{node=\"$node_query\", net_if_name=\"$network_if_name\"}[$__rate_interval]))",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "{{net_if_name}}-{{net_if_alias}} recv",
+          "range": true,
+          "refId": "B",
+          "useBackend": false
+        }
+      ],
+      "title": "Network Interface IO (Total Count)",
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -2876,6 +2769,7 @@
         "type": "query"
       },
       {
+        "allValue": "",
         "current": {},
         "datasource": {
           "type": "prometheus",
@@ -2909,6 +2803,6 @@
   "timezone": "",
   "title": "Jvmm-Node Dashboard",
   "uid": "e3f9a181-2edc-4493-b3fb-d8f07cfadfb2",
-  "version": 10,
+  "version": 11,
   "weekStart": ""
 }
