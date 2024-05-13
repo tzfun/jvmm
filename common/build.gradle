@@ -20,6 +20,7 @@ dependencies {
 task writeVersionFile() {
     def file = file('src/main/resources/jvmm-version.txt')
     file.deleteOnExit()
+    file.getParentFile().mkdirs()
     file.createNewFile()
     file.write("${version}")
 }

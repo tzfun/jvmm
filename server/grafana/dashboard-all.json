@@ -2841,7 +2841,7 @@
             "fullMetaSearch": false,
             "includeNullMetadata": true,
             "instant": false,
-            "legendFormat": "locked",
+            "legendFormat": "deadlocked",
             "range": true,
             "refId": "A",
             "useBackend": false
@@ -5209,7 +5209,7 @@
     ]
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {},

@@ -1,16 +1,16 @@
 {
   "__inputs": [
     {
-      "name": "DS_PROMETHEUS",
-      "label": "prometheus",
+      "name": "DS_PROMETHEUS-JVMM-NODE",
+      "label": "prometheus-jvmm-node",
       "description": "",
       "type": "datasource",
       "pluginId": "prometheus",
       "pluginName": "Prometheus"
     },
     {
-      "name": "DS_PROMETHEUS-FOR-LIBRARY-PANEL",
-      "label": "prometheus",
+      "name": "DS_PROMETHEUS-JVMM-NODE-FOR-LIBRARY-PANEL",
+      "label": "prometheus-jvmm-node",
       "description": "",
       "type": "datasource",
       "pluginId": "prometheus",
@@ -46,6 +46,83 @@
     }
   ],
   "__elements": {
+    "ba4f0d70-7b50-445a-b2f5-311476c8038b": {
+      "name": "Load Avg",
+      "uid": "ba4f0d70-7b50-445a-b2f5-311476c8038b",
+      "kind": 1,
+      "model": {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS-JVMM-NODE}"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "percentage",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "orange",
+                  "value": 70
+                },
+                {
+                  "color": "red",
+                  "value": 85
+                }
+              ]
+            },
+            "unit": "percentunit"
+          },
+          "overrides": []
+        },
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "10.2.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
+            },
+            "disableTextWrap": false,
+            "editorMode": "builder",
+            "expr": "os_load_avg{node=\"$node_query\"}",
+            "format": "time_series",
+            "fullMetaSearch": false,
+            "includeNullMetadata": true,
+            "instant": false,
+            "interval": "",
+            "legendFormat": "{{os_name}}-{{os_version}}-{{os_arch}}",
+            "range": true,
+            "refId": "A",
+            "useBackend": false
+          }
+        ],
+        "title": "Load Avg",
+        "type": "stat"
+      }
+    },
     "c6bd6cca-ea56-4b21-8e17-af95a4647159": {
       "name": "CPU Used",
       "uid": "c6bd6cca-ea56-4b21-8e17-af95a4647159",
@@ -53,7 +130,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-NODE-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -191,7 +268,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
+          "uid": "${DS_PROMETHEUS-JVMM-NODE}"
         },
         "description": "",
         "fieldConfig": {
@@ -370,7 +447,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-NODE-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -521,7 +598,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-NODE-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -641,7 +718,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-NODE-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -718,7 +795,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-NODE-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -838,7 +915,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-NODE-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -1024,7 +1101,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS-JVMM-NODE}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1075,7 +1152,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -1095,7 +1172,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS-JVMM-NODE}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1146,7 +1223,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -1166,7 +1243,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS-JVMM-NODE}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1217,7 +1294,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -1237,7 +1314,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS-JVMM-NODE}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1288,7 +1365,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -1308,7 +1385,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS-JVMM-NODE}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1360,7 +1437,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -1378,81 +1455,17 @@
       "type": "stat"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "percentage",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "orange",
-                "value": 70
-              },
-              {
-                "color": "red",
-                "value": 85
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 3,
         "w": 4,
         "x": 20,
         "y": 1
       },
-      "id": 7,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "10.2.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "os_load_avg{node=\"$node_query\"}",
-          "format": "time_series",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "interval": "",
-          "legendFormat": "{{os_name}}-{{os_version}}-{{os_arch}}",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "Load Avg",
-      "type": "stat"
+      "id": 45,
+      "libraryPanel": {
+        "uid": "ba4f0d70-7b50-445a-b2f5-311476c8038b",
+        "name": "Load Avg"
+      }
     },
     {
       "collapsed": false,
@@ -1470,7 +1483,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS-JVMM-NODE}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1522,7 +1535,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -1555,7 +1568,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS-JVMM-NODE}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1607,7 +1620,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -1640,7 +1653,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS-JVMM-NODE}"
       },
       "description": "",
       "fieldConfig": {
@@ -1690,7 +1703,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -1775,7 +1788,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS-JVMM-NODE}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1829,7 +1842,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -1849,7 +1862,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS-JVMM-NODE}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1928,7 +1941,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -1945,7 +1958,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -1966,7 +1979,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS-JVMM-NODE}"
       },
       "fieldConfig": {
         "defaults": {
@@ -2046,7 +2059,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -2062,7 +2075,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -2083,7 +2096,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS-JVMM-NODE}"
       },
       "description": "",
       "fieldConfig": {
@@ -2164,7 +2177,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -2183,7 +2196,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -2220,7 +2233,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS-JVMM-NODE}"
       },
       "fieldConfig": {
         "defaults": {
@@ -2299,7 +2312,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -2316,7 +2329,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -2333,7 +2346,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -2349,7 +2362,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -2366,7 +2379,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -2383,7 +2396,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -2400,7 +2413,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -2417,7 +2430,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -2434,7 +2447,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -2451,7 +2464,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -2468,7 +2481,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -2485,7 +2498,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -2502,7 +2515,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -2523,7 +2536,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS-JVMM-NODE}"
       },
       "fieldConfig": {
         "defaults": {
@@ -2602,7 +2615,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -2618,7 +2631,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -2635,7 +2648,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -2652,7 +2665,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -2669,7 +2682,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -2716,7 +2729,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS-JVMM-NODE}"
       },
       "fieldConfig": {
         "defaults": {
@@ -2797,7 +2810,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -2813,7 +2826,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -2832,7 +2845,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "",
+  "refresh": "10s",
   "schemaVersion": 39,
   "tags": [],
   "templating": {
@@ -2841,7 +2854,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
+          "uid": "${DS_PROMETHEUS-JVMM-NODE}"
         },
         "definition": "label_values(node)",
         "description": "node",
@@ -2866,7 +2879,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
+          "uid": "${DS_PROMETHEUS-JVMM-NODE}"
         },
         "definition": "label_values(net_if_name)",
         "hide": 0,
@@ -2889,13 +2902,13 @@
     ]
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Jvmm-Node Dashboard",
   "uid": "e3f9a181-2edc-4493-b3fb-d8f07cfadfb2",
-  "version": 7,
+  "version": 10,
   "weekStart": ""
 }
