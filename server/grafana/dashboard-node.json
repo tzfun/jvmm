@@ -229,6 +229,7 @@
       }
     ]
   },
+  "description": "Jvmm grafana dashboard for node",
   "editable": false,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
@@ -827,7 +828,7 @@
           "editorMode": "builder",
           "expr": "cpu_io_wait{node=\"$node_query\"}",
           "fullMetaSearch": false,
-          "hide": false,
+          "hide": true,
           "includeNullMetadata": true,
           "instant": false,
           "legendFormat": "io_wait",
@@ -951,7 +952,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 11,
         "w": 3,
         "x": 0,
         "y": 16
@@ -991,7 +992,7 @@
           "useBackend": false
         }
       ],
-      "title": "Memory Used",
+      "title": "Memory Used State",
       "type": "stat"
     },
     {
@@ -1102,7 +1103,7 @@
         ]
       },
       "gridPos": {
-        "h": 8,
+        "h": 6,
         "w": 21,
         "x": 3,
         "y": 16
@@ -1173,6 +1174,106 @@
         }
       ],
       "title": "Memory",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS-JVMM-NODE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 21,
+        "x": 3,
+        "y": 22
+      },
+      "id": 46,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "right",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "os_mem_used_present{node=\"$node_query\"}",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "memory used",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Memory Used",
       "type": "timeseries"
     },
     {
@@ -1271,7 +1372,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 24
+        "y": 27
       },
       "id": 35,
       "options": {
@@ -1389,7 +1490,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 24
+        "y": 27
       },
       "id": 37,
       "options": {
@@ -1448,7 +1549,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 32
+        "y": 35
       },
       "id": 18,
       "panels": [],
@@ -1460,7 +1561,7 @@
         "h": 8,
         "w": 3,
         "x": 0,
-        "y": 33
+        "y": 36
       },
       "id": 39,
       "libraryPanel": {
@@ -1502,7 +1603,7 @@
         "h": 8,
         "w": 9,
         "x": 3,
-        "y": 33
+        "y": 36
       },
       "id": 20,
       "options": {
@@ -1605,7 +1706,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 33
+        "y": 36
       },
       "id": 21,
       "options": {
@@ -1723,7 +1824,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 41
+        "y": 44
       },
       "id": 22,
       "options": {
@@ -1841,7 +1942,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 41
+        "y": 44
       },
       "id": 23,
       "options": {
@@ -1906,7 +2007,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 49
+        "y": 52
       },
       "id": 24,
       "panels": [],
@@ -1976,7 +2077,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 50
+        "y": 53
       },
       "id": 25,
       "options": {
@@ -2279,7 +2380,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 50
+        "y": 53
       },
       "id": 26,
       "options": {
@@ -2448,7 +2549,7 @@
         "h": 8,
         "w": 6,
         "x": 0,
-        "y": 58
+        "y": 61
       },
       "id": 41,
       "options": {
@@ -2566,7 +2667,7 @@
         "h": 8,
         "w": 6,
         "x": 6,
-        "y": 58
+        "y": 61
       },
       "id": 43,
       "options": {
@@ -2684,7 +2785,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 58
+        "y": 61
       },
       "id": 29,
       "options": {
@@ -2803,6 +2904,6 @@
   "timezone": "",
   "title": "Jvmm-Node Dashboard",
   "uid": "e3f9a181-2edc-4493-b3fb-d8f07cfadfb2",
-  "version": 11,
+  "version": 13,
   "weekStart": ""
 }

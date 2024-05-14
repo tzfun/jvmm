@@ -1,16 +1,16 @@
 {
   "__inputs": [
     {
-      "name": "DS_PROMETHEUS",
-      "label": "prometheus",
+      "name": "DS_PROMETHEUS-JVMM",
+      "label": "prometheus-jvmm",
       "description": "",
       "type": "datasource",
       "pluginId": "prometheus",
       "pluginName": "Prometheus"
     },
     {
-      "name": "DS_PROMETHEUS-FOR-LIBRARY-PANEL",
-      "label": "prometheus",
+      "name": "DS_PROMETHEUS-JVMM-FOR-LIBRARY-PANEL",
+      "label": "prometheus-jvmm",
       "description": "",
       "type": "datasource",
       "pluginId": "prometheus",
@@ -18,16 +18,8 @@
       "usage": {
         "libraryPanels": [
           {
-            "name": "Load Avg",
-            "uid": "ba4f0d70-7b50-445a-b2f5-311476c8038b"
-          },
-          {
             "name": "CPU System Used",
             "uid": "a3197bed-12f8-4bf0-9621-6df8dff2c6af"
-          },
-          {
-            "name": "CPU Used",
-            "uid": "c6bd6cca-ea56-4b21-8e17-af95a4647159"
           },
           {
             "name": "CPU User Used",
@@ -90,10 +82,6 @@
             "uid": "ee37ffc1-43cb-4305-be0b-15c1cea34517"
           },
           {
-            "name": "JVM Compilation Time",
-            "uid": "a19d1e31-397c-4358-a9c3-430f9ecc0ca9"
-          },
-          {
             "name": "JVM Version",
             "uid": "d373c347-9583-42a8-bfc0-18c0f38adc52"
           },
@@ -153,7 +141,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM}"
         },
         "description": "",
         "fieldConfig": {
@@ -178,13 +166,10 @@
                   "value": 85
                 }
               ]
-            }
+            },
+            "unit": "percentunit"
           },
           "overrides": []
-        },
-        "libraryPanel": {
-          "name": "Load Avg",
-          "uid": "ba4f0d70-7b50-445a-b2f5-311476c8038b"
         },
         "options": {
           "colorMode": "value",
@@ -233,7 +218,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -301,144 +286,6 @@
         "type": "gauge"
       }
     },
-    "c6bd6cca-ea56-4b21-8e17-af95a4647159": {
-      "name": "CPU Used",
-      "uid": "c6bd6cca-ea56-4b21-8e17-af95a4647159",
-      "kind": 1,
-      "model": {
-        "datasource": {
-          "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
-        },
-        "description": "",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "palette-classic"
-            },
-            "custom": {
-              "axisBorderShow": false,
-              "axisCenteredZero": false,
-              "axisColorMode": "text",
-              "axisLabel": "",
-              "axisPlacement": "auto",
-              "barAlignment": 0,
-              "drawStyle": "line",
-              "fillOpacity": 25,
-              "gradientMode": "none",
-              "hideFrom": {
-                "legend": false,
-                "tooltip": false,
-                "viz": false
-              },
-              "insertNulls": false,
-              "lineInterpolation": "linear",
-              "lineWidth": 1,
-              "pointSize": 5,
-              "scaleDistribution": {
-                "type": "linear"
-              },
-              "showPoints": "auto",
-              "spanNulls": false,
-              "stacking": {
-                "group": "A",
-                "mode": "normal"
-              },
-              "thresholdsStyle": {
-                "mode": "off"
-              }
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                },
-                {
-                  "color": "red",
-                  "value": 80
-                }
-              ]
-            },
-            "unit": "percentunit"
-          },
-          "overrides": []
-        },
-        "libraryPanel": {
-          "name": "CPU Used",
-          "uid": "c6bd6cca-ea56-4b21-8e17-af95a4647159"
-        },
-        "options": {
-          "legend": {
-            "calcs": [],
-            "displayMode": "list",
-            "placement": "bottom",
-            "showLegend": true
-          },
-          "tooltip": {
-            "mode": "multi",
-            "sort": "none"
-          }
-        },
-        "targets": [
-          {
-            "datasource": {
-              "type": "prometheus",
-              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
-            },
-            "disableTextWrap": false,
-            "editorMode": "builder",
-            "expr": "cpu_sys{node=\"$node_query\"}",
-            "fullMetaSearch": false,
-            "hide": false,
-            "includeNullMetadata": true,
-            "instant": false,
-            "legendFormat": "sys",
-            "range": true,
-            "refId": "B",
-            "useBackend": false
-          },
-          {
-            "datasource": {
-              "type": "prometheus",
-              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
-            },
-            "disableTextWrap": false,
-            "editorMode": "builder",
-            "expr": "p_cpu_load{node=\"$node_query\"}",
-            "fullMetaSearch": false,
-            "hide": false,
-            "includeNullMetadata": true,
-            "instant": false,
-            "legendFormat": "process",
-            "range": true,
-            "refId": "D",
-            "useBackend": false
-          },
-          {
-            "datasource": {
-              "type": "prometheus",
-              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
-            },
-            "disableTextWrap": false,
-            "editorMode": "builder",
-            "expr": "cpu_io_wait{node=\"$node_query\"}",
-            "fullMetaSearch": false,
-            "hide": false,
-            "includeNullMetadata": true,
-            "instant": false,
-            "legendFormat": "io_wait",
-            "range": true,
-            "refId": "A",
-            "useBackend": false
-          }
-        ],
-        "title": "CPU Used",
-        "type": "timeseries"
-      }
-    },
     "f0e994af-1e51-4133-8096-47828620254d": {
       "name": "CPU User Used",
       "uid": "f0e994af-1e51-4133-8096-47828620254d",
@@ -446,7 +293,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -521,7 +368,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
+          "uid": "${DS_PROMETHEUS-JVMM}"
         },
         "description": "",
         "fieldConfig": {
@@ -700,7 +547,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -851,7 +698,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -971,7 +818,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -1048,7 +895,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -1125,7 +972,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -1245,7 +1092,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -1365,7 +1212,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -1491,7 +1338,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -1797,7 +1644,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -1967,7 +1814,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -2087,7 +1934,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -2207,7 +2054,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -2328,7 +2175,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -2402,7 +2249,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -2470,109 +2317,6 @@
         "type": "stat"
       }
     },
-    "a19d1e31-397c-4358-a9c3-430f9ecc0ca9": {
-      "name": "JVM Compilation Time",
-      "uid": "a19d1e31-397c-4358-a9c3-430f9ecc0ca9",
-      "kind": 1,
-      "model": {
-        "datasource": {
-          "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
-        },
-        "description": "",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "palette-classic"
-            },
-            "custom": {
-              "axisBorderShow": false,
-              "axisCenteredZero": false,
-              "axisColorMode": "text",
-              "axisLabel": "",
-              "axisPlacement": "auto",
-              "barAlignment": 0,
-              "drawStyle": "line",
-              "fillOpacity": 25,
-              "gradientMode": "none",
-              "hideFrom": {
-                "legend": false,
-                "tooltip": false,
-                "viz": false
-              },
-              "insertNulls": false,
-              "lineInterpolation": "linear",
-              "lineWidth": 1,
-              "pointSize": 5,
-              "scaleDistribution": {
-                "type": "linear"
-              },
-              "showPoints": "auto",
-              "spanNulls": false,
-              "stacking": {
-                "group": "A",
-                "mode": "none"
-              },
-              "thresholdsStyle": {
-                "mode": "off"
-              }
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                },
-                {
-                  "color": "red",
-                  "value": 80
-                }
-              ]
-            },
-            "unit": "ms"
-          },
-          "overrides": []
-        },
-        "libraryPanel": {
-          "name": "JVM Compilation Time",
-          "uid": "a19d1e31-397c-4358-a9c3-430f9ecc0ca9"
-        },
-        "options": {
-          "legend": {
-            "calcs": [],
-            "displayMode": "list",
-            "placement": "right",
-            "showLegend": false
-          },
-          "tooltip": {
-            "mode": "multi",
-            "sort": "none"
-          }
-        },
-        "targets": [
-          {
-            "datasource": {
-              "type": "prometheus",
-              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
-            },
-            "disableTextWrap": false,
-            "editorMode": "builder",
-            "expr": "jvm_compilation_time{node=\"$node_query\"}",
-            "fullMetaSearch": false,
-            "includeNullMetadata": true,
-            "instant": false,
-            "legendFormat": "compilation time",
-            "range": true,
-            "refId": "A",
-            "useBackend": false
-          }
-        ],
-        "title": "JVM Compilation Time",
-        "type": "timeseries"
-      }
-    },
     "d373c347-9583-42a8-bfc0-18c0f38adc52": {
       "name": "JVM Version",
       "uid": "d373c347-9583-42a8-bfc0-18c0f38adc52",
@@ -2580,7 +2324,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -2654,7 +2398,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -2756,7 +2500,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -2841,7 +2585,7 @@
             "fullMetaSearch": false,
             "includeNullMetadata": true,
             "instant": false,
-            "legendFormat": "deadlocked",
+            "legendFormat": "locked",
             "range": true,
             "refId": "A",
             "useBackend": false
@@ -2909,7 +2653,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -3097,7 +2841,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
+          "uid": "${DS_PROMETHEUS-JVMM}"
         },
         "description": "",
         "fieldConfig": {
@@ -3197,7 +2941,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -3300,7 +3044,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -3404,7 +3148,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -3507,7 +3251,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -3610,7 +3354,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -3713,7 +3457,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-FOR-LIBRARY-PANEL}"
         },
         "description": "The number of times the JVM memory pool has used memory beyond the limit.",
         "fieldConfig": {
@@ -3815,7 +3559,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-FOR-LIBRARY-PANEL}"
         },
         "description": "",
         "fieldConfig": {
@@ -3918,7 +3662,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-FOR-LIBRARY-PANEL}"
+          "uid": "${DS_PROMETHEUS-JVMM-FOR-LIBRARY-PANEL}"
         },
         "description": "The number of times the JVM memory pool used memory during GC exceeded the limit.",
         "fieldConfig": {
@@ -4059,6 +3803,7 @@
   "description": "Jvmm grafana dashboard",
   "editable": false,
   "fiscalYearStartMonth": 0,
+  "gnetId": 20400,
   "graphTooltip": 0,
   "id": null,
   "links": [],
@@ -4080,7 +3825,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS-JVMM}"
       },
       "fieldConfig": {
         "defaults": {
@@ -4131,7 +3876,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -4151,7 +3896,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS-JVMM}"
       },
       "fieldConfig": {
         "defaults": {
@@ -4202,7 +3947,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -4222,7 +3967,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS-JVMM}"
       },
       "fieldConfig": {
         "defaults": {
@@ -4273,7 +4018,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -4293,7 +4038,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS-JVMM}"
       },
       "fieldConfig": {
         "defaults": {
@@ -4344,7 +4089,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -4364,7 +4109,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS-JVMM}"
       },
       "fieldConfig": {
         "defaults": {
@@ -4416,7 +4161,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -4473,6 +4218,66 @@
       }
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS-JVMM}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 25,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 10,
         "w": 21,
@@ -4480,10 +4285,73 @@
         "y": 5
       },
       "id": 1,
-      "libraryPanel": {
-        "uid": "c6bd6cca-ea56-4b21-8e17-af95a4647159",
-        "name": "CPU Used"
-      }
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS-JVMM}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "cpu_sys{node=\"$node_query\"}",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "sys",
+          "range": true,
+          "refId": "B",
+          "useBackend": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS-JVMM}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "p_cpu_load{node=\"$node_query\"}",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "process",
+          "range": true,
+          "refId": "D",
+          "useBackend": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS-JVMM}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "cpu_io_wait{node=\"$node_query\"}",
+          "fullMetaSearch": false,
+          "hide": true,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "io_wait",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "CPU Used",
+      "type": "timeseries"
     },
     {
       "gridPos": {
@@ -4514,7 +4382,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS-JVMM}"
       },
       "description": "",
       "fieldConfig": {
@@ -4545,7 +4413,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 11,
         "w": 3,
         "x": 0,
         "y": 16
@@ -4571,7 +4439,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -4585,12 +4453,12 @@
           "useBackend": false
         }
       ],
-      "title": "Memory Used",
+      "title": "Memory Used State",
       "type": "stat"
     },
     {
       "gridPos": {
-        "h": 8,
+        "h": 6,
         "w": 21,
         "x": 3,
         "y": 16
@@ -4602,11 +4470,111 @@
       }
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS-JVMM}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 21,
+        "x": 3,
+        "y": 22
+      },
+      "id": 50,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "right",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS-JVMM}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "os_mem_used_present{node=\"$node_query\"}",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "memory used",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Memory Used",
+      "type": "timeseries"
+    },
+    {
       "gridPos": {
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 24
+        "y": 27
       },
       "id": 14,
       "libraryPanel": {
@@ -4619,7 +4587,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 24
+        "y": 27
       },
       "id": 18,
       "libraryPanel": {
@@ -4633,7 +4601,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 32
+        "y": 35
       },
       "id": 12,
       "panels": [],
@@ -4645,7 +4613,7 @@
         "h": 8,
         "w": 3,
         "x": 0,
-        "y": 33
+        "y": 36
       },
       "id": 16,
       "libraryPanel": {
@@ -4658,7 +4626,7 @@
         "h": 8,
         "w": 9,
         "x": 3,
-        "y": 33
+        "y": 36
       },
       "id": 17,
       "libraryPanel": {
@@ -4671,7 +4639,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 33
+        "y": 36
       },
       "id": 2,
       "libraryPanel": {
@@ -4684,7 +4652,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 41
+        "y": 44
       },
       "id": 19,
       "libraryPanel": {
@@ -4697,7 +4665,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 41
+        "y": 44
       },
       "id": 3,
       "libraryPanel": {
@@ -4711,7 +4679,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 49
+        "y": 52
       },
       "id": 11,
       "panels": [],
@@ -4723,7 +4691,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 50
+        "y": 53
       },
       "id": 10,
       "libraryPanel": {
@@ -4736,7 +4704,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 50
+        "y": 53
       },
       "id": 9,
       "libraryPanel": {
@@ -4749,7 +4717,7 @@
         "h": 8,
         "w": 6,
         "x": 0,
-        "y": 58
+        "y": 61
       },
       "id": 5,
       "libraryPanel": {
@@ -4762,7 +4730,7 @@
         "h": 8,
         "w": 6,
         "x": 6,
-        "y": 58
+        "y": 61
       },
       "id": 6,
       "libraryPanel": {
@@ -4775,7 +4743,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 58
+        "y": 61
       },
       "id": 4,
       "libraryPanel": {
@@ -4789,7 +4757,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 66
+        "y": 69
       },
       "id": 30,
       "panels": [],
@@ -4801,7 +4769,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 67
+        "y": 70
       },
       "id": 29,
       "libraryPanel": {
@@ -4814,7 +4782,7 @@
         "h": 8,
         "w": 3,
         "x": 4,
-        "y": 67
+        "y": 70
       },
       "id": 48,
       "libraryPanel": {
@@ -4825,7 +4793,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS-JVMM}"
       },
       "description": "",
       "fieldConfig": {
@@ -4886,7 +4854,7 @@
         "h": 8,
         "w": 9,
         "x": 7,
-        "y": 67
+        "y": 70
       },
       "id": 32,
       "options": {
@@ -4905,11 +4873,11 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "jvm_loaded_class_total{node=\"$node_query\"}",
+          "expr": "increase(jvm_loaded_class_total{node=\"$node_query\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
@@ -4922,11 +4890,11 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "jvm_loaded_class{node=\"$node_query\"}",
+          "expr": "increase(jvm_loaded_class{node=\"$node_query\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -4938,11 +4906,11 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS-JVMM}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "jvm_unloaded_class{node=\"$node_query\"}",
+          "expr": "increase(jvm_unloaded_class{node=\"$node_query\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
@@ -4957,24 +4925,112 @@
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS-JVMM}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 25,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 67
+        "y": 70
       },
       "id": 33,
-      "libraryPanel": {
-        "uid": "a19d1e31-397c-4358-a9c3-430f9ecc0ca9",
-        "name": "JVM Compilation Time"
-      }
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS-JVMM}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "increase(jvm_compilation_time{node=\"$node_query\"}[$__rate_interval])",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "compilation time",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "JVM Compilation Time",
+      "type": "timeseries"
     },
     {
       "gridPos": {
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 71
+        "y": 74
       },
       "id": 31,
       "libraryPanel": {
@@ -4987,7 +5043,7 @@
         "h": 8,
         "w": 7,
         "x": 0,
-        "y": 75
+        "y": 78
       },
       "id": 38,
       "libraryPanel": {
@@ -5000,7 +5056,7 @@
         "h": 8,
         "w": 9,
         "x": 7,
-        "y": 75
+        "y": 78
       },
       "id": 46,
       "libraryPanel": {
@@ -5013,7 +5069,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 75
+        "y": 78
       },
       "id": 47,
       "libraryPanel": {
@@ -5026,7 +5082,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 83
+        "y": 86
       },
       "id": 49,
       "libraryPanel": {
@@ -5039,7 +5095,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 91
+        "y": 94
       },
       "id": 37,
       "libraryPanel": {
@@ -5052,7 +5108,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 99
+        "y": 102
       },
       "id": 36,
       "libraryPanel": {
@@ -5065,7 +5121,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 106
+        "y": 109
       },
       "id": 39,
       "libraryPanel": {
@@ -5078,7 +5134,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 114
+        "y": 117
       },
       "id": 40,
       "libraryPanel": {
@@ -5092,7 +5148,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 122
+        "y": 125
       },
       "id": 45,
       "panels": [],
@@ -5104,7 +5160,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 123
+        "y": 126
       },
       "id": 41,
       "libraryPanel": {
@@ -5117,7 +5173,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 123
+        "y": 126
       },
       "id": 43,
       "libraryPanel": {
@@ -5130,7 +5186,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 131
+        "y": 134
       },
       "id": 42,
       "libraryPanel": {
@@ -5143,7 +5199,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 131
+        "y": 134
       },
       "id": 44,
       "libraryPanel": {
@@ -5161,7 +5217,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
+          "uid": "${DS_PROMETHEUS-JVMM}"
         },
         "definition": "label_values(node)",
         "description": "node",
@@ -5186,7 +5242,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
+          "uid": "${DS_PROMETHEUS-JVMM}"
         },
         "definition": "label_values(net_if_name)",
         "hide": 0,
@@ -5216,6 +5272,6 @@
   "timezone": "",
   "title": "Jvmm Dashboard",
   "uid": "e3aa5de6-b86e-4fe7-8fc9-9fcd3edf4621",
-  "version": 10,
+  "version": 13,
   "weekStart": ""
 }

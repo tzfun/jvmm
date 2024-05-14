@@ -223,6 +223,14 @@ public class PrometheusUtil {
         cpuIOWaitTimeSeries.addAllLabels(labels);
         cpuIOWaitTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(cpu.getIoWait()).build());
         writeRequest.addTimeseries(cpuIOWaitTimeSeries);
+
+
+        Types.TimeSeries.Builder cpuIdleTimeSeries = Types.TimeSeries.newBuilder();
+        cpuIdleTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("cpu_idle").build());
+        cpuIdleTimeSeries.addLabels(cpuNumLabel);
+        cpuIdleTimeSeries.addAllLabels(labels);
+        cpuIdleTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(cpu.getIdle()).build());
+        writeRequest.addTimeseries(cpuIdleTimeSeries);
     }
 
     /**
