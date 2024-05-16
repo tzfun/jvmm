@@ -102,57 +102,38 @@ public class PrometheusUtil {
         if (sys == null) {
             return;
         }
-        double loadAverage = sys.getLoadAverage();
-        Types.TimeSeries.Builder osTimeSeries = Types.TimeSeries.newBuilder();
-        osTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("os_load_avg").build());
-        osTimeSeries.addLabels(Types.Label.newBuilder().setName("os_name").setValue(sys.getName()).build());
-        osTimeSeries.addLabels(Types.Label.newBuilder().setName("os_version").setValue(sys.getVersion()).build());
-        osTimeSeries.addLabels(Types.Label.newBuilder().setName("os_arch").setValue(sys.getArch()).build());
-        osTimeSeries.addAllLabels(labels);
-        osTimeSeries.addSamples(Types.Sample.newBuilder().setTimestamp(timestamp).setValue(Math.max(loadAverage, 0)).build());
-        writeRequest.addTimeseries(osTimeSeries.build());
 
         Types.TimeSeries.Builder osCPUNumTimeSeries = Types.TimeSeries.newBuilder();
         osCPUNumTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("os_cpu").build());
         osCPUNumTimeSeries.addLabels(Types.Label.newBuilder().setName("os_name").setValue(sys.getName()).build());
         osCPUNumTimeSeries.addLabels(Types.Label.newBuilder().setName("os_version").setValue(sys.getVersion()).build());
         osCPUNumTimeSeries.addLabels(Types.Label.newBuilder().setName("os_arch").setValue(sys.getArch()).build());
+        osCPUNumTimeSeries.addLabels(Types.Label.newBuilder().setName("os_bitness").setValue(String.valueOf(sys.getBitness())).build());
         osCPUNumTimeSeries.addAllLabels(labels);
         osCPUNumTimeSeries.addSamples(Types.Sample.newBuilder().setTimestamp(timestamp).setValue(Math.max(sys.getCpuNum(), 0)).build());
         writeRequest.addTimeseries(osCPUNumTimeSeries.build());
 
+        double loadAverage = sys.getLoadAverage();
+        Types.TimeSeries.Builder osTimeSeries = Types.TimeSeries.newBuilder();
+        osTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("os_load_avg").build());
+        osTimeSeries.addAllLabels(labels);
+        osTimeSeries.addSamples(Types.Sample.newBuilder().setTimestamp(timestamp).setValue(Math.max(loadAverage, 0)).build());
+        writeRequest.addTimeseries(osTimeSeries.build());
+
         Types.TimeSeries.Builder osUpTimeSeries = Types.TimeSeries.newBuilder();
         osUpTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("os_up_secs").build());
-        osUpTimeSeries.addLabels(Types.Label.newBuilder().setName("os_name").setValue(sys.getName()).build());
-        osUpTimeSeries.addLabels(Types.Label.newBuilder().setName("os_version").setValue(sys.getVersion()).build());
-        osUpTimeSeries.addLabels(Types.Label.newBuilder().setName("os_arch").setValue(sys.getArch()).build());
         osUpTimeSeries.addAllLabels(labels);
         osUpTimeSeries.addSamples(Types.Sample.newBuilder().setTimestamp(timestamp).setValue(sys.getUptime()).build());
         writeRequest.addTimeseries(osUpTimeSeries.build());
 
-        Types.TimeSeries.Builder osBitnessSeries = Types.TimeSeries.newBuilder();
-        osBitnessSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("os_bitness").build());
-        osBitnessSeries.addLabels(Types.Label.newBuilder().setName("os_name").setValue(sys.getName()).build());
-        osBitnessSeries.addLabels(Types.Label.newBuilder().setName("os_version").setValue(sys.getVersion()).build());
-        osBitnessSeries.addLabels(Types.Label.newBuilder().setName("os_arch").setValue(sys.getArch()).build());
-        osBitnessSeries.addAllLabels(labels);
-        osBitnessSeries.addSamples(Types.Sample.newBuilder().setTimestamp(timestamp).setValue(sys.getBitness()).build());
-        writeRequest.addTimeseries(osBitnessSeries.build());
-
         Types.TimeSeries.Builder osThreadCountSeries = Types.TimeSeries.newBuilder();
         osThreadCountSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("os_thread_count").build());
-        osThreadCountSeries.addLabels(Types.Label.newBuilder().setName("os_name").setValue(sys.getName()).build());
-        osThreadCountSeries.addLabels(Types.Label.newBuilder().setName("os_version").setValue(sys.getVersion()).build());
-        osThreadCountSeries.addLabels(Types.Label.newBuilder().setName("os_arch").setValue(sys.getArch()).build());
         osThreadCountSeries.addAllLabels(labels);
         osThreadCountSeries.addSamples(Types.Sample.newBuilder().setTimestamp(timestamp).setValue(sys.getThreadCount()).build());
         writeRequest.addTimeseries(osThreadCountSeries.build());
 
         Types.TimeSeries.Builder osProcessCountSeries = Types.TimeSeries.newBuilder();
         osProcessCountSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("os_process_count").build());
-        osProcessCountSeries.addLabels(Types.Label.newBuilder().setName("os_name").setValue(sys.getName()).build());
-        osProcessCountSeries.addLabels(Types.Label.newBuilder().setName("os_version").setValue(sys.getVersion()).build());
-        osProcessCountSeries.addLabels(Types.Label.newBuilder().setName("os_arch").setValue(sys.getArch()).build());
         osProcessCountSeries.addAllLabels(labels);
         osProcessCountSeries.addSamples(Types.Sample.newBuilder().setTimestamp(timestamp).setValue(sys.getProcessCount()).build());
         writeRequest.addTimeseries(osProcessCountSeries.build());
@@ -259,7 +240,6 @@ public class PrometheusUtil {
         cpuIOWaitTimeSeries.addAllLabels(labels);
         cpuIOWaitTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(cpu.getIoWait()).build());
         writeRequest.addTimeseries(cpuIOWaitTimeSeries);
-
 
         Types.TimeSeries.Builder cpuIdleTimeSeries = Types.TimeSeries.newBuilder();
         cpuIdleTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("cpu_idle").build());

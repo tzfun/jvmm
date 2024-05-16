@@ -16,6 +16,9 @@ public class ProcessInfo implements JsonParsable {
      */
     private String name;
     private long startTime;
+    /**
+     * 已启动时间，milliseconds
+     */
     private long uptime;
     private long pid;
 
