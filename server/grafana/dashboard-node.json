@@ -7,180 +7,9 @@
       "type": "datasource",
       "pluginId": "prometheus",
       "pluginName": "Prometheus"
-    },
-    {
-      "name": "DS_PROMETHEUS-JVMM-NODE-FOR-LIBRARY-PANEL",
-      "label": "prometheus-jvmm-node",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "prometheus",
-      "pluginName": "Prometheus",
-      "usage": {
-        "libraryPanels": [
-          {
-            "name": "Disk Used (ALL)",
-            "uid": "b4ae56ef-dd6f-44c5-b709-8f6ac921f28c"
-          }
-        ]
-      }
     }
   ],
-  "__elements": {
-    "ba4f0d70-7b50-445a-b2f5-311476c8038b": {
-      "name": "Load Avg",
-      "uid": "ba4f0d70-7b50-445a-b2f5-311476c8038b",
-      "kind": 1,
-      "model": {
-        "datasource": {
-          "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-JVMM-NODE}"
-        },
-        "description": "",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "percentage",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                },
-                {
-                  "color": "orange",
-                  "value": 70
-                },
-                {
-                  "color": "red",
-                  "value": 85
-                }
-              ]
-            },
-            "unit": "percentunit"
-          },
-          "overrides": []
-        },
-        "options": {
-          "colorMode": "value",
-          "graphMode": "area",
-          "justifyMode": "auto",
-          "orientation": "auto",
-          "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
-            "fields": "",
-            "values": false
-          },
-          "textMode": "auto",
-          "wideLayout": true
-        },
-        "pluginVersion": "10.2.3",
-        "targets": [
-          {
-            "datasource": {
-              "type": "prometheus",
-              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
-            },
-            "disableTextWrap": false,
-            "editorMode": "builder",
-            "expr": "os_load_avg{node=\"$node_query\"}",
-            "format": "time_series",
-            "fullMetaSearch": false,
-            "includeNullMetadata": true,
-            "instant": false,
-            "interval": "",
-            "legendFormat": "{{os_name}}-{{os_version}}-{{os_arch}}",
-            "range": true,
-            "refId": "A",
-            "useBackend": false
-          }
-        ],
-        "title": "Load Avg",
-        "type": "stat"
-      }
-    },
-    "b4ae56ef-dd6f-44c5-b709-8f6ac921f28c": {
-      "name": "Disk Used (ALL)",
-      "uid": "b4ae56ef-dd6f-44c5-b709-8f6ac921f28c",
-      "kind": 1,
-      "model": {
-        "datasource": {
-          "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-JVMM-NODE-FOR-LIBRARY-PANEL}"
-        },
-        "description": "",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "mappings": [],
-            "max": 1,
-            "min": 0,
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                },
-                {
-                  "color": "red",
-                  "value": 80
-                }
-              ]
-            },
-            "unit": "percentunit"
-          },
-          "overrides": []
-        },
-        "libraryPanel": {
-          "name": "Disk Used (ALL)",
-          "uid": "b4ae56ef-dd6f-44c5-b709-8f6ac921f28c"
-        },
-        "options": {
-          "colorMode": "value",
-          "graphMode": "area",
-          "justifyMode": "auto",
-          "orientation": "auto",
-          "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
-            "fields": "",
-            "values": false
-          },
-          "textMode": "auto",
-          "wideLayout": true
-        },
-        "pluginVersion": "10.2.3",
-        "targets": [
-          {
-            "datasource": {
-              "type": "prometheus",
-              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
-            },
-            "disableTextWrap": false,
-            "editorMode": "builder",
-            "expr": "os_file_all_used_present{node=\"$node_query\"}",
-            "fullMetaSearch": false,
-            "includeNullMetadata": true,
-            "instant": false,
-            "legendFormat": "__auto",
-            "range": true,
-            "refId": "A",
-            "useBackend": false
-          }
-        ],
-        "title": "Disk Used (ALL)",
-        "type": "stat"
-      }
-    }
-  },
+  "__elements": {},
   "__requires": [
     {
       "type": "panel",
@@ -607,6 +436,38 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS-JVMM-NODE}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 3,
         "w": 4,
@@ -614,10 +475,44 @@
         "y": 1
       },
       "id": 45,
-      "libraryPanel": {
-        "uid": "ba4f0d70-7b50-445a-b2f5-311476c8038b",
-        "name": "Load Avg"
-      }
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "os_load_avg{node=\"$node_query\"}",
+          "format": "time_series",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{os_name}}-{{os_version}}-{{os_arch}}",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Load Avg",
+      "type": "stat"
     },
     {
       "collapsed": false,
@@ -1557,6 +1452,36 @@
       "type": "row"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS-JVMM-NODE}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 8,
         "w": 3,
@@ -1564,10 +1489,42 @@
         "y": 36
       },
       "id": 39,
-      "libraryPanel": {
-        "uid": "b4ae56ef-dd6f-44c5-b709-8f6ac921f28c",
-        "name": "Disk Used (ALL)"
-      }
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "os_file_all_used_present{node=\"$node_query\"}",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Disk Used (ALL)",
+      "type": "stat"
     },
     {
       "datasource": {

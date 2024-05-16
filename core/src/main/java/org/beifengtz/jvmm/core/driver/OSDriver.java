@@ -66,6 +66,10 @@ public final class OSDriver {
         return INSTANCE;
     }
 
+    public OperatingSystem getOS() {
+        return si.getOperatingSystem();
+    }
+
     public GlobalMemory getOSMemory() {
         return si.getHardware().getMemory();
     }

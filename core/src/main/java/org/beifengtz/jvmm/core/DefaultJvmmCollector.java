@@ -12,6 +12,7 @@ import org.beifengtz.jvmm.core.driver.OSDriver;
 import org.beifengtz.jvmm.core.entity.info.*;
 import org.beifengtz.jvmm.core.entity.result.LinuxMemResult;
 import oshi.hardware.GlobalMemory;
+import oshi.software.os.OperatingSystem;
 
 import java.lang.management.*;
 import java.lang.reflect.Field;
@@ -48,6 +49,7 @@ class DefaultJvmmCollector implements JvmmCollector {
     @Override
     public SysInfo getSys() {
         OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
+        OperatingSystem os = OSDriver.get().getOS();
         return SysInfo.create().setName(operatingSystemMXBean.getName())
                 .setArch(operatingSystemMXBean.getArch())
                 .setVersion(operatingSystemMXBean.getVersion())
@@ -55,7 +57,12 @@ class DefaultJvmmCollector implements JvmmCollector {
                 .setTimeZone(SystemPropertyUtil.get("user.timezone"))
                 .setIp(IPUtil.getLocalIP())
                 .setUser(SystemPropertyUtil.get("user.name"))
-                .setLoadAverage(OSDriver.get().getCPULoadAverage());
+                .setLoadAverage(OSDriver.get().getCPULoadAverage())
+                .setUptime(os.getSystemUptime())
+                .setBootTime(os.getSystemBootTime())
+                .setBitness(os.getBitness())
+                .setThreadCount(os.getThreadCount())
+                .setProcessCount(os.getProcessCount());
     }
 
     @Override

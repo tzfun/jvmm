@@ -11,6 +11,7 @@ import org.beifengtz.jvmm.core.entity.info.ThreadTimedInfo;
 import org.junit.jupiter.api.Test;
 import oshi.SystemInfo;
 import oshi.hardware.GlobalMemory;
+import oshi.software.os.OperatingSystem;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
@@ -160,5 +161,20 @@ public class TestCollector {
         CPUInfo cpuInfo = collector.getCPU(3, TimeUnit.SECONDS).get();
         System.out.println(cpuInfo);
         System.out.println(collector.getCPUInfo());
+    }
+
+    @Test
+    public void testSystemInfo() {
+        SystemInfo systemInfo = new SystemInfo();
+        OperatingSystem os = systemInfo.getOperatingSystem();
+        long systemUptime = os.getSystemUptime();
+        long systemBootTime = os.getSystemBootTime();
+        System.out.println(systemUptime);
+        System.out.println(systemBootTime);
+        System.out.println(os.getBitness());
+        System.out.println(os.getFamily());
+        System.out.println(os.getManufacturer());
+        System.out.println(os.getThreadCount());
+        System.out.println(os.getProcessCount());
     }
 }

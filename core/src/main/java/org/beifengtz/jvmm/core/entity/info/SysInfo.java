@@ -40,6 +40,26 @@ public class SysInfo implements JsonParsable {
      * 平均负载
      */
     private double loadAverage;
+    /**
+     * 系统自启动到现在的时间，单位秒
+     */
+    private long uptime;
+    /**
+     * 系统启动时间，时间戳，单位秒
+     */
+    private long bootTime;
+    /**
+     * 操作系统位数
+     */
+    private int bitness;
+    /**
+     * 线程数
+     */
+    private int threadCount;
+    /**
+     * 进程数
+     */
+    private int processCount;
 
 
     private SysInfo(){}
@@ -117,6 +137,51 @@ public class SysInfo implements JsonParsable {
 
     public SysInfo setLoadAverage(double loadAverage) {
         this.loadAverage = loadAverage;
+        return this;
+    }
+
+    public long getUptime() {
+        return uptime;
+    }
+
+    public SysInfo setUptime(long uptime) {
+        this.uptime = uptime;
+        return this;
+    }
+
+    public long getBootTime() {
+        return bootTime;
+    }
+
+    public SysInfo setBootTime(long bootTime) {
+        this.bootTime = bootTime;
+        return this;
+    }
+
+    public int getBitness() {
+        return bitness;
+    }
+
+    public SysInfo setBitness(int bitness) {
+        this.bitness = bitness;
+        return this;
+    }
+
+    public int getThreadCount() {
+        return threadCount;
+    }
+
+    public SysInfo setThreadCount(int threadCount) {
+        this.threadCount = threadCount;
+        return this;
+    }
+
+    public int getProcessCount() {
+        return processCount;
+    }
+
+    public SysInfo setProcessCount(int processCount) {
+        this.processCount = processCount;
         return this;
     }
 
