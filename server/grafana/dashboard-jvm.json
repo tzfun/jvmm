@@ -55,12 +55,24 @@
   "description": "Jvmm grafana dashboard for JVM",
   "editable": false,
   "fiscalYearStartMonth": 0,
-  "gnetId": 20429,
   "graphTooltip": 0,
   "id": null,
   "links": [],
   "liveNow": false,
   "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 28,
+      "panels": [],
+      "title": "Overview",
+      "type": "row"
+    },
     {
       "datasource": {
         "type": "prometheus",
@@ -92,7 +104,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 0
+        "y": 1
       },
       "id": 1,
       "options": {
@@ -163,7 +175,7 @@
         "h": 4,
         "w": 4,
         "x": 4,
-        "y": 0
+        "y": 1
       },
       "id": 2,
       "options": {
@@ -235,7 +247,7 @@
         "h": 4,
         "w": 4,
         "x": 8,
-        "y": 0
+        "y": 1
       },
       "id": 26,
       "options": {
@@ -304,7 +316,7 @@
         "h": 4,
         "w": 4,
         "x": 12,
-        "y": 0
+        "y": 1
       },
       "id": 27,
       "options": {
@@ -374,7 +386,7 @@
         "h": 4,
         "w": 4,
         "x": 16,
-        "y": 0
+        "y": 1
       },
       "id": 25,
       "options": {
@@ -445,7 +457,7 @@
         "h": 4,
         "w": 4,
         "x": 20,
-        "y": 0
+        "y": 1
       },
       "id": 6,
       "options": {
@@ -549,7 +561,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 4
+        "y": 5
       },
       "id": 21,
       "options": {
@@ -682,7 +694,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 4
+        "y": 5
       },
       "id": 7,
       "options": {
@@ -834,7 +846,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 11
+        "y": 12
       },
       "id": 19,
       "options": {
@@ -934,7 +946,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 11
+        "y": 12
       },
       "id": 8,
       "options": {
@@ -1056,6 +1068,19 @@
       "type": "timeseries"
     },
     {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
+      "id": 29,
+      "panels": [],
+      "title": "GC & Memory",
+      "type": "row"
+    },
+    {
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS-JVMM-JVM}"
@@ -1120,7 +1145,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 18
+        "y": 20
       },
       "id": 23,
       "options": {
@@ -1221,7 +1246,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 26
+        "y": 28
       },
       "id": 9,
       "options": {
@@ -1321,7 +1346,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 34
+        "y": 36
       },
       "id": 10,
       "options": {
@@ -1422,7 +1447,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 41
+        "y": 43
       },
       "id": 11,
       "options": {
@@ -1522,7 +1547,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 49
+        "y": 51
       },
       "id": 12,
       "options": {
@@ -1557,6 +1582,19 @@
       ],
       "title": "JVM Non-Heap",
       "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 59
+      },
+      "id": 30,
+      "panels": [],
+      "title": "Memory Pool",
+      "type": "row"
     },
     {
       "datasource": {
@@ -1622,7 +1660,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 57
+        "y": 60
       },
       "id": 13,
       "options": {
@@ -1722,7 +1760,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 57
+        "y": 60
       },
       "id": 14,
       "options": {
@@ -1822,7 +1860,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 65
+        "y": 68
       },
       "id": 15,
       "options": {
@@ -1922,7 +1960,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 65
+        "y": 68
       },
       "id": 16,
       "options": {
@@ -1999,6 +2037,6 @@
   "timezone": "",
   "title": "Jvmm-JVM Dashboard",
   "uid": "c7aaf18c-a8f1-4c0c-9df7-6b8a1f3cfc8f",
-  "version": 18,
+  "version": 19,
   "weekStart": ""
 }

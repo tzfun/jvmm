@@ -153,7 +153,7 @@
     ]
   },
   "description": "Jvmm grafana dashboard for node",
-  "editable": true,
+  "editable": false,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": null,
@@ -698,7 +698,7 @@
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "__auto",
+          "legendFormat": "load avg",
           "range": true,
           "refId": "A",
           "useBackend": false
