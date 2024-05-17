@@ -7,103 +7,9 @@
       "type": "datasource",
       "pluginId": "prometheus",
       "pluginName": "Prometheus"
-    },
-    {
-      "name": "DS_PROMETHEUS-JVMM-NODE-FOR-LIBRARY-PANEL",
-      "label": "prometheus-jvmm-node",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "prometheus",
-      "pluginName": "Prometheus",
-      "usage": {
-        "libraryPanels": [
-          {
-            "name": "Disk Used (ALL)",
-            "uid": "b4ae56ef-dd6f-44c5-b709-8f6ac921f28c"
-          }
-        ]
-      }
     }
   ],
-  "__elements": {
-    "b4ae56ef-dd6f-44c5-b709-8f6ac921f28c": {
-      "name": "Disk Used (ALL)",
-      "uid": "b4ae56ef-dd6f-44c5-b709-8f6ac921f28c",
-      "kind": 1,
-      "model": {
-        "datasource": {
-          "type": "prometheus",
-          "uid": "${DS_PROMETHEUS-JVMM-NODE-FOR-LIBRARY-PANEL}"
-        },
-        "description": "",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "mappings": [],
-            "max": 1,
-            "min": 0,
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                },
-                {
-                  "color": "red",
-                  "value": 80
-                }
-              ]
-            },
-            "unit": "percentunit"
-          },
-          "overrides": []
-        },
-        "libraryPanel": {
-          "name": "Disk Used (ALL)",
-          "uid": "b4ae56ef-dd6f-44c5-b709-8f6ac921f28c"
-        },
-        "options": {
-          "colorMode": "value",
-          "graphMode": "area",
-          "justifyMode": "auto",
-          "orientation": "auto",
-          "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
-            "fields": "",
-            "values": false
-          },
-          "textMode": "auto",
-          "wideLayout": true
-        },
-        "pluginVersion": "10.2.3",
-        "targets": [
-          {
-            "datasource": {
-              "type": "prometheus",
-              "uid": "c5d835ba-fe1a-4481-b26c-f157301a0ab1"
-            },
-            "disableTextWrap": false,
-            "editorMode": "builder",
-            "expr": "os_file_all_used_present{node=\"$node_query\"}",
-            "fullMetaSearch": false,
-            "includeNullMetadata": true,
-            "instant": false,
-            "legendFormat": "__auto",
-            "range": true,
-            "refId": "A",
-            "useBackend": false
-          }
-        ],
-        "title": "Disk Used (ALL)",
-        "type": "stat"
-      }
-    }
-  },
+  "__elements": {},
   "__requires": [
     {
       "type": "panel",
@@ -222,10 +128,10 @@
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "",
+          "fields": "/^os_name$/",
           "values": false
         },
-        "textMode": "name",
+        "textMode": "value",
         "wideLayout": true
       },
       "pluginVersion": "10.2.3",
@@ -238,6 +144,7 @@
           "disableTextWrap": false,
           "editorMode": "builder",
           "expr": "os_cpu{node=\"$node_query\"}",
+          "format": "table",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -293,10 +200,10 @@
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "",
+          "fields": "/^os_version$/",
           "values": false
         },
-        "textMode": "name",
+        "textMode": "value",
         "wideLayout": true
       },
       "pluginVersion": "10.2.3",
@@ -309,6 +216,7 @@
           "disableTextWrap": false,
           "editorMode": "builder",
           "expr": "os_cpu{node=\"$node_query\"}",
+          "format": "table",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -364,10 +272,10 @@
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "",
+          "fields": "/^os_arch$/",
           "values": false
         },
-        "textMode": "name",
+        "textMode": "value",
         "wideLayout": true
       },
       "pluginVersion": "10.2.3",
@@ -381,7 +289,7 @@
           "editorMode": "builder",
           "exemplar": false,
           "expr": "os_cpu{node=\"$node_query\"}",
-          "format": "time_series",
+          "format": "table",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -512,10 +420,10 @@
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "",
+          "fields": "/^os_bitness$/",
           "values": false
         },
-        "textMode": "name",
+        "textMode": "value",
         "wideLayout": true
       },
       "pluginVersion": "10.2.3",
@@ -528,7 +436,7 @@
           "disableTextWrap": false,
           "editorMode": "builder",
           "expr": "os_cpu{node=\"$node_query\"}",
-          "format": "time_series",
+          "format": "table",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -669,13 +577,14 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "percentunit"
         },
         "overrides": []
       },
       "gridPos": {
         "h": 6,
-        "w": 12,
+        "w": 8,
         "x": 0,
         "y": 4
       },
@@ -700,7 +609,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "os_load_avg",
+          "expr": "os_load_avg{node=\"$node_query\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -731,7 +640,7 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 0,
+            "fillOpacity": 25,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
@@ -774,17 +683,17 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 6,
-        "x": 12,
+        "w": 8,
+        "x": 8,
         "y": 4
       },
       "id": 49,
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
+          "displayMode": "hidden",
+          "placement": "right",
+          "showLegend": false
         },
         "tooltip": {
           "mode": "multi",
@@ -799,7 +708,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "os_thread_count",
+          "expr": "os_thread_count{node=\"$node_query\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -830,7 +739,7 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 0,
+            "fillOpacity": 25,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
@@ -873,17 +782,17 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 6,
-        "x": 18,
+        "w": 8,
+        "x": 16,
         "y": 4
       },
       "id": 50,
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
+          "displayMode": "hidden",
+          "placement": "right",
+          "showLegend": false
         },
         "tooltip": {
           "mode": "multi",
@@ -898,7 +807,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "os_process_count",
+          "expr": "os_process_count{node=\"$node_query\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -953,8 +862,8 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
-        "w": 3,
+        "h": 10,
+        "w": 4,
         "x": 0,
         "y": 11
       },
@@ -1059,8 +968,8 @@
       },
       "gridPos": {
         "h": 10,
-        "w": 21,
-        "x": 3,
+        "w": 20,
+        "x": 4,
         "y": 11
       },
       "id": 31,
@@ -1106,7 +1015,7 @@
           "hide": false,
           "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "process",
+          "legendFormat": "monitor used",
           "range": true,
           "refId": "D",
           "useBackend": false
@@ -1133,26 +1042,41 @@
       "type": "timeseries"
     },
     {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 21
+      },
+      "id": 13,
+      "panels": [],
+      "title": "Memory",
+      "type": "row"
+    },
+    {
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS-JVMM-NODE}"
       },
+      "description": "",
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
           "mappings": [],
           "thresholds": {
-            "mode": "absolute",
+            "mode": "percentage",
             "steps": [
               {
                 "color": "green",
                 "value": null
               },
               {
+                "color": "orange",
+                "value": 70
+              },
+              {
                 "color": "red",
-                "value": 80
+                "value": 85
               }
             ]
           },
@@ -1161,12 +1085,12 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
-        "w": 3,
+        "h": 11,
+        "w": 4,
         "x": 0,
-        "y": 16
+        "y": 22
       },
-      "id": 11,
+      "id": 14,
       "options": {
         "minVizHeight": 200,
         "minVizWidth": 200,
@@ -1191,89 +1115,6 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "p_cpu_load{node=\"$node_query\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "CPU Process Used",
-      "type": "gauge"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 21
-      },
-      "id": 13,
-      "panels": [],
-      "title": "Memory",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS-JVMM-NODE}"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 3,
-        "x": 0,
-        "y": 22
-      },
-      "id": 14,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "10.2.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
           "expr": "os_mem_used_present{node=\"$node_query\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -1285,7 +1126,7 @@
         }
       ],
       "title": "Memory Used State",
-      "type": "stat"
+      "type": "gauge"
     },
     {
       "datasource": {
@@ -1396,8 +1237,8 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 21,
-        "x": 3,
+        "w": 20,
+        "x": 4,
         "y": 22
       },
       "id": 33,
@@ -1530,8 +1371,8 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 21,
-        "x": 3,
+        "w": 20,
+        "x": 4,
         "y": 28
       },
       "id": 46,
@@ -1616,8 +1457,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1765,8 +1605,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1849,23 +1688,11 @@
       "type": "row"
     },
     {
-      "gridPos": {
-        "h": 9,
-        "w": 3,
-        "x": 0,
-        "y": 42
-      },
-      "id": 39,
-      "libraryPanel": {
-        "uid": "b4ae56ef-dd6f-44c5-b709-8f6ac921f28c",
-        "name": "Disk Used (ALL)"
-      }
-    },
-    {
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS-JVMM-NODE}"
       },
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1878,12 +1705,83 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
                 "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 3,
+        "x": 0,
+        "y": 42
+      },
+      "id": 39,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "os_file_all_used_present{node=\"$node_query\"}",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Disk Used (ALL)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS-JVMM-NODE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "orange",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 85
               }
             ]
           },
@@ -1982,8 +1880,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2049,8 +1946,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2095,7 +1991,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "disk_queue_len",
+          "expr": "disk_queue_len{node=\"$node_query\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -2156,8 +2052,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2273,8 +2168,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2391,8 +2285,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2527,8 +2420,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2831,8 +2723,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2948,8 +2839,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -3116,8 +3006,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -3252,6 +3141,6 @@
   "timezone": "",
   "title": "Jvmm-Node Dashboard",
   "uid": "e3f9a181-2edc-4493-b3fb-d8f07cfadfb2",
-  "version": 23,
+  "version": 27,
   "weekStart": ""
 }
