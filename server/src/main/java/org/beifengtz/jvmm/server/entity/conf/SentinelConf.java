@@ -1,6 +1,7 @@
 package org.beifengtz.jvmm.server.entity.conf;
 
 import org.beifengtz.jvmm.core.contanstant.CollectionType;
+import org.beifengtz.jvmm.core.entity.conf.ThreadPoolConf;
 
 import java.util.ArrayList;
 import java.util.List;

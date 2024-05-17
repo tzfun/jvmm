@@ -1,7 +1,11 @@
 package org.beifengtz.jvmm.core;
 
+import org.beifengtz.jvmm.core.contanstant.CollectionType;
+import org.beifengtz.jvmm.core.entity.JvmmData;
+import org.beifengtz.jvmm.core.entity.conf.ThreadPoolConf;
 import org.beifengtz.jvmm.core.entity.info.*;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -62,7 +66,7 @@ public interface JvmmCollector {
      *
      * @return {@link NetInfo} of {@link CompletableFuture}
      */
-    CompletableFuture<NetInfo> getNetwork();
+    NetInfo getNetwork();
 
     /**
      * 获取所有磁盘信息
@@ -307,4 +311,103 @@ public interface JvmmCollector {
      * @return 根据 CPU Time 从大到小排序的线程堆栈列表，它将以 {@link CompletableFuture} 返回
      */
     CompletableFuture<List<String>> getOrderedThreadTimedStack(long time, TimeUnit unit);
+
+
+    /**
+     * 根据采集项收集数据
+     *
+     * @param options             {@link CollectionType}采集项
+     * @param listenedPorts       如果 options 包含{@link CollectionType#port}，此参数表示需要监听的端口列表，否则可以为null
+     * @param listenedThreadPools 如果 options 包含了 {@link CollectionType#jvm_thread_pool}，此参数表示需要监听的线程池信息，否则可以为null
+     */
+    default JvmmData collectByOptions(List<CollectionType> options,
+                                      List<Integer> listenedPorts,
+                                      List<ThreadPoolConf> listenedThreadPools) {
+        JvmmData res = new JvmmData().setCollectTimestamp(System.currentTimeMillis());
+        for (CollectionType type : options) {
+            if (type == null) {
+                continue;
+            }
+            switch (type) {
+                case process:
+                    res.setProcess(getProcess());
+                    break;
+                case disk:
+                    res.setDisk(getDisk());
+                    break;
+                case disk_io:
+                    res.setDiskIO(getDiskIO());
+                    break;
+                case cpu:
+                    res.setCpu(getCPUInfo());
+                    break;
+                case network:
+                    res.setNetwork(getNetwork());
+                    break;
+                case sys:
+                    res.setSys(getSys());
+                    break;
+                case sys_memory:
+                    res.setSysMem(getSysMem());
+                    break;
+                case sys_file:
+                    res.setSysFile(getSysFile());
+                    break;
+                case port:
+                    PortInfo portInfo = new PortInfo();
+                    if (listenedPorts != null && !listenedPorts.isEmpty()) {
+                        res.setPort(getPortInfo(listenedPorts));
+                    }
+                    res.setPort(portInfo);
+                    break;
+                case jvm_classloading:
+                    res.setJvmClassLoading(getJvmClassLoading());
+                    break;
+                case jvm_classloader:
+                    res.setJvmClassLoader(getJvmClassLoaders());
+                    break;
+                case jvm_compilation:
+                    res.setJvmCompilation(getJvmCompilation());
+                    break;
+                case jvm_gc:
+                    res.setJvmGc(getJvmGC());
+                    break;
+                case jvm_memory:
+                    res.setJvmMemory(getJvmMemory());
+                    break;
+                case jvm_memory_manager:
+                    res.setJvmMemoryManager(getJvmMemoryManager());
+                    break;
+                case jvm_memory_pool:
+                    res.setJvmMemoryPool(getJvmMemoryPool());
+                    break;
+                case jvm_thread:
+                    res.setJvmThread(getJvmThread());
+                    break;
+                case jvm_thread_stack:
+                    res.setJvmStack(dumpAllThreads());
+                    break;
+                case jvm_thread_detail:
+                    res.setJvmThreadDetail(getAllJvmThreadDetailInfo());
+                    break;
+                case jvm_thread_pool:
+                    if (listenedThreadPools != null && !listenedThreadPools.isEmpty()) {
+                        List<ThreadPoolInfo> infos = new ArrayList<>(listenedThreadPools.size());
+                        for (ThreadPoolConf tp : listenedThreadPools) {
+                            ThreadPoolInfo info;
+                            if (tp.getInstanceFiled() == null) {
+                                info = getThreadPoolInfo(tp.getClassPath(), tp.getFiled());
+                            } else {
+                                info = getThreadPoolInfo(tp.getClassPath(), tp.getInstanceFiled(), tp.getFiled());
+                            }
+                            info.setName(tp.getName());
+                            infos.add(info);
+                        }
+                        res.setThreadPool(infos);
+                    }
+                    break;
+            }
+        }
+        return res;
+    }
 }

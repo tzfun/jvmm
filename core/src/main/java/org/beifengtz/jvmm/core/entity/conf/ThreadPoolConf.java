@@ -1,4 +1,4 @@
-package org.beifengtz.jvmm.server.entity.conf;
+package org.beifengtz.jvmm.core.entity.conf;
 
 /**
  * description TODO

@@ -14,7 +14,10 @@ import java.util.List;
  */
 public class JvmmData implements JsonParsable {
     private String node;
-
+    /**
+     * 采集时间戳，单位毫秒
+     */
+    private long collectTimestamp;
     private ProcessInfo process;
     private List<DiskInfo> disk;
     private List<DiskIOInfo> diskIO;
@@ -42,6 +45,15 @@ public class JvmmData implements JsonParsable {
 
     public JvmmData setNode(String node) {
         this.node = node;
+        return this;
+    }
+
+    public long getCollectTimestamp() {
+        return collectTimestamp;
+    }
+
+    public JvmmData setCollectTimestamp(long collectTimestamp) {
+        this.collectTimestamp = collectTimestamp;
         return this;
     }
 

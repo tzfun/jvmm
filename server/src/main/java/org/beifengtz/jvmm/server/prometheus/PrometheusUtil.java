@@ -312,22 +312,6 @@ public class PrometheusUtil {
                 Types.Label ifName = Types.Label.newBuilder().setName("net_if_name").setValue(info.getName()).build();
                 Types.Label ifAlias = Types.Label.newBuilder().setName("net_if_alias").setValue(info.getAlias()).build();
 
-                Types.TimeSeries.Builder ifSentSpeedTimeSeries = Types.TimeSeries.newBuilder();
-                ifSentSpeedTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("net_if_sent_speed").build());
-                ifSentSpeedTimeSeries.addLabels(ifName);
-                ifSentSpeedTimeSeries.addLabels(ifAlias);
-                ifSentSpeedTimeSeries.addAllLabels(labels);
-                ifSentSpeedTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(info.getSentBytesPerSecond()).build());
-                writeRequest.addTimeseries(ifSentSpeedTimeSeries);
-
-                Types.TimeSeries.Builder ifRecvSpeedTimeSeries = Types.TimeSeries.newBuilder();
-                ifRecvSpeedTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("net_if_recv_speed").build());
-                ifRecvSpeedTimeSeries.addLabels(ifName);
-                ifRecvSpeedTimeSeries.addLabels(ifAlias);
-                ifRecvSpeedTimeSeries.addAllLabels(labels);
-                ifRecvSpeedTimeSeries.addSamples(Sample.newBuilder().setTimestamp(timestamp).setValue(info.getRecvBytesPerSecond()).build());
-                writeRequest.addTimeseries(ifRecvSpeedTimeSeries);
-
                 Types.TimeSeries.Builder ifSentBytesTimeSeries = Types.TimeSeries.newBuilder();
                 ifSentBytesTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("net_if_sent_bytes").build());
                 ifSentBytesTimeSeries.addLabels(ifName);

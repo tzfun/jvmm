@@ -13,6 +13,7 @@ import java.util.Map;
 /**
  * description: 网卡信息
  * date 16:08 2023/1/31
+ *
  * @author beifengtz
  */
 public class NetInfo implements JsonParsable {
@@ -184,14 +185,6 @@ public class NetInfo implements JsonParsable {
          */
         private long mtu;
         /**
-         * 当前发送速率
-         */
-        private double sentBytesPerSecond;
-        /**
-         * 当前接收速率
-         */
-        private double recvBytesPerSecond;
-        /**
          * 总收包大小，bytes
          */
         private long recvBytes;
@@ -276,24 +269,6 @@ public class NetInfo implements JsonParsable {
 
         public NetworkIFInfo setMtu(long mtu) {
             this.mtu = mtu;
-            return this;
-        }
-
-        public double getSentBytesPerSecond() {
-            return sentBytesPerSecond;
-        }
-
-        public NetworkIFInfo setSentBytesPerSecond(double sentBytesPerSecond) {
-            this.sentBytesPerSecond = sentBytesPerSecond;
-            return this;
-        }
-
-        public double getRecvBytesPerSecond() {
-            return recvBytesPerSecond;
-        }
-
-        public NetworkIFInfo setRecvBytesPerSecond(double recvBytesPerSecond) {
-            this.recvBytesPerSecond = recvBytesPerSecond;
             return this;
         }
 

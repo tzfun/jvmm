@@ -1,5 +1,6 @@
 package org.beifengtz.jvmm.server.test;
 
+import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.contanstant.CollectionType;
 import org.beifengtz.jvmm.core.entity.JvmmData;
 import org.beifengtz.jvmm.server.entity.conf.SentinelSubscriberConf;
@@ -30,21 +31,18 @@ public class TestPrometheus {
         PrometheusExporter exporter = new PrometheusExporter();
         List<CollectionType> tasks = Arrays.asList(CollectionType.values());
         CountDownLatch cdl = new CountDownLatch(1);
-        JvmmService.collectByOptions(tasks, Arrays.asList(3306, 6379, 8080), null, pair -> {
-            if (pair.getLeft().get() <= 0) {
-                JvmmData data = pair.getRight().setNode("test_node");
-                byte[] dataBytes = PrometheusUtil.pack(data);
-                System.out.println("Exported " + dataBytes.length);
-                exporter.export(subscriber, dataBytes).whenComplete(((bytes, throwable) -> {
-                    if (throwable == null) {
-                        System.out.println("Response: " + new String(bytes, StandardCharsets.UTF_8));
-                    } else {
-                        throwable.printStackTrace();
-                    }
-                    cdl.countDown();
-                }));
+        JvmmData data = JvmmFactory.getCollector().collectByOptions(tasks, Arrays.asList(3306, 6379, 8080), null);
+        data.setNode("test_node");
+        byte[] dataBytes = PrometheusUtil.pack(data);
+        System.out.println("Exported " + dataBytes.length);
+        exporter.export(subscriber, dataBytes).whenComplete(((bytes, throwable) -> {
+            if (throwable == null) {
+                System.out.println("Response: " + new String(bytes, StandardCharsets.UTF_8));
+            } else {
+                throwable.printStackTrace();
             }
-        });
+            cdl.countDown();
+        }));
 
         cdl.await();
     }

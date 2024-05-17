@@ -2194,13 +2194,13 @@
             "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
-          "editorMode": "builder",
+          "editorMode": "code",
           "exemplar": false,
-          "expr": "increase(disk_reads{node=\"$node_query\"}[$__rate_interval])",
+          "expr": "1000 * increase(disk_reads{node=\"$node_query\"}[$__rate_interval]) / ${__interval_ms}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "{{disk_name}} read count",
+          "legendFormat": "{{disk_name}} read (count/s)",
           "range": true,
           "refId": "A",
           "useBackend": false
@@ -2211,19 +2211,19 @@
             "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "increase(disk_writes{node=\"$node_query\"}[$__rate_interval])",
+          "editorMode": "code",
+          "expr": "1000 * increase(disk_writes{node=\"$node_query\"}[$__rate_interval]) / ${__interval_ms}",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "{{disk_name}} write count",
+          "legendFormat": "{{disk_name}} write (count/s)",
           "range": true,
           "refId": "B",
           "useBackend": false
         }
       ],
-      "title": "Disk IO (count)",
+      "title": "Disk IO (count/s)",
       "type": "timeseries"
     },
     {
@@ -2430,15 +2430,15 @@
             "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
-          "editorMode": "builder",
+          "editorMode": "code",
           "exemplar": false,
-          "expr": "increase(disk_read_bytes{node=\"$node_query\"}[$__rate_interval])",
+          "expr": "1000 * increase(disk_read_bytes{node=\"$node_query\"}[$__rate_interval]) / ${__interval_ms}",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
           "interval": "",
-          "legendFormat": "{{disk_name}} read size",
+          "legendFormat": "{{disk_name}} read (size/s)",
           "range": true,
           "refId": "A",
           "useBackend": false
@@ -2449,22 +2449,22 @@
             "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
-          "editorMode": "builder",
+          "editorMode": "code",
           "exemplar": false,
-          "expr": "increase(disk_write_bytes{node=\"$node_query\"}[$__rate_interval])",
+          "expr": "1000 * increase(disk_write_bytes{node=\"$node_query\"}[$__rate_interval]) / ${__interval_ms}",
           "format": "time_series",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
           "instant": false,
           "interval": "",
-          "legendFormat": "{{disk_name}} write size",
+          "legendFormat": "{{disk_name}} write (size/s)",
           "range": true,
           "refId": "B",
           "useBackend": false
         }
       ],
-      "title": "Disk IO (size)",
+      "title": "Disk IO (size/s)",
       "type": "timeseries"
     },
     {
@@ -2540,7 +2540,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 12,
+        "h": 8,
         "w": 12,
         "x": 0,
         "y": 69
@@ -2840,124 +2840,6 @@
               }
             ]
           },
-          "unit": "bytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 69
-      },
-      "id": 41,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "increase(net_if_sent_bytes{node=\"$node_query\", net_if_name=\"$network_if_name\"}[$__rate_interval])",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "{{net_if_name}}-{{net_if_alias}} sent",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS-JVMM-NODE}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "increase(net_if_recv_bytes{node=\"$node_query\", net_if_name=\"$network_if_name\"}[$__rate_interval])",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "{{net_if_name}}-{{net_if_alias}} recv",
-          "range": true,
-          "refId": "B",
-          "useBackend": false
-        }
-      ],
-      "title": "Network Interface IO (Total Size)",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS-JVMM-NODE}"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
           "unit": "locale"
         },
         "overrides": []
@@ -2966,7 +2848,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 77
+        "y": 69
       },
       "id": 43,
       "options": {
@@ -2988,12 +2870,12 @@
             "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "floor(increase(net_if_sent_count{node=\"$node_query\", net_if_name=\"$network_if_name\"}[$__rate_interval]))",
+          "editorMode": "code",
+          "expr": "floor(1000 * increase(net_if_sent_count{node=\"$node_query\", net_if_name=\"$network_if_name\"}[$__rate_interval]) / ${__interval_ms})",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "{{net_if_name}}-{{net_if_alias}} sent",
+          "legendFormat": "{{net_if_name}}-{{net_if_alias}} sent (count/s)",
           "range": true,
           "refId": "A",
           "useBackend": false
@@ -3004,19 +2886,19 @@
             "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "floor(increase(net_if_recv_count{node=\"$node_query\", net_if_name=\"$network_if_name\"}[$__rate_interval]))",
+          "editorMode": "code",
+          "expr": "floor(1000 * increase(net_if_recv_count{node=\"$node_query\", net_if_name=\"$network_if_name\"}[$__rate_interval]) / ${__interval_ms})",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "{{net_if_name}}-{{net_if_alias}} recv",
+          "legendFormat": "{{net_if_name}}-{{net_if_alias}} recv (count/s)",
           "range": true,
           "refId": "B",
           "useBackend": false
         }
       ],
-      "title": "Network Interface IO (Total Count)",
+      "title": "Network Interface IO (count/s)",
       "type": "timeseries"
     },
     {
@@ -3079,10 +2961,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 12,
+        "h": 8,
         "w": 12,
         "x": 0,
-        "y": 81
+        "y": 77
       },
       "id": 26,
       "options": {
@@ -3251,7 +3133,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 85
+        "y": 77
       },
       "id": 29,
       "options": {
@@ -3273,12 +3155,12 @@
             "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "net_if_sent_speed{node=\"$node_query\", net_if_name=\"$network_if_name\"}",
+          "editorMode": "code",
+          "expr": "1000 * increase(net_if_sent_bytes{node=\"$node_query\", net_if_name=\"$network_if_name\"}[$__rate_interval]) / $__interval_ms",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "{{net_if_name}}-{{net_if_alias}} sent",
+          "legendFormat": "{{net_if_name}}-{{net_if_alias}} sent (size/s)",
           "range": true,
           "refId": "A",
           "useBackend": false
@@ -3289,13 +3171,13 @@
             "uid": "${DS_PROMETHEUS-JVMM-NODE}"
           },
           "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "net_if_recv_speed{node=\"$node_query\", net_if_name=\"$network_if_name\"}",
+          "editorMode": "code",
+          "expr": "1000 * increase(net_if_recv_bytes{node=\"$node_query\", net_if_name=\"$network_if_name\"}[$__rate_interval]) / $__interval_ms",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "{{net_if_name}}-{{net_if_alias}} recv",
+          "legendFormat": "{{net_if_name}}-{{net_if_alias}} recv (size/s)",
           "range": true,
           "refId": "B",
           "useBackend": false
@@ -3370,6 +3252,6 @@
   "timezone": "",
   "title": "Jvmm-Node Dashboard",
   "uid": "e3f9a181-2edc-4493-b3fb-d8f07cfadfb2",
-  "version": 22,
+  "version": 23,
   "weekStart": ""
 }
