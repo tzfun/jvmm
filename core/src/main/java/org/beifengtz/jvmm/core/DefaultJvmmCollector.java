@@ -107,7 +107,7 @@ class DefaultJvmmCollector implements JvmmCollector {
     }
 
     @Override
-    public CompletableFuture<NetInfo> getNetwork() {
+    public NetInfo getNetwork() {
         return OSDriver.get().getNetInfo();
     }
 

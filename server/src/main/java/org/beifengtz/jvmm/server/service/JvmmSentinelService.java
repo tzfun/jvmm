@@ -4,6 +4,8 @@ import io.netty.util.concurrent.Promise;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.common.factory.ExecutorFactory;
+import org.beifengtz.jvmm.core.JvmmCollector;
+import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.entity.JvmmData;
 import org.beifengtz.jvmm.server.ServerContext;
 import org.beifengtz.jvmm.server.entity.conf.SentinelConf;
@@ -152,44 +154,38 @@ public class JvmmSentinelService implements JvmmService {
             counter++;
             executor.execute(() -> {
                 try {
-                    JvmmService.collectByOptions(conf.getTasks(), conf.getListenedPorts(), conf.getListenedThreadPools(), pair -> {
-                        if (pair.getLeft().get() <= 0) {
-                            try {
-                                JvmmData data = pair.getRight().setNode(ServerContext.getConfiguration().getName());
-                                byte[] httpData = hasHttpSubscriber ? data.toJsonStr().getBytes(StandardCharsets.UTF_8) : null;
-                                byte[] prometheusData = hasPrometheusSubscriber ? PrometheusUtil.pack(data) : null;
-                                for (SentinelSubscriberConf subscriber : conf.getSubscribers()) {
-                                    if (subscriber.getType() == SubscriberType.http && httpExporter != null) {
-                                        CompletableFuture<String> future = httpExporter.export(subscriber, httpData);
-                                        future.whenComplete(((s, throwable) -> {
-                                            if (throwable == null) {
-                                                logger.debug("Sentinel published to http server[{}], task: {}", subscriber.getUrl(), conf.getTasks());
-                                            } else {
-                                                logger.warn("Sentinel publish to http server[{}] failed. {}: {}",
-                                                        subscriber.getUrl(), throwable.getClass(), throwable.getMessage());
-                                            }
-                                        }));
-                                    } else if (subscriber.getType() == SubscriberType.prometheus && prometheusExporter != null) {
-                                        CompletableFuture<byte[]> future = prometheusExporter.export(subscriber, prometheusData);
-                                        future.whenComplete(((bytes, throwable) -> {
-                                            if (throwable == null) {
-                                                logger.debug("Sentinel published to http server[{}], task: {}", subscriber.getUrl(), conf.getTasks());
-                                            } else {
-                                                logger.warn("Sentinel publish to prometheus server[{}] failed. {}: {}",
-                                                        subscriber.getUrl(), throwable.getClass(), throwable.getMessage());
-                                            }
-                                        }));
-                                    }
+                    JvmmData data = JvmmFactory.getCollector().collectByOptions(conf.getTasks(), conf.getListenedPorts(), conf.getListenedThreadPools());
+                    data.setNode(ServerContext.getConfiguration().getName());
+
+                    byte[] httpData = hasHttpSubscriber ? data.toJsonStr().getBytes(StandardCharsets.UTF_8) : null;
+                    byte[] prometheusData = hasPrometheusSubscriber ? PrometheusUtil.pack(data) : null;
+                    for (SentinelSubscriberConf subscriber : conf.getSubscribers()) {
+                        if (subscriber.getType() == SubscriberType.http && httpExporter != null) {
+                            CompletableFuture<String> future = httpExporter.export(subscriber, httpData);
+                            future.whenComplete(((s, throwable) -> {
+                                if (throwable == null) {
+                                    logger.debug("Sentinel published to http server[{}], task: {}", subscriber.getUrl(), conf.getTasks());
+                                } else {
+                                    logger.warn("Sentinel publish to http server[{}] failed. {}: {}",
+                                            subscriber.getUrl(), throwable.getClass(), throwable.getMessage());
                                 }
-                            } catch (Throwable e) {
-                                logger.error("Sentinel publish failed", e);
-                            }
-                            execTime = System.currentTimeMillis() + conf.getInterval() * 1000L;
+                            }));
+                        } else if (subscriber.getType() == SubscriberType.prometheus && prometheusExporter != null) {
+                            CompletableFuture<byte[]> future = prometheusExporter.export(subscriber, prometheusData);
+                            future.whenComplete(((bytes, throwable) -> {
+                                if (throwable == null) {
+                                    logger.debug("Sentinel published to http server[{}], task: {}", subscriber.getUrl(), conf.getTasks());
+                                } else {
+                                    logger.warn("Sentinel publish to prometheus server[{}] failed. {}: {}",
+                                            subscriber.getUrl(), throwable.getClass(), throwable.getMessage());
+                                }
+                            }));
                         }
-                    });
+                    }
                 } catch (Throwable e) {
                     logger.error("Sentinel execute task failed: " + e.getMessage(), e);
                 }
+                execTime = System.currentTimeMillis() + conf.getInterval() * 1000L;
             });
             return false;
         }

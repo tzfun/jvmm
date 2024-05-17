@@ -59,7 +59,7 @@ public class TestCollector {
         System.out.println(osDriver.getDiskInfo());
         System.out.println(osDriver.getOsFileInfo());
         osDriver.getCPUInfo(1, TimeUnit.SECONDS).thenAccept(System.out::println);
-        osDriver.getNetInfo().thenAccept(System.out::println);
+        System.out.println(osDriver.getNetInfo());
         System.out.println(osDriver.getDiskIOInfo());
         Thread.sleep(2000);
     }

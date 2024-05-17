@@ -17,6 +17,7 @@ import org.beifengtz.jvmm.core.JvmmCollector;
 import org.beifengtz.jvmm.core.JvmmFactory;
 import org.beifengtz.jvmm.core.Unsafe;
 import org.beifengtz.jvmm.core.contanstant.CollectionType;
+import org.beifengtz.jvmm.core.entity.JvmmData;
 import org.beifengtz.jvmm.core.entity.info.*;
 import org.beifengtz.jvmm.server.entity.dto.ThreadInfoDTO;
 import org.beifengtz.jvmm.server.service.JvmmService;
@@ -67,8 +68,8 @@ public class CollectController {
 
     @JvmmMapping(RpcType.JVMM_COLLECT_NETWORK_INFO)
     @HttpRequest("/collect/network")
-    public void getNetInfo(ResponseFuture future) {
-        JvmmFactory.getCollector().getNetwork().thenAccept(future::apply);
+    public NetInfo getNetInfo() {
+        return JvmmFactory.getCollector().getNetwork();
     }
 
     @JvmmMapping(RpcType.JVMM_COLLECT_SYS_INFO)
@@ -224,11 +225,7 @@ public class CollectController {
 
     @JvmmMapping(RpcType.JVMM_COLLECT_BATCH)
     @HttpRequest(value = "/collect/by_options")
-    public void collectBatch(@RequestParam List<CollectionType> options, ResponseFuture future) {
-        JvmmService.collectByOptions(options, null, null, pair -> {
-            if (pair.getLeft().get() <= 0) {
-                future.apply(pair.getRight());
-            }
-        });
+    public JvmmData collectBatch(@RequestParam List<CollectionType> options) {
+        return JvmmFactory.getCollector().collectByOptions(options, null, null);
     }
 }

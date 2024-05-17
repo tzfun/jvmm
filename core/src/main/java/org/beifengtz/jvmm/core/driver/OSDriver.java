@@ -25,7 +25,6 @@ import oshi.software.os.OperatingSystem;
 
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -279,9 +278,9 @@ public final class OSDriver {
     /**
      * 获取网卡信息，包含连接数、TCP和UDP在IPv4和IPv6连接信息、各个网卡信息（mac地址、状态、上下行速度）
      *
-     * @return {@link NetInfo} of {@link CompletableFuture}
+     * @return {@link NetInfo}
      */
-    public CompletableFuture<NetInfo> getNetInfo() {
+    public NetInfo getNetInfo() {
         OperatingSystem os = si.getOperatingSystem();
         InternetProtocolStats ips = os.getInternetProtocolStats();
         List<IPConnection> connections = ips.getConnections();
@@ -325,37 +324,22 @@ public final class OSDriver {
         info.setUdpV4Connections(udpV4);
         info.setUdpV6Connections(udpV6);
         List<NetworkIF> networkIFs = si.getHardware().getNetworkIFs();
-        Map<String, NetworkIF> networkIFMap = new HashMap<>(networkIFs.size());
+
         for (NetworkIF networkIF : networkIFs) {
-            networkIFMap.put(networkIF.getName(), networkIF);
+            NetworkIFInfo ifInfo = NetworkIFInfo.create()
+                    .setName(networkIF.getName())
+                    .setAlias(networkIF.getIfAlias())
+                    .setMtu(networkIF.getMTU())
+                    .setMac(networkIF.getMacaddr())
+                    .setStatus(networkIF.getIfOperStatus().toString())
+                    .setIpV4(networkIF.getIPv4addr())
+                    .setIpV6(networkIF.getIPv6addr())
+                    .setRecvBytes(networkIF.getBytesRecv())
+                    .setRecvCount(networkIF.getPacketsRecv())
+                    .setSentBytes(networkIF.getBytesSent())
+                    .setSentCount(networkIF.getPacketsSent());
+            info.addNetworkIFInfo(ifInfo);
         }
-        CompletableFuture<NetInfo> future = new CompletableFuture<>();
-        executor.schedule(() -> {
-            try {
-                for (NetworkIF networkIF : si.getHardware().getNetworkIFs()) {
-                    NetworkIF preIF = networkIFMap.get(networkIF.getName());
-                    if (preIF == null) continue;
-                    NetworkIFInfo ifInfo = NetworkIFInfo.create()
-                            .setName(networkIF.getName())
-                            .setAlias(networkIF.getIfAlias())
-                            .setMtu(networkIF.getMTU())
-                            .setMac(networkIF.getMacaddr())
-                            .setStatus(networkIF.getIfOperStatus().toString())
-                            .setIpV4(networkIF.getIPv4addr())
-                            .setIpV6(networkIF.getIPv6addr())
-                            .setRecvBytes(networkIF.getBytesRecv())
-                            .setRecvCount(networkIF.getPacketsRecv())
-                            .setSentBytes(networkIF.getBytesSent())
-                            .setSentCount(networkIF.getPacketsSent())
-                            .setRecvBytesPerSecond(networkIF.getBytesRecv() - preIF.getBytesRecv())
-                            .setSentBytesPerSecond(networkIF.getBytesSent() - preIF.getBytesSent());
-                    info.addNetworkIFInfo(ifInfo);
-                }
-                future.complete(info);
-            } catch (Throwable t) {
-                future.completeExceptionally(t);
-            }
-        }, 1, TimeUnit.SECONDS);
-        return future;
+        return info;
     }
 }
