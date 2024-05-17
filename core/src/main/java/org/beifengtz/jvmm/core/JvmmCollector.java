@@ -76,7 +76,7 @@ public interface JvmmCollector {
      *
      * @return {@link DiskIOInfo} List of {@link CompletableFuture}
      */
-    CompletableFuture<List<DiskIOInfo>> getDiskIO();
+    List<DiskIOInfo> getDiskIO();
 
     /**
      * 获取指定磁盘读写次数、吞吐量，异步执行
@@ -84,7 +84,7 @@ public interface JvmmCollector {
      * @param name 磁盘名
      * @return {@link DiskIOInfo} of {@link CompletableFuture}
      */
-    CompletableFuture<DiskIOInfo> getDiskIO(String name);
+    DiskIOInfo getDiskIO(String name);
 
     /**
      * 获取磁盘分区信息

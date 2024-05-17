@@ -158,44 +158,44 @@ public class PrometheusUtil {
             //  磁盘读次数速度
             Types.TimeSeries.Builder diskReadSpeedTimeSeries = Types.TimeSeries.newBuilder();
             diskReadSpeedTimeSeries.addLabels(nameLabel);
-            diskReadSpeedTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("disk_read_speed").build());
+            diskReadSpeedTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("disk_reads").build());
             diskReadSpeedTimeSeries.addAllLabels(labels);
             diskReadSpeedTimeSeries.addSamples(Types.Sample.newBuilder()
                     .setTimestamp(timestamp)
-                    .setValue(disk.getReadPerSecond())
+                    .setValue(disk.getReads())
                     .build());
             writeRequest.addTimeseries(diskReadSpeedTimeSeries.build());
 
             //  磁盘读bytes速度
             Types.TimeSeries.Builder diskReadBytesSpeedTimeSeries = Types.TimeSeries.newBuilder();
             diskReadBytesSpeedTimeSeries.addLabels(nameLabel);
-            diskReadBytesSpeedTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("disk_read_bytes_speed").build());
+            diskReadBytesSpeedTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("disk_read_bytes").build());
             diskReadBytesSpeedTimeSeries.addAllLabels(labels);
             diskReadBytesSpeedTimeSeries.addSamples(Types.Sample.newBuilder()
                     .setTimestamp(timestamp)
-                    .setValue(disk.getReadBytesPerSecond())
+                    .setValue(disk.getReadBytes())
                     .build());
             writeRequest.addTimeseries(diskReadBytesSpeedTimeSeries.build());
 
             //  磁盘写次数速度
             Types.TimeSeries.Builder diskWriteSpeedTimeSeries = Types.TimeSeries.newBuilder();
             diskWriteSpeedTimeSeries.addLabels(nameLabel);
-            diskWriteSpeedTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("disk_write_speed").build());
+            diskWriteSpeedTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("disk_writes").build());
             diskWriteSpeedTimeSeries.addAllLabels(labels);
             diskWriteSpeedTimeSeries.addSamples(Types.Sample.newBuilder()
                     .setTimestamp(timestamp)
-                    .setValue(disk.getWritePerSecond())
+                    .setValue(disk.getWrites())
                     .build());
             writeRequest.addTimeseries(diskWriteSpeedTimeSeries.build());
 
             //  磁盘写bytes速度
             Types.TimeSeries.Builder diskWriteBytesSpeedTimeSeries = Types.TimeSeries.newBuilder();
             diskWriteBytesSpeedTimeSeries.addLabels(nameLabel);
-            diskWriteBytesSpeedTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("disk_write_bytes_speed").build());
+            diskWriteBytesSpeedTimeSeries.addLabels(Types.Label.newBuilder().setName(PROMETHEUS_LABEL_NAME).setValue("disk_write_bytes").build());
             diskWriteBytesSpeedTimeSeries.addAllLabels(labels);
             diskWriteBytesSpeedTimeSeries.addSamples(Types.Sample.newBuilder()
                     .setTimestamp(timestamp)
-                    .setValue(disk.getReadBytesPerSecond())
+                    .setValue(disk.getReadBytes())
                     .build());
             writeRequest.addTimeseries(diskWriteBytesSpeedTimeSeries.build());
 

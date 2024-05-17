@@ -69,12 +69,7 @@ public interface JvmmService {
                     res.setDisk(collector.getDisk());
                     break;
                 case disk_io:
-                    asyncNum.incrementAndGet();
-                    collector.getDiskIO().thenAccept(info -> {
-                        res.setDiskIO(info);
-                        asyncNum.decrementAndGet();
-                        consumer.accept(PairKey.of(asyncNum, res));
-                    });
+                    res.setDiskIO(collector.getDiskIO());
                     break;
                 case cpu:
                     res.setCpu(collector.getCPUInfo());

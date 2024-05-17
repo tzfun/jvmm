@@ -100,86 +100,46 @@ public final class OSDriver {
      *
      * @return {@link DiskIOInfo} list future
      */
-    public CompletableFuture<List<DiskIOInfo>> getDiskIOInfo() {
+    public List<DiskIOInfo> getDiskIOInfo() {
         List<HWDiskStore> preHwDisks = si.getHardware().getDiskStores();
-        CompletableFuture<List<DiskIOInfo>> future = new CompletableFuture<>();
-        Map<String, long[]> preDiskInfo = new HashMap<>();
+        List<DiskIOInfo> disks = new ArrayList<>(preHwDisks.size());
         for (HWDiskStore disk : preHwDisks) {
             long reads = disk.getReads();
             long readBytes = disk.getReadBytes();
             long writes = disk.getWrites();
             long writeBytes = disk.getWriteBytes();
 
-            preDiskInfo.put(disk.getName(), new long[]{reads, readBytes, writes, writeBytes});
+            DiskIOInfo info = DiskIOInfo.create()
+                    .setName(disk.getName().replaceAll("[\\\\.]", ""))
+                    .setCurrentQueueLength(disk.getCurrentQueueLength())
+                    .setReads(reads)
+                    .setReadBytes(readBytes)
+                    .setWrites(writes)
+                    .setWriteBytes(writeBytes);
+            disks.add(info);
         }
-        executor.schedule(() -> {
-            try {
-                List<DiskIOInfo> disks = new ArrayList<>(preHwDisks.size());
-                for (HWDiskStore disk : preHwDisks) {
-                    disk.updateAttributes();
-                    long reads = disk.getReads();
-                    long readBytes = disk.getReadBytes();
-                    long writes = disk.getWrites();
-                    long writeBytes = disk.getWriteBytes();
-                    String name = disk.getName();
-
-                    long[] preInfo = preDiskInfo.get(name);
-
-                    DiskIOInfo info = DiskIOInfo.create()
-                            .setName(disk.getName().replaceAll("\\\\|\\.", ""))
-                            .setCurrentQueueLength(disk.getCurrentQueueLength())
-                            .setReadPerSecond(reads - preInfo[0])
-                            .setReadBytesPerSecond(readBytes - preInfo[1])
-                            .setWritePerSecond(writes - preInfo[2])
-                            .setWriteBytesPerSecond(writeBytes - preInfo[3]);
-                    disks.add(info);
-                }
-                future.complete(disks);
-            } catch (Throwable t) {
-                future.completeExceptionally(t);
-            }
-        }, 1, TimeUnit.SECONDS);
-        return future;
+        return disks;
     }
 
     /**
      * 获取指定磁盘的IO信息
      *
      * @param name 磁盘名
-     * @return 计算完成时返回 {@link DiskIOInfo} 信息，如果未找到对应磁盘名返回null
+     * @return {@link DiskIOInfo} 信息，如果未找到对应磁盘名返回null
      */
-    public CompletableFuture<DiskIOInfo> getDiskIOInfo(String name) {
+    public DiskIOInfo getDiskIOInfo(String name) {
         List<HWDiskStore> hwDisks = si.getHardware().getDiskStores();
-        HWDiskStore pre = hwDisks.stream().filter(o -> o.getName().contains(name)).findAny().orElse(null);
-        if (pre == null) {
-            return CompletableFuture.completedFuture(null);
+        HWDiskStore disk = hwDisks.stream().filter(o -> o.getName().contains(name)).findAny().orElse(null);
+        if (disk == null) {
+            return null;
         }
-        CompletableFuture<DiskIOInfo> future = new CompletableFuture<>();
-        executor.schedule(() -> {
-            try {
-                HWDiskStore disk = si.getHardware()
-                        .getDiskStores()
-                        .stream()
-                        .filter(o -> o.getName().contains(name))
-                        .findAny()
-                        .orElse(null);
-                if (disk == null) {
-                    future.complete(null);
-                } else {
-                    DiskIOInfo info = DiskIOInfo.create()
-                            .setName(disk.getName().replaceAll("\\\\|\\.", ""))
-                            .setCurrentQueueLength(disk.getCurrentQueueLength())
-                            .setReadPerSecond(disk.getReads() - pre.getReads())
-                            .setReadBytesPerSecond(disk.getReadBytes() - pre.getReadBytes())
-                            .setWritePerSecond(disk.getWrites() - pre.getWrites())
-                            .setWriteBytesPerSecond(disk.getWriteBytes() - pre.getWriteBytes());
-                    future.complete(info);
-                }
-            } catch (Throwable t) {
-                future.completeExceptionally(t);
-            }
-        }, 1, TimeUnit.SECONDS);
-        return future;
+        return DiskIOInfo.create()
+                .setName(disk.getName().replaceAll("[\\\\.]", ""))
+                .setCurrentQueueLength(disk.getCurrentQueueLength())
+                .setReads(disk.getReads())
+                .setReadBytes(disk.getReadBytes())
+                .setWrites(disk.getWrites())
+                .setWriteBytes(disk.getWriteBytes());
     }
 
     /**

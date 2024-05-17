@@ -14,21 +14,21 @@ public class DiskIOInfo implements JsonParsable {
      */
     private String name;
     /**
-     * 每秒读次数
+     * 读次数
      */
-    private double readPerSecond;
+    private double reads;
     /**
-     * 每秒写次数
+     * 写次数
      */
-    private double writePerSecond;
+    private double writes;
     /**
-     * 读速率 bytes/s
+     * 读大小 bytes/s
      */
-    private double readBytesPerSecond;
+    private double readBytes;
     /**
-     * 写速率 bytes/s
+     * 写大小 bytes/s
      */
-    private double writeBytesPerSecond;
+    private double writeBytes;
     /**
      * 磁盘队列长度
      */
@@ -51,8 +51,40 @@ public class DiskIOInfo implements JsonParsable {
         return this;
     }
 
-    public double getReadPerSecond() {
-        return readPerSecond;
+    public double getReads() {
+        return reads;
+    }
+
+    public DiskIOInfo setReads(double reads) {
+        this.reads = reads;
+        return this;
+    }
+
+    public double getWrites() {
+        return writes;
+    }
+
+    public DiskIOInfo setWrites(double writes) {
+        this.writes = writes;
+        return this;
+    }
+
+    public double getReadBytes() {
+        return readBytes;
+    }
+
+    public DiskIOInfo setReadBytes(double readBytes) {
+        this.readBytes = readBytes;
+        return this;
+    }
+
+    public double getWriteBytes() {
+        return writeBytes;
+    }
+
+    public DiskIOInfo setWriteBytes(double writeBytes) {
+        this.writeBytes = writeBytes;
+        return this;
     }
 
     public long getCurrentQueueLength() {
@@ -63,39 +95,6 @@ public class DiskIOInfo implements JsonParsable {
         this.currentQueueLength = currentQueueLength;
         return this;
     }
-
-    public DiskIOInfo setReadPerSecond(double readPerSecond) {
-        this.readPerSecond = readPerSecond;
-        return this;
-    }
-
-    public double getWritePerSecond() {
-        return writePerSecond;
-    }
-
-    public DiskIOInfo setWritePerSecond(double writePerSecond) {
-        this.writePerSecond = writePerSecond;
-        return this;
-    }
-
-    public double getReadBytesPerSecond() {
-        return readBytesPerSecond;
-    }
-
-    public DiskIOInfo setReadBytesPerSecond(double readBytesPerSecond) {
-        this.readBytesPerSecond = readBytesPerSecond;
-        return this;
-    }
-
-    public double getWriteBytesPerSecond() {
-        return writeBytesPerSecond;
-    }
-
-    public DiskIOInfo setWriteBytesPerSecond(double writeBytesPerSecond) {
-        this.writeBytesPerSecond = writeBytesPerSecond;
-        return this;
-    }
-
 
     @Override
     public String toString() {

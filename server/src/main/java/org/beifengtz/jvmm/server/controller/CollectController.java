@@ -55,8 +55,8 @@ public class CollectController {
 
     @JvmmMapping(RpcType.JVMM_COLLECT_DISK_IO_INFO)
     @HttpRequest("/collect/disk_io")
-    public void getDiskIOInfo(ResponseFuture future) {
-        JvmmFactory.getCollector().getDiskIO().thenAccept(future::apply);
+    public List<DiskIOInfo> getDiskIOInfo() {
+        return JvmmFactory.getCollector().getDiskIO();
     }
 
     @JvmmMapping(RpcType.JVMM_COLLECT_CPU_INFO)

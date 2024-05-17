@@ -21,18 +21,7 @@ import org.beifengtz.jvmm.convey.enums.RpcType;
 import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 import org.beifengtz.jvmm.core.contanstant.CollectionType;
 import org.beifengtz.jvmm.core.contanstant.Switches;
-import org.beifengtz.jvmm.core.entity.info.CPUInfo;
-import org.beifengtz.jvmm.core.entity.info.DiskIOInfo;
-import org.beifengtz.jvmm.core.entity.info.JvmClassLoaderInfo;
-import org.beifengtz.jvmm.core.entity.info.JvmClassLoadingInfo;
-import org.beifengtz.jvmm.core.entity.info.JvmCompilationInfo;
-import org.beifengtz.jvmm.core.entity.info.JvmGCInfo;
-import org.beifengtz.jvmm.core.entity.info.JvmMemoryManagerInfo;
-import org.beifengtz.jvmm.core.entity.info.JvmThreadDetailInfo;
-import org.beifengtz.jvmm.core.entity.info.SysFileInfo;
-import org.beifengtz.jvmm.core.entity.info.SysInfo;
-import org.beifengtz.jvmm.core.entity.info.SysMemInfo;
-import org.beifengtz.jvmm.core.entity.info.ThreadTimedInfo;
+import org.beifengtz.jvmm.core.entity.info.*;
 import org.beifengtz.jvmm.core.entity.result.JpsResult;
 
 import java.io.File;
@@ -300,15 +289,15 @@ public class ServerServiceImpl extends ServerService {
         } else if (type == CollectionType.disk_io) {
             JsonArray array = data.getAsJsonArray();
             TableFormatter table = new TableFormatter();
-            table.setHead("Name", "Read(n/s)", "Write(n/s)", "Read(b/s)", "Write(b/s)", "Queue Len");
+            table.setHead("Name", "Reads", "Writes", "Read(bytes)", "Write(bytes)", "Queue Len");
             for (JsonElement json : array) {
                 DiskIOInfo info = gson.fromJson(json, DiskIOInfo.class);
                 table.addRow(
                         info.getName(),
-                        StringUtil.doubleToString(info.getReadPerSecond(), 0, RoundingMode.FLOOR),
-                        StringUtil.doubleToString(info.getWritePerSecond(), 0, RoundingMode.FLOOR),
-                        StringUtil.doubleToString(info.getReadBytesPerSecond(), 0, RoundingMode.FLOOR),
-                        StringUtil.doubleToString(info.getWriteBytesPerSecond(), 0, RoundingMode.FLOOR),
+                        StringUtil.doubleToString(info.getReads(), 0, RoundingMode.FLOOR),
+                        StringUtil.doubleToString(info.getWrites(), 0, RoundingMode.FLOOR),
+                        StringUtil.doubleToString(info.getReadBytes(), 0, RoundingMode.FLOOR),
+                        StringUtil.doubleToString(info.getWriteBytes(), 0, RoundingMode.FLOOR),
                         String.valueOf(info.getCurrentQueueLength())
                 );
             }

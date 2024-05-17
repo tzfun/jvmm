@@ -117,12 +117,12 @@ class DefaultJvmmCollector implements JvmmCollector {
     }
 
     @Override
-    public CompletableFuture<List<DiskIOInfo>> getDiskIO() {
+    public List<DiskIOInfo> getDiskIO() {
         return OSDriver.get().getDiskIOInfo();
     }
 
     @Override
-    public CompletableFuture<DiskIOInfo> getDiskIO(String name) {
+    public DiskIOInfo getDiskIO(String name) {
         return OSDriver.get().getDiskIOInfo(name);
     }
 
