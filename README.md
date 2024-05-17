@@ -419,7 +419,7 @@ server:
 ]
 ```
 
-jvmm提供了三个Grafana模板Dashboard，分别是：node、jvm、all
+jvmm提供了两个Grafana模板Dashboard，分别是：node、jvm
 
 ###### node
 **node** 模板是与系统相关监控项的集合，可以帮助你更专注物理机或云主机的监控数据
@@ -463,11 +463,6 @@ jvmm提供了三个Grafana模板Dashboard，分别是：node、jvm、all
   "jvm_thread"
 ]
 ```
-
-###### all
-**all** 模板是以上两个模板的汇总，配置所有Prometheus支持的采集任务即可，也就是上面两个模板的任务的并集。
-
-导入方式：导入Dashboard ID [20428](https://grafana.com/grafana/dashboards/20428) 或 导入 [dashboard-all.json](server/grafana/dashboard-all.json)
 
 ## core使用
 
