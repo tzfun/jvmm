@@ -1,14 +1,7 @@
 package org.beifengtz.jvmm.common.util;
 
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.NetworkInterface;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.net.*;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,6 +22,8 @@ public class IPUtil {
     private static final Pattern ipPattern = Pattern.compile("(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})((:\\d+)?)(/?)");
     private static final Pattern hostPattern = Pattern.compile("^(((\\d{1,3}\\.){3}\\d{1,3})|((([\\w\\\\-_]+)(\\.[\\w\\\\-_]+))+)):\\d{1,5}$");
 
+    private static String IP = null;
+
     static {
         Set<String> ipFilter = new HashSet<>();
         ipFilter.add("^10\\.(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|[0-9])"
@@ -48,11 +43,39 @@ public class IPUtil {
     }
 
     /**
+     * 获取出口IP
+     *
+     * @return 有可能会获取失败，失败时返回 {@link #getLocalIP()} 的值
+     */
+    public static String getOutboundIP() {
+        if (IP == null) {
+            IP = getOutboundIP0();
+        }
+        return IP;
+    }
+
+    /**
+     * 获取出口IP
+     *
+     * @return 有可能会获取失败，失败时返回 {@link #getLocalIP()} 的值
+     */
+    private static String getOutboundIP0() {
+        try {
+            try (DatagramSocket socket = new DatagramSocket()) {
+                socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
+                return socket.getLocalAddress().getHostAddress();
+            }
+        } catch (Exception ignored) {
+            return getLocalIP();
+        }
+    }
+
+    /**
      * get IP address, automatically distinguish the operating system.（windows or linux）
      *
      * @return String
      */
-    public static String getLocalIP() {
+    private static String getLocalIP() {
         InetAddress ip = null;
         try {
             if (PlatformUtil.isWindows()) {

@@ -49,7 +49,7 @@ public class TestCollector {
 
     @Test
     public void testIp() {
-        System.out.println(IPUtil.getLocalIP());
+        System.out.println(IPUtil.getOutboundIP());
         System.out.println(System.getProperties().getProperty("user.name"));
     }
 
