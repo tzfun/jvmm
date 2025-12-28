@@ -14,6 +14,7 @@ import java.util.List;
  */
 public class JvmmData implements JsonParsable {
     private String node;
+    private String ip;
     /**
      * 采集时间戳，单位毫秒
      */
@@ -45,6 +46,15 @@ public class JvmmData implements JsonParsable {
 
     public JvmmData setNode(String node) {
         this.node = node;
+        return this;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public JvmmData setIp(String ip) {
+        this.ip = ip;
         return this;
     }
 

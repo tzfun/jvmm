@@ -1,5 +1,6 @@
 package org.beifengtz.jvmm.core;
 
+import org.beifengtz.jvmm.common.util.IPUtil;
 import org.beifengtz.jvmm.core.contanstant.CollectionType;
 import org.beifengtz.jvmm.core.entity.JvmmData;
 import org.beifengtz.jvmm.core.entity.conf.ThreadPoolConf;
@@ -21,7 +22,6 @@ import java.util.concurrent.TimeUnit;
  * @author beifengtz
  */
 public interface JvmmCollector {
-
     /**
      * 获取硬件和操作系统信息
      *
@@ -324,6 +324,7 @@ public interface JvmmCollector {
                                       List<Integer> listenedPorts,
                                       List<ThreadPoolConf> listenedThreadPools) {
         JvmmData res = new JvmmData().setCollectTimestamp(System.currentTimeMillis());
+        res.setIp(IPUtil.getOutboundIP());
         for (CollectionType type : options) {
             if (type == null) {
                 continue;

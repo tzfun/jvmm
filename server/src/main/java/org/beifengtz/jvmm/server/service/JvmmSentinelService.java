@@ -16,6 +16,7 @@ import org.beifengtz.jvmm.server.exporter.PrometheusExporter;
 import org.beifengtz.jvmm.server.prometheus.PrometheusUtil;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -134,11 +135,15 @@ public class JvmmSentinelService implements JvmmService {
 
         public SentinelTask(SentinelConf conf) {
             for (SentinelSubscriberConf subscriber : conf.getSubscribers()) {
-                if (subscriber.getType() == SubscriberType.http && httpExporter == null) {
-                    httpExporter = new HttpExporter();
+                if (subscriber.getType() == SubscriberType.http) {
+                    if (httpExporter == null) {
+                        httpExporter = new HttpExporter();
+                    }
                     hasHttpSubscriber = true;
-                } else if (subscriber.getType() == SubscriberType.prometheus && prometheusExporter == null) {
-                    prometheusExporter = new PrometheusExporter();
+                } else if (subscriber.getType() == SubscriberType.prometheus) {
+                    if (prometheusExporter == null) {
+                        prometheusExporter = new PrometheusExporter();
+                    }
                     hasPrometheusSubscriber = true;
                 }
             }
