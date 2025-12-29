@@ -1,19 +1,13 @@
-plugins {
-    id 'java'
-    id 'application'
-}
-ext.projectName = 'jvmm-server'
-archivesBaseName = "jvmm-server"
-
 group = rootProject.group
 version = rootProject.version
 
 dependencies {
-    compile project(':core')
-    compile project(':convey')
+    implementation project(':common')
+    implementation project(':core')
+    implementation project(':convey')
     compile "org.yaml:snakeyaml:${snakeyamlVersion}"
     if(env == 'dev') {
-        compile project(':logger')
+        implementation project(':logger')
     }
     compile "com.google.protobuf:protobuf-java:${protobufVersion}"
     compile "org.xerial.snappy:snappy-java:1.1.10.3"
@@ -23,7 +17,7 @@ jar {
     manifestContentCharset 'utf-8'
     metadataCharset 'utf-8'
 
-    archiveName("${projectName}.jar")
+    archiveFileName = "jvmm-${project.name}.jar"
 
     manifest {
         attributes 'Main-Class': 'org.beifengtz.jvmm.server.ServerApplication'
@@ -53,7 +47,7 @@ javadoc {
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-    archiveName("${projectName}-sources.jar")
+    archiveFileName = "jvmm-${project.name}-sources.jar"
     getArchiveClassifier().set('sources')
     from sourceSets.main.allSource
 }
@@ -69,53 +63,4 @@ tasks.jar.configure {
 
 artifacts {
     archives sourcesJar, javadocJar
-}
-
-if(env == 'publish') {
-    uploadArchives {
-        repositories {
-            mavenDeployer {
-                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-                repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                    authentication(userName: sonatypeUsername, password: sonatypePassword)
-                }
-
-                snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
-                    authentication(userName: sonatypeUsername, password: sonatypePassword)
-                }
-
-                pom.project {
-                    name projectName
-                    packaging 'jar'
-                    description 'Provides access to operating system, process, thread and other information during Java runtime.'
-                    url 'https://github.com/tzfun/jvmm'
-
-                    scm {
-                        url = 'https://github.com/tzfun/jvmm'
-                        connection = 'scm:git:git://github.com/tzfun/jvmm.git'
-                        developerConnection = 'scm:git:ssh://git@github.com/tzfun/jvmm.git'
-                    }
-
-                    licenses {
-                        license {
-                            name 'The Apache License, Version 2.0'
-                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                        }
-                    }
-
-                    developers {
-                        developer {
-                            name 'beifengtz'
-                            email 'beifengtz@163.com'
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    signing {
-        sign configurations.archives
-    }
 }

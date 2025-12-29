@@ -1,3 +1,4 @@
+//  新版必须和namespace相同
 group = 'io.github.tzfun.jvmm'
 version = '2.5.0'
 
@@ -15,8 +16,7 @@ ext {
 
 subprojects {
     apply plugin: 'java'
-    apply plugin: 'maven'
-    apply plugin: 'signing'
+    apply plugin: 'application'
 
     [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
 
@@ -50,3 +50,73 @@ if (JavaVersion.current().isJava8Compatible()) {
         }
     }
 }
+
+def libProjects() {
+    return subprojects.findAll { !it.name.matches("demo|client|agent") }
+}
+
+configure(libProjects()) {
+    apply plugin: 'maven-publish'
+    apply plugin: 'signing'
+
+    def projectName = it.name
+
+    if (env == 'publish') {
+
+        publishing {
+            publications {
+                mavenJava(MavenPublication) {
+                    from components.java
+
+                    artifactId = "jvmm-${projectName}"
+
+                    pom {
+                        name = projectName
+                        packaging = 'jar'
+                        description = 'Provides access to operating system, process, thread and other information during Java runtime.'
+                        url = 'https://github.com/tzfun/jvmm'
+
+                        scm {
+                            url = 'https://github.com/tzfun/jvmm'
+                            connection = 'scm:git:git://github.com/tzfun/jvmm.git'
+                            developerConnection = 'scm:git:ssh://git@github.com/tzfun/jvmm.git'
+                        }
+
+                        licenses {
+                            license {
+                                name = 'The Apache License, Version 2.0'
+                                url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                name = 'beifengtz'
+                                email = 'beifengtz@163.com'
+                            }
+                        }
+                    }
+                }
+            }
+
+            repositories {
+                maven {
+                    name = "sonatypeCentralStagingApi"
+
+                    url = "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
+
+                    credentials {
+                        username = mavenCentralUsername
+                        password = mavenCentralPassword
+                    }
+                }
+            }
+        }
+
+
+        signing {
+            sign configurations.archives
+        }
+    }
+}
+
