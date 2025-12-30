@@ -6,7 +6,7 @@ dependencies {
 jar {
     manifestContentCharset 'utf-8'
     metadataCharset 'utf-8'
-    def jarName = "jvmm-agent.jar"
+    def jarName = "jvmm-${project.name}.jar"
 
     manifest {
         attributes(
@@ -17,7 +17,7 @@ jar {
                 "Boot-Class-Path": "${jarName}"
         )
     }
-    archiveName(jarName)
+    archiveFileName = jarName
 
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }

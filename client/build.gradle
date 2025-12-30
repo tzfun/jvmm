@@ -3,9 +3,9 @@ repositories {
 }
 
 dependencies {
-    compile(project(':convey'))
-    compile(project(':core'))
-    compile(project(':logger'))
+    implementation(project(':convey'))
+    implementation(project(':core'))
+    implementation(project(':logger'))
 }
 
 def resourcesPath = 'src/main/resources'
@@ -62,7 +62,7 @@ jar {
     metadataCharset 'utf-8'
 
     def jarName = "jvmm.jar"
-    archiveName(jarName)
+    archiveFileName = jarName
     manifest {
         attributes 'Main-Class': 'org.beifengtz.jvmm.client.ClientApplication'
     }
