@@ -50,3 +50,4 @@ web/src/main/resources/application*.yml
 /log/
 /.jvmm/
 /logs/
+/core/test_sample.html

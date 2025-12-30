@@ -5,9 +5,12 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
     compileOnly(project(':agent'))
+    implementation(project(':core'))
+    implementation(project(':common'))
     implementation(project(':aop'))
     implementation(project(':server'))
     implementation(project(':logger'))
+    implementation(project(':convey'))
 }
 
 test {

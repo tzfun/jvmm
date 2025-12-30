@@ -3,6 +3,7 @@ repositories {
 }
 
 dependencies {
+    implementation(project(':common'))
     implementation(project(':convey'))
     implementation(project(':core'))
     implementation(project(':logger'))
