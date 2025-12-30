@@ -14,26 +14,3 @@ jar {
 
     archiveFileName = "jvmm-${project.name}.jar"
 }
-
-javadoc {
-    options.addStringOption("charset", "UTF-8")
-}
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-    archiveFileName = "jvmm-${project.name}-sources.jar"
-    getArchiveClassifier().set('sources')
-    from sourceSets.main.allSource
-}
-
-task javadocJar(type:Jar) {
-    from javadoc
-    getArchiveClassifier().set('javadoc')
-}
-
-tasks.jar.configure {
-    dependsOn sourcesJar
-}
-
-artifacts {
-    archives sourcesJar, javadocJar
-}

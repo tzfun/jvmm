@@ -15,7 +15,7 @@ ext {
 }
 
 subprojects {
-    apply plugin: 'java'
+    apply plugin: 'java-library'
     apply plugin: 'application'
 
     [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
@@ -55,20 +55,56 @@ def libProjects() {
     return subprojects.findAll { !it.name.matches("demo|client|agent") }
 }
 
+
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+
 configure(libProjects()) {
     apply plugin: 'maven-publish'
     apply plugin: 'signing'
 
-    def projectName = it.name
+    def moduleName = it.name
+    def projectName = "jvmm-${it.name}"
 
     if (env == 'publish') {
+
+//        java {
+//            withSourcesJar()
+//            withJavadocJar()
+//        }
+
+        task sourcesJar(type: Jar) {
+            from sourceSets.main.allSource
+            archiveClassifier = 'sources'
+            dependsOn classes
+        }
+
+        task javadocJar(type: Jar) {
+            archiveClassifier = 'javadoc'
+            from javadoc.destinationDir
+            dependsOn javadoc
+        }
+
+        tasks.jar.configure {
+            dependsOn sourcesJar
+        }
+
+        tasks.withType(Javadoc).configureEach {
+            options.version = true
+            options.author = true
+            options.encoding = "UTF-8"
+            options.charSet = "UTF-8"
+        }
 
         publishing {
             publications {
                 mavenJava(MavenPublication) {
                     from components.java
 
-                    artifactId = "jvmm-${projectName}"
+                    artifact sourcesJar
+                    artifact javadocJar
+
+                    artifactId = projectName
 
                     pom {
                         name = projectName
@@ -100,9 +136,10 @@ configure(libProjects()) {
             }
 
             repositories {
+                //  API调试： https://ossrh-staging-api.central.sonatype.com/swagger-ui/
                 maven {
-                    name = "sonatypeCentralStagingApi"
-
+                    name = "ossrh-staging-api"
+//                    name = "sonatypeCentralStagingApi"
                     url = "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
 
                     credentials {
@@ -110,12 +147,86 @@ configure(libProjects()) {
                         password = mavenCentralPassword
                     }
                 }
+                //  发布到本地
+//                maven {
+//                    name = "localBundle"
+//                    url = uri("${buildDir}/central-repo")
+//                }
             }
         }
 
-
         signing {
-            sign configurations.archives
+            sign publishing.publications.mavenJava
+        }
+
+        tasks.register('generateCentralBundle') {
+            group = "publishing"
+            description = "Generate Central Portal bundle.zip"
+
+            doLast {
+                def repoDir = file("${buildDir}/central-repo")
+                def bundleDir = file("${buildDir}/central-bundle")
+
+                bundleDir.deleteDir()
+                bundleDir.mkdirs()
+
+                copy {
+                    from repoDir
+                    into bundleDir
+                    exclude "**/maven-metadata.xml*"
+                    exclude "**/*.sha256"
+                    exclude "**/*.sha512"
+                }
+
+                ant.zip(destfile: "${buildDir}/central-bundle.zip") {
+                    fileset(dir: bundleDir)
+                }
+
+                println "✔ Central bundle.zip ready"
+            }
+        }
+
+        tasks.register('publishCentralBundle') {
+            group = "publishing"
+            description = "Upload bundle.zip to Central Portal and auto publish"
+
+            dependsOn 'generateCentralBundle'
+
+            doLast {
+                def auth = "${mavenCentralUsername}:${mavenCentralPassword}".bytes.encodeBase64().toString()
+                def namespace = "io.github.tzfun"
+                def url = "https://ossrh-staging-api.central.sonatype.com/manual/upload/defaultRepository/${namespace}?publishing_type=automatic"
+                println("request to ${url}")
+                def cmd = [
+                        "curl",
+                        "-sS",
+                        "--http1.1",
+                        "-X", "POST",
+                        "-H", "Authorization: Bearer ${auth}",
+                        url
+                ]
+
+                println "▶ Uploading bundle to Central Portal..."
+                def process = cmd.execute()
+                process.in.eachLine { println it }
+                process.err.eachLine { System.err.println(it) }
+
+                if (process.waitFor() != 0) {
+                    throw new GradleException("Central Portal upload failed")
+                }
+
+                println "✔ Central Portal upload finished"
+            }
+        }
+
+        tasks.register('releaseToMavenCentral') {
+            group = "publishing"
+            description = "Build, publish and auto release to Maven Central"
+
+            dependsOn(
+                    ":${moduleName}:publish",
+                    "publishCentralBundle"
+            )
         }
     }
 }
