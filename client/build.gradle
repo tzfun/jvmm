@@ -25,7 +25,13 @@ tasks.clean.configure {
 }
 
 tasks.compileJava.configure {
-    dependsOn project(':agent').tasks.jar, project(':server').tasks.jar, clearResourcesPath
+    dependsOn project(':agent').tasks.jar,
+            project(':common').tasks.jar,
+            project(':core').tasks.jar,
+            project(':convey').tasks.jar,
+            project(':logger').tasks.jar,
+            project(':server').tasks.jar,
+            clearResourcesPath
 
     doLast {
 
@@ -69,7 +75,7 @@ jar {
     }
 
     from {
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
 
     doLast {

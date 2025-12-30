@@ -26,7 +26,7 @@ jar {
     //  仅dev打包时使用，发布时去掉
     if (env == 'dev') {
         from {
-            configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+            configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
         }
     }
 
