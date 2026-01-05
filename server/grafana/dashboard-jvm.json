@@ -1640,7 +1640,7 @@
             "uid": "${DS_PROMETHEUS-JVMM-JVM}"
           },
           "editorMode": "builder",
-          "expr": "jvm_mem_nonheap_committed",
+          "expr": "jvm_mem_nonheap_committed{node=\"$node_query\"}",
           "hide": false,
           "instant": false,
           "legendFormat": "non-heap committed",
