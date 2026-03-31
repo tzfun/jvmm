@@ -426,7 +426,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "p_up_time",
+          "expr": "p_up_time{node=\"$node_query\"}",
           "format": "table",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
