@@ -2,7 +2,6 @@ group = rootProject.group
 version = rootProject.version
 
 dependencies {
-    compile "org.ow2.asm:asm:${asmVersion}"
     compile "org.ow2.asm:asm-commons:${asmVersion}"
 }
 
