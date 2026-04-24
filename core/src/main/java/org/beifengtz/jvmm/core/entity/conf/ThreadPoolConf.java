@@ -1,7 +1,7 @@
 package org.beifengtz.jvmm.core.entity.conf;
 
 /**
- * description TODO
+ * 
  * date 16:27 2023/6/22
  *
  * @author beifengtz

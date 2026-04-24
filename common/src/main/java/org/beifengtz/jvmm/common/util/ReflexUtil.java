@@ -66,18 +66,18 @@ public class ReflexUtil {
                                     try {
                                         classes.add(Thread.currentThread().getContextClassLoader().loadClass(packageName + '.' + className));
                                     } catch (ClassNotFoundException e) {
-                                        e.printStackTrace();
+                                        e.printStackTrace(System.err);
                                     }
                                 }
                             }
                         }
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        e.printStackTrace(System.err);
                     }
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         }
 
         return classes;
@@ -110,7 +110,7 @@ public class ReflexUtil {
                 try {
                     classes.add(Thread.currentThread().getContextClassLoader().loadClass(packageName + '.' + className));
                 } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
+                    e.printStackTrace(System.err);
                 }
             }
         }

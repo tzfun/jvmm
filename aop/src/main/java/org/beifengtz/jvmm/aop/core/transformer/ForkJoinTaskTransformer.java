@@ -15,13 +15,13 @@ public class ForkJoinTaskTransformer implements ClassFileTransformer {
 
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
-                            ProtectionDomain protectionDomain, byte[] classfileBuffer) {
+                            ProtectionDomain protectionDomain, byte[] classFileBuffer) {
         className = className.replace("/", ".");
         if (className.equals(FORK_JOIN_TASK_CLASS_NAME)) {
             try {
-                return ForkJoinTaskEnhancer.enhance(classfileBuffer);
+                return ForkJoinTaskEnhancer.enhance(classFileBuffer);
             } catch (Throwable e) {
-                e.printStackTrace();
+                e.printStackTrace(System.err);
             }
         }
         return null;

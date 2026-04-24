@@ -18,26 +18,23 @@ public class ConsumerWrapper<T> implements Consumer<T> {
 
     private final Consumer<T> consumer;
     private final Attributes attributes;
-    private final long parentThreadId;
 
     public ConsumerWrapper(Consumer<T> consumer) {
         if (consumer == null) {
             throw new NullPointerException("Consumer can not be null");
         }
         this.consumer = consumer;
-        this.parentThreadId = Thread.currentThread().getId();
         this.attributes = ThreadLocalStore.cloneAttributes();
     }
 
     @Override
     public void accept(T t) {
+        Attributes previous = ThreadLocalStore.getAttributes();
         ThreadLocalStore.setAttributes(attributes);
         try {
             consumer.accept(t);
         } finally {
-            if (parentThreadId != Thread.currentThread().getId()) {
-                ThreadLocalStore.setAttributes(null);
-            }
+            ThreadLocalStore.setAttributes(previous);
         }
     }
 }

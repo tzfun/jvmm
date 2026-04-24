@@ -20,26 +20,23 @@ public class SupplierWrapper<V> implements Supplier<V> {
 
     private final Supplier<V> supplier;
     private final Attributes attributes;
-    private final long parentThreadId;
 
     public SupplierWrapper(Supplier<V> supplier) {
         if (supplier == null) {
             throw new NullPointerException("Supplier can not be null");
         }
         this.supplier = supplier;
-        this.parentThreadId = Thread.currentThread().getId();
         this.attributes = ThreadLocalStore.cloneAttributes();
     }
 
     @Override
     public V get() {
+        Attributes previous = ThreadLocalStore.getAttributes();
         ThreadLocalStore.setAttributes(attributes);
         try {
             return supplier.get();
         } finally {
-            if (parentThreadId != Thread.currentThread().getId()) {
-                ThreadLocalStore.setAttributes(null);
-            }
+            ThreadLocalStore.setAttributes(previous);
         }
     }
 }

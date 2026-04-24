@@ -17,13 +17,13 @@ public class ExecutorTransformer implements ClassFileTransformer {
 
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
-                            ProtectionDomain protectionDomain, byte[] classfileBuffer) {
+                            ProtectionDomain protectionDomain, byte[] classFileBuffer) {
         className = className.replace("/", ".");
         if (THREAD_POOL_EXECUTOR_CLASS_NAME.equals(className) || SCHEDULED_THREAD_POOL_EXECUTOR_CLASS_NAME.equals(className)) {
             try {
-                return ExecutorEnhancer.enhance(className, classfileBuffer);
+                return ExecutorEnhancer.enhance(className, classFileBuffer);
             } catch (Throwable e) {
-                e.printStackTrace();
+                e.printStackTrace(System.err);
             }
         }
         return null;

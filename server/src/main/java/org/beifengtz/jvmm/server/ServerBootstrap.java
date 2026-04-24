@@ -91,7 +91,7 @@ public class ServerBootstrap {
         try {
             ServerContext.loadLoggerLib();
         } catch (Throwable t) {
-            t.printStackTrace();
+            t.printStackTrace(System.err);
         }
 
         bootstrap = new ServerBootstrap(inst);

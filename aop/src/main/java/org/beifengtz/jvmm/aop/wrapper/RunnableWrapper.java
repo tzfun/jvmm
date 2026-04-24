@@ -16,26 +16,23 @@ public class RunnableWrapper implements Runnable {
 
     private final Runnable runnable;
     private final Attributes attributes;
-    private final long parentThreadId;
 
     protected RunnableWrapper(Runnable runnable) {
         if (runnable == null) {
             throw new NullPointerException("Runnable can not be null");
         }
         this.runnable = runnable;
-        this.parentThreadId = Thread.currentThread().getId();
         this.attributes = ThreadLocalStore.cloneAttributes();
     }
 
     @Override
     public void run() {
+        Attributes previous = ThreadLocalStore.getAttributes();
         ThreadLocalStore.setAttributes(attributes);
         try {
             runnable.run();
         } finally {
-            if (parentThreadId != Thread.currentThread().getId()) {
-                ThreadLocalStore.setAttributes(null);
-            }
+            ThreadLocalStore.setAttributes(previous);
         }
     }
 }

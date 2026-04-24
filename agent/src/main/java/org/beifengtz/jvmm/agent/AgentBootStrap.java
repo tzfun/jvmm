@@ -235,7 +235,7 @@ public class AgentBootStrap {
                 return springLaunchClassLoader;
             }
         } catch (Throwable e) {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         }
         return null;
     }

@@ -170,7 +170,7 @@ public class FileUtil {
 
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
             if (file != null && file.exists()) {
                 file.delete();
             }

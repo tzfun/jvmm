@@ -18,26 +18,23 @@ public class CallableWrapper<V> implements Callable<V> {
 
     private final Callable<V> callable;
     private final Attributes attributes;
-    private final long parentThreadId;
 
     public CallableWrapper(Callable<V> callable) {
         if (callable == null) {
             throw new NullPointerException("Callable can not be null");
         }
         this.callable = callable;
-        this.parentThreadId = Thread.currentThread().getId();
         this.attributes = ThreadLocalStore.cloneAttributes();
     }
 
     @Override
     public V call() throws Exception {
+        Attributes previous = ThreadLocalStore.getAttributes();
         ThreadLocalStore.setAttributes(attributes);
         try {
             return callable.call();
         } finally {
-            if (parentThreadId != Thread.currentThread().getId()) {
-                ThreadLocalStore.setAttributes(null);
-            }
+            ThreadLocalStore.setAttributes(previous);
         }
     }
 }

@@ -20,7 +20,7 @@ public class AgentProxyPrinter implements Printer {
             bootClazz.getMethod("logger", Map.class).invoke(null, ((LoggerEvent) content).toMap());
         } catch (Throwable e) {
             System.err.println("Invoke agent boot method(#logger) failed!");
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         }
     }
 

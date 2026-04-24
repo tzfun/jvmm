@@ -8,7 +8,6 @@ import org.beifengtz.jvmm.aop.core.transformer.MethodTransformer;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.lang.instrument.Instrumentation;
 import java.net.JarURLConnection;
 import java.net.URL;
@@ -41,7 +40,7 @@ public class JvmmAOPInitializer {
      * @throws Exception 初始化失败时抛出
      */
     public static synchronized void initAspect(String packagePrefix, Instrumentation instrumentation) throws Exception {
-        Set<Class<?>> classes = scanAnnotation(packagePrefix, AspectJoin.class);
+        Set<Class<?>> classes = scanAspectJoinAnnotation(packagePrefix);
 
         for (Class<?> clazz : classes) {
             String className = clazz.getName();
@@ -118,18 +117,18 @@ public class JvmmAOPInitializer {
                                     try {
                                         classes.add(Thread.currentThread().getContextClassLoader().loadClass(packageName + '.' + className));
                                     } catch (ClassNotFoundException e) {
-                                        e.printStackTrace();
+                                        e.printStackTrace(System.err);
                                     }
                                 }
                             }
                         }
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        e.printStackTrace(System.err);
                     }
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         }
 
         return classes;
@@ -159,7 +158,7 @@ public class JvmmAOPInitializer {
                 try {
                     classes.add(Thread.currentThread().getContextClassLoader().loadClass(packageName + '.' + className));
                 } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
+                    e.printStackTrace(System.err);
                 }
             }
         }
@@ -169,15 +168,14 @@ public class JvmmAOPInitializer {
      * 扫描某个包下注有某个注解的类
      *
      * @param pack       包路径：例如 org.beifengtz.jvmm
-     * @param annotation 被扫描的注解类
      * @return {@link Class}集合
      */
-    private static Set<Class<?>> scanAnnotation(String pack, Class<? extends Annotation> annotation) {
+    private static Set<Class<?>> scanAspectJoinAnnotation(String pack) {
         Set<Class<?>> classes = getClasses(pack);
 
         Set<Class<?>> result = new HashSet<>();
         for (Class<?> clazz : classes) {
-            if (clazz.isAnnotationPresent(annotation)) {
+            if (clazz.isAnnotationPresent(AspectJoin.class)) {
                 result.add(clazz);
             }
         }

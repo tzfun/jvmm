@@ -48,7 +48,7 @@ public class FilePrinter implements Printer {
                 file.renameTo(newFile);
             }
         } catch (Throwable t) {
-            t.printStackTrace();
+            t.printStackTrace(System.err);
         }
     }
 

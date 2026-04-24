@@ -63,7 +63,7 @@ public class JvmmAgentLogger {
         if (isTraceEnabled()) {
             System.out.format(TRACE_PATTERN, msg);
             if (t != null) {
-                t.printStackTrace();
+                t.printStackTrace(System.err);
             }
         }
     }
@@ -103,7 +103,7 @@ public class JvmmAgentLogger {
         if (isDebugEnabled()) {
             System.out.format(DEBUG_PATTERN, msg);
             if (t != null) {
-                t.printStackTrace();
+                t.printStackTrace(System.err);
             }
         }
     }
@@ -148,7 +148,7 @@ public class JvmmAgentLogger {
         if (isInfoEnabled()) {
             System.out.format(INFO_PATTERN, msg);
             if (t != null) {
-                t.printStackTrace();
+                t.printStackTrace(System.err);
             }
         }
     }
@@ -228,7 +228,7 @@ public class JvmmAgentLogger {
         if (isErrorEnabled()) {
             System.out.format(ERROR_PATTERN, msg);
             if (t != null) {
-                t.printStackTrace();
+                t.printStackTrace(System.err);
             }
         }
     }

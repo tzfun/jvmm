@@ -71,7 +71,7 @@ public class ApiDemo {
             //  等待时间建议长于采样时间
             future.get(12, TimeUnit.SECONDS);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         }
     }
 }

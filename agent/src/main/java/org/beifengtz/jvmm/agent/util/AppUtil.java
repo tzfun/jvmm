@@ -22,7 +22,7 @@ public class AppUtil {
             System.setProperty("jvmm.data.path", DATA_PATH);
         } catch (Exception e) {
             System.err.println("Init application failed. " + e.getMessage());
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         }
     }
 

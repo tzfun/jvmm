@@ -70,7 +70,7 @@ public class AsyncProfiler {
                     Files.copy(stream, file.toPath());
                     libPath = file.getAbsolutePath();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    e.printStackTrace(System.err);
                 }
             }
         }
@@ -186,7 +186,7 @@ public class AsyncProfiler {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    e.printStackTrace(System.err);
                 }
             }
         }).start();

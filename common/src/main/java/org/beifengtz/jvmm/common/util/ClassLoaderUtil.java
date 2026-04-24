@@ -32,7 +32,7 @@ public class ClassLoaderUtil {
                             "\t3. --add-opens java.management/sun.management=ALL-UNNAMED\n" +
                             "See https://github.com/tzfun/jvmm#%E5%90%AF%E5%8A%A8jvmm%E6%97%B6%E6%8A%A5%E9%94%99-javalangillegalargumentexception-can-not-found-java-program-jps for more information.");
                 }
-                e.printStackTrace();
+                e.printStackTrace(System.err);
                 throw e;
             }
         }

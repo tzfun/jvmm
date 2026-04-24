@@ -54,13 +54,13 @@ public class MethodTransformer  implements ClassFileTransformer {
 
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
-                            byte[] classfileBuffer) {
-        className = className.replaceAll("/", ".");
+                            byte[] classFileBuffer) {
+        className = className.replace("/", ".");
         if (needEnhance(className)) {
             try {
-                return Enhancer.enhanceMethod(classfileBuffer, className, methodListener, methodRegex, methodIgnoreRegex);
+                return Enhancer.enhanceMethod(classFileBuffer, className, methodListener, methodRegex, methodIgnoreRegex);
             } catch (Throwable e) {
-                e.printStackTrace();
+                e.printStackTrace(System.err);
             }
         }
         return null;

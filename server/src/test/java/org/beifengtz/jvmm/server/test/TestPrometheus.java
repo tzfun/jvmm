@@ -39,7 +39,7 @@ public class TestPrometheus {
             if (throwable == null) {
                 System.out.println("Response: " + new String(bytes, StandardCharsets.UTF_8));
             } else {
-                throwable.printStackTrace();
+                throwable.printStackTrace(System.err);
             }
             cdl.countDown();
         }));

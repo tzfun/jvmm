@@ -19,26 +19,23 @@ import java.util.function.Function;
 public class FunctionWrapper<T, R> implements Function<T, R> {
     private final Function<T, R> function;
     private final Attributes attributes;
-    private final long parentThreadId;
 
     public FunctionWrapper(Function<T, R> function) {
         if (function == null) {
             throw new NullPointerException("Function can not be null");
         }
         this.function = function;
-        this.parentThreadId = Thread.currentThread().getId();
         this.attributes = ThreadLocalStore.cloneAttributes();
     }
 
     @Override
     public R apply(T t) {
+        Attributes previous = ThreadLocalStore.getAttributes();
         ThreadLocalStore.setAttributes(attributes);
         try {
             return function.apply(t);
         } finally {
-            if (parentThreadId != Thread.currentThread().getId()) {
-                ThreadLocalStore.setAttributes(null);
-            }
+            ThreadLocalStore.setAttributes(previous);
         }
     }
 }

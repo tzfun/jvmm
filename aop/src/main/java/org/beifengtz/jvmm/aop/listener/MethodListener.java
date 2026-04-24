@@ -42,7 +42,7 @@ public abstract class MethodListener implements Comparable<MethodListener> {
             try {
                 listener.before(info);
             } catch (Throwable e) {
-                e.printStackTrace();
+                e.printStackTrace(System.err);
             }
         }
     }
@@ -59,7 +59,7 @@ public abstract class MethodListener implements Comparable<MethodListener> {
             try {
                 listener.afterReturning(info, returnValue);
             } catch (Throwable e) {
-                e.printStackTrace();
+                e.printStackTrace(System.err);
             }
         }
     }
@@ -76,7 +76,7 @@ public abstract class MethodListener implements Comparable<MethodListener> {
             try {
                 listener.afterThrowing(info, throwable);
             } catch (Throwable e) {
-                e.printStackTrace();
+                e.printStackTrace(System.err);
             }
         }
     }
@@ -94,7 +94,7 @@ public abstract class MethodListener implements Comparable<MethodListener> {
             try {
                 listener.after(info, returnVal, throwable);
             } catch (Throwable e) {
-                e.printStackTrace();
+                e.printStackTrace(System.err);
             }
         }
     }

@@ -5,9 +5,7 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -26,6 +24,48 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
      * 每一个被增强的方法，在处理完 before 之后就已经拿到了上下文，存入栈中，后续的切面函数可以从栈中获取
      */
     private static final ThreadLocal<Deque<MethodAttach>> threadMethodAttachStack = ThreadLocal.withInitial(LinkedList::new);
+
+    /**
+     * 重置所有增强状态，清除所有已注册的 listener 和增强记录。
+     * 通常在卸载 agent 或需要重新增强时调用。
+     * <p>
+     * 注意：调用此方法后，已经注入到字节码中的 adviceId 将找不到对应的 listener，
+     * 对应的增强方法会打印警告并跳过切面逻辑，不会影响业务方法的正常执行。
+     * 如果需要彻底清除增强效果，应配合 {@link java.lang.instrument.Instrumentation#retransformClasses} 还原字节码。
+     */
+    public static void reset() {
+        LISTENER_MAP.clear();
+        ENHANCED_METHOD.clear();
+        LISTENER_ID_GENERATOR.set(0);
+    }
+
+    /**
+     * 移除指定的 listener，同时清理其关联的增强记录。
+     *
+     * @param listener 要移除的 {@link MethodListener}
+     * @return 被移除的 adviceId 列表，可用于日志追踪
+     */
+    public static List<Integer> removeListener(MethodListener listener) {
+        if (listener == null) {
+            return new ArrayList<>();
+        }
+
+        //  清理 LISTENER_MAP 中该 listener 对应的所有 adviceId
+        List<Integer> removedIds = new ArrayList<>();
+        Iterator<Map.Entry<Integer, MethodListener>> it = LISTENER_MAP.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<Integer, MethodListener> entry = it.next();
+            if (entry.getValue() == listener) {
+                removedIds.add(entry.getKey());
+                it.remove();
+            }
+        }
+
+        //  清理 ENHANCED_METHOD 中该 listener 对应的记录
+        ENHANCED_METHOD.entrySet().removeIf(entry -> entry.getValue() == listener);
+
+        return removedIds;
+    }
 
     public static void methodOnBefore(int adviceId, ClassLoader classLoader, String className, String methodName,
                                       String methodDesc, Object target, Object[] args) {
@@ -101,7 +141,7 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
             try {
                 adviceListener.before(info);
             } catch (Throwable t) {
-                t.printStackTrace();
+                t.printStackTrace(System.err);
             }
         }
     }
@@ -111,7 +151,7 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
             try {
                 adviceListener.afterReturning(info, returnVal);
             } catch (Throwable t) {
-                t.printStackTrace();
+                t.printStackTrace(System.err);
             }
         }
     }
@@ -121,7 +161,7 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
             try {
                 adviceListener.afterThrowing(info, throwable);
             } catch (Throwable t) {
-                t.printStackTrace();
+                t.printStackTrace(System.err);
             }
         }
     }
@@ -131,7 +171,7 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
             try {
                 adviceListener.after(info, returnVal, throwable);
             } catch (Throwable t) {
-                t.printStackTrace();
+                t.printStackTrace(System.err);
             }
         }
     }
