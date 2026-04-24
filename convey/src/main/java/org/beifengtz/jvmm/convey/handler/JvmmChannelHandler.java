@@ -206,7 +206,7 @@ public abstract class JvmmChannelHandler extends SimpleChannelInboundHandler<Jvm
             Class<?> controller = method.getDeclaringClass();
             Object instance = controllerInstance.computeIfAbsent(controller, o -> {
                 try {
-                    return controller.newInstance();
+                    return controller.getDeclaredConstructor().newInstance();
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Enumeration;
@@ -98,7 +99,7 @@ public class FileUtil {
             suffix = " TB";
             size = (double) bytes / 1099511627776L;
         }
-        BigDecimal bigDecimal = new BigDecimal(size).setScale(scale, BigDecimal.ROUND_HALF_UP);
+        BigDecimal bigDecimal = new BigDecimal(size).setScale(scale, RoundingMode.HALF_UP);
         if (scale == 0) {
             return bigDecimal.longValue() + suffix;
         } else {

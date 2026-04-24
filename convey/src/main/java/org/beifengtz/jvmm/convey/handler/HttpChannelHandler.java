@@ -195,7 +195,7 @@ public abstract class HttpChannelHandler extends SimpleChannelInboundHandler<Ful
             Class<?> controller = method.getDeclaringClass();
             Object instance = controllerInstance.computeIfAbsent(controller, o -> {
                 try {
-                    return controller.newInstance();
+                    return controller.getDeclaredConstructor() .newInstance();
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
