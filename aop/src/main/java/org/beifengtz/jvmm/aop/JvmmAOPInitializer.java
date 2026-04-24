@@ -23,7 +23,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 /**
- * description: TODO
+ * 
  * date: 15:35 2023/6/30
  *
  * @author beifengtz
@@ -49,7 +49,7 @@ public class JvmmAOPInitializer {
             AspectJoin aj = clazz.getAnnotation(AspectJoin.class);
             Object o = instanceMap.get(className);
             if (o == null) {
-                instanceMap.put(className, o = clazz.newInstance());
+                instanceMap.put(className, o = clazz.getDeclaredConstructor().newInstance());
             }
 
             new MethodTransformer(

@@ -1,7 +1,7 @@
 package org.beifengtz.jvmm.log.printer;
 
 /**
- * description: TODO
+ * 
  * date 10:26 2023/2/3
  * @author beifengtz
  */

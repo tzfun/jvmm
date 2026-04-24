@@ -1,7 +1,7 @@
 package org.beifengtz.jvmm.common.exception;
 
 /**
- * Description: TODO
+ * 
  *
  * Created in 14:22 2022/2/25
  *

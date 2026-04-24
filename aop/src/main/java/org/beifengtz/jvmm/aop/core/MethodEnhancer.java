@@ -12,7 +12,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * description: TODO
  * date: 11:36 2023/6/28
  *
  * @author beifengtz
@@ -39,7 +38,8 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
         try {
             MethodListener listener = LISTENER_MAP.get(adviceId);
             if (listener == null) {
-                throw new RuntimeException("no listener for:" + adviceId);
+                System.err.println("[jvmm] WARN: no listener for adviceId=" + adviceId);
+                return;
             }
 
             //  方法调用开始，保存上下文入栈，后续 methodOnEnd 可以从此获取，而不必再传这些参数
@@ -76,7 +76,11 @@ public class MethodEnhancer extends ClassVisitor implements Opcodes {
 
         //  从栈中恢复执行现场
         try {
-            MethodAttach methodAttach = threadMethodAttachStack.get().pop();
+            Deque<MethodAttach> stack = threadMethodAttachStack.get();
+            if (stack.isEmpty()) {
+                return;
+            }
+            MethodAttach methodAttach = stack.pop();
 
             MethodListener adviceListener = methodAttach.getListener();
 

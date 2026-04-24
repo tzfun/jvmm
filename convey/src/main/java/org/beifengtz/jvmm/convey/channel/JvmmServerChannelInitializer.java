@@ -20,7 +20,7 @@ import static org.beifengtz.jvmm.convey.channel.ChannelUtil.LEN_ENCODER_HANDLER;
 
 /**
  * <p>
- * Description: TODO
+ * 
  * </p>
  * <p>
  * Created in 17:31 2021/5/17

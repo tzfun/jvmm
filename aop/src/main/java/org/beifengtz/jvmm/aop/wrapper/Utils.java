@@ -6,7 +6,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * description: TODO
+ * 
  * date: 10:22 2023/10/16
  *
  * @author beifengtz

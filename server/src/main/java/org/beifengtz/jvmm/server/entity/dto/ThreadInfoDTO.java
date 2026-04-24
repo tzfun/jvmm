@@ -2,7 +2,7 @@ package org.beifengtz.jvmm.server.entity.dto;
 
 /**
  * <p>
- * Description: TODO
+ * 
  * </p>
  * <p>
  * Created in 17:42 2022/9/21

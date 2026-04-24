@@ -25,10 +25,10 @@ public abstract class MethodListener implements Comparable<MethodListener> {
 
     @Override
     public int compareTo(MethodListener o) {
-        if (Objects.equals(this, o)) {
+        if (this == o) {
             return 0;
         }
-        return this.hashCode() > o.hashCode() ? 1 : -1;
+        return Integer.compare(System.identityHashCode(this), System.identityHashCode(o));
     }
 
     /**

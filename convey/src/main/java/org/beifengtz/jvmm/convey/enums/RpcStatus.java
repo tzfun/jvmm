@@ -2,7 +2,7 @@ package org.beifengtz.jvmm.convey.enums;
 
 /**
  * <p>
- * Description: TODO
+ * 
  * </p>
  * <p>
  * Created in 8:43 下午 2021/5/17

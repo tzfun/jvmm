@@ -2,7 +2,7 @@ package org.beifengtz.jvmm.common.exception;
 
 /**
  * <p>
- * Description: TODO
+ * 
  * </p>
  * <p>
  * Created in 9:55 下午 2021/5/29

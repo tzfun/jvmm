@@ -2,7 +2,7 @@ package org.beifengtz.jvmm.core.entity.result;
 
 /**
  * <p>
- * Description: TODO
+ * 
  * </p>
  * <p>
  * Created in 10:09 2022/9/1

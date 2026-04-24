@@ -10,7 +10,7 @@ import org.objectweb.asm.commons.JSRInlinerAdapter;
 import static org.beifengtz.jvmm.aop.core.WeaverUtil.*;
 
 /**
- * description: TODO
+ *
  * date: 16:14 2023/6/28
  *
  * @author beifengtz
@@ -45,7 +45,6 @@ public class MethodWeaver extends AdviceAdapter {
     protected void onMethodEnter() {
         //  fill arg: adviceId
         push(adviceId);
-        box(Type.getType(Integer.class));
 
         //  fill arg: classLoader
         loadClassLoader();

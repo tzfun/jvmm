@@ -56,8 +56,10 @@ public class MethodStackListener extends MethodExecuteTimeListener {
      * @param joinMethodPattern 记录调用堆栈的启动类下的方法匹配符，*为通配符，如果为 null 默认为 *
      */
     public MethodStackListener(String joinClassPattern, String joinMethodPattern) {
-        this.joinClassPattern = joinClassPattern.replaceAll("\\.", ".*");
-        this.joinMethodPattern = joinMethodPattern == null ? ".*" : joinMethodPattern.replaceAll("\\.", ".*");
+        this.joinClassPattern = joinClassPattern.replaceAll("\\.", "\\\\.").replaceAll("\\*", ".*");
+        this.joinMethodPattern = joinMethodPattern == null
+                ? ".*"
+                : joinMethodPattern.replaceAll("\\.", "\\\\.").replaceAll("\\*", ".*");
     }
 
     @Override
