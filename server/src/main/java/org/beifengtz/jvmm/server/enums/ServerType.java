@@ -3,10 +3,6 @@ package org.beifengtz.jvmm.server.enums;
 import java.util.Locale;
 
 /**
- * <p>
- * 
- * </p>
- * <p>
  * Created in 16:59 2022/9/7
  *
  * @author beifengtz

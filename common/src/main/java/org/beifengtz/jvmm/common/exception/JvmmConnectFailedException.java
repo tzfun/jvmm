@@ -1,8 +1,6 @@
 package org.beifengtz.jvmm.common.exception;
 
 /**
- * 
- *
  * Created in 14:22 2022/2/25
  *
  * @author beifengtz

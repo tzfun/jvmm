@@ -5,10 +5,6 @@ import io.netty.util.concurrent.EventExecutorGroup;
 import org.beifengtz.jvmm.convey.handler.HandlerProvider;
 
 /**
- * <p>
- * 
- * </p>
- * <p>
  * Created in 18:16 2021/5/17
  *
  * @author beifengtz

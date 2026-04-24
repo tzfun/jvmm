@@ -23,10 +23,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * <p>
- * 
- * </p>
- * <p>
  * Created in 10:58 2021/5/12
  *
  * @author beifengtz

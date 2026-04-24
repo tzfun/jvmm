@@ -8,10 +8,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p>
- * 
- * </p>
- * <p>
  * Created in 11:28 2022/9/13
  *
  * @author beifengtz

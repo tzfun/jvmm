@@ -16,10 +16,6 @@ import org.beifengtz.jvmm.server.entity.conf.JvmmServerConf;
 import java.util.Objects;
 
 /**
- * <p>
- * 
- * </p>
- * <p>
  * Created in 9:39 2021/5/18
  *
  * @author beifengtz

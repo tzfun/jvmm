@@ -3,9 +3,7 @@ package org.beifengtz.jvmm.demo.enhance;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
-/**
- * 
- * date: 15:28 2023/10/12
+/** date: 15:28 2023/10/12
  *
  * @author beifengtz
  */

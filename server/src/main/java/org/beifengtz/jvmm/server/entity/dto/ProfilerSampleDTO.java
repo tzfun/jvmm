@@ -4,10 +4,6 @@ import org.beifengtz.jvmm.core.entity.profiler.ProfilerCounter;
 import org.beifengtz.jvmm.core.entity.profiler.ProfilerEvent;
 
 /**
- * <p>
- * 
- * </p>
- * <p>
  * Created in 17:38 2022/9/13
  *
  * @author beifengtz

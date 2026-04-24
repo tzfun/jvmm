@@ -1,8 +1,6 @@
 package org.beifengtz.jvmm.log.printer;
 
-/**
- * 
- * date 10:26 2023/2/3
+/** date 10:26 2023/2/3
  * @author beifengtz
  */
 public interface Printer {

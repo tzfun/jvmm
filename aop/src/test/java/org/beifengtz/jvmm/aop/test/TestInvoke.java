@@ -1,27 +1,18 @@
 package org.beifengtz.jvmm.aop.test;
 
 import org.beifengtz.jvmm.aop.core.Attributes;
-import org.beifengtz.jvmm.aop.core.ThreadLocalStore;
 import org.beifengtz.jvmm.aop.core.Enhancer;
-import org.beifengtz.jvmm.aop.core.ExecutorEnhancer;
 import org.beifengtz.jvmm.aop.core.MethodInfo;
+import org.beifengtz.jvmm.aop.core.ThreadLocalStore;
 import org.beifengtz.jvmm.aop.listener.MethodListener;
 import org.beifengtz.jvmm.aop.wrapper.ThreadPoolExecutorWrapper;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.lang.reflect.Constructor;
-import java.nio.file.Files;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-/**
- * 
- * date: 18:12 2023/6/28
+/** date: 18:12 2023/6/28
  *
  * @author beifengtz
  */
@@ -63,11 +54,9 @@ public class TestInvoke {
 
     @Test
     public void testMethodMatch() {
-        String excludeRegex = "^((?!<init>|<clinit>).)*$";
         String filter = "s*y*";
         String methodRegex = filter.replaceAll("\\*", ".*");
         System.out.println("say".matches(methodRegex));
-        ;
         System.out.println("<init>".matches(methodRegex));
         System.out.println("sayHello".matches(methodRegex));
         System.out.println("sayHelloWorld".matches(methodRegex));
@@ -86,7 +75,7 @@ public class TestInvoke {
 
     @Test
     public void testExecutorInvoke() throws Exception {
-        ThreadPoolExecutorWrapper executor = new ThreadPoolExecutorWrapper(2, 2, 0, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+        ThreadPoolExecutorWrapper executor = new ThreadPoolExecutorWrapper(2, 2, 0, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
         System.out.println("==> " + Thread.currentThread().getId());
         CountDownLatch cdl = new CountDownLatch(10);
         ThreadLocalStore.setAttributes(new Attributes().setContextId("123ABC"));

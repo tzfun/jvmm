@@ -14,10 +14,6 @@ import org.beifengtz.jvmm.convey.enums.RpcType;
 import java.nio.charset.StandardCharsets;
 
 /**
- * <p>
- * 
- * </p>
- * <p>
  * Created in 19:00 2021/5/17
  *
  * @author beifengtz

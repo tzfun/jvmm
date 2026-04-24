@@ -3,9 +3,7 @@ package org.beifengtz.jvmm.client.test;
 import org.beifengtz.jvmm.client.fomatter.TableFormatter;
 import org.junit.jupiter.api.Test;
 
-/**
- * 
- * date 17:59 2023/9/6
+/** date 17:59 2023/9/6
  *
  * @author beifengtz
  */

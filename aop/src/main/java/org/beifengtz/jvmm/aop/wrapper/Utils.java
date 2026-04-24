@@ -5,9 +5,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-/**
- * 
- * date: 10:22 2023/10/16
+/** date: 10:22 2023/10/16
  *
  * @author beifengtz
  */

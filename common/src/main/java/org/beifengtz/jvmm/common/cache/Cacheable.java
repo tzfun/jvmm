@@ -3,10 +3,6 @@ package org.beifengtz.jvmm.common.cache;
 import java.util.Collection;
 
 /**
- * <p>
- * 
- * </p>
- * <p>
  * Created in 11:19 2021/05/11
  *
  * @author beifengtz

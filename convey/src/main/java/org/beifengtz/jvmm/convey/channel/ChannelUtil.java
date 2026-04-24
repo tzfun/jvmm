@@ -22,10 +22,6 @@ import java.net.SocketAddress;
 import java.util.concurrent.Executor;
 
 /**
- * <p>
- * 
- * </p>
- * <p>
  * Created in 18:21 2022/9/7
  *
  * @author beifengtz

@@ -1,10 +1,6 @@
 package org.beifengtz.jvmm.common;
 
 /**
- * <p>
- * 
- * </p>
- * <p>
  * Created in 15:46 2021/5/12
  *
  * @author beifengtz

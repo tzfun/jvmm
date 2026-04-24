@@ -10,10 +10,6 @@ import io.netty.handler.timeout.IdleStateHandler;
 import org.beifengtz.jvmm.convey.handler.HandlerProvider;
 
 /**
- * <p>
- * 
- * </p>
- * <p>
  * Created in 18:19 2022/9/7
  *
  * @author beifengtz

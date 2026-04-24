@@ -6,10 +6,6 @@ import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
 import java.util.Map;
 
 /**
- * <p>
- * 
- * </p>
- * <p>
  * Created in 16:44 2022/9/7
  *
  * @author beifengtz

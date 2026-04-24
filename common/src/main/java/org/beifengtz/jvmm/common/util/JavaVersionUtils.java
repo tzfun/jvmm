@@ -3,10 +3,6 @@ package org.beifengtz.jvmm.common.util;
 import java.util.Properties;
 
 /**
- * <p>
- * 
- * </p>
- * <p>
  * Created in 16:19 2021/5/12
  *
  * @author beifengtz

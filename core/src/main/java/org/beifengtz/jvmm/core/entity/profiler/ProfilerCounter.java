@@ -1,10 +1,6 @@
 package org.beifengtz.jvmm.core.entity.profiler;
 
 /**
- * <p>
- * 
- * </p>
- * <p>
  * Created in 8:41 下午 2021/6/23
  *
  * @author beifengtz

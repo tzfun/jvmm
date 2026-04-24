@@ -12,10 +12,6 @@ import java.util.Locale;
 import java.util.concurrent.RejectedExecutionException;
 
 /**
- * <p>
- * 
- * </p>
- * <p>
  * Created in 15:46 2021/5/12
  *
  * @author beifengtz

@@ -20,9 +20,7 @@ import static org.objectweb.asm.ClassWriter.COMPUTE_FRAMES;
 import static org.objectweb.asm.ClassWriter.COMPUTE_MAXS;
 import static org.objectweb.asm.Opcodes.ASM9;
 
-/**
- * 
- * date: 20:22 2023/10/16
+/** date: 20:22 2023/10/16
  *
  * @author beifengtz
  */

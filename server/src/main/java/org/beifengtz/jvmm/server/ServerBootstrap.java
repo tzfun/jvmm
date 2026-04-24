@@ -27,10 +27,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 /**
- * <p>
- * 
- * </p>
- * <p>
  * Created in 10:11 2021/5/22
  *
  * @author beifengtz

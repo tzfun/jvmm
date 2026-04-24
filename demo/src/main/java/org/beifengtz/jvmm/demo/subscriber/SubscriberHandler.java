@@ -6,9 +6,7 @@ import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.beifengtz.jvmm.convey.handler.HttpChannelHandler;
 
-/**
- * 
- * date 23:20 2023/6/22
+/** date 23:20 2023/6/22
  *
  * @author beifengtz
  */

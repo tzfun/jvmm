@@ -1,8 +1,6 @@
 package org.beifengtz.jvmm.aop.test;
 
-/**
- * 
- * date: 18:32 2023/6/28
+/** date: 18:32 2023/6/28
  *
  * @author beifengtz
  */

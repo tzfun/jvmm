@@ -4,9 +4,7 @@ import org.beifengtz.jvmm.common.JsonParsable;
 
 import java.lang.Thread.State;
 
-/**
- * 
- * date 15:23 2023/9/3
+/** date 15:23 2023/9/3
  *
  * @author beifengtz
  */

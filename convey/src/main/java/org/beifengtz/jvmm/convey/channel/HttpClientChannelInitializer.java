@@ -13,9 +13,7 @@ import static org.beifengtz.jvmm.convey.channel.ChannelUtil.AGGREGATOR_HANDLER;
 import static org.beifengtz.jvmm.convey.channel.ChannelUtil.HTTP_CODEC_HANDLER;
 import static org.beifengtz.jvmm.convey.channel.ChannelUtil.IDLE_STATE_HANDLER;
 
-/**
- * 
- * date: 9:46 2024/1/30
+/** date: 9:46 2024/1/30
  *
  * @author beifengtz
  */

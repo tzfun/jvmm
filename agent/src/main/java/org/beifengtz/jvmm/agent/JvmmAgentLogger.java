@@ -3,9 +3,7 @@ package org.beifengtz.jvmm.agent;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-/**
- * 
- * <p>
+/** <p>
  * Created in 15:53 2021/12/9
  *
  * @author beifengtz

@@ -19,10 +19,6 @@ import java.net.MalformedURLException;
 import java.util.Properties;
 
 /**
- * <p>
- * 
- * </p>
- * <p>
  * Created in 15:30 2021/5/17
  *
  * @author beifengtz

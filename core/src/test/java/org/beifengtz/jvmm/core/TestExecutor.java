@@ -3,10 +3,6 @@ package org.beifengtz.jvmm.core;
 import org.junit.jupiter.api.Test;
 
 /**
- * <p>
- * 
- * </p>
- * <p>
  * Created in 17:32 2021/5/12
  *
  * @author beifengtz

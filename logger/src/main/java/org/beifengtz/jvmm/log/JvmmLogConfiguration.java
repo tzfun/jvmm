@@ -5,9 +5,7 @@ import io.netty.util.internal.logging.InternalLogLevel;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * 
- * date 10:18 2023/2/3
+/** date 10:18 2023/2/3
  * @author beifengtz
  */
 public class JvmmLogConfiguration {

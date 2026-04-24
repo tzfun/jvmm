@@ -1,8 +1,6 @@
 package org.beifengtz.jvmm.server.entity.dto;
 
 /**
- * 
- *
  * Created in 16:10 2022/9/26
  *
  * @author beifengtz

@@ -24,9 +24,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-/**
- * 
- * <p>
+/** <p>
  * Created in 16:32 2021/12/15
  *
  * @author beifengtz

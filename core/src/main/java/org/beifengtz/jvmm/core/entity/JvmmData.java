@@ -5,9 +5,7 @@ import org.beifengtz.jvmm.core.entity.info.*;
 
 import java.util.List;
 
-/**
- * 
- * <p>
+/** <p>
  * Created in 9:58 2022/8/30
  *
  * @author beifengtz

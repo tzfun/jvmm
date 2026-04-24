@@ -13,9 +13,7 @@ import org.beifengtz.jvmm.convey.socket.JvmmConnector;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-/**
- * 
- * <p>
+/** <p>
  * Created in 17:16 2021/12/15
  *
  * @author beifengtz

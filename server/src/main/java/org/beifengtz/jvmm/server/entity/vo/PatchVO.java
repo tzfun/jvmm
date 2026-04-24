@@ -1,8 +1,6 @@
 package org.beifengtz.jvmm.server.entity.vo;
 
 /**
- * 
- *
  * Created in 16:33 2022/9/26
  *
  * @author beifengtz

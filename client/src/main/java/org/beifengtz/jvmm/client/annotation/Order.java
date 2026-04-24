@@ -5,9 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * 
- * date: 18:04 2023/4/26
+/** date: 18:04 2023/4/26
  *
  * @author beifengtz
  */

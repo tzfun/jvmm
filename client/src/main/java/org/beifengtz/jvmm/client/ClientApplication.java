@@ -5,10 +5,6 @@ import org.beifengtz.jvmm.common.util.SystemPropertyUtil;
 import org.beifengtz.jvmm.log.JvmmLoggerFactory;
 
 /**
- * <p>
- * 
- * </p>
- * <p>
  * Created in 10:34 上午 2021/12/11
  *
  * @author beifengtz

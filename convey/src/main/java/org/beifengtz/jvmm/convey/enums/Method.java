@@ -3,10 +3,6 @@ package org.beifengtz.jvmm.convey.enums;
 import io.netty.handler.codec.http.HttpMethod;
 
 /**
- * <p>
- * 
- * </p>
- * <p>
  * Created in 14:29 2022/9/13
  *
  * @author beifengtz

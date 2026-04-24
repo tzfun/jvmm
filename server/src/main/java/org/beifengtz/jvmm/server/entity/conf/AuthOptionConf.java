@@ -1,10 +1,6 @@
 package org.beifengtz.jvmm.server.entity.conf;
 
 /**
- * <p>
- * 
- * </p>
- * <p>
  * Created in 11:27 2022/9/7
  *
  * @author beifengtz

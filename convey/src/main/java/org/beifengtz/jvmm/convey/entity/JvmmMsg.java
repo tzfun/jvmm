@@ -3,9 +3,7 @@ package org.beifengtz.jvmm.convey.entity;
 import io.netty.buffer.ByteBuf;
 import org.beifengtz.jvmm.common.JsonParsable;
 
-/**
- * 
- * date 16:56 2023/9/8
+/** date 16:56 2023/9/8
  *
  * @author beifengtz
  */

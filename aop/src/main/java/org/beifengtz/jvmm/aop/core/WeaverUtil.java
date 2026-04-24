@@ -12,9 +12,7 @@ import static org.objectweb.asm.Opcodes.ACC_NATIVE;
 import static org.objectweb.asm.Opcodes.ACC_STATIC;
 import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
 
-/**
- * 
- * date 16:38 2023/9/11
+/** date 16:38 2023/9/11
  *
  * @author beifengtz
  */

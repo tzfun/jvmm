@@ -6,10 +6,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p>
- * 
- * </p>
- * <p>
  * Created in 3:23 下午 2021/12/12
  *
  * @author beifengtz

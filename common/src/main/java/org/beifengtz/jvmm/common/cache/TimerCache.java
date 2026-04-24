@@ -1,10 +1,6 @@
 package org.beifengtz.jvmm.common.cache;
 
 /**
- * <p>
- * 
- * </p>
- * <p>
  * Created in 11:19 2021/05/11
  *
  * @author beifengtz

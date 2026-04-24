@@ -2,9 +2,7 @@ package org.beifengtz.jvmm.convey.entity;
 
 import java.util.function.Consumer;
 
-/**
- * 
- * date 19:03 2023/1/31
+/** date 19:03 2023/1/31
  * @author beifengtz
  */
 public class ResponseFuture {

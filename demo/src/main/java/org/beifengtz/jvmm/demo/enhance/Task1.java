@@ -4,9 +4,7 @@ import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 
-/**
- * 
- * date: 15:22 2023/10/12
+/** date: 15:22 2023/10/12
  *
  * @author beifengtz
  */

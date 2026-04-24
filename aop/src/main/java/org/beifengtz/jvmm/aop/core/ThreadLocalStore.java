@@ -1,8 +1,6 @@
 package org.beifengtz.jvmm.aop.core;
 
-/**
- * 
- * date: 9:52 2023/10/13
+/** date: 9:52 2023/10/13
  *
  * @author beifengtz
  */

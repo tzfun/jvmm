@@ -8,9 +8,7 @@ import org.beifengtz.jvmm.convey.entity.JvmmMsg;
 
 import java.util.List;
 
-/**
- * 
- * date 16:31 2023/9/8
+/** date 16:31 2023/9/8
  *
  * @author beifengtz
  */

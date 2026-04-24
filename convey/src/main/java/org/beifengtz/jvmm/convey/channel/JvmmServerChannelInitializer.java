@@ -19,10 +19,6 @@ import static org.beifengtz.jvmm.convey.channel.ChannelUtil.LEN_DECODER_HANDLER;
 import static org.beifengtz.jvmm.convey.channel.ChannelUtil.LEN_ENCODER_HANDLER;
 
 /**
- * <p>
- * 
- * </p>
- * <p>
  * Created in 17:31 2021/5/17
  *
  * @author beifengtz
